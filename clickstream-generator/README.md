@@ -68,10 +68,9 @@ Create AMI:
 AWS_PROFILE=<YOUR-AWS-PROFILE> ./build-ami.sh
 ```
 
-NOTE: The Ansible Playbook has a quick hack to start the clickstream generator server using /etc/rc.local. In production we should create a real /etc/init.d service, of course.
+NOTE: 
 
-NOTE also that I didn't comprise the Terraform AWS configuration related how to use the AMI in some AWS envrironment. 
-
-Another way would to pack the clickstream generator as a Docker container and use AWS ECS / Fargate to deploy the container.
-
+- The Ansible Playbook has a quick hack to start the clickstream generator server using /etc/rc.local. In production we should create a real /etc/init.d service, of course.
+- I didn't include the Terraform AWS configuration in this project since I only wanted to demonstrate how to use Clojure.
+- Another way to create a deployment unit for AWS would be to pack the clickstream generator as a Docker container and use AWS ECS / Fargate to deploy the container.
 
