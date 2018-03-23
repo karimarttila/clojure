@@ -1,0 +1,31 @@
+# Virtualenv
+venv/
+
+# Emacs backups
+*~
+
+# Python class files
+*.pyc
+
+# IntelliJ IDEA / PyCharm
+.idea/
+*.iml
+
+# Log files
+*.log
+
+# target directory
+target/
+
+# tmp directories everywhere
+tmp/
+
+# Personal information
+personal-info/
+
+# Leiningen
+.lein-env
+.lein-failures
+.lein-repl-history
+.nrepl-port
+

@@ -1,0 +1,26 @@
+{
+    "builders": [
+        {
+            "ami_name": "clickstream-generator-ami-{{timestamp}}",
+            "ami_users": [
+                "YOUR-AWS-ACCOUNT-HERE"
+            ],
+            "associate_public_ip_address": "true",
+            "instance_type": "t2.nano",
+            "region": "eu-west-1",
+            "source_ami": "ami-d834aba1",
+            "ssh_username": "ec2-user",
+            "subnet_id": "subnet-<YOUR-SUBNET-HERE>",
+            "type": "amazon-ebs",
+            "vpc_id": "vpc-<YOUR-VPC-ID-HERE>"
+        }
+    ],
+    "provisioners": [
+        {
+            "extra_arguments": "-vvvvv",
+            "playbook_file": "playbook.yml",
+            "sftp_command": "/usr/libexec/openssh/sftp-server",
+            "type": "ansible"
+        }
+    ]
+}
