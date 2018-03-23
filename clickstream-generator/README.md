@@ -23,9 +23,9 @@ You can configure the click event stochastic model in csgen.properties file.
 
 There are two kinds of clicks generated:
 
-1. Product group clicks, e.g. "https://webstore.cie.com/api/group/2?userid=77>" => User 77 is browsing product titles in product group 2 list.
+1. Product group clicks, e.g. "https://webstore.demo.com/api/group/2?userid=77>" => User 77 is browsing product titles in product group 2 list.
 
-2. Product clicks, e.g. "https://webstore.cie.com/api/group/2/product/345?userid=77>" => User 77 is viewing details of product 345 (belonging to product group 2).
+2. Product clicks, e.g. "https://webstore.demo.com/api/group/2/product/345?userid=77>" => User 77 is viewing details of product 345 (belonging to product group 2).
 
 
 ## Web server Implementation

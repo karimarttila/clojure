@@ -69,8 +69,8 @@
     file:
       path: "{{app_dest_dir}}/logs"
       state: directory
-      owner: cie-user
-      group: cie-user
+      owner: demo-user
+      group: demo-user
       mode: 0775
 
   # NOTE: A quick hack to avoid hassle to create a real /etc/init.d service.
