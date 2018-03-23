@@ -4,7 +4,7 @@
 
 I needed clickstream events for an internal POC (proof of concept) I implemented some time ago. Since I'm pretty exited about Clojure and wrote a couple of blog articles about Clojure in [my Medium Publication](https://medium.com/@kari.marttila) I thought that I publish the clickstream generator web application in my Github account as a Clojure example.
 
-So, this is a simple clickstream generator to demonstrate how to create a simple web service server using [Clojure](https://clojure.org/).
+So, this is a simple clickstream generator to demonstrate how to create a simple Web service server using [Clojure](https://clojure.org/).
 
 ## Technical Description
 
@@ -15,7 +15,7 @@ There are two parts in the application:
 1. Clickstream generator. Generates two kinds of clicks based on the imaginary web store which sells books (product group 1) and movies (product group 2) (see click templates below). 
 2. Web server for starting/stopping click generation.
 
-The server sends the generated clickstream events to raw-url AWS Kinesis stream.
+The server sends the generated clickstream events to AWS Kinesis stream. In the original POC I implemented an AWS Lambda using Python to process the raw url clicks to semantic events and then stored those events using AWS Firehose to S3. Then I used AWS Glue to provide a relational view to those semantic events for further analysis using AWS Quicksight. This application is for demonstrating how one can use Clojure to implement a Web service server so I didn't comprise the AWS infrastructure code (in the original POC I used Terraform for AWS infrastructure).
 
 You can configure the click event stochastic model in csgen.properties file. 
 
