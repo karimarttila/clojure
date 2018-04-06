@@ -22,14 +22,6 @@
    [ring/ring-core "1.6.3"]
    [ring/ring-jetty-adapter "1.6.3"]
    ;; TODO-END here.
-   [circleci/analytics-clj "0.4.1"]
-   [amazonica "0.3.118"
-    :exclusions [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor
-                 commons-logging
-                 commons-codec
-                 org.clojure/tools.reader
-                 com.fasterxml.jackson.core/jackson-databind
-                 com.fasterxml.jackson.core/jackson-core]]
    ]
 
   :plugins

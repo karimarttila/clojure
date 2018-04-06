@@ -80,5 +80,5 @@
 (defn get-vec-value
   [key]
   (if (nil? @config)
-    (-load-configuration @property-filename))
+    (-load-configuration))
   (str/split (get @config key) #","))

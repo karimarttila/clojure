@@ -110,6 +110,15 @@ lein repl :connect localhost:55444
 See instructions in [lein-ring documentation](https://github.com/weavejester/lein-ring).
 
 
+### Static Code Analysis
+
+You can use [Eastwood](https://github.com/jonase/eastwood) for static code analysis. Add Eastwood plugin to your home profile as instructed in Eastwood documentation. Then give command:
+
+```
+lein eastwood
+```
+
+
 
 ## Building for Production
 
