@@ -29,3 +29,6 @@ personal-info/
 .lein-repl-history
 .nrepl-port
 
+# Javascript generated stuff
+clj-ring-cljs-reagent-demo/simple-frontend/public/js/
+
