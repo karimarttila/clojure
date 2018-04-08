@@ -176,9 +176,9 @@ I first forgot the ":format :json" part of the request. This also puzzled me qui
 ...
 ```
 
-... i.e. I store the body to an atom after in the POST handler.
+... i.e. I store the body to an atom in the POST handler.
 
-Then I connect a remote REPL to the running application as describe above (the Easy Way). I sent a request using Postman and check the atom value in remote REPL:
+Then I connect a remote REPL to the running application as described above (the Easy Way). I sent a request using Postman and check the atom value in remote REPL:
 
 ```bash
 user=> @simpleserver.webserver.server/my-body
