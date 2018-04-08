@@ -156,7 +156,7 @@ Now that you have the CORS configurations done in the server side, you can post 
 
 #### Using Remote REPL to Debug CORS Issues
 
-I first forgot the ":format :json" part of the request. This also puzzled me quite a lot since the server side POST processing was working just fine when I tested the POST interface with curl or [Postman](https://www.getpostman.com/). Then I used the power of Lisp and added a simple debugging trace to server side code:
+I first forgot the ":format :json" part of the request. This also puzzled me quite a lot since the server side POST processing was working just fine when I tested the POST interface with [curl](http://manpages.ubuntu.com/manpages/trusty/man1/curl.1.html) or [Postman](https://www.getpostman.com/). Then I used the power of Lisp and added a simple debugging trace to server side code:
 
 
 ```clojure
