@@ -95,13 +95,13 @@ I added the following nrepl configuration to the ring configuration (in project.
 
 Now you can start the server using command:
 
-```
+```bash
 SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties lein with-profile +log-dev ring server-headless
 ```
 
 ... and enjoy both connecting a REPL to the given nrepl port:
 
-```
+```bash
 lein repl :connect localhost:55444
 ```
 
@@ -117,6 +117,86 @@ You can use [Eastwood](https://github.com/jonase/eastwood) for static code analy
 ```
 lein eastwood
 ```
+
+Other useful tools in blog article [The state of code quality tools in Clojure](https://blog.jeaye.com/2017/08/31/clojure-code-quality/).
+
+
+
+### CORS Issues
+
+I had to spend quite a lot of time before I got the [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) configurations done properly:
+
+#### Simple Server
+
+In the backend side I use [ring-cors](https://github.com/r0man/ring-cors) library to configure the CORS related headers:
+
+```clojure
+  (wrap-cors routes :access-control-allow-origin [#".*"]
+             :access-control-allow-headers ["Content-Type"]
+             :access-control-allow-methods [:get :put :post :delete :options])
+```
+
+The reason why I had to spend such a long time with this is that I first didn't realize that wrap-cors was not working with (ri-defaults/wrap-defaults ri-defaults/api-defaults) - I need to figure out later why this is so.
+
+#### Simple Frontend
+
+Now that you have the CORS configurations done in the server side, you can post the form values to server using [cljs-ajax](https://github.com/JulianBirch/cljs-ajax) library:
+
+
+```clojurescript
+    (let [response (a-core/POST url
+        {:format          :json
+         :params          data
+         :response-format :json
+         :headers         {"Accept" "application/json"
+                                    "Content-Type" "application/json"
+                          }
+...                          
+```
+
+I first forgot the ":format :json" part of the request. This also puzzled me quite a lot since the server side POST processing was working just fine when I tested the POST interface with curl or [Postman](https://www.getpostman.com/). Then I used the power of Lisp and added a simple debugging trace to server side code:
+
+
+```clojure
+(def my-body (atom nil))
+
+(defn -reset-body
+  [body]
+  (reset! my-body body))
+
+...
+(defn -sign-in
+  [req]
+  (log/trace "ENTER -sign-in")
+  (log/trace (str "req: " req))
+  (let [body (:body req)
+        dummy (-reset-body body)
+...
+```
+
+... i.e. I store the body to an atom after in the POST handler.
+
+Then I connect a remote REPL to the running application as describe above (the Easy Way). I sent a request using Postman and check the atom value in remote REPL:
+
+```bash
+user=> @simpleserver.webserver.server/my-body
+{:first-name "Jamppa", :last-name "Tuominen", :email "jamppa.tuominen@tieto.com", :password "123"}
+user=> (type @simpleserver.webserver.server/my-body)
+clojure.lang.PersistentArrayMap
+```
+
+... looking good. Now send the post in ClojureScript Simple Frontend application (without the ":format :json" part of the request):
+
+```bash
+user=> @simpleserver.webserver.server/my-body
+("^ " "~:first-name" "k" "~:last-name" "k" "~:email" "1@com.foo" "~:password" "k")
+user=> (type @simpleserver.webserver.server/my-body)
+clojure.lang.LazySeq
+```
+
+... what the heck? - says the developer. But it was an easy way to debug a running application and find out where the problem lies.
+
+Remote REPL really is a powerful way to debug your running application.
 
 
 

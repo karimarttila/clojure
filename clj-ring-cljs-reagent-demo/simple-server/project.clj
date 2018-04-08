@@ -22,6 +22,7 @@
    [ring/ring-core "1.6.3"]
    [ring/ring-jetty-adapter "1.6.3"]
    ;; TODO-END here.
+   [ring-cors "0.1.12"]
    ]
 
   :plugins

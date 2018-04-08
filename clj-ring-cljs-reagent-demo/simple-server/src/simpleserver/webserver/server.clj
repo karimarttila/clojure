@@ -7,11 +7,25 @@
     [ring.util.response :as ri-resp]
     [ring.middleware.json :as ri-json]
     [ring.middleware.defaults :as ri-defaults]
+    [ring.middleware.cors :refer [wrap-cors]]
     [environ.core :refer [env]]
     [simpleserver.util.prop :as ss-prop]
     [simpleserver.userdb.users :as ss-users]
     ))
 
+
+;; NOTE: my-body atom is just for testing purposes using remote REPL:
+;; lein repl :connect localhost:55444
+;; Use ClojureScript Simple Frontend, curl or Postman to send a signin POST request,
+;; and then in remote REPL you can check the body like:
+;; user=> @simpleserver.webserver.server/my-body
+;; => {:first-name "Jamppa", :last-name "Tuominen", :email "jamppa.tuominen@foo.com", :password "p"}
+
+(def my-body (atom nil))
+
+(defn -reset-body
+  [body]
+  (reset! my-body body))
 
 (defn -read-configuration
   "Reads configuration for web server."
@@ -64,8 +78,9 @@
 (defn -sign-in
   [req]
   (log/trace "ENTER -sign-in")
-  ;(log/trace (str "req: " req))
+  (log/trace (str "req: " req))
   (let [body (:body req)
+        dummy (-reset-body body)
         first-name (:first-name body)
         last-name (:last-name body)
         password (:password body)
@@ -79,28 +94,18 @@
 
 (co-core/defroutes app-routes
                    (co-core/GET "/info" [] (-get-info))
-                   (co-core/POST "/sign-in" req (-sign-in req))
+                   (co-core/POST "/signin" req (-sign-in req))
                    (co-route/resources "/")
                    (co-route/not-found "Not Found. Use /info to get information how to use the commands."))
 
 
-(defn -cors-handling [response]
-  (->
-    response
-    (assoc-in [:headers "Access-Control-Allow-Origin"] "*")
-    (assoc-in [:headers "Access-Control-Allow-Headers"] "X-Requested-With,Content-Type,Cache-Control")
-    (assoc-in [:headers "Access-Control-Allow-Methods"] "GET,PUT,POST,DELETE,OPTIONS")
-    (assoc-in [:headers "Content-Type"] "application/json")
-    ))
-
-;; Check with curl -v (verbose) that the headers are there:
-;; curl -v -H "Content-Type: application/json" -X POST -d '{"first-name":"Jamppa", "last-name": "Tuominen", "email": "jamppa.3.tuominen@tieto.com", "password":"123"}' http://localhost:3000/sign-in
-(defn -my-wrap-cors [handler]
-  (fn
-    ([request]
-     (-> (handler request) (-cors-handling)))
-    ([request respond raise]
-     (handler request #(respond (-cors-handling %)) raise))))
+(defn -cors-handler [routes]
+  ; TODO: Why cannot we see this log entry?
+  (log/trace "ENTER -cors-handler")
+  (wrap-cors routes :access-control-allow-origin [#".*"]
+             :access-control-allow-headers ["Content-Type"]
+             :access-control-allow-methods [:get :put :post :delete :options])
+  )
 
 
 ;; NOTE: Start web-server in development mode like:
@@ -108,11 +113,11 @@
 (def web-server
   (->
     app-routes
-    (ri-defaults/wrap-defaults ri-defaults/api-defaults)
-    (-my-wrap-cors)
+    ;; NOTE: Not working with wrap-cors, why?
+    ;(ri-defaults/wrap-defaults ri-defaults/api-defaults)
     (ri-json/wrap-json-body {:keywords? true})
+    (-cors-handler)
     (ri-json/wrap-json-response)
-
     ))
 
 
