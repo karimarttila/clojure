@@ -14,39 +14,47 @@
   :min-lein-version "2.5.0"
 
   :clean-targets ^{:protect false}
-  [:target-path
-   [:cljsbuild :builds :app :compiler :output-dir]
-   [:cljsbuild :builds :app :compiler :output-to]]
+[:target-path
+ [:cljsbuild :builds :app :compiler :output-dir]
+ [:cljsbuild :builds :app :compiler :output-to]]
 
   :resource-paths ["public"]
 
   :figwheel {:http-server-root "."
-             :nrepl-port 7002
+             :server-port      3445                         ;; default is 3449
+             :nrepl-port       7002
              :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"]
-             :css-dirs ["public/css"]}
+             :css-dirs         ["public/css"]}
 
-  :cljsbuild {:builds {:app
-                       {:source-paths ["src" "env/dev/cljs"]
-                        :compiler
-                        {:main "simplefrontend.dev"
-                         :output-to "public/js/app.js"
-                         :output-dir "public/js/out"
-                         :asset-path   "js/out"
-                         :source-map true
-                         :optimizations :none
-                         :pretty-print  true}
-                        :figwheel
-                        {:on-jsload "simplefrontend.core/mount-root"
-                         ;:open-urls ["http://localhost:3449/index.html"]
-                         }}
-                       :release
-                       {:source-paths ["src" "env/prod/cljs"]
-                        :compiler
-                        {:output-to "public/js/app.js"
-                         :output-dir "public/js/release"
-                         :asset-path   "js/out"
-                         :optimizations :advanced
-                         :pretty-print false}}}}
+  :cljsbuild {:builds
+              {:app
+               {:source-paths ["src" "env/dev/cljs"]
+                :compiler
+                              {:main          "simplefrontend.dev"
+                               :output-to     "public/js/app.js"
+                               :output-dir    "public/js/out"
+                               :asset-path    "js/out"
+                               :source-map    true
+                               :optimizations :none
+                               :pretty-print  true}
+                :figwheel
+                              {:on-jsload       "simplefrontend.core/mount-root"
+                               :websocket-url  "ws://localhost:3445/figwheel-ws"
+                               }
+                }
+               :release
+               {:source-paths ["src" "env/prod/cljs"]
+                :compiler
+                              {:output-to     "public/js/app.js"
+                               :output-dir    "public/js/release"
+                               :asset-path    "js/out"
+                               :optimizations :advanced
+                               :pretty-print  false}
+                }
+               }
+              }
+
+
 
   :aliases {"package" ["do" "clean" ["cljsbuild" "once" "release"]]}
 
