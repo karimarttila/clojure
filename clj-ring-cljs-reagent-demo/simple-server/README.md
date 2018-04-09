@@ -191,12 +191,12 @@ clojure.lang.PersistentArrayMap
 
 ```bash
 user=> @simpleserver.webserver.server/my-body
-("^ " "~:first-name" "k" "~:last-name" "k" "~:email" "1@com.foo" "~:password" "k")
+("^ " "~:first-name" "Jamppa" "~:last-name" "Tuominen" "~:email" "jamppa.1.tuominen@tieto.com" "~:password" "foo")
 user=> (type @simpleserver.webserver.server/my-body)
 clojure.lang.LazySeq
 ```
 
-... what the heck? - says the developer. But it was an easy way to debug a running application and find out where the problem lies.
+... what the heck? - says the developer. But it was an easy way to debug a running application and find out where the problem lies (the ":format :json" part of the ClojureScript POST request missing).
 
 Remote REPL really is a powerful way to debug your running application.
 
