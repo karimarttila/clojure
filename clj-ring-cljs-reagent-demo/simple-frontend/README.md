@@ -130,12 +130,13 @@ Some example screenshots of the page:
 
 Validation failed:
 
-![Validation failed](doc-images/sign-in-validation-failed.png validation failed")
+
+![Sign-in validation failed](doc-images/sign-in-validation-failed.png "validation failed")
 
 
 Server accepted sign-in:
 
-![Sign-in successful](doc-images/sign-in-success.png sign-in success")
+![Sign-in successful](doc-images/sign-in-success.png sign-in "sign-in success")
 
 
 
