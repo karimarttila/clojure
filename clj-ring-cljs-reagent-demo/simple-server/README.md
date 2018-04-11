@@ -53,7 +53,7 @@ nrepl://127.0.0.1:51954
 - In the previous REPL start Jetty for the web server handler:
 ```
 (use 'ring.adapter.jetty)
-(run-jetty simpleserver.webserver.server/web-server {:port 3000})
+(run-jetty simpleserver.webserver.server/web-server {:port 3045})
 ```
 
 - Ok. Now you have the first REPL running the Ring web server.
@@ -73,7 +73,7 @@ simpleserver.core=> (count (vals @simpleserver.userdb.users/users))
 - In console using curl send a POST to the Ring server to add a new user:
 
 ```bash
-curl -H "Content-Type: application/json" -X POST -d '{"first-name":"Jamppa", "last-name": "Tuominen", "email": "jamppa.tuominen@tieto.com", "password":"123"}' http://localhost:3000/sign-in
+curl -H "Content-Type: application/json" -X POST -d '{"first-name":"Jamppa", "last-name": "Tuominen", "email": "jamppa.tuominen@tieto.com", "password":"123"}' http://localhost:3045/sign-in
 ```
 
 - Now count the users again:

@@ -22,7 +22,7 @@
 
   :figwheel {:http-server-root "."
              :server-port      3445                         ;; default is 3449
-             :nrepl-port       7002
+             :nrepl-port       7045                         ;; default is 7002
              :nrepl-middleware ["cemerick.piggieback/wrap-cljs-repl"]
              :css-dirs         ["public/css"]}
 
@@ -62,3 +62,20 @@
                                   [figwheel-sidecar "0.5.15"]
                                   [org.clojure/tools.nrepl "0.2.13"]
                                   [com.cemerick/piggieback "0.2.2"]]}})
+
+;Instructions how to start remote REPL to Figwheel:
+;- Start Figwheel REPL in terminal as instructed above.
+;- Check the port Figwheel provides nREPL, e.g.: "Figwheel: Starting nREPL server on port: 7002".
+;- In Cursive: Create new Run configuration: Clojure REPL / Remote:
+;-- Host: localhost
+;-- Port: 7002
+;- Start the remote REPL in Cursive.
+;- In REPL:
+;-- Choose cljs (default is clj).
+;-- (use 'figwheel-sidecar.repl-api) (cljs-repl)
+;-- You should now see the same Figwheel text as in terminal
+;-- Open browser: http://localhost:3449
+;-- In Cursive remote REPL:
+;--- (simplefrontend.signin/submit-form "Jeppe" "Virtanen" "jeppe.virtanen@tieto.com" "pass")
+;--- You now should see the logging in browser console (open it in Chrome: Ctrl-Shift-i).
+;--- So, you are now able to test your functions that are running in browser using Cursive REPL.

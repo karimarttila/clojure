@@ -34,6 +34,7 @@
 
   :ring {:handler simpleserver.webserver.server/web-server
          :init simpleserver.webserver.server/initialize-web-server
+         :port 3045
          :nrepl {:start? true
                  :port 55444}
          }

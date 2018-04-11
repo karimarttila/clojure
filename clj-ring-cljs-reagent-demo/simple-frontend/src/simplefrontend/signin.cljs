@@ -5,28 +5,50 @@
     ))
 
 
-(defn -input
-  [label name type my-atom]
-  (fn []
-    [:div
-     [:label label]
-     [:input {:id        name
-              :name      name
-              :type      type
-              :value     @my-atom
-              :on-change #(reset! my-atom (-> % .-target .-value))
-              }]]))
+;; ***** Namespace vars. *****
+(def my-error-msg-atom (r/atom nil))
+(def my-success-msg-atom (r/atom nil))
+;; For debugging
+(def my-response-atom (r/atom nil))
 
 
-(defn -handler
+(defn reset-page
+  "Reset page atoms when coming here from home page."
   []
-  (.log js/console (str "In -handler"))
+  (reset! my-response-atom nil)
+  (reset! my-error-msg-atom nil)
+  (reset! my-success-msg-atom nil)
   )
 
 
+(defn -handler
+  "The success (http status 200) handler."
+  [response]
+  (.log js/console (str "ENTER -handler, response: " response))
+  (do
+    (reset! my-response-atom response)
+    (reset! my-success-msg-atom "Cool, sign-in successful! You can now proceed to Web store home page to login using your new credentials!")
+    (reset! my-error-msg-atom nil)
+    )
+  )
+
+
+(defn -error-handler
+  "The error (http status not 200) handler."
+  [response]
+  (.log js/console (str "ENTER -error-handler, response: " response))
+  (let [error-msg ((:response response) "msg")]
+    (do
+      (reset! my-response-atom response)
+      (reset! my-error-msg-atom error-msg)
+      (reset! my-success-msg-atom nil))
+    )
+  )
+
 (defn -submit-form
+  "Send form data to server using POST."
   [first-name last-name, email-address password]
-  (.log js/console (str "In submit-form, first-name: " first-name))
+  (.log js/console (str "ENTER submit-form, email: " email-address))
   (let [host (:host simplefrontend.core/backend-host-config)
         port (:port simplefrontend.core/backend-host-config)
         url (str "http://" host ":" port "/signin")
@@ -42,17 +64,52 @@
                                                    "Content-Type" "application/json"
                                                    }
                                  :handler         -handler
-                                 ;:error-handler (fn [r] (prn r))
+                                 :error-handler   -error-handler
                                  }
                                 )]
       (.log js/console (str "Response: " response)))
     ))
 
+
+(defn -input
+  "Input field component for First name, Last name, Email address and Password."
+  [label name type my-atom]
+  (fn []
+    [:div
+     [:label label]
+     [:input {:id        name
+              :name      name
+              :type      type
+              :value     @my-atom
+              :on-change #(reset! my-atom (-> % .-target .-value))
+              }]]))
+
+(defn -msg-field
+  "Message field component for success/error feedback."
+  [label name type color err-msg]
+  (fn []
+    [:div
+     [:label label]
+     [:textarea
+      {:id        name
+       :name      name
+       :type      type
+       :rows      3
+       :style     {:background-color color}
+       :cols      50
+       :value     err-msg
+       :read-only true
+       }]]))
+
+
 (defn signin-page []
+  "The actual page function called by simplefrontend.core."
+  (.log js/console (str "ENTER signin-page"))
   (let [first-name-atom (r/atom nil)
         last-name-atom (r/atom nil)
         email-address-atom (r/atom nil)
-        password-atom (r/atom nil)]
+        password-atom (r/atom nil)
+        ]
     (fn []
       [:div
        [:h1 "Sign-in"]
@@ -73,13 +130,17 @@
                        "password"
                        "text"
                        password-atom)]]]
-
        [:div [:input {:type     "button" :value "Submit"
                       :on-click #(-submit-form @first-name-atom
                                                @last-name-atom
                                                @email-address-atom
                                                @password-atom)
                       }]]
+
+       (if (not (nil? @my-error-msg-atom))
+         [(-msg-field "Error: " "error" "text" "red" @my-error-msg-atom)])
+       (if (not (nil? @my-success-msg-atom))
+         [(-msg-field "Success: " "success" "text" "greenyellow" @my-success-msg-atom)])
 
        [:div [:a {:href "#/"} "Back to Web Store Home Page"]]])))
 

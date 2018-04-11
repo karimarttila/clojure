@@ -27,7 +27,7 @@ lein new reagent-frontend simple-frontend
 
 To start the [Figwheel](https://github.com/bhauman/lein-figwheel) compiler, navigate to the project folder and run the following command in the terminal:
 
-```
+```bash
 lein figwheel
 ```
 
@@ -41,11 +41,20 @@ You can also open browser in url: http://localhost:3449/
 
 See detailed instructions in [Johan Haleby' article](http://code.haleby.se/2017/02/24/connect-cursive-to-figwheel-repl/).
 
+
+First configure project.clj to provide remote repl in port 7045:
+
+```clojurescript
+  :figwheel {:http-server-root "."
+             :server-port      3445                         ;; default is 3449
+             :nrepl-port       7045                         ;; default is 7002
+```
+
 - Start Figwheel REPL in terminal as instructed above.
-- Check the port Figwheel provides nREPL, e.g.: "Figwheel: Starting nREPL server on port: 7002".
+- Check the port Figwheel provides nREPL, e.g.: "Figwheel: Starting nREPL server on port: 7045".
 - In Cursive: Create new Run configuration: Clojure REPL / Remote:
 -- Host: localhost
--- Port: 7002
+-- Port: 7045
 - Start the remote REPL in Cursive.
 - In REPL:
 -- Choose cljs (default is clj).
@@ -68,7 +77,7 @@ I thought that I had do
 ```clojurescript
   :figwheel {:http-server-root "."
              :server-port      3445                         ;; default is 3449
-             :nrepl-port       7002
+             :nrepl-port       7045
 ...
   :cljsbuild {:builds
               {:app
@@ -99,6 +108,10 @@ So, if you have some odd issues related to your ClojureScript setup, try this fi
 5. Try your application again in browser.
 
 
+
+### Solving Other Application Development Issues
+
+If you have some weird issues - try to reload the application in Browser.
 
 
 

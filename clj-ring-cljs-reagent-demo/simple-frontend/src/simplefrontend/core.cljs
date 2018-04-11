@@ -17,7 +17,7 @@
 
 ;; -------------------------
 ;; Application wide properties.
-(def backend-host-config {:host "localhost" :port 3000})
+(def backend-host-config {:host "localhost" :port 3045})
 
 
 
@@ -57,6 +57,7 @@
 
 (defn signin
   []
+  (sf-signin/reset-page)
   (sf-signin/signin-page))
 
 (defn login
