@@ -115,10 +115,27 @@ If you have some weird issues - try to reload the application in Browser.
 
 
 
-
 ## Building for Production
 
 ```
 lein clean
 lein package
 ```
+
+## Frontend Development Observations
+
+Sign-in page ( [signin.cljs](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-frontend/src/simplefrontend/signin.cljs) ) was my first real ClojureScript page I implemented for the SPA. I didn't worry about CSS styles since I'm not artistic and our corporation usually provides some graphical designer who creates the styles for HTML pages - so I only focused on getting the functionality right. I'm an old backend developer and I don't have that much experience implementing frontends. I have implemented one SPA using Javascript/Angular and now after the first SPA page using ClojureScript/Reagent I feel that ClojureScript was somehow easier to work with and code readability is also a lot better. 
+
+Some example screenshots of the page:
+
+Validation failed:
+
+![Validation failed](doc-images/sign-in-validation-failed.png validation failed")
+
+
+Server accepted sign-in:
+
+![Sign-in successful](doc-images/sign-in-success.png sign-in success")
+
+
+

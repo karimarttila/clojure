@@ -47,7 +47,7 @@
 
 (defn -submit-form
   "Send form data to server using POST."
-  [first-name last-name, email-address password]
+  [first-name last-name email-address password]
   (.log js/console (str "ENTER submit-form, email: " email-address))
   (let [host (:host simplefrontend.core/backend-host-config)
         port (:port simplefrontend.core/backend-host-config)
