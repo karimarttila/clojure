@@ -136,7 +136,7 @@ Validation failed:
 
 Server accepted sign-in:
 
-![Sign-in successful](doc-images/sign-in-success.png sign-in "sign-in success")
+![Sign-in successful](doc-images/sign-in-success.png "sign-in success")
 
 
 
