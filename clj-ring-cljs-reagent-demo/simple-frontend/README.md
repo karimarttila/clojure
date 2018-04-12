@@ -122,9 +122,24 @@ lein clean
 lein package
 ```
 
-## Frontend Development Observations
+## Frontend Application Structure
+
+### Sign-in Page
 
 Sign-in page ( [signin.cljs](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-frontend/src/simplefrontend/signin.cljs) ) was my first real ClojureScript page I implemented for the SPA. I didn't worry about CSS styles since I'm not artistic and our corporation usually provides some graphical designer who creates the styles for HTML pages - so I only focused on getting the functionality right. I'm an old backend developer and I don't have that much experience implementing frontends. I have implemented one SPA using Javascript/Angular and now after the first SPA page using ClojureScript/Reagent I feel that ClojureScript was somehow easier to work with and code readability is also a lot better. 
+
+With this first SPA page I needed to figure out how to do the following things using ClojureScript (and in the backend side using Clojure/Ring):
+
+- **[Reagent](https://reagent-project.github.io/)**: how to create the SPA page using Reagent. 
+- **GET and POST requests**. For these in the Frontend side I used [cljs-ajax](https://github.com/JulianBirch/cljs-ajax) ClojureScript library. In the backend side I used various [ring-clojure](https://github.com/ring-clojure) libraries and [compojure](https://github.com/weavejester/compojure) library.
+- **CORS** (Cross Origin Resource Handling). For cors handling I used [ring-cors](https://github.com/r0man/ring-cors) library in the backend side.
+- **HTML / Single Page Application (SPA) handling** in the SPA. For these I just studied various code examples and did some experimentation using Figwheel and remote REPL (see above how to configure them). 
+- **Dynamic DOM manipulation** in the SPA. Again a lot of experimentation using remote REPL and added some helper variables (e.g. my-response-atom)  to code to be examined using remote REPL after using the SPA in the browser to examine the values of those variables. 
+- **React components** using Reagent: How to create React components that can be reused (e.g. -input and -msg-field). 
+- **HTTP Response and Error handlers**: see functions -handler and -error-handler. 
+- **Simple interactivity in the SPA page**: e.g. the validation error / email already exists error / successful sign-in messages (see the two if functions at the end of signin-page function).
+
+
 
 Some example screenshots of the page:
 
@@ -138,5 +153,7 @@ Server accepted sign-in:
 
 ![Sign-in successful](doc-images/sign-in-success.png "sign-in success")
 
+
+### Login Page
 
 

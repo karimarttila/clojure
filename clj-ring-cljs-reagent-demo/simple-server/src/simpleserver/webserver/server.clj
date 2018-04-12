@@ -24,6 +24,7 @@
 (def my-body (atom nil))
 
 (defn -reset-body
+  "Resets the my body atom which is just for debugging purposes."
   [body]
   (reset! my-body body))
 
@@ -43,6 +44,7 @@
 
 
 (defn -get-info
+  "Gets the info page."
   []
   (log/trace "ENTER -get-info")
   (let [response {:info "index.html => Info in HTML format"}]
@@ -50,6 +52,7 @@
 
 
 (defn -check-token
+  "Checks the token."
   [token]
   (let [ok-hash (ss-prop/get-str-value "token-as-hash")
         hashed-token (str (int (hash token)))]
@@ -57,6 +60,7 @@
 
 
 (defn -token-error
+  "Returns token error."
   []
   (json/write-str {:error "Wrong token"}))
 
@@ -69,13 +73,33 @@
 
 ;; As in headers check with curl that the http status is properly set.
 (defn -set-http-status
+  "Sets the http status either to 200 (ret=ok) or 400 (otherwise)."
   [ring-response ret]
   (if (= ret :ok)
     ring-response
     (ri-resp/status ring-response 400)))
 
 
-(defn -sign-in
+(defn -signin
+  "Provides API for sign-in page."
+  [req]
+  (log/trace "ENTER -sign-in")
+  (log/trace (str "req: " req))
+  (let [body (:body req)
+        dummy (-reset-body body)
+        first-name (:first-name body)
+        last-name (:last-name body)
+        password (:password body)
+        email (:email body)
+        validation-passed (-validate-sign-in [email first-name last-name password])
+        response-value (if validation-passed
+                         (ss-users/add-new-user email first-name last-name password)
+                         {:ret :failed, :msg "Validation failed - some fields were empty"})]
+    (-set-http-status (ri-resp/response response-value) (:ret response-value))))
+
+
+(defn -login
+  "Provides API for login page."
   [req]
   (log/trace "ENTER -sign-in")
   (log/trace (str "req: " req))
@@ -94,12 +118,15 @@
 
 (co-core/defroutes app-routes
                    (co-core/GET "/info" [] (-get-info))
-                   (co-core/POST "/signin" req (-sign-in req))
+                   (co-core/POST "/signin" req (-sign req))
+                   (co-core/POST "/login" req (-login req))
                    (co-route/resources "/")
                    (co-route/not-found "Not Found. Use /info to get information how to use the commands."))
 
 
-(defn -cors-handler [routes]
+(defn -cors-handler
+  "Adds cors handling to response."
+  [routes]
   ; TODO: Why cannot we see this log entry?
   (log/trace "ENTER -cors-handler")
   (wrap-cors routes :access-control-allow-origin [#".*"]
