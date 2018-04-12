@@ -5,19 +5,19 @@
 ; A simple dynamic user database for demonstration purposes.
 (def users (atom
              {1 {:userid          "1",
-                 :email           "kari.marttila@tieto.com",
+                 :email           "kari.karttinen@foo.com",
                  :first-name      "Kari",
-                 :last-name       "Marttila"
+                 :last-name       "Karttinen"
                  :hashed-password "1340477763"}
               2 {:userid          "2",
-                 :email           "timo.tapanainen@tieto.com",
+                 :email           "timo.tillinen@foo.com",
                  :first-name      "Timo",
-                 :last-name       "Tapanainen"
+                 :last-name       "Tillinen"
                  :hashed-password "-36072128"}
               3 {:userid          "3",
-                 :email           "erkka.tuomela@tieto.com",
+                 :email           "erkka.erkkila@foo.com",
                  :first-name      "Erkka",
-                 :last-name       "Tuomela"
+                 :last-name       "Erkkilä"
                  :hashed-password "1655387230"}}))
 
 (defn -email-already-exists?
