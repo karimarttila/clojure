@@ -11,7 +11,8 @@
     [buddy.sign.jwt :as buddy-jwt]
     [environ.core :refer [env]]
     [simpleserver.util.prop :as ss-prop]
-    [simpleserver.userdb.users :as ss-users]))
+    [simpleserver.userdb.users :as ss-users]
+    [simpleserver.webserver.login :as ss-login]))
 
 
 
@@ -24,17 +25,6 @@
 
 (def my-body (atom nil))
 
-;; Creates dynamically a hex secret when the server boots.
-(def my-hex-secret
-  ((fn []
-     (let [my-chars (->> (range (int \a) (inc (int \z))) (map char))
-           my-ints (->> (range (int \0) (inc (int \9))) (map char))
-           my-set (lazy-cat my-chars my-ints)
-           hexify (fn [s]
-                    (apply str
-                           (map #(format "%02x" (int %)) s)))
-           ]
-       (hexify (repeatedly 24 #(rand-nth my-set)))))))
 
 (defn -reset-body
   "Resets the my body atom which is just for debugging purposes."
@@ -96,7 +86,7 @@
 (defn -signin
   "Provides API for sign-in page."
   [req]
-  (log/trace "ENTER -sign-in")
+  (log/trace "ENTER -signin")
   (log/trace (str "req: " req))
   (let [body (:body req)
         dummy (-reset-body body)
@@ -111,20 +101,10 @@
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 
-
-(defn -create-json-web-token
-  "Creates the JSON web token"
-  [email]
-  (let [my-secret my-hex-secret
-        my-claim {:email email}]
-    (buddy-jwt/sign my-claim my-secret)))
-
-
-
 (defn -login
   "Provides API for login page."
   [req]
-  (log/trace "ENTER -login-in")
+  (log/trace "ENTER -login")
   (log/trace (str "req: " req))
   (let [body (:body req)
         dummy (-reset-body body)
@@ -135,7 +115,7 @@
                          (ss-users/credentials-ok? email password)
                          nil)
         json-web-token (if credentials-ok
-                         (-create-json-web-token email)
+                         (ss-login/-create-json-web-token email)
                          nil)
         response-value (if (not validation-passed)
                          {:ret :failed, :msg "Validation failed - some fields were empty"}
@@ -148,8 +128,22 @@
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 
+
+
+
+(defn -test-token
+  "For testing the JSON Web Token handling in backend side"
+  []
+  (log/trace "ENTER -test-token")
+
+  (let [response {:info "index.html => Info in HTML format"}]
+    (json/write-str response)))
+
+
+
 (co-core/defroutes app-routes
                    (co-core/GET "/info" [] (-get-info))
+                   (co-core/GET "/test-token" [] (-test-token))
                    (co-core/POST "/signin" req (-signin req))
                    (co-core/POST "/login" req (-login req))
                    (co-route/resources "/")
