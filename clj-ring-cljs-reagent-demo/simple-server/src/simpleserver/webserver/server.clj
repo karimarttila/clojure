@@ -24,6 +24,18 @@
 
 (def my-body (atom nil))
 
+;; Creates dynamically a hex secret when the server boots.
+(def my-hex-secret
+  ((fn []
+     (let [my-chars (->> (range (int \a) (inc (int \z))) (map char))
+           my-ints (->> (range (int \0) (inc (int \9))) (map char))
+           my-set (lazy-cat my-chars my-ints)
+           hexify (fn [s]
+                    (apply str
+                           (map #(format "%02x" (int %)) s)))
+           ]
+       (hexify (repeatedly 24 #(rand-nth my-set)))))))
+
 (defn -reset-body
   "Resets the my body atom which is just for debugging purposes."
   [body]
@@ -103,7 +115,7 @@
 (defn -create-json-web-token
   "Creates the JSON web token"
   [email]
-  (let [my-secret (ss-prop/get-str-value "my-secret")
+  (let [my-secret my-hex-secret
         my-claim {:email email}]
     (buddy-jwt/sign my-claim my-secret)))
 
