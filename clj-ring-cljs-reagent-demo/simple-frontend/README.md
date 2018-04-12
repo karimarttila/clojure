@@ -156,4 +156,14 @@ Server accepted sign-in:
 
 ### Login Page
 
+The most important exercise of the login page was to figure out how to create the [JSON Web Token](https://en.wikipedia.org/wiki/JSON_Web_Token) after successful login, pass it to SPA, store the token in SPA session and use it with communication with the backend. 
+
+The lessons learned:
+
+- **Creating JSON Web Token in the backend**: The user credentials (email address as username and password) need to be validated against the user database. If credentials are good we create a JSON Web Token. I have used the Clojure [buddy](https://github.com/funcool/buddy) library to create the JSON Web Token.
+- **Storing JSON Web Token in SPA**. The JSON Web Token is then passed to the SPA which stores it as TODO.
+
+
+
+
 

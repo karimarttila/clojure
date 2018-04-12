@@ -8,10 +8,11 @@
     [ring.middleware.json :as ri-json]
     [ring.middleware.defaults :as ri-defaults]
     [ring.middleware.cors :refer [wrap-cors]]
+    [buddy.sign.jwt :as buddy-jwt]
     [environ.core :refer [env]]
     [simpleserver.util.prop :as ss-prop]
-    [simpleserver.userdb.users :as ss-users]
-    ))
+    [simpleserver.userdb.users :as ss-users]))
+
 
 
 ;; NOTE: my-body atom is just for testing purposes using remote REPL:
@@ -31,8 +32,8 @@
 (defn -read-configuration
   "Reads configuration for web server."
   []
-  (log/trace "ENTER -read-configuration")
-  )
+  (log/trace "ENTER -read-configuration"))
+
 
 
 (defn initialize-web-server
@@ -65,7 +66,7 @@
   (json/write-str {:error "Wrong token"}))
 
 
-(defn -validate-sign-in
+(defn -validate-parameters
   "Extremely simple validator - just request that all fields must have some value."
   [field-values]
   (every? #(not (empty? %)) field-values))
@@ -91,34 +92,53 @@
         last-name (:last-name body)
         password (:password body)
         email (:email body)
-        validation-passed (-validate-sign-in [email first-name last-name password])
+        validation-passed (-validate-parameters [email first-name last-name password])
         response-value (if validation-passed
                          (ss-users/add-new-user email first-name last-name password)
                          {:ret :failed, :msg "Validation failed - some fields were empty"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
+
+
+
+(defn -create-json-web-token
+  "Creates the JSON web token"
+  [email]
+  (let [my-secret (ss-prop/get-str-value "my-secret")
+        my-claim {:email email}]
+    (buddy-jwt/sign my-claim my-secret)))
+
 
 
 (defn -login
   "Provides API for login page."
   [req]
-  (log/trace "ENTER -sign-in")
+  (log/trace "ENTER -login-in")
   (log/trace (str "req: " req))
   (let [body (:body req)
         dummy (-reset-body body)
-        first-name (:first-name body)
-        last-name (:last-name body)
-        password (:password body)
         email (:email body)
-        validation-passed (-validate-sign-in [email first-name last-name password])
-        response-value (if validation-passed
-                         (ss-users/add-new-user email first-name last-name password)
-                         {:ret :failed, :msg "Validation failed - some fields were empty"})]
+        password (:password body)
+        validation-passed (-validate-parameters [email password])
+        credentials-ok (if validation-passed
+                         (ss-users/credentials-ok? email password)
+                         nil)
+        json-web-token (if credentials-ok
+                         (-create-json-web-token email)
+                         nil)
+        response-value (if (not validation-passed)
+                         {:ret :failed, :msg "Validation failed - some fields were empty"}
+                         (if (not credentials-ok)
+                           {:ret :failed, :msg "Credentials are not good - either email or password is not correct"}
+                           (if (not json-web-token)
+                             {:ret :failed, :msg "Internal error when creating the json web token"}
+                             {:ret :ok, :msg "Credentials ok" :json-web-token json-web-token})))
+        ]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 
 (co-core/defroutes app-routes
                    (co-core/GET "/info" [] (-get-info))
-                   (co-core/POST "/signin" req (-sign req))
+                   (co-core/POST "/signin" req (-signin req))
                    (co-core/POST "/login" req (-login req))
                    (co-route/resources "/")
                    (co-route/not-found "Not Found. Use /info to get information how to use the commands."))
@@ -131,8 +151,8 @@
   (log/trace "ENTER -cors-handler")
   (wrap-cors routes :access-control-allow-origin [#".*"]
              :access-control-allow-headers ["Content-Type"]
-             :access-control-allow-methods [:get :put :post :delete :options])
-  )
+             :access-control-allow-methods [:get :put :post :delete :options]))
+
 
 
 ;; NOTE: Start web-server in development mode like:
@@ -144,8 +164,8 @@
     ;(ri-defaults/wrap-defaults ri-defaults/api-defaults)
     (ri-json/wrap-json-body {:keywords? true})
     (-cors-handler)
-    (ri-json/wrap-json-response)
-    ))
+    (ri-json/wrap-json-response)))
+
 
 
 

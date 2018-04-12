@@ -23,7 +23,8 @@
    [ring/ring-jetty-adapter "1.6.3"]
    ;; TODO-END here.
    [ring-cors "0.1.12"]
-   ]
+   [buddy/buddy-sign "2.2.0"]]
+
 
   :plugins
   [
@@ -36,8 +37,8 @@
          :init simpleserver.webserver.server/initialize-web-server
          :port 3045
          :nrepl {:start? true
-                 :port 55444}
-         }
+                 :port 55444}}
+
 
   :main ^:skip-aot simpleserver.core
   :target-path "target/%s"

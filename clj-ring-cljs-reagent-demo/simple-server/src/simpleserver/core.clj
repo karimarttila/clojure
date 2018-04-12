@@ -32,5 +32,5 @@
   "Main entry point to clickstream data generation application."
   [& args]
   (throw (ex-info (str "Use ring to start the server, example: "
-                       "SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties lein with-profile +log-dev ring server-headless") {}))
-  )
+                       "SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties lein with-profile +log-dev ring server-headless") {})))
+

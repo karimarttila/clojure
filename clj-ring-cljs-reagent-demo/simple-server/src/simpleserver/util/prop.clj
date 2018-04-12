@@ -40,7 +40,7 @@
         (do (log/info (str "Using poperty file: " configfile-name))
             (set-property-file configfile-name))
         (do (log/info (str "Property file: " configfile-name " not found, exiting."))
-            (throw (ex-info (str "Property file: " configfile-name " not found") {})))))    ))
+            (throw (ex-info (str "Property file: " configfile-name " not found") {})))))))
 
 
 (defn -load-props
