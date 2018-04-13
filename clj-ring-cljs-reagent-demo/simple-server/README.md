@@ -110,6 +110,11 @@ lein repl :connect localhost:55444
 See instructions in [lein-ring documentation](https://github.com/weavejester/lein-ring).
 
 
+#### Connect to Remote REPL using Cursive REPL
+
+Very simple: Just create a remote REPL configuration with hostname: localhost, and port 55444.
+
+
 ### Static Code Analysis
 
 You can use [Eastwood](https://github.com/jonase/eastwood) for static code analysis. Add Eastwood plugin to your home profile as instructed in Eastwood documentation. Then give command:

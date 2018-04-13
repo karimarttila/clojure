@@ -126,7 +126,11 @@ lein package
 
 ### Sign-in Page
 
-Sign-in page ( [signin.cljs](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-frontend/src/simplefrontend/signin.cljs) ) was my first real ClojureScript page I implemented for the SPA. I didn't worry about CSS styles since I'm not artistic and our corporation usually provides some graphical designer who creates the styles for HTML pages - so I only focused on getting the functionality right. I'm an old backend developer and I don't have that much experience implementing frontends. I have implemented one SPA using Javascript/Angular and now after the first SPA page using ClojureScript/Reagent I feel that ClojureScript was somehow easier to work with and code readability is also a lot better. 
+Sign-in page ( [signin.cljs](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-frontend/src/simplefrontend/signin.cljs) ) was my first real ClojureScript page I implemented for the SPA. 
+
+TODO: Implement some simple CSS to make the frontend a bit more appealing. 
+
+I didn't worry about CSS styles since I'm not artistic and our corporation usually provides some graphical designer who creates the styles for HTML pages - so I only focused on getting the functionality right. I'm an old backend developer and I don't have that much experience implementing frontends. I have implemented one SPA using Javascript/Angular and now after the first SPA page using ClojureScript/Reagent I feel that ClojureScript was somehow easier to work with and code readability is also a lot better. 
 
 With this first SPA page I needed to figure out how to do the following things using ClojureScript (and in the backend side using Clojure/Ring):
 
@@ -161,7 +165,8 @@ The most important exercise of the login page was to figure out how to create th
 The lessons learned:
 
 - **Creating JSON Web Token in the backend**: The user credentials (email address as username and password) need to be validated against the user database. If credentials are good we create a JSON Web Token. I have used the Clojure [buddy](https://github.com/funcool/buddy) library to create the JSON Web Token.
-- **Storing JSON Web Token in SPA**. The JSON Web Token is then passed to the SPA which stores it as TODO.
+- **React components**. I realized that I can reuse the input msg-field components used in the sign-in page, so I refactored them to namespace simplefrontend.components and use them as react components the same way in the sign-in and login pages.
+- **Storing JSON Web Token in SPA**. The JSON Web Token is then passed to the SPA which stores it to application data as simplefrontend.core/app-state (r/atom) and redirects user to Product groups page.
 
 
 

@@ -2,6 +2,7 @@
   (:require
     [reagent.core :as r]
     [ajax.core :as a-core]
+    [simplefrontend.components :as sf-components]
     ))
 
 
@@ -47,14 +48,14 @@
 
 (defn -submit-form
   "Send form data to server using POST."
-  [first-name last-name email-address password]
-  (.log js/console (str "ENTER submit-form, email: " email-address))
+  [first-name last-name email password]
+  (.log js/console (str "ENTER submit-form, email: " email))
   (let [host (:host simplefrontend.core/backend-host-config)
         port (:port simplefrontend.core/backend-host-config)
         url (str "http://" host ":" port "/signin")
         data {:first-name first-name
               :last-name  last-name
-              :email      email-address
+              :email      email
               :password   password}]
     (let [response (a-core/POST url
                                 {:format          :json
@@ -71,39 +72,11 @@
     ))
 
 
-(defn -input
-  "Input field component for First name, Last name, Email address and Password."
-  [label name type my-atom]
-  (fn []
-    [:div
-     [:label label]
-     [:input {:id        name
-              :name      name
-              :type      type
-              :value     @my-atom
-              :on-change #(reset! my-atom (-> % .-target .-value))
-              }]]))
-
-(defn -msg-field
-  "Message field component for success/error feedback."
-  [label name type color err-msg]
-  (fn []
-    [:div
-     [:label label]
-     [:textarea
-      {:id        name
-       :name      name
-       :type      type
-       :rows      3
-       :style     {:background-color color}
-       :cols      50
-       :value     err-msg
-       :read-only true
-       }]]))
 
 
-(defn signin-page []
+(defn signin-page
   "The actual page function called by simplefrontend.core."
+  []
   (.log js/console (str "ENTER signin-page"))
   (let [first-name-atom (r/atom nil)
         last-name-atom (r/atom nil)
@@ -114,19 +87,19 @@
       [:div
        [:h1 "Sign-in"]
        [:form
-        [:div [(-input "First name: "
+        [:div [(sf-components/input "First name: "
                        "first-name"
                        "text"
                        first-name-atom)]]
-        [:div [(-input "Last name: "
+        [:div [(sf-components/input "Last name: "
                        "last-name"
                        "text"
                        last-name-atom)]]
-        [:div [(-input "Email address: "
+        [:div [(sf-components/input "Email address: "
                        "email-address"
                        "text"
                        email-address-atom)]]
-        [:div [(-input "Password: "
+        [:div [(sf-components/input "Password: "
                        "password"
                        "text"
                        password-atom)]]]
@@ -138,9 +111,9 @@
                       }]]
 
        (if (not (nil? @my-error-msg-atom))
-         [(-msg-field "Error: " "error" "text" "red" @my-error-msg-atom)])
+         [(sf-components/msg-field "Error: " "error" "text" "red" @my-error-msg-atom)])
        (if (not (nil? @my-success-msg-atom))
-         [(-msg-field "Success: " "success" "text" "greenyellow" @my-success-msg-atom)])
+         [(sf-components/msg-field "Success: " "success" "text" "greenyellow" @my-success-msg-atom)])
 
        [:div [:a {:href "#/"} "Back to Web Store Home Page"]]])))
 

@@ -7,7 +7,8 @@
     [goog.history.EventType :as EventType]
     [reagent.core :as r]
     [simplefrontend.login :as sf-login]
-    [simplefrontend.signin :as sf-signin]))
+    [simplefrontend.signin :as sf-signin]
+    [simplefrontend.productgroups :as sf-productgroups]))
 
 
 ;; -------------------------
@@ -15,11 +16,16 @@
 (def app-state (r/atom {}))
 
 
+
 ;; -------------------------
 ;; Application wide properties.
 (def backend-host-config {:host "localhost" :port 3045})
 
 
+(defn set-page
+  "Sets current page"
+  [page]
+  (swap! app-state assoc :page page))
 
 ;; -------------------------
 ;; Views.
@@ -37,14 +43,13 @@
   (secretary/set-config! :prefix "#")
 
   (defroute "/" []
-            (swap! app-state assoc :page :home))
-
+            (set-page :home))
   (defroute "/signin" []
-            (swap! app-state assoc :page :signin))
-
+            (set-page :signin))
   (defroute "/login" []
-            (swap! app-state assoc :page :login))
-
+            (set-page :login))
+  (defroute "/productgroups" []
+            (set-page :productgroups))
   (hook-browser-navigation!))
 
 
@@ -53,7 +58,10 @@
   [:div [:h1 "Web Store"]
    [:a {:href "#/signin"} "Sign-in"]
    [:div]
-   [:a {:href "#/login"} "Login"]])
+   [:a {:href "#/login"} "Login"]
+   [:div]
+   [:a {:href "#/productgroups"} "Product Groups"]
+   ])
 
 (defn signin
   []
@@ -62,7 +70,12 @@
 
 (defn login
   []
+  (sf-login/reset-page)
   (sf-login/login-page))
+
+(defn productgroups
+  []
+  (sf-productgroups/productgroups-page))
 
 
 
@@ -73,6 +86,8 @@
   [signin])
 (defmethod current-page :login []
   [login])
+(defmethod current-page :productgroups []
+  [productgroups])
 (defmethod current-page :default []
   [:div])
 
