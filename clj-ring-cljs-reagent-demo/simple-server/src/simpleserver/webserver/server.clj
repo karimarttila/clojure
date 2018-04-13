@@ -12,7 +12,9 @@
     [environ.core :refer [env]]
     [simpleserver.util.prop :as ss-prop]
     [simpleserver.userdb.users :as ss-users]
-    [simpleserver.webserver.login :as ss-login]))
+    [simpleserver.webserver.login :as ss-login]
+    [simpleserver.domain :as ss-domain]
+    ))
 
 
 
@@ -128,22 +130,17 @@
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 
-
-
-
-(defn -test-token
-  "For testing the JSON Web Token handling in backend side"
+(defn -product-groups
+  "Get product groups"
   []
-  (log/trace "ENTER -test-token")
-
-  (let [response {:info "index.html => Info in HTML format"}]
-    (json/write-str response)))
-
+  (log/trace "ENTER -product-groups")
+  (let [response-value (ss-domain/get-product-groups)]
+    (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 
 (co-core/defroutes app-routes
                    (co-core/GET "/info" [] (-get-info))
-                   (co-core/GET "/test-token" [] (-test-token))
+                   (co-core/GET "/product-groups" [] (-product-groups))
                    (co-core/POST "/signin" req (-signin req))
                    (co-core/POST "/login" req (-login req))
                    (co-route/resources "/")

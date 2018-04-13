@@ -1,3 +1,3 @@
 #!/bin/bash
 
-curl -H "Content-Type: application/json" -X POST -d '{"first-name":"Jamppa", "last-name":"Tuominen", "email": "jamppa.tuominen@tieto.com", "password":"123"}' http://localhost:3045/signin
+curl -H "Content-Type: application/json" -X POST -d '{"first-name":"Jamppa", "last-name":"Jamppanen", "email": "jamppa.jamppanen@foo.com", "password":"Jamppa"}' http://localhost:3045/signin

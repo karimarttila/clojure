@@ -5,6 +5,7 @@
    [org.clojure/clojure "1.9.0"]
    [org.clojure/data.json "0.2.6"]
    [org.clojure/core.async "0.4.474"]
+   [org.clojure/data.csv "0.1.4"]
 
    [org.clojure/tools.logging "0.4.0"]
    [commons-logging "1.2"]
