@@ -34,7 +34,19 @@
        (hexify (repeatedly 24 #(rand-nth my-set)))))))
 
 
-(defn -create-json-web-token
+(defn validate-token
+  "Validates the token. Returns email if session ok, nil otherwise."
+  [token]
+  (try
+    (buddy-jwt/unsign token my-hex-secret)
+    (catch Exception e
+      (if (.contains (.getMessage e) "Token is expired")
+        ; Token just expired, return nil.
+        nil
+        ; Some other issue, throw it.
+        (throw e)))))
+
+(defn create-json-web-token
   "Creates the JSON web token and adds it to sessions atom"
   [email]
   (let [my-secret my-hex-secret

@@ -115,7 +115,7 @@
                          (ss-users/credentials-ok? email password)
                          nil)
         json-web-token (if credentials-ok
-                         (ss-login/-create-json-web-token email)
+                         (ss-login/create-json-web-token email)
                          nil)
         response-value (if (not validation-passed)
                          {:ret :failed, :msg "Validation failed - some fields were empty"}
