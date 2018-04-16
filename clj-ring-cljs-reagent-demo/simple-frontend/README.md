@@ -164,10 +164,19 @@ The most important exercise of the login page was to figure out how to create th
 
 The lessons learned:
 
-- **Creating JSON Web Token in the backend**: The user credentials (email address as username and password) need to be validated against the user database. If credentials are good we create a JSON Web Token. I have used the Clojure [buddy](https://github.com/funcool/buddy) library to create the JSON Web Token.
+- **Creating JSON Web Token in the backend**: The user credentials (email address as username and password) need to be validated against the user database. If credentials are good we create a JSON Web Token. I have used the Clojure [buddy](https://github.com/funcool/buddy) library to create the JSON Web Token. See also the longer description in the [Simple Server README.md](../simple-server/README.md).
 - **React components**. I realized that I can reuse the input msg-field components used in the sign-in page, so I refactored them to namespace simplefrontend.components and use them as react components the same way in the sign-in and login pages.
 - **Storing JSON Web Token in SPA**. The JSON Web Token is then passed to the SPA which stores it to application data as simplefrontend.core/app-state (r/atom) and redirects user to Product groups page.
 
+
+### Product Groups Page
+
+The most important exercise of the login page was to figure out how to use the [JSON Web Token](https://en.wikipedia.org/wiki/JSON_Web_Token) to authorize the API call to get the product groups. 
+
+The lessons learned:
+
+- **Implemented the Authorization header parsing and token validation in the backend side**: see the longer description in the [Simple Server README.md](../simple-server/README.md). I was some time puzzled why this wasn't working until I realized that I have to add the "Authorization" http header as allowed header in my CORS handler.
+- **Simple Frontend uses the token** it got in the Login page to pass it as part of the GET call to get the product groups.
 
 
 

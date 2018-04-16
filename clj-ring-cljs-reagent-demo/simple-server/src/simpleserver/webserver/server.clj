@@ -118,19 +118,20 @@
 
 
 (defn -valid-token?
-  "Validates the token."
+  "Parses the token from the http authorization header and asks session ns to validate the token"
   [req]
   (log/trace "ENTER -validate-token")
   (let [basic ((:headers req) "authorization")
         dummy (log/trace (str "basic: " basic))
-        basic-str (last (re-find #"^Basic (.*)$" basic))
+        basic-str (and basic
+                       (last (re-find #"^Basic (.*)$" basic)))
         raw-token (and basic-str
                        (apply str (map char (base64/decode (.getBytes basic-str)))))
         dummy (log/trace (str "raw-token: " raw-token))
         ; Finally strip the password part if testing with curl
         token (and raw-token
                    (clojure.string/replace raw-token #":NOT" ""))]
-    ;; Session ns does the actual validation.
+    ;; Session namespace does the actual validation logic.
     (if (not token)
       nil
       (ss-session/validate-token token))))
@@ -164,7 +165,7 @@
   ; TODO: Why cannot we see this log entry?
   (log/trace "ENTER -cors-handler")
   (wrap-cors routes :access-control-allow-origin [#".*"]
-             :access-control-allow-headers ["Content-Type"]
+             :access-control-allow-headers ["Content-Type" "Authorization"]
              :access-control-allow-methods [:get :put :post :delete :options]))
 
 
@@ -177,6 +178,7 @@
     ;; NOTE: Not working with wrap-cors, why?
     ;(ri-defaults/wrap-defaults ri-defaults/api-defaults)
     (ri-json/wrap-json-body {:keywords? true})
+    ;(ri-json/wrap-json-params)
     (-cors-handler)
     (ri-json/wrap-json-response)))
 

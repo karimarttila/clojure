@@ -27,7 +27,7 @@
   "The success (http status 200) handler."
   [response]
   (.log js/console (str "ENTER -handler, response: " response))
-  (let [token (response"json-web-token")
+  (let [token (response "json-web-token")
         dummy (.log js/console (str "token: " token))
         ]
     (do

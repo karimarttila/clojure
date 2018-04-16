@@ -75,8 +75,8 @@
 
 (defn productgroups
   []
-  (sf-productgroups/productgroups-page))
-
+  (sf-productgroups/reset-page)
+  (sf-productgroups/productgroups-page (@simplefrontend.core/app-state :token)))
 
 
 (defmulti current-page #(@app-state :page))
