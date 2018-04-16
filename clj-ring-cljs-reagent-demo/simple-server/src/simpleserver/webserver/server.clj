@@ -2,6 +2,7 @@
   (:require
     [clojure.data.json :as json]
     [clojure.tools.logging :as log]
+    [clojure.data.codec.base64 :as base64]
     [compojure.core :as co-core]
     [compojure.route :as co-route]
     [ring.util.response :as ri-resp]
@@ -13,8 +14,8 @@
     [simpleserver.util.prop :as ss-prop]
     [simpleserver.userdb.users :as ss-users]
     [simpleserver.webserver.session :as ss-session]
-    [simpleserver.domain :as ss-domain]
-    ))
+    [simpleserver.domain :as ss-domain]))
+
 
 
 
@@ -111,31 +112,46 @@
                            {:ret :failed, :msg "Credentials are not good - either email or password is not correct"}
                            (if (not json-web-token)
                              {:ret :failed, :msg "Internal error when creating the json web token"}
-                             {:ret :ok, :msg "Credentials ok" :json-web-token json-web-token})))
-        ]
+                             {:ret :ok, :msg "Credentials ok" :json-web-token json-web-token})))]
+
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 
-(defn -validate-token
+(defn -valid-token?
   "Validates the token."
-  []
-  (let []
+  [req]
+  (log/trace "ENTER -validate-token")
+  (let [basic ((:headers req) "authorization")
+        dummy (log/trace (str "basic: " basic))
+        basic-str (last (re-find #"^Basic (.*)$" basic))
+        raw-token (and basic-str
+                       (apply str (map char (base64/decode (.getBytes basic-str)))))
+        dummy (log/trace (str "raw-token: " raw-token))
+        ; Finally strip the password part if testing with curl
+        token (and raw-token
+                   (clojure.string/replace raw-token #":NOT" ""))]
+    ;; Session ns does the actual validation.
+    (if (not token)
+      nil
+      (ss-session/validate-token token))))
 
-    ))
 
-;; TODO: Add first the token validation - if not valid, then return error, else return product groups as below.
 (defn -product-groups
   "Get product groups"
-  []
+  [req]
   (log/trace "ENTER -product-groups")
+  (log/trace (str "req: " req))
+  (let [token-ok? (-valid-token? req)
+        response-value (if (not token-ok?)
+                         {:ret :failed, :msg "Given token is not valid"}
+                         {:ret :ok, :product-groups (ss-domain/get-product-groups)})]
 
-  (let [response-value (ss-domain/get-product-groups)]
-    (-set-http-status (ri-resp/response response-value) {:ret :ok, :product-groups response-value})))
+    (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 
 (co-core/defroutes app-routes
                    (co-core/GET "/info" [] (-get-info))
-                   (co-core/GET "/product-groups" [] (-product-groups))
+                   (co-core/GET "/product-groups" req (-product-groups req))
                    (co-core/POST "/signin" req (-signin req))
                    (co-core/POST "/login" req (-login req))
                    (co-route/resources "/")

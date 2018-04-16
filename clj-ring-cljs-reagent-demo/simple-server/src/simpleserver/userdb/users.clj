@@ -46,20 +46,20 @@
                   :first-name      first-name,
                   :last-name       last-name,
                   :hashed-password (str (hash password))}))
-        {:email email, :ret :ok})
-      )
-    )
-  )
+        {:email email, :ret :ok}))))
+
+
+
 
 
 (defn credentials-ok?
   "Checks given credentials"
   [email password]
   (some
-  (fn [user]
-    (and
-      (= (:email user) email)
-      (= (:hashed-password user) (str (hash password))))
-    )
-  (vals @users)))
+   (fn [user]
+     (and
+       (= (:email user) email)
+       (= (:hashed-password user) (str (hash password)))))
+
+   (vals @users)))
 

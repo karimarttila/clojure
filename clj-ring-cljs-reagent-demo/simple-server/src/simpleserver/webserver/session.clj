@@ -5,8 +5,8 @@
     [ring.middleware.cors :refer [wrap-cors]]
     [buddy.sign.jwt :as buddy-jwt]
     [environ.core :refer [env]]
-    [simpleserver.util.prop :as ss-prop]
-    ))
+    [simpleserver.util.prop :as ss-prop]))
+
 
 
 ;; Atom to store the JSON Web Token expiration as seconds.
@@ -29,8 +29,8 @@
            my-set (lazy-cat my-chars my-ints)
            hexify (fn [s]
                     (apply str
-                           (map #(format "%02x" (int %)) s)))
-           ]
+                           (map #(format "%02x" (int %)) s)))]
+
        (hexify (repeatedly 24 #(rand-nth my-set)))))))
 
 
@@ -71,7 +71,7 @@
         exp-time (c-time/plus (c-time/now) (c-time/seconds @my-expiration-time))
         my-claim {:email email :exp exp-time}
         json-web-token (buddy-jwt/sign my-claim my-secret)
-        dummy (swap! my-sessions conj json-web-token)
-        ]
+        dummy (swap! my-sessions conj json-web-token)]
+
     json-web-token))
 
