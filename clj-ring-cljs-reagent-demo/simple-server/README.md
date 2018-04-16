@@ -255,7 +255,6 @@ Loading src/simpleserver/webserver/session.clj... done
 (validate-token my-bad-token)
 => nil
 2018-04-16 12:18:40 DE [nREPL-worker-9] WARN  simpleserver.webserver.session - Token not found in my sessions - unknown token: eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImJhZCJ9.zm5xUy2vYF6-XGujPk_nsXplls8_xxEDHoVq98AJjZg
-
 ```
 
 The numbers refer to the comments in the above REPL session:
@@ -272,6 +271,30 @@ The numbers refer to the comments in the above REPL session:
 10. Let's create a bad token outside the Simple Server API - token is not stored to Simple Server sessions set - it is created by a malicious party.
 11. My sessions set should be empty still, of course.
 12. Now try to validate the bad token using Simple Server API - Simple Server didn't create the token and rejects it.
+
+Now that the actual application logic to validate token is ready, it is just a matter for the client to set the token to the http authorization header and in the Simple Server I parse the token from the http authorization header and pass the parsed token to the validation function.  You can test the process using the test scripts I provided in the scripts directory:
+
+```
+./post-sign-in.sh
+{"email":"jamppa.jamppanen@foo.com","ret":"ok"}
+
+./post-login.sh
+{"ret":"ok","msg":"Credentials ok","json-web-token":"eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImphbXBwYS5qYW1wcGFuZW5AZm9vLmNvbSIsImV4cCI6MTUyMzg4NDExMn0.FiZ4rcterBqoEkCDxSOiddUurZ5pOaWhE-SiSMelxbo"}
+
+... copy-paste the returned token to the get-product-groups call...
+./get-product-groups.sh eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImphbXBwYS5qYW1wcGFuZW5AZm9vLmNvbSIsImV4cCI6MTUyMzg4NDExMn0.FiZ4rcterBqoEkCDxSOiddUurZ5pOaWhE-SiSMelxbo
+...
+{"ret":"ok","product-groups":{"1":"Books","2":"Movies"}}
+
+... wait some time for the token to expire...
+./get-product-groups.sh eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImphbXBwYS5qYW1wcGFuZW5AZm9vLmNvbSIsImV4cCI6MTUyMzg4NDExMn0.FiZ4rcterBqoEkCDxSOiddUurZ5pOaWhE-SiSMelxbo
+...
+{"ret":"failed","msg":"Given token is not valid"}
+
+```
+
+
+
 
 
 ## Building for Production
