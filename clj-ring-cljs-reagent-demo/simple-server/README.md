@@ -205,6 +205,73 @@ clojure.lang.LazySeq
 
 Remote REPL really is a powerful way to debug your running application.
 
+### Session Handling
+
+In the backend side (Simple Server) I use the Clojure [buddy](https://github.com/funcool/buddy) library to create the [JSON Web Token](https://en.wikipedia.org/wiki/JSON_Web_Token) which is then passed to the Simple Frontend which needs to add the token to the http Authorization header for all API calls that needs authorization. Simple server then checks the validity of the session token (i.e. the token has not expired and the server has actually created the token). Internally the session is stored in the Simple Server in an atom in the session namespace. I could have used other buddy services to automate REST API authorization but I wanted to make the session handling more transparent for learning purposes and therefore handled the token storing / validation myself.
+
+BTW. Using local REPL it is very easy to validate that the token handling works as expected, e.g.  (first set the json-web-token-expiration-as-seconds property in the simpleserver.properties file to some small number (e.g. 10 (seconds) so that you are able to test token expiration):
+
+```
+;; #1.
+(do (require '[clojure.tools.namespace.repl :refer [refresh]]) (refresh))
+:reloading ()
+=> :ok
+Loading src/simpleserver/webserver/session.clj... done
+;; #2.
+@my-sessions
+=> #{}
+;; #3.
+(def my-good-token (create-json-web-token "kari"))
+=> #'simpleserver.webserver.session/my-good-token
+;; #4.
+@my-sessions
+=> #{"eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImthcmkiLCJleHAiOjE1MjM4Njk5NDJ9.W-bmUOt1b_jM1pv3KAjATsNKJqYE7jjTLwm6XM_FpTQ"}
+;; #5.
+(validate-token my-good-token)
+=> {:email "kari", :exp 1523869942}
+@my-sessions
+=> #{"eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImthcmkiLCJleHAiOjE1MjM4Njk5NDJ9.W-bmUOt1b_jM1pv3KAjATsNKJqYE7jjTLwm6XM_FpTQ"}
+;; #6.
+(validate-token my-good-token)
+2018-04-16 12:12:29 DE [nREPL-worker-8] TRACE simpleserver.webserver.session - Token is expired, removing it from my sessions and returnin nil: eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImthcmkiLCJleHAiOjE1MjM4Njk5NDJ9.W-bmUOt1b_jM1pv3KAjATsNKJqYE7jjTLwm6XM_FpTQ
+=> nil
+;; #7.
+@my-sessions
+=> #{}
+;; #8.
+(validate-token my-good-token)
+=> nil
+2018-04-16 12:12:36 DE [nREPL-worker-8] WARN  simpleserver.webserver.session - Token not found in my sessions - unknown token: eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImthcmkiLCJleHAiOjE1MjM4Njk5NDJ9.W-bmUOt1b_jM1pv3KAjATsNKJqYE7jjTLwm6XM_FpTQ
+;; #9.
+@my-sessions
+=> #{}
+;; #10. 
+(def my-bad-token (buddy-jwt/sign {:email "bad"} my-hex-secret))
+=> #'simpleserver.webserver.session/my-bad-token
+;; #11.
+@my-sessions
+=> #{}
+;; #12.
+(validate-token my-bad-token)
+=> nil
+2018-04-16 12:18:40 DE [nREPL-worker-9] WARN  simpleserver.webserver.session - Token not found in my sessions - unknown token: eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImJhZCJ9.zm5xUy2vYF6-XGujPk_nsXplls8_xxEDHoVq98AJjZg
+
+```
+
+The numbers refer to the comments in the above REPL session:
+
+1. First refresh the local REPL with all code changes and reload the namespace (to reset atom).
+2. my-sessions atom set should be empty now.
+3. Create a token using Simple Server API.
+4. You should see the token now in my-sessions atom.
+5. Test token validation - should return the decrypted token content.
+6. Wait until token should be expired, then try validation again - should return nil and you should see the "Token is expired..." log.
+7. my-sessions atom set should be empty again since validation removed expired token.
+8. Try to validate the same token again. You should now see the first validation check that the session is unknown (not found in the sessions set). 
+9. My sessions set should be empty still, of course.
+10. Let's create a bad token outside the Simple Server API - token is not stored to Simple Server sessions set - it is created by a malicious party.
+11. My sessions set should be empty still, of course.
+12. Now try to validate the bad token using Simple Server API - Simple Server didn't create the token and rejects it.
 
 
 ## Building for Production

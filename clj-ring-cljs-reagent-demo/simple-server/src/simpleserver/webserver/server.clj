@@ -12,7 +12,7 @@
     [environ.core :refer [env]]
     [simpleserver.util.prop :as ss-prop]
     [simpleserver.userdb.users :as ss-users]
-    [simpleserver.webserver.login :as ss-login]
+    [simpleserver.webserver.session :as ss-session]
     [simpleserver.domain :as ss-domain]
     ))
 
@@ -54,20 +54,6 @@
   (log/trace "ENTER -get-info")
   (let [response {:info "index.html => Info in HTML format"}]
     (json/write-str response)))
-
-
-(defn -check-token
-  "Checks the token."
-  [token]
-  (let [ok-hash (ss-prop/get-str-value "token-as-hash")
-        hashed-token (str (int (hash token)))]
-    (= hashed-token ok-hash)))
-
-
-(defn -token-error
-  "Returns token error."
-  []
-  (json/write-str {:error "Wrong token"}))
 
 
 (defn -validate-parameters
@@ -117,7 +103,7 @@
                          (ss-users/credentials-ok? email password)
                          nil)
         json-web-token (if credentials-ok
-                         (ss-login/create-json-web-token email)
+                         (ss-session/create-json-web-token email)
                          nil)
         response-value (if (not validation-passed)
                          {:ret :failed, :msg "Validation failed - some fields were empty"}
@@ -130,12 +116,21 @@
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 
+(defn -validate-token
+  "Validates the token."
+  []
+  (let []
+
+    ))
+
+;; TODO: Add first the token validation - if not valid, then return error, else return product groups as below.
 (defn -product-groups
   "Get product groups"
   []
   (log/trace "ENTER -product-groups")
+
   (let [response-value (ss-domain/get-product-groups)]
-    (-set-http-status (ri-resp/response response-value) (:ret response-value))))
+    (-set-http-status (ri-resp/response response-value) {:ret :ok, :product-groups response-value})))
 
 
 (co-core/defroutes app-routes
