@@ -157,9 +157,31 @@
   (let [pg-id ((req :params) :pg-id)
         dummy (log/trace (str "pg-id: " pg-id))
         token-ok? (-valid-token? req)
+        products (ss-domain/get-products pg-id)
         response-value (if (not token-ok?)
                          {:ret :failed, :msg "Given token is not valid"}
-                         {:ret :ok, :pg-id pg-id, :products (ss-domain/get-products pg-id)})]
+                         (if (not products)
+                           {:ret :failed, :msg (str "Did not find product group: " pg-id)}
+                           {:ret :ok, :pg-id pg-id, :products products}))]
+    (-set-http-status (ri-resp/response response-value) (:ret response-value))))
+
+
+(defn -product
+  "Get product"
+  [req]
+  (log/trace "ENTER -product")
+  (log/trace (str "req: " req))
+  (let [pg-id ((req :params) :pg-id)
+        p-id ((req :params) :p-id)
+        dummy (log/trace (str "pg-id: " pg-id))
+        dummy (log/trace (str "p-id: " p-id))
+        token-ok? (-valid-token? req)
+        product (ss-domain/get-product pg-id p-id)
+        response-value (if (not token-ok?)
+                         {:ret :failed, :msg "Given token is not valid"}
+                         (if (not product)
+                           {:ret :failed, :msg (str "Did not find product for pg-id: " pg-id ", and p-id: " p-id)}
+                           {:ret :ok, :pg-id pg-id, :p-id p-id :product product}))]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 
@@ -167,6 +189,7 @@
                    (co-core/GET "/info" [] (-get-info))
                    (co-core/GET "/product-groups" req (-product-groups req))
                    (co-core/GET "/products/:pg-id" req (-products req))
+                   (co-core/GET "/product/:pg-id/:p-id" req (-product req))
                    (co-core/POST "/signin" req (-signin req))
                    (co-core/POST "/login" req (-login req))
                    (co-route/resources "/")
