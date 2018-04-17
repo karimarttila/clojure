@@ -26,3 +26,22 @@
                                               raw))]
       (swap! my-domain-atom assoc :product-groups product-groups-from-file)
       product-groups-from-file)))
+
+
+(defn get-products
+  "Get products for a product group"
+  [pg-id]
+  (log/trace "ENTER get-products, pg-id: " pg-id)
+  (let [my-key (str "pg-" pg-id "-products")]
+    (if-let [products (@my-domain-atom my-key)]
+      products
+      (let [raw (with-open [reader (io/reader (str "resources/pg-" pg-id "-products.csv"))]
+                  (doall
+                    (csv/read-csv reader)))
+            products-from-file (into [] (map
+                                          (fn [[item]]
+                                            (str/split item #"\t"))
+                                          raw))]
+        (swap! my-domain-atom assoc my-key products-from-file)
+        products-from-file)))
+  )

@@ -146,13 +146,27 @@
         response-value (if (not token-ok?)
                          {:ret :failed, :msg "Given token is not valid"}
                          {:ret :ok, :product-groups (ss-domain/get-product-groups)})]
+    (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
+
+(defn -products
+  "Get products for a product group"
+  [req]
+  (log/trace "ENTER -products")
+  (log/trace (str "req: " req))
+  (let [pg-id ((req :params) :pg-id)
+        dummy (log/trace (str "pg-id: " pg-id))
+        token-ok? (-valid-token? req)
+        response-value (if (not token-ok?)
+                         {:ret :failed, :msg "Given token is not valid"}
+                         {:ret :ok, :pg-id pg-id, :products (ss-domain/get-products pg-id)})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 
 (co-core/defroutes app-routes
                    (co-core/GET "/info" [] (-get-info))
                    (co-core/GET "/product-groups" req (-product-groups req))
+                   (co-core/GET "/products/:pg-id" req (-products req))
                    (co-core/POST "/signin" req (-signin req))
                    (co-core/POST "/login" req (-login req))
                    (co-route/resources "/")
