@@ -9,9 +9,10 @@
 ;; Application state.
 (def app-state (r/atom {}))
 
-
 ;; -------------------------
 ;; Utilities
+
+(def token-key "sf-token")
 
 (defn -base64-encode
   "Does the base64 encoding for the string"
@@ -26,14 +27,23 @@
 
 
 (defn get-encoded-token
-  "Gets the token for pages"
+  "Gets the encoded token for pages"
   []
-  (-encode-token (@app-state :token)))
+  (let [token-from-app-state (@app-state :token)
+        token (if token-from-app-state
+                token-from-app-state
+                (.getItem (.-localStorage js/window) token-key))]
+    (-encode-token token))
+  )
+
 
 (defn set-token
   "Sets the token for the application"
   [token]
-  (swap! app-state assoc :token token))
+  ; Store to Clojurescript application state atom.
+  (swap! app-state assoc :token token)
+  ; Also store to browser local storage.
+  (.setItem (.-localStorage js/window) token-key token))
 
 
 (defn set-current-page
