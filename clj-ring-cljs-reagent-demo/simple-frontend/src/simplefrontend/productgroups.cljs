@@ -12,7 +12,7 @@
 ;; For debugging
 (def my-response-atom (r/atom nil))
 (def my-product-groups-atom (r/atom nil))
-(def my-tmp-product-groups-atom (r/atom {"1" "Books", "2" "Movies"}))
+(def my-dev-product-groups-atom (r/atom {"1" "Books", "2" "Movies"}))
 
 
 (defn reset-page
@@ -75,28 +75,38 @@
 
 (defn -product-groups-table
   [data]
-
-  )
+  [:table
+   [:thead
+    [:tr
+     [:th "Id"]
+     [:th "Name"]]]
+   [:tbody
+    (map (fn [item]
+           (let [[my-key my-value] item]
+             [:tr {:key my-key}
+              [:td my-key]
+              [:td [:a {:href (str "#/products/" my-key)} my-value]]]
+             ))
+         data)
+    ]])
 
 ;; TODO: CONTINUE HERE: HOW TO SHOW THE PRODUCT GROUP LIST?
 (defn productgroups-page
   "The actual page function called by simplefrontend.core."
   [token]
   (.log js/console (str "ENTER productgroups-page"))
-  (let [response (-get-productgroups token)
-        ;product-groups (response :product-groups)
-        ;product-groups (@my-response-atom "product-groups")
-        ;dummy (.log js/console (str "DEBUG: response: " response))
-        ;dummy (.log js/console (str "DEBUG: my-response-atom: " my-response-atom))
-        ;product-groups (@simplefrontend.productgroups/my-response-atom "product-groups")
-        ]
+  (let [response (-get-productgroups token)]
 
     (fn []
       [:div
        [:h1 "Product Groups"]
-       (if (not (nil? @my-response-atom))
-         [(sf-components/msg-field  "Product groups: " "pg" "text" "blue" (@my-tmp-product-groups-atom "1"))])
-
+       (if (not (nil? @my-product-groups-atom))
+         [:div (-product-groups-table @my-product-groups-atom)]
+         )
+       ;; During development:
+       ;(if (not (nil? @my-dev-product-groups-atom))
+       ;  [:div (-product-groups-table @my-dev-product-groups-atom)]
+       ;  )
        [:div [:a {:href "#/"} "Back to Web Store Home Page"]]])))
 
 
