@@ -2,9 +2,11 @@
   (:require
     [reagent.core :as r]
     [ajax.core :as a-core]
+    [secretary.core :as secretary]
+    [simplefrontend.session :as sf-session]
     [simplefrontend.components :as sf-components]
-    [simplefrontend.productgroups :as sf-productgroups]
-    ))
+    [simplefrontend.productgroups :as sf-productgroups]))
+
 
 
 ;; ***** Namespace vars. *****
@@ -19,8 +21,7 @@
   []
   (reset! my-response-atom nil)
   (reset! my-error-msg-atom nil)
-  (reset! my-success-msg-atom nil)
-  )
+  (reset! my-success-msg-atom nil))
 
 
 (defn -handler
@@ -28,16 +29,20 @@
   [response]
   (.log js/console (str "ENTER -handler, response: " response))
   (let [token (response "json-web-token")
-        dummy (.log js/console (str "token: " token))
-        ]
+        dummy (.log js/console (str "token: " token))]
+
     (do
       (reset! my-response-atom response)
-      (reset! my-success-msg-atom "Cool, login successful! You can now proceed to Web store home page to browsing products!")
+      (reset! my-success-msg-atom
+              (str "Cool, login successful! "
+                   "You can now proceed to browse product groups! "))
       (reset! my-error-msg-atom nil)
-      (swap! simplefrontend.core/app-state assoc :token token)
-      (simplefrontend.core/set-page :productgroups)
-      ))
-  )
+      ;; Store the token to the browser app state.
+      (sf-session/set-token token)
+      ;(swap! simplefrontend.core/app-state assoc :token token)
+      ;; Redirect the user to the productgroups page.
+      (set! (.-location js/document) "/#/productgroups")
+      )))
 
 
 (defn -error-handler
@@ -48,9 +53,9 @@
     (do
       (reset! my-response-atom response)
       (reset! my-error-msg-atom error-msg)
-      (reset! my-success-msg-atom nil))
-    )
-  )
+      (reset! my-success-msg-atom nil))))
+
+
 
 (defn -submit-form
   "Send form data to server using POST."
@@ -59,21 +64,21 @@
   (let [host (:host simplefrontend.core/backend-host-config)
         port (:port simplefrontend.core/backend-host-config)
         url (str "http://" host ":" port "/login")
-        data {:email      email
-              :password   password}]
+        data {:email    email
+              :password password}]
     (let [response (a-core/POST url
                                 {:format          :json
                                  :params          data
                                  :response-format :json
                                  :headers         {"Accept"       "application/json"
-                                                   "Content-Type" "application/json"
-                                                   }
+                                                   "Content-Type" "application/json"}
+
                                  :handler         -handler
-                                 :error-handler   -error-handler
-                                 }
-                                )]
-      (.log js/console (str "Response: " response)))
-    ))
+                                 :error-handler   -error-handler})]
+
+
+      (.log js/console (str "Response: " response)))))
+
 
 
 (defn login-page
@@ -81,24 +86,24 @@
   []
   (.log js/console (str "ENTER login-page"))
   (let [email-address-atom (r/atom nil)
-        password-atom (r/atom nil)
-        ]
+        password-atom (r/atom nil)]
+
     (fn []
       [:div
        [:h1 "Login"]
        [:form
         [:div [(sf-components/input "Email address: "
-                       "email-address"
-                       "text"
-                       email-address-atom)]]
+                                    "email-address"
+                                    "text"
+                                    email-address-atom)]]
         [:div [(sf-components/input "Password: "
-                       "password"
-                       "text"
-                       password-atom)]]]
+                                    "password"
+                                    "text"
+                                    password-atom)]]]
        [:div [:input {:type     "button" :value "Submit"
                       :on-click #(-submit-form @email-address-atom
-                                               @password-atom)
-                      }]]
+                                               @password-atom)}]]
+
 
        (if (not (nil? @my-error-msg-atom))
          [(sf-components/msg-field "Error: " "error" "text" "red" @my-error-msg-atom)])

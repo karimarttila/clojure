@@ -5,8 +5,8 @@
                  [reagent "0.7.0"]
                  [reagent-utils "0.3.1"]
                  [secretary "1.2.3"]
-                 [cljs-ajax "0.7.3"]
-                 ]
+                 [cljs-ajax "0.7.3"]]
+
 
   :plugins [[lein-cljsbuild "1.1.5"]
             [lein-figwheel "0.5.15"]]
@@ -14,11 +14,11 @@
   :min-lein-version "2.5.0"
 
   :clean-targets ^{:protect false}
-[:target-path
- [:cljsbuild :builds :app :compiler :output-dir]
- [:cljsbuild :builds :app :compiler :output-to]]
+ [:target-path
+  [:cljsbuild :builds :app :compiler :output-dir]
+  [:cljsbuild :builds :app :compiler :output-to]]
 
-  :resource-paths ["public"]
+ :resource-paths ["public"]
 
   :figwheel {:http-server-root "."
              :server-port      3445                         ;; default is 3449
@@ -39,9 +39,9 @@
                                :pretty-print  true}
                 :figwheel
                               {:on-jsload       "simplefrontend.core/mount-root"
-                               :websocket-url  "ws://localhost:3445/figwheel-ws"
-                               }
-                }
+                               :websocket-url  "ws://localhost:3445/figwheel-ws"}}
+
+
                :release
                {:source-paths ["src" "env/prod/cljs"]
                 :compiler
@@ -49,10 +49,10 @@
                                :output-dir    "public/js/release"
                                :asset-path    "js/out"
                                :optimizations :advanced
-                               :pretty-print  false}
-                }
-               }
-              }
+                               :pretty-print  false}}}}
+
+
+
 
 
 

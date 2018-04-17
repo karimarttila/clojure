@@ -2,8 +2,8 @@
   (:require
     [reagent.core :as r]
     [ajax.core :as a-core]
-    [simplefrontend.components :as sf-components]
-    ))
+    [simplefrontend.components :as sf-components]))
+
 
 
 ;; ***** Namespace vars. *****
@@ -18,8 +18,8 @@
   []
   (reset! my-response-atom nil)
   (reset! my-error-msg-atom nil)
-  (reset! my-success-msg-atom nil)
-  )
+  (reset! my-success-msg-atom nil))
+
 
 
 (defn -handler
@@ -29,9 +29,9 @@
   (do
     (reset! my-response-atom response)
     (reset! my-success-msg-atom "Cool, sign-in successful! You can now proceed to Web store home page to login using your new credentials!")
-    (reset! my-error-msg-atom nil)
-    )
-  )
+    (reset! my-error-msg-atom nil)))
+
+
 
 
 (defn -error-handler
@@ -42,9 +42,9 @@
     (do
       (reset! my-response-atom response)
       (reset! my-error-msg-atom error-msg)
-      (reset! my-success-msg-atom nil))
-    )
-  )
+      (reset! my-success-msg-atom nil))))
+
+
 
 (defn -submit-form
   "Send form data to server using POST."
@@ -62,14 +62,14 @@
                                  :params          data
                                  :response-format :json
                                  :headers         {"Accept"       "application/json"
-                                                   "Content-Type" "application/json"
-                                                   }
+                                                   "Content-Type" "application/json"}
+
                                  :handler         -handler
-                                 :error-handler   -error-handler
-                                 }
-                                )]
-      (.log js/console (str "Response: " response)))
-    ))
+                                 :error-handler   -error-handler})]
+
+
+      (.log js/console (str "Response: " response)))))
+
 
 
 
@@ -81,8 +81,8 @@
   (let [first-name-atom (r/atom nil)
         last-name-atom (r/atom nil)
         email-address-atom (r/atom nil)
-        password-atom (r/atom nil)
-        ]
+        password-atom (r/atom nil)]
+
     (fn []
       [:div
        [:h1 "Sign-in"]
@@ -107,8 +107,8 @@
                       :on-click #(-submit-form @first-name-atom
                                                @last-name-atom
                                                @email-address-atom
-                                               @password-atom)
-                      }]]
+                                               @password-atom)}]]
+
 
        (if (not (nil? @my-error-msg-atom))
          [(sf-components/msg-field "Error: " "error" "text" "red" @my-error-msg-atom)])

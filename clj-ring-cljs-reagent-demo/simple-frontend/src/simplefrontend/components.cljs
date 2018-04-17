@@ -1,8 +1,8 @@
 (ns simplefrontend.components
   (:require
     [reagent.core :as r]
-    [ajax.core :as a-core]
-    ))
+    [ajax.core :as a-core]))
+
 
 
 (defn input
@@ -15,8 +15,8 @@
               :name      name
               :type      type
               :value     @my-atom
-              :on-change #(reset! my-atom (-> % .-target .-value))
-              }]]))
+              :on-change #(reset! my-atom (-> % .-target .-value))}]]))
+
 
 (defn msg-field
   "Message field component for success/error feedback."
@@ -32,5 +32,5 @@
        :style     {:background-color color}
        :cols      50
        :value     err-msg
-       :read-only true
-       }]]))
+       :read-only true}]]))
+

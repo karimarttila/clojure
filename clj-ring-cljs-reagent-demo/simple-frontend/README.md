@@ -7,7 +7,11 @@ Simple Frontend is a simple frontend for demonstrating how to create a Single Pa
 
 ## Techical Description
 
-The Simple Frontend is a [ClojureScript](http://clojurescript.org) application which uses the [Reagent](http://reagent-project.github.io/index.html) framework which provides the ClojureScript integration for the [React](https://reactjs.org/) JavaScript library.
+The Simple Frontend is a [ClojureScript](http://clojurescript.org) application which uses the following libraries:
+
+- [Reagent](http://reagent-project.github.io/index.html) framework which provides the ClojureScript integration for the [React](https://reactjs.org/) JavaScript library
+- [Secretary](https://github.com/gf3/secretary) which provides client side routing for the Single Page Application.
+
 
 # Development Instructions
 
@@ -177,6 +181,12 @@ The lessons learned:
 
 - **Implemented the Authorization header parsing and token validation in the backend side**: see the longer description in the [Simple Server README.md](../simple-server/README.md). I was some time puzzled why this wasn't working until I realized that I have to add the "Authorization" http header as allowed header in my CORS handler.
 - **Simple Frontend uses the token** it got in the Login page to pass it as part of the GET call to get the product groups.
+- **From Login page how to redirect to Product groups page?** I was puzzled about how to do this using [Secretary](https://github.com/gf3/secretary) library. Finally I didn't figure out any other way than to just set the location using plain Javascript: "(set! (.-location js/document) "/#/productgroups")"
+- **Refreshing page resets app-state**. App-state is an r/atom in the core namespace and refreshing any page makes resets the atom. This is a bit of a problem since the user needs to go to the login page again. We might want to store the token in browser's local storage.
+- **Table for showing product groups**. I realized that because of Figwheel hot loading changes to the browser the page gets screwed with any changes and I lost my atom value for product groups. For development I created a temporary atom which keeps a sample of the data for the time I'm ready for creating the table function. This was pretty nice with ClojureScript.
+
+
+
 
 
 

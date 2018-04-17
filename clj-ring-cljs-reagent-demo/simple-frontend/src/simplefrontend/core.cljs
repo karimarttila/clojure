@@ -6,14 +6,10 @@
     [goog.events :as events]
     [goog.history.EventType :as EventType]
     [reagent.core :as r]
+    [simplefrontend.session :as sf-session]
     [simplefrontend.login :as sf-login]
     [simplefrontend.signin :as sf-signin]
     [simplefrontend.productgroups :as sf-productgroups]))
-
-
-;; -------------------------
-;; Application state.
-(def app-state (r/atom {}))
 
 
 
@@ -22,10 +18,10 @@
 (def backend-host-config {:host "localhost" :port 3045})
 
 
-(defn set-page
+(defn set-page!
   "Sets current page"
   [page]
-  (swap! app-state assoc :page page))
+  (sf-session/set-current-page page))
 
 ;; -------------------------
 ;; Views.
@@ -43,13 +39,13 @@
   (secretary/set-config! :prefix "#")
 
   (defroute "/" []
-            (set-page :home))
+            (set-page! :home))
   (defroute "/signin" []
-            (set-page :signin))
+            (set-page! :signin))
   (defroute "/login" []
-            (set-page :login))
+            (set-page! :login))
   (defroute "/productgroups" []
-            (set-page :productgroups))
+            (set-page! :productgroups))
   (hook-browser-navigation!))
 
 
@@ -60,8 +56,8 @@
    [:div]
    [:a {:href "#/login"} "Login"]
    [:div]
-   [:a {:href "#/productgroups"} "Product Groups"]
-   ])
+   [:a {:href "#/productgroups"} "Product Groups"]])
+
 
 (defn signin
   []
@@ -76,10 +72,11 @@
 (defn productgroups
   []
   (sf-productgroups/reset-page)
-  (sf-productgroups/productgroups-page (@simplefrontend.core/app-state :token)))
+  (sf-productgroups/productgroups-page (sf-session/get-encoded-token)))
 
 
-(defmulti current-page #(@app-state :page))
+; (defmulti current-page #(@sf-session/app-state :page))
+(defmulti current-page #(sf-session/get-current-page))
 (defmethod current-page :home []
   [home])
 (defmethod current-page :signin []
