@@ -190,7 +190,9 @@ The lessons learned:
 
 The lessons learned: Nothing much. I added a new session atom (page-params) to store the pg-id parameter in GET /products/:pg-id router. Otherwise implementing the products page was almost identical to productgroups page that I implemented earlier.
 
+### Product Page
 
+The lessons learned: Nothing much. I followed the template of the previous pages.
 
 
 
