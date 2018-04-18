@@ -2,10 +2,25 @@
 
 ## Table of Contents
 
-* [Introduction](#introduction)
-* [Techical Description](#techical-description)
-* [Development Instructions](#development-instructions)
-
+  * [Table of Contents](#table-of-contents)
+  * [Introduction](#introduction)
+  * [Techical Description](#techical-description)
+  * [Development Instructions](#development-instructions)
+     * [Creating the Project](#creating-the-project)
+     * [Figwheel](#figwheel)
+     * [Connecting Cursive to Figwheel REPL](#connecting-cursive-to-figwheel-repl)
+     * [Solving Figwheel Issues](#solving-figwheel-issues)
+     * [Solving Other Application Development Issues](#solving-other-application-development-issues)
+  * [Building and Deployment for Production](#building-and-deployment-for-production)
+     * [Build Production Version](#build-production-version)
+     * [Deploy Production Version](#deploy-production-version)
+  * [Simple Frontend Application Structure](#simple-frontend-application-structure)
+     * [Sign-in Page](#sign-in-page)
+     * [Login Page](#login-page)
+     * [Product Groups Page](#product-groups-page)
+     * [Products Page](#products-page)
+     * [Product Info Page](#product-info-page)
+  * [Simple Frontend Development Next Steps](#simple-frontend-development-next-steps)
 
 
 ## Introduction
