@@ -259,7 +259,7 @@ The lessons learned: Nothing much. I followed the template of the previous pages
 
 Some example screenshots of the page:
 
-![Product info](doc-images/product-info-page "product info page")
+![Product info](doc-images/product-info-page.png "product info page")
 
 
 ## Simple Frontend Development Next Steps
