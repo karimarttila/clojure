@@ -199,15 +199,11 @@ With this first SPA page I needed to figure out how to do the following things u
 - **HTTP Response and Error handlers**: see functions -handler and -error-handler. 
 - **Simple interactivity in the SPA page**: e.g. the validation error / email already exists error / successful sign-in messages (see the two if functions at the end of signin-page function).
 
-
-
 Some example screenshots of the page:
 
 Validation failed:
 
-
 ![Sign-in validation failed](doc-images/sign-in-validation-failed.png "validation failed")
-
 
 Server accepted sign-in:
 
@@ -224,6 +220,14 @@ The lessons learned:
 - **React components**. I realized that I can reuse the input msg-field components used in the sign-in page, so I refactored them to namespace simplefrontend.components and use them as react components the same way in the sign-in and login pages.
 - **Storing JSON Web Token in SPA**. The JSON Web Token is then passed to the SPA which stores it to application data as simplefrontend.core/app-state (r/atom) and redirects user to Product groups page.
 
+Some example screenshots of the page:
+
+Login failed because credentials were wrong:
+
+![Login failed](doc-images/login-failed.png "login failed")
+
+With successful login the user is directed to the Product Groups page.
+
 
 ### Product Groups Page
 
@@ -237,16 +241,27 @@ The lessons learned:
 - **Refreshing page resets app-state**. App-state is an r/atom in the core namespace and refreshing any page makes resets the atom. This is a bit of a problem since the user needs to go to the login page again. Therefore I stored the token also in the browser's local storage.
 - **Table for showing product groups**. I realized that because of Figwheel hot loading changes to the browser the page gets screwed with any changes and I lost my atom value for product groups. For development purposes I created a temporary atom (my-dev-product-groups-atom) which keeps a sample of the data so that I can use it to test the function that creates the actual HTML table for product groups. This was pretty nice with ClojureScript.
 
+Some example screenshots of the page:
+
+![Product groups](doc-images/product-groups-page.png "product groups page")
+
 
 ### Products Page
 
 The lessons learned: Nothing much. I added a new session atom (page-params) to store the pg-id parameter in GET /products/:pg-id router. Otherwise implementing the products page was almost identical to productgroups page that I implemented earlier.
+
+Some example screenshots of the page:
+
+![Products](doc-images/products-page.png "products page")
 
 
 ### Product Info Page
 
 The lessons learned: Nothing much. I followed the template of the previous pages.
 
+Some example screenshots of the page:
+
+![Product info](doc-images/product-info-page "product info page")
 
 
 ## Simple Frontend Development Next Steps
