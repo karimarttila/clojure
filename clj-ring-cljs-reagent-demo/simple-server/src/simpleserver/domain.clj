@@ -31,7 +31,7 @@
 (defn -get-raw-products
   "Get raw products for a product group, returns the whole product information for each product"
   [pg-id]
-  (log/trace "ENTER get-raw-products, pg-id: " pg-id)
+  (log/trace (str "ENTER get-raw-products, pg-id: " pg-id))
   (let [my-key (str "pg-" pg-id "-raw-products")]
     (if-let [raw-products (@my-domain-atom my-key)]
       raw-products
@@ -50,7 +50,7 @@
 (defn get-products
   "Get products for a product group, returns list of items: [p-id, pg-id, name, price]"
   [pg-id]
-  (log/trace "ENTER get-products, pg-id: " pg-id)
+  (log/trace (str "ENTER get-products, pg-id: " pg-id))
   (let [my-key (str "pg-" pg-id "-products")]
     (if-let [products (@my-domain-atom my-key)]
       products
@@ -69,6 +69,7 @@
 (defn get-product
   "Gets product info for a product, returned item varies related to product group"
   [pg-id p-id]
+  (log/trace (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
   (let [products (-get-raw-products pg-id)]
     (first (filter (fn [item]
                      (let [id (first item)]
