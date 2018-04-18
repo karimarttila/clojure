@@ -27,8 +27,10 @@
       product-groups-from-file)))
 
 
+
+
 (defn get-products
-  "Get products for a product group"
+  "Get products for a product group, returns list of items: [p-id, pg-id, name, price]"
   [pg-id]
   (log/trace "ENTER get-products, pg-id: " pg-id)
   (let [my-key (str "pg-" pg-id "-products")]
@@ -39,10 +41,12 @@
                     (doall
                       (csv/read-csv reader)))
                   (catch java.io.FileNotFoundException e nil))
-            products-from-file (and raw (into [] (map
-                                                   (fn [[item]]
-                                                     (str/split item #"\t"))
-                                                   raw)))]
+            products-from-file (and raw
+                                    (into []
+                                          (map
+                                            (fn [[item]]
+                                              (take 4 (str/split item #"\t")))
+                                            raw)))]
         (if products-from-file
           (do
             (swap! my-domain-atom assoc my-key products-from-file)
@@ -50,7 +54,7 @@
           nil)))))
 
 (defn get-product
-  "Gets product info for a product"
+  "Gets product info for a product, returned item varies related to product group"
   [pg-id p-id]
   (let [products (get-products pg-id)]
     (first (filter (fn [item]
