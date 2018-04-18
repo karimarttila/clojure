@@ -25,7 +25,7 @@
 
 ## Introduction
 
-Simple Frontend is a simple frontend for demonstrating how to create a Single Page Application (SPA) using [ClojureScript](https://clojurescript.org/) and [Reagent](https://reagent-project.github.io/).
+Simple Frontend is a simple frontend for demonstrating how to create a Single Page Application (SPA) using [ClojureScript](https://clojurescript.org/) and [Reagent](https://reagent-project.github.io/). The Simple Frontend application is a hypothetical web store which sells books and movies.
 
 **Disclaimer**: I didn't worry about CSS styles since I'm not artistic and our corporation usually provides some graphical designer who creates the styles for HTML pages - so I only focused on getting the frontend functionality right. The UI look and feel is horrific, I know, don't worry about that, relax and have a home brew.
 
