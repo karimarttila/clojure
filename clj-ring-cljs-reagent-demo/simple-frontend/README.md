@@ -182,9 +182,13 @@ The lessons learned:
 - **Implemented the Authorization header parsing and token validation in the backend side**: see the longer description in the [Simple Server README.md](../simple-server/README.md). I was some time puzzled why this wasn't working until I realized that I have to add the "Authorization" http header as allowed header in my CORS handler.
 - **Simple Frontend uses the token** it got in the Login page to pass it as part of the GET call to get the product groups.
 - **From Login page how to redirect to Product groups page?** I was puzzled about how to do this using [Secretary](https://github.com/gf3/secretary) library. Finally I didn't figure out any other way than to just set the location using plain Javascript: "(set! (.-location js/document) "/#/productgroups")"
-- **Refreshing page resets app-state**. App-state is an r/atom in the core namespace and refreshing any page makes resets the atom. This is a bit of a problem since the user needs to go to the login page again. We might want to store the token in browser's local storage.
-- **Table for showing product groups**. I realized that because of Figwheel hot loading changes to the browser the page gets screwed with any changes and I lost my atom value for product groups. For development I created a temporary atom which keeps a sample of the data for the time I'm ready for creating the table function. This was pretty nice with ClojureScript.
+- **Refreshing page resets app-state**. App-state is an r/atom in the core namespace and refreshing any page makes resets the atom. This is a bit of a problem since the user needs to go to the login page again. Therefore I stored the token also in the browser's local storage.
+- **Table for showing product groups**. I realized that because of Figwheel hot loading changes to the browser the page gets screwed with any changes and I lost my atom value for product groups. For development purposes I created a temporary atom (my-dev-product-groups-atom) which keeps a sample of the data so that I can use it to test the function that creates the actual HTML table for product groups. This was pretty nice with ClojureScript.
 
+
+### Products Page
+
+The lessons learned: Nothing much. I added a new session atom (page-params) to store the pg-id parameter in GET /products/:pg-id router. Otherwise implementing the products page was almost identical to productgroups page that I implemented earlier.
 
 
 
