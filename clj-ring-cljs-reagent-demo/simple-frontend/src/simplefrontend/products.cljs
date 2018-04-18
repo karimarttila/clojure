@@ -1,7 +1,8 @@
 (ns simplefrontend.products
   (:require
     [reagent.core :as r]
-    [ajax.core :as a-core]))
+    [ajax.core :as a-core]
+    [simplefrontend.config :as sf-config]))
 
 
 ;; ***** Namespace vars. *****
@@ -50,9 +51,7 @@
 (defn -get-products
   "Does the GET for products"
   [token pg-id]
-  (let [host (:host simplefrontend.core/backend-host-config)
-        port (:port simplefrontend.core/backend-host-config)
-        url (str "http://" host ":" port "/products/" pg-id )]
+  (let [url (str (sf-config/get-base-url) "/products/" pg-id)]
     (let [response (a-core/GET url
                                {:format          :json
                                 :response-format :json
@@ -79,25 +78,27 @@
              [:tr {:key p-id}
               [:td p-id]
               [:td [:a {:href (str "#/product/" pg-id "/" p-id)} name]]
-              [:td price]
-              ]
-             ))
-         data)
-    ]])
+              [:td price]]))
+
+
+         data)]])
+
 
 
 (defn products-page
   "The actual page function called by simplefrontend.core."
   [token pg-id]
   (.log js/console (str "ENTER products-page, pg-id: " pg-id))
-  (let [response (-get-products token pg-id)]
-
+  (let [response (-get-products token pg-id)
+        category (if (= pg-id "1")
+                   "Books"
+                   "Movies")]
     (fn []
       [:div
-       [:h1 "Products"]
+       [:h1 (str "Products: " category)]
        (if (not (nil? @my-products-atom))
-         [:div (-products-table @my-products-atom)]
-         )
+         [:div (-products-table @my-products-atom)])
+
        ;; During development:
        ;(if (not (nil? @my-dev-products-atom))
        ;  [:div (-products-table @my-dev-products-atom)]

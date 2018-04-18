@@ -5,7 +5,8 @@
     [secretary.core :as secretary]
     [simplefrontend.session :as sf-session]
     [simplefrontend.components :as sf-components]
-    [simplefrontend.productgroups :as sf-productgroups]))
+    [simplefrontend.productgroups :as sf-productgroups]
+    [simplefrontend.config :as sf-config]))
 
 
 
@@ -41,8 +42,8 @@
       (sf-session/set-token token)
       ;(swap! simplefrontend.core/app-state assoc :token token)
       ;; Redirect the user to the productgroups page.
-      (set! (.-location js/document) "/#/productgroups")
-      )))
+      (set! (.-location js/document) "/#/productgroups"))))
+
 
 
 (defn -error-handler
@@ -61,9 +62,7 @@
   "Send form data to server using POST."
   [email password]
   (.log js/console (str "ENTER submit-form, email: " email))
-  (let [host (:host simplefrontend.core/backend-host-config)
-        port (:port simplefrontend.core/backend-host-config)
-        url (str "http://" host ":" port "/login")
+  (let [url (str (sf-config/get-base-url) "/login")
         data {:email    email
               :password password}]
     (let [response (a-core/POST url

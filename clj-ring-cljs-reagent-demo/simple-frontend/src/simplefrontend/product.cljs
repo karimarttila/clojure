@@ -1,4 +1,4 @@
-(ns simplefrontend.productgroups
+(ns simplefrontend.product
   (:require
     [reagent.core :as r]
     [ajax.core :as a-core]
@@ -10,10 +10,10 @@
 (def my-success-msg-atom (r/atom nil))
 ;; For debugging
 (def my-response-atom (r/atom nil))
-;; The product groups from server.
-(def my-product-groups-atom (r/atom nil))
+;; The product from server.
+(def my-product-atom (r/atom nil))
 ;; For development purposes.
-(def my-dev-product-groups-atom (r/atom {"1" "Books", "2" "Movies"}))
+(def my-dev-product-atom (r/atom ["2011","1","The Decameron","29.03","Giovanni Boccaccio","1351","Italy","Italian"]))
 
 
 (defn reset-page
@@ -28,10 +28,11 @@
   "The success (http status 200) handler."
   [response]
   (.log js/console (str "ENTER -handler, response: " response))
+  ;(.log js/console (str "ENTER -handler"))
   (let []
     (do
       (reset! my-response-atom response)
-      (reset! my-product-groups-atom (@my-response-atom "product-groups"))
+      (reset! my-product-atom (@my-response-atom "product"))
       (reset! my-success-msg-atom "TODO")
       (reset! my-error-msg-atom nil))))
 
@@ -47,10 +48,10 @@
       (reset! my-success-msg-atom nil))))
 
 
-(defn -get-productgroups
-  "Does the GET for productgroups"
-  [token]
-  (let [url (str (sf-config/get-base-url) "/product-groups")]
+(defn -get-product
+  "Does the GET for product"
+  [token pg-id p-id]
+  (let [url (str (sf-config/get-base-url) "/product/" pg-id "/" p-id)]
     (let [response (a-core/GET url
                                {:format          :json
                                 :response-format :json
@@ -63,39 +64,39 @@
       response)))
 
 
-(defn -product-groups-table
-  [data]
-  [:table
-   [:thead
-    [:tr
-     [:th "Id"]
-     [:th "Name"]]]
-   [:tbody
-    (map (fn [item]
-           (let [[my-key my-value] item]
-             [:tr {:key my-key}
-              [:td my-key]
-              [:td [:a {:href (str "#/products/" my-key)} my-value]]]))
-
-         data)]])
+(defn -product-table
+  [data titles]
+  (let [table-values (map list titles data)]
+    [:table
+     [:tbody
+      (map (fn [item]
+             (let [[field value] item]
+               [:tr {:key field}
+                [:td field]
+                [:td value]
+                ]))
+           table-values)]]))
 
 
-
-(defn productgroups-page
+(defn product-page
   "The actual page function called by simplefrontend.core."
-  [token]
-  (.log js/console (str "ENTER productgroups-page"))
-  (let [response (-get-productgroups token)]
-
+  [token pg-id p-id]
+  (.log js/console (str "ENTER product-page, pg-id: " pg-id ", p-id: " p-id))
+  (let [response (-get-product token pg-id p-id)
+        titles (if (= pg-id "1")
+                 ["Id" "Pg-Id" "Name" "Price" "Author" "Year" "Country" "Language"] ; Book
+                 ["Id" "Pg-Id" "Name" "Price" "Director" "Year" "Country" "Category"] ; Movie
+                 )]
     (fn []
       [:div
-       [:h1 "Product Groups"]
-       (if (not (nil? @my-product-groups-atom))
-         [:div (-product-groups-table @my-product-groups-atom)])
-
+       [:h1 "Product"]
+       (if (not (nil? @my-product-atom))
+         [:div (-product-table @my-product-atom titles)])
        ;; During development:
-       ;(if (not (nil? @my-dev-product-groups-atom))
-       ;  [:div (-product-groups-table @my-dev-product-groups-atom)]
+       ;(if (not (nil? @my-dev-products-atom))
+       ;  [:div (-products-table @my-dev-products-atom)]
        ;  )
+       [:div [:a {:href (str "#/products/" pg-id)} "Back to Products page"]]
+       [:div [:a {:href "#/productgroups"} "Back to Product Groups page"]]
        [:div [:a {:href "#/"} "Back to Web Store Home Page"]]])))
 

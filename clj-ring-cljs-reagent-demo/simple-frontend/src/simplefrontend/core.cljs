@@ -10,13 +10,10 @@
     [simplefrontend.login :as sf-login]
     [simplefrontend.signin :as sf-signin]
     [simplefrontend.productgroups :as sf-productgroups]
-    [simplefrontend.products :as sf-products]))
+    [simplefrontend.products :as sf-products]
+    [simplefrontend.product :as sf-product]))
 
 
-
-;; -------------------------
-;; Application wide properties.
-(def backend-host-config {:host "localhost" :port 3045})
 
 
 ;; -------------------------
@@ -45,6 +42,9 @@
   (defroute "/products/:pg-id" [pg-id]
             (sf-session/set-current-page! :products)
             (sf-session/set-page-params! :products {:pg-id pg-id}))
+  (defroute "/product/:pg-id/:p-id" [pg-id p-id]
+            (sf-session/set-current-page! :product)
+            (sf-session/set-page-params! :product {:pg-id pg-id :p-id p-id}))
   (hook-browser-navigation!))
 
 
@@ -79,6 +79,13 @@
   (sf-products/products-page (sf-session/get-encoded-token)
                              ((sf-session/get-page-params :products) :pg-id)))
 
+(defn product
+  []
+  (sf-product/reset-page)
+  (sf-product/product-page (sf-session/get-encoded-token)
+                           ((sf-session/get-page-params :product) :pg-id)
+                           ((sf-session/get-page-params :product) :p-id)))
+
 
 ; (defmulti current-page #(@sf-session/app-state :page))
 (defmulti current-page #(sf-session/get-current-page))
@@ -92,6 +99,8 @@
   [productgroups])
 (defmethod current-page :products []
   [products])
+(defmethod current-page :product []
+  [product])
 (defmethod current-page :default []
   [:div])
 

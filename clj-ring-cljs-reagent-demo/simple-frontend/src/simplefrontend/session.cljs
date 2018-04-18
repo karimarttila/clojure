@@ -2,8 +2,8 @@
   (:require
     [goog.crypt.base64 :as base64]
     [reagent.core :as r]
-    [ajax.core :as a-core]
-    ))
+    [ajax.core :as a-core]))
+
 
 ;; -------------------------
 ;; Application state.
@@ -34,8 +34,8 @@
         token (if token-from-app-state
                 token-from-app-state
                 (.getItem (.-localStorage js/window) token-key))]
-    (-encode-token token))
-  )
+    (-encode-token token)))
+
 
 
 (defn set-token

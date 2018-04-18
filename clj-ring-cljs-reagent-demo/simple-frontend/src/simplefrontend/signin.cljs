@@ -2,8 +2,8 @@
   (:require
     [reagent.core :as r]
     [ajax.core :as a-core]
-    [simplefrontend.components :as sf-components]))
-
+    [simplefrontend.components :as sf-components]
+    [simplefrontend.config :as sf-config]))
 
 
 ;; ***** Namespace vars. *****
@@ -50,9 +50,7 @@
   "Send form data to server using POST."
   [first-name last-name email password]
   (.log js/console (str "ENTER submit-form, email: " email))
-  (let [host (:host simplefrontend.core/backend-host-config)
-        port (:port simplefrontend.core/backend-host-config)
-        url (str "http://" host ":" port "/signin")
+  (let [url (str (sf-config/get-base-url) "/signin")
         data {:first-name first-name
               :last-name  last-name
               :email      email
