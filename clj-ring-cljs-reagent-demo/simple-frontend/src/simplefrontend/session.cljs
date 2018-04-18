@@ -8,6 +8,7 @@
 ;; -------------------------
 ;; Application state.
 (def app-state (r/atom {}))
+(def page-params (r/atom {}))
 
 ;; -------------------------
 ;; Utilities
@@ -46,7 +47,15 @@
   (.setItem (.-localStorage js/window) token-key token))
 
 
-(defn set-current-page
+(defn set-page-params!
+  [page params]
+  (swap! page-params assoc page params))
+
+(defn get-page-params
+  [page]
+  (@page-params page))
+
+(defn set-current-page!
   [page]
   (swap! app-state assoc :page page))
 
