@@ -1,5 +1,28 @@
 # Simple Server
 
+## Table of Contents
+
+  * [Table of Contents](#table-of-contents)
+  * [Introduction](#introduction)
+  * [Technical Description](#technical-description)
+  * [Clojure Development](#clojure-development)
+     * [IntelliJ IDEA / Cursive](#intellij-idea--cursive)
+     * [Command Line](#command-line)
+     * [Hot Code Reloading](#hot-code-reloading)
+     * [Connecting REPL to Running Ring Server](#connecting-repl-to-running-ring-server)
+        * [The Hard Way](#the-hard-way)
+        * [The Easy Way](#the-easy-way)
+        * [Connect to Remote REPL using Cursive REPL](#connect-to-remote-repl-using-cursive-repl)
+     * [Static Code Analysis](#static-code-analysis)
+     * [CORS Issues](#cors-issues)
+        * [Simple Server](#simple-server-1)
+        * [Simple Frontend](#simple-frontend)
+        * [Using Remote REPL to Debug CORS Issues](#using-remote-repl-to-debug-cors-issues)
+     * [Session Handling](#session-handling)
+  * [Building for Production](#building-for-production)
+
+
+
 ## Introduction
 
 Simple Server serves as a backend server for the Simple Frontend.
@@ -19,7 +42,7 @@ If you are using IntelliJ IDEA with Cursive plugin you can configure REPL with p
 
 ### Command Line
 
-Command line: 
+Start server in command line: 
 
 ```bash
 SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties lein with-profile +log-dev ring server-headless
@@ -294,14 +317,10 @@ Now that the actual application logic to validate token is ready, it is just a m
 ```
 
 
-
-
-
 ## Building for Production
 
-TODO
+Run:
 
-```
-TODO
-
+```bash
+./build-distributable.sh
 ```
