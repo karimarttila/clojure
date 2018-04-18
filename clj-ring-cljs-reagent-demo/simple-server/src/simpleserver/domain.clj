@@ -39,19 +39,19 @@
       (let [raw (try
                   (with-open [reader (io/reader (str "resources/pg-" pg-id "-products.csv"))]
                     (doall
-                      (csv/read-csv reader)))
+                      (csv/read-csv reader :separator \tab)))
                   (catch java.io.FileNotFoundException e nil))
+
             products-from-file (and raw
-                                    (into []
-                                          (map
-                                            (fn [[item]]
-                                              (take 4 (str/split item #"\t")))
-                                            raw)))]
+                                    (map
+                                      (fn [item]
+                                        (take 4 item)) raw))]
         (if products-from-file
           (do
             (swap! my-domain-atom assoc my-key products-from-file)
             products-from-file)
           nil)))))
+
 
 (defn get-product
   "Gets product info for a product, returned item varies related to product group"
