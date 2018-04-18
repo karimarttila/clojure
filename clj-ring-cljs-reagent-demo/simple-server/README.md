@@ -30,7 +30,7 @@ Simple Server serves as a backend server for the Simple Frontend.
 
 ## Technical Description
 
-Simple Servers is implemented using [Clojure](https://clojure.org/) and [Ring](https://github.com/ring-clojure).
+Simple Server is implemented using [Clojure](https://clojure.org/) and [Ring](https://github.com/ring-clojure).
 
 ## Clojure Development
 
