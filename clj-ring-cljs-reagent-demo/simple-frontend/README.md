@@ -1,5 +1,11 @@
 # Simple Frontend
 
+## Table of Contents
+
+[Introduction](##Introduction)  
+[Development Instructions](##Development Instructions)
+
+
 ## Introduction
 
 Simple Frontend is a simple frontend for demonstrating how to create a Single Page Application (SPA) using [ClojureScript](https://clojurescript.org/) and [Reagent](https://reagent-project.github.io/).
@@ -13,9 +19,9 @@ The Simple Frontend is a [ClojureScript](http://clojurescript.org) application w
 - [Secretary](https://github.com/gf3/secretary) which provides client side routing for the Single Page Application.
 
 
-# Development Instructions
+## Development Instructions
 
-## Creating the Project
+### Creating the Project
 
 We are using the [reagent-frontend](https://github.com/reagent-project/reagent-frontend-template) [Leiningen](https://leiningen.org/) plugin to create the initial Reagent project:
 
@@ -23,9 +29,6 @@ We are using the [reagent-frontend](https://github.com/reagent-project/reagent-f
 lein new reagent-frontend simple-frontend
 
 ```
-
-
-## Development
 
 ### Figwheel
 
@@ -119,14 +122,46 @@ If you have some weird issues - try to reload the application in Browser.
 
 
 
-## Building for Production
+## Building and Deployment for Production
+
+
+### Build Production Version
+
+Run:
 
 ```
 lein clean
 lein package
 ```
 
-## Frontend Application Structure
+### Deploy Production Version
+
+Deploy the public directory to whatever http server you want to use.
+
+You can use Python's HTTPServer for quick testing that the production deployment package is working:
+
+
+```
+cd public
+python -m SimpleHTTPServer
+```
+
+This starts a http server on port 8000: Open url in browser and test: http://localhost:8000/
+
+The url to the Simple Server is currently hardcoded in namespace simplefrontend.config. Just change it to whatever url your Simple server is deployed.
+
+
+## Simple Frontend Application Structure
+
+Simple Frontend has 6 pages:
+
+- Home page: http://localhost:3445/
+- Sign-in page: http://localhost:3445/#/signin
+- Login page: http://localhost:3445/#/login
+- Product groups page: http://localhost:3445/#/productgroups
+- Products page: http://localhost:3445/#/products/:product-group-id
+- Product info page: http://localhost:3445/#/product/:product-group-id/:product-id
+
 
 ### Sign-in Page
 
@@ -190,10 +225,20 @@ The lessons learned:
 
 The lessons learned: Nothing much. I added a new session atom (page-params) to store the pg-id parameter in GET /products/:pg-id router. Otherwise implementing the products page was almost identical to productgroups page that I implemented earlier.
 
-### Product Page
+
+### Product Info Page
 
 The lessons learned: Nothing much. I followed the template of the previous pages.
 
 
+
+## Simple Frontend Development Next Steps
+
+These are things I deliberately didn't implement and I might implement them once I have extra time. Most of these things are rather trivial and I felt that I have learned most of the things I wanted to know about how to use ClojureScript and various related libraries and tools to implement a Single Page Application. 
+
+- Do not show any other pages than Sign-in and Login if there is no valid session in the browser.
+- Logout functionality: Add a logout link once user is logged in.
+- Some shopping cart functionality for the user to choose the items for purchasing.
+- Some basic CSS to make the Simple Frontend look at least a little bit less horrific. :-)
 
 
