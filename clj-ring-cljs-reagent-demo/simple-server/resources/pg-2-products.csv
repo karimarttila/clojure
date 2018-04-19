@@ -11,7 +11,7 @@
 11	2	Gentlemen Prefer Blondes	102.91	Hawks, Howard	1953	USA	Romance-Musical-Comedy
 12	2	Seven Samurai	84.97	Kurosawa, Akira	1954	Japan	Drama-Action-History
 13	2	Rear Window	12.91	Hitchcock, Alfred	1954	USA	Thriller-Mystery
-14	2	Strada, La	88.26	Fellini, Federico	1954	Italy	Drama
+14	2	La Strada	88.26	Fellini, Federico	1954	Italy	Drama
 15	2	East of Eden	8.93	Kazan, Elia	1955	USA	Drama
 16	2	Rebel Without a Cause	5.31	Ray, Nicholas	1955	USA	Drama
 17	2	Tuntematon sotilas	17.36	Edvin Laine	1955	Finland	War
@@ -49,7 +49,7 @@
 49	2	Once Upon a Time in the West	14.4	Leone, Sergio	1968	Italy-USA	Western
 50	2	Rosemary's Baby	37.22	Polanski, Roman	1968	USA	Thriller-Horror-Drama
 51	2	Night of the Living Dead	21.9	Romero, George A.	1968	USA	Horror
-52	2	The Wild Bunch,	0.66	Peckinpah, Sam	1969	USA	Western
+52	2	The Wild Bunch	0.66	Peckinpah, Sam	1969	USA	Western
 53	2	Easy Rider	69.02	Hopper, Dennis	1969	USA	Drama
 54	2	Ruusujen aika	24.29	Risto Jarva	1969	Finland	Drama
 55	2	M*A*S*H	17.5	Altman, Robert	1970	USA	War-Comedy
@@ -60,7 +60,7 @@
 60	2	Fellini's Roma	82.92	Fellini, Federico	1972	Italy	Drama-Comedy
 61	2	Kahdeksan surmanluotia	14.4	Mikko Niskanen	1972	Finland	Thriller-Action
 62	2	Kun taivas putoaa...	166.71	Risto Jarva	1972	Finland	Drama
-63	2	Long Goodbye, The	3.25	Altman, Robert	1973	USA	Drama-Crime
+63	2	The Long Goodbye	3.25	Altman, Robert	1973	USA	Drama-Crime
 64	2	Pat Garrett and Billy the Kid	8.47	Peckinpah, Sam	1973	USA	Western
 65	2	Sensuela	69.02	Teuvo Tulio	1973	Finland	Erotic
 66	2	Maa on syntinen laulu	166	Rauni Mollberg	1973	Finland	Drama
@@ -114,13 +114,13 @@
 114	2	Akira	32.64	Otomo, Katsuhiro	1988	Japan	Animated-Science Fiction-Action
 115	2	Katsastus	9.64	Matti Ijäs	1988	Finland	Drama
 116	2	Do the Right Thing	103.94	Lee, Spike	1989	USA	Drama-Comedy
-117	2	Cook, the Thief, His Wife & Her Lover, The	0.62	Greenaway, Peter	1989	UK-France	Drama
+117	2	The Cook, the Thief, His Wife & Her Lover	0.62	Greenaway, Peter	1989	UK-France	Drama
 118	2	Dead Poets Society	4.55	Weir, Peter	1989	USA	Drama
 119	2	GoodFellas	52.56	Scorsese, Martin	1990	USA	Drama-Crime
 120	2	Miller's Crossing	24.24	Coen, Joel & Ethan Coen	1990	USA	Crime
 121	2	Akira Kurosawa's Dreams	150.53	Kurosawa, Akira	1990	USA	Fantasy
 122	2	Tulitikkutehtaan tyttö	66.77	Aki Kaurismäki	1990	Finland	Drama
-123	2	Silence of the Lambs, The	11.04	Demme, Jonathan	1991	USA	Thriller-Mystery
+123	2	The Silence of the Lambs	11.04	Demme, Jonathan	1991	USA	Thriller-Mystery
 124	2	JFK	49.91	Stone, Oliver	1991	USA	History-Drama
 125	2	Thelma & Louise	83.62	Scott, Ridley	1991	USA	Drama-Comedy-Adventure
 126	2	Zombie ja kummitusjuna	43.33	Mika Kaurismäki	1991	Finland	Drama
@@ -137,7 +137,7 @@
 137	2	Heat	51.55	Mann, Michael	1995	USA	Thriller-Drama-Crime
 138	2	Casino	49.07	Scorsese, Martin	1995	USA	Drama-Crime
 139	2	The Bridges of Madison County	44.5	Eastwood, Clint	1995	USA	Romance-Drama
-140	2	Usual Suspects, The	14.98	Singer, Bryan	1995	USA	Thriller-Mystery-Crime
+140	2	The Usual Suspects	14.98	Singer, Bryan	1995	USA	Thriller-Mystery-Crime
 141	2	Fargo	3.86	Coen, Joel & Ethan Coen	1996	USA	Drama-Crime-Comedy
 142	2	Trainspotting	0.54	Boyle, Danny	1996	UK	Drama-Comedy
 143	2	Kauas pilvet karkaavat	27.58	Aki Kaurismäki	1996	Finland	Drama
@@ -158,7 +158,7 @@
 158	2	Million Dollar Baby	37.11	Eastwood, Clint	2004	USA	Drama
 159	2	Koirankynnen leikkaaja	4.79	Markku Pölönen	2004	Finland	Drama
 160	2	Brokeback Mountain	134.34	Lee, Ang	2005	USA-Canada	Romance-Drama
-161	2	History of Violence, A	23.66	Cronenberg, David	2005	USA-Germany	Crime-Drama-Mystery
+161	2	A History of Violence	23.66	Cronenberg, David	2005	USA-Germany	Crime-Drama-Mystery
 162	2	Paha maa	21.9	Aku Louhimies	2005	Finland	Drama
 163	2	Äideistä parhain	125.49	Klaus Härö	2005	Finland	Drama
 164	2	There Will Be Blood	117.9	Anderson, Paul Thomas	2007	USA	Drama
