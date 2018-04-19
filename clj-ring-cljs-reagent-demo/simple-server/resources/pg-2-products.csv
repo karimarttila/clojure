@@ -1,800 +1,169 @@
-1	2	Rashomon	13.89	Kurosawa, Akira	1950	Japan	Drama-Crime
-2	2	Sunset Blvd.	122.3	Wilder, Billy	1950	USA	Drama
-3	2	All About Eve	39.56	Mankiewicz, Joseph L.	1950	USA	Drama
-4	2	Olvidados, Los	92.62	Buñuel, Luis	1950	Mexico	Drama-Crime
-5	2	In a Lonely Place	7.98	Ray, Nicholas	1950	USA	Drama-Mystery-Romance
-6	2	Orpheus	7.92	Cocteau, Jean	1950	France	Romance-Fantasy-Drama
-7	2	Stromboli	6.36	Rossellini, Roberto	1950	Italy	Drama
-8	2	Flowers of St. Francis, The	165.41	Rossellini, Roberto	1950	Italy	Religious-Drama
-9	2	Wagon Master	177.57	Ford, John	1950	USA	Western
-10	2	Asphalt Jungle, The	71.95	Huston, John	1950	USA	Thriller-Crime
-11	2	Chant d'amour, Un	1.49	Genet, Jean	1950	France	Drama
-12	2	Gun Crazy	159.16	Lewis, Joseph H.	1950	USA	Drama-Crime
-13	2	River, The	31.42	Renoir, Jean	1951	France-India-USA	Romance-Drama
-14	2	Diary of a Country Priest	2.05	Bresson, Robert	1951	France	Religious-Drama
-15	2	Early Summer	107.68	Ozu, Yasujiro	1951	Japan	Drama
-16	2	Strangers on a Train	36.16	Hitchcock, Alfred	1951	USA	Thriller-Drama-Crime
-17	2	Miracle in Milan	4.62	De Sica, Vittorio	1951	Italy	Fantasy-Drama-Comedy
-18	2	African Queen, The	64.15	Huston, John	1951	USA	Romance-Adventure
-19	2	Place in the Sun, A	18.46	Stevens, George	1951	USA	Romance-Drama
-20	2	Streetcar Named Desire, A	50.13	Kazan, Elia	1951	USA	Drama
-21	2	Ace in the Hole	112.78	Wilder, Billy	1951	USA	Drama
-22	2	American in Paris, An	59.78	Minnelli, Vincente	1951	USA	Musical-Dance
-23	2	Day the Earth Stood Still, The	4.73	Wise, Robert	1951	USA	Science Fiction
-24	2	Singin' in the Rain	36.88	Donen, Stanley/Gene Kelly	1952	USA	Musical-Dance-Comedy
-25	2	Ikiru	192.52	Kurosawa, Akira	1952	Japan	Drama
-26	2	Umberto D.	133.03	De Sica, Vittorio	1952	Italy	Drama
-27	2	Quiet Man, The	42.96	Ford, John	1952	USA	Romance-Drama-Comedy
-28	2	Life of Oharu, The	54.31	Mizoguchi, Kenji	1952	Japan	Drama
-29	2	High Noon	138.96	Zinnemann, Fred	1952	USA	Western
-30	2	Plaisir, Le	4.89	Ophüls, Max	1952	France	Romance-Drama
-31	2	Limelight	3.36	Chaplin, Charles	1952	USA	Drama-Comedy
-32	2	Europa '51	38.6	Rossellini, Roberto	1952	Italy	Drama
-33	2	Golden Coach, The	11.91	Renoir, Jean	1952	Italy-France	Drama-Comedy-Romance
-34	2	Bad and the Beautiful, The	67.18	Minnelli, Vincente	1952	USA	Drama
-35	2	Casque d'or	131.44	Becker, Jacques	1952	France	Romance-Drama-Crime
-36	2	Forbidden Games	120.53	Clément, René	1952	France	War-Drama
-37	2	Lusty Men, The	12.63	Ray, Nicholas	1952	USA	Western-Sport-Drama
-38	2	Othello	6.08	Welles, Orson	1952	Italy-France-Morocco-USA	Drama
-39	2	Tokyo Story	84.03	Ozu, Yasujiro	1953	Japan	Drama
-40	2	Ugetsu monogatari	4.09	Mizoguchi, Kenji	1953	Japan	Drama
-41	2	Voyage in Italy	27.37	Rossellini, Roberto	1953	Italy	Romance-Drama
-42	2	Madame de...	13.82	Ophüls, Max	1953	France-Italy	Romance-Drama
-43	2	Band Wagon, The	11.92	Minnelli, Vincente	1953	USA	Musical-Dance-Comedy
-44	2	Wages of Fear, The	146.71	Clouzot, Henri-Georges	1953	France-Italy	Thriller-Adventure-Action
-45	2	Mr. Hulot's Holiday	21.04	Tati, Jacques	1953	France	Comedy
-46	2	El	168.14	Buñuel, Luis	1953	Mexico	Drama
-47	2	Shane	41.94	Stevens, George	1953	USA	Western-Drama
-48	2	Big Heat, The	19.02	Lang, Fritz	1953	USA	Drama-Crime
-49	2	Vitelloni, I	42.99	Fellini, Federico	1953	Italy	Drama
-50	2	Pickup on South Street	57.35	Fuller, Samuel	1953	USA	Spy-Crime
-51	2	Sun Shines Bright, The	37.31	Ford, John	1953	USA	Drama-Comedy
-52	2	Roman Holiday	56.44	Wyler, William	1953	USA	Romance-Comedy-Drama
-53	2	Gentlemen Prefer Blondes	102.91	Hawks, Howard	1953	USA	Romance-Musical-Comedy
-54	2	Anatahan	111.9	von Sternberg, Josef	1953	Japan	War-Drama
-55	2	Sawdust and Tinsel	39.13	Bergman, Ingmar	1953	Sweden	Drama
-56	2	Seven Samurai	84.97	Kurosawa, Akira	1954	Japan	Drama-Action-History
-57	2	Rear Window	12.91	Hitchcock, Alfred	1954	USA	Thriller-Mystery
-58	2	Strada, La	88.26	Fellini, Federico	1954	Italy	Drama
-59	2	Sansho the Bailiff	160.4	Mizoguchi, Kenji	1954	Japan	Drama
-60	2	On the Waterfront	44.89	Kazan, Elia	1954	USA	Drama
-61	2	Johnny Guitar	29.82	Ray, Nicholas	1954	USA	Western
-62	2	Star is Born, A	17.96	Cukor, George	1954	USA	Musical-Drama
-63	2	Senso	15.44	Visconti, Luchino	1954	Italy	War-Drama-Romance
-64	2	Chikamatsu monogatari	2.74	Mizoguchi, Kenji	1954	Japan	Drama-Romance
-65	2	Touchez pas au Grisbi	39.92	Becker, Jacques	1954	France	Thriller-Crime-Drama
-66	2	Ordet	55.44	Dreyer, Carl Theodor	1955	Denmark	Religious-Drama
-67	2	Night of the Hunter, The	22.55	Laughton, Charles	1955	USA	Thriller
-68	2	Pather Panchali	20.58	Ray, Satyajit	1955	India	Drama
-69	2	Night and Fog	8.7	Resnais, Alain	1955	France	War-Documentary-Short
-70	2	Floating Clouds	91.33	Naruse, Mikio	1955	Japan	Romance-Drama
-71	2	Lola Montès	8.41	Ophüls, Max	1955	France-West Germany	Drama-Biography-Romance
-72	2	Kiss Me Deadly	82.69	Aldrich, Robert	1955	USA	Crime-Thriller-Drama
-73	2	All That Heaven Allows	148.42	Sirk, Douglas	1955	USA	Romance-Drama
-74	2	French Cancan	46.98	Renoir, Jean	1955	France	Musical-Drama-Comedy
-75	2	East of Eden	8.93	Kazan, Elia	1955	USA	Drama
-76	2	Rebel Without a Cause	5.31	Ray, Nicholas	1955	USA	Drama
-77	2	Diaboliques, Les	86.15	Clouzot, Henri-Georges	1955	France	Thriller-Mystery
-78	2	Smiles of a Summer Night	25.61	Bergman, Ingmar	1955	Sweden	Romance-Comedy
-79	2	Maîtres fous, Les	21.29	Rouch, Jean	1955	France	Documentary-Short
-80	2	Rififi	16.84	Dassin, Jules	1955	France	Crime
-81	2	Moonfleet	58.29	Lang, Fritz	1955	USA	Adventure-Drama
-82	2	Ladykillers, The	9.42	Mackendrick, Alexander	1955	UK	Crime-Comedy
-83	2	Criminal Life of Archibaldo de la Cruz, The	105.61	Buñuel, Luis	1955	Mexico	Drama-Crime
-84	2	Bob le flambeur	37.67	Melville, Jean-Pierre	1955	France	Crime
-85	2	Princess Yang Kwei Fei	35.33	Mizoguchi, Kenji	1955	Japan-Hong Kong	Romance-Drama-History
-86	2	Searchers, The	176.4	Ford, John	1956	USA	Western
-87	2	Man Escaped, A	2.13	Bresson, Robert	1956	France	Prison-Drama
-88	2	Written on the Wind	5.94	Sirk, Douglas	1956	USA	Drama
-89	2	Bigger Than Life	21.52	Ray, Nicholas	1956	USA	Drama
-90	2	Aparajito	75.88	Ray, Satyajit	1956	India	Drama
-91	2	Killing, The	76.02	Kubrick, Stanley	1956	USA	Crime-Thriller
-92	2	Invasion of the Body Snatchers	14.12	Siegel, Don	1956	USA	Science Fiction-Horror
-93	2	Red Balloon, The	42.1	Lamorisse, Albert	1956	France	Fantasy-Family-Short
-94	2	Street of Shame	157.48	Mizoguchi, Kenji	1956	Japan	Drama
-95	2	Forbidden Planet	145.71	Wilcox, Fred M.	1956	USA	Science Fiction
-96	2	Ten Commandments, The	143.03	DeMille, Cecil B.	1956	USA	Religious-Drama
-97	2	Wild Strawberries	2.55	Bergman, Ingmar	1957	Sweden	Drama
-98	2	Seventh Seal, The	83.08	Bergman, Ingmar	1957	Sweden	Fantasy-Drama
-99	2	Sweet Smell of Success	19.51	Mackendrick, Alexander	1957	USA	Drama
-100	2	Nights of Cabiria	111.53	Fellini, Federico	1957	Italy-France	Drama
-101	2	Paths of Glory	44.51	Kubrick, Stanley	1957	USA	War-Drama
-102	2	Throne of Blood	4.29	Kurosawa, Akira	1957	Japan	War-Drama
-103	2	Affair to Remember, An	5.92	McCarey, Leo	1957	USA	Romance-Drama
-104	2	Bridge on the River Kwai, The	55.09	Lean, David	1957	UK	War-Drama-Action
-105	2	Pyaasa	4.97	Dutt, Guru	1957	India	Drama-Musical-Romance
-106	2	12 Angry Men	61.43	Lumet, Sidney	1957	USA	Drama
-107	2	Cranes Are Flying, The	40.17	Kalatozov, Mikhail	1957	USSR	War-Romance-Drama
-108	2	Grido, Il	105.57	Antonioni, Michelangelo	1957	Italy	Drama
-109	2	Night of the Demon	4.56	Tourneur, Jacques	1957	UK	Horror
-110	2	Mother India	55.81	Khan, Mehboob	1957	India	Drama-Musical-Family
-111	2	Incredible Shrinking Man, The	19.64	Arnold, Jack	1957	USA	Science Fiction
-112	2	Tarnished Angels, The	3.19	Sirk, Douglas	1957	USA	Drama
-113	2	Vertigo	31.98	Hitchcock, Alfred	1958	USA	Thriller-Drama-Mystery
-114	2	Touch of Evil	11.59	Welles, Orson	1958	USA	Thriller-Crime
-115	2	Ashes and Diamonds	108.75	Wajda, Andrzej	1958	Poland	War-Drama-Political
-116	2	Music Room, The	14.22	Ray, Satyajit	1958	India	Drama
-117	2	Mon oncle	37.56	Tati, Jacques	1958	France	Comedy
-118	2	Some Came Running	83.25	Minnelli, Vincente	1958	USA	Drama
-119	2	Nazarín	14.83	Buñuel, Luis	1958	Mexico	Religious-Drama
-120	2	Tiger of Eschnapur, The	89.52	Lang, Fritz	1958	West Germany-France-Italy	Romance-Adventure
-121	2	Big Deal on Madonna Street	86.84	Monicelli, Mario	1958	Italy	Crime-Comedy
-122	2	Dracula	2.45	Fisher, Terence	1958	UK	Horror
-123	2	Moi, un Noir	29.4	Rouch, Jean	1958	France	Drama
-124	2	Cairo Station	44.1	Chahine, Youssef	1958	Egypt	Crime-Drama
-125	2	400 Blows, The	40.12	Truffaut, François	1959	France	Drama
-126	2	Some Like it Hot	6.33	Wilder, Billy	1959	USA	Romance-Crime-Comedy
-127	2	Rio Bravo	105.46	Hawks, Howard	1959	USA	Western
-128	2	North by Northwest	158.47	Hitchcock, Alfred	1959	USA	Thriller-Spy-Romance
-129	2	Pickpocket	39.18	Bresson, Robert	1959	France	Drama-Crime
-130	2	Hiroshima mon amour	11.74	Resnais, Alain	1959	France-Japan	Drama
-131	2	Imitation of Life	49.81	Sirk, Douglas	1959	USA	Drama-Romance
-132	2	World of Apu, The	68.74	Ray, Satyajit	1959	India	Drama
-133	2	Shadows	2.4	Cassavetes, John	1959	USA	Drama
-134	2	Ben-Hur	38.97	Wyler, William	1959	USA	Religious-History
-135	2	Virgin Spring, The	125.95	Bergman, Ingmar	1959	Sweden	Drama
-136	2	Kaagaz Ke Phool	8.2	Dutt, Guru	1959	India	Romance-Drama
-137	2	Anatomy of a Murder	17.26	Preminger, Otto	1959	USA	Drama
-138	2	Black Orpheus	92.92	Camus, Marcel	1959	Brazil-France	Drama-Romance
-139	2	India: Matri Bhumi	8.06	Rossellini, Roberto	1959	Italy-France	Documentary-Drama
-140	2	Floating Weeds	9.79	Ozu, Yasujiro	1959	Japan	Drama
-141	2	Indian Tomb, The	111.72	Lang, Fritz	1959	West Germany-France-Italy	Adventure
-142	2	Breathless	80.9	Godard, Jean-Luc	1960	France	Romance-Drama-Crime
-143	2	Psycho	125.33	Hitchcock, Alfred	1960	USA	Thriller-Horror
-144	2	Dolce vita, La	42.71	Fellini, Federico	1960	Italy	Drama
-145	2	Avventura, L'	105	Antonioni, Michelangelo	1960	Italy-France	Drama-Mystery-Romance
-146	2	Apartment, The	31.92	Wilder, Billy	1960	USA	Drama-Comedy
-147	2	Rocco and His Brothers	106.51	Visconti, Luchino	1960	Italy-France	Drama
-148	2	Peeping Tom	12.89	Powell, Michael	1960	UK	Thriller-Drama
-149	2	Eyes Without a Face	4.05	Franju, Georges	1960	France-Italy	Horror-Drama-Thriller
-150	2	Shoot the Piano Player	77.82	Truffaut, François	1960	France	Drama-Crime-Thriller
-151	2	Cloud-Capped Star, The	20.46	Ghatak, Ritwik	1960	India	Drama-Musical
-152	2	Spartacus	60.3	Kubrick, Stanley	1960	USA	Adventure-History-Drama
-153	2	Saturday Night and Sunday Morning	12.07	Reisz, Karel	1960	UK	Drama-Romance
-154	2	Naked Island, The	65.05	Shindo, Kaneto	1960	Japan	Drama
-155	2	Trou, Le	66.11	Becker, Jacques	1960	France-Italy	Drama-Crime
-156	2	Viridiana	106.86	Buñuel, Luis	1961	Spain	Drama
-157	2	Last Year at Marienbad	9.28	Resnais, Alain	1961	France-Italy	Drama-Mystery-Avant-Garde
-158	2	Notte, La	1.76	Antonioni, Michelangelo	1961	Italy-France	Drama
-159	2	West Side Story	2.03	Wise, Robert/Jerome Robbins	1961	USA	Romance-Musical-Dance
-160	2	Hustler, The	30.1	Rossen, Robert	1961	USA	Drama-Sport
-161	2	Innocents, The	28.45	Clayton, Jack	1961	UK	Horror-Thriller
-162	2	Yojimbo	0.68	Kurosawa, Akira	1961	Japan	Drama-Action
-163	2	Accattone	125.66	Pasolini, Pier Paolo	1961	Italy	Drama
-164	2	Chronicle of a Summer	2.71	Rouch, Jean & Edgar Morin	1961	France	Documentary
-165	2	Lola	72.33	Demy, Jacques	1961	France	Romance-Drama
-166	2	Plácido	46.44	García Berlanga, Luis	1961	Spain	Comedy
-167	2	Splendor in the Grass	133.44	Kazan, Elia	1961	USA	Drama
-168	2	Breakfast at Tiffany's	35.71	Edwards, Blake	1961	USA	Romance-Drama-Comedy
-169	2	Misfits, The	102.15	Huston, John	1961	USA	Western-Romance-Drama
-170	2	End of Summer, The	19.9	Ozu, Yasujiro	1961	Japan	Drama
-171	2	Ladies Man, The	7.58	Lewis, Jerry	1961	USA	Comedy
-172	2	Posto, Il	53.21	Olmi, Ermanno	1961	Italy	Drama
-173	2	Femme est une femme, Une	24.5	Godard, Jean-Luc	1961	France	Drama-Comedy-Musical
-174	2	Lawrence of Arabia	6.06	Lean, David	1962	UK	War-Biography-Adventure
-175	2	Jules et Jim	127.93	Truffaut, François	1962	France	Romance-Drama
-176	2	Man Who Shot Liberty Valance, The	46.85	Ford, John	1962	USA	Western
-177	2	Eclisse, L'	41.86	Antonioni, Michelangelo	1962	Italy-France	Drama-Romance
-178	2	Jetée, La	45.22	Marker, Chris	1962	France	Science Fiction-Drama-Short
-179	2	Vivre sa vie	24.98	Godard, Jean-Luc	1962	France	Drama
-180	2	Exterminating Angel, The	35.12	Buñuel, Luis	1962	Mexico	Drama-Fantasy-Mystery
-181	2	Autumn Afternoon, An	36.56	Ozu, Yasujiro	1962	Japan	Drama
-182	2	To Kill a Mockingbird	30.22	Mulligan, Robert	1962	USA	Drama
-183	2	Cléo from 5 to 7	12.1	Varda, Agnès	1962	France	Drama
-184	2	Ivan's Childhood	14.65	Tarkovsky, Andrei	1962	USSR	War-Drama
-185	2	Salvatore Giuliano	1.86	Rosi, Francesco	1962	Italy	History-Drama-Crime
-186	2	Winter Light	42.81	Bergman, Ingmar	1962	Sweden	Religious-Drama
-187	2	Hatari!	28.43	Hawks, Howard	1962	USA	Drama
-188	2	Manchurian Candidate, The	25.82	Frankenheimer, John	1962	USA	Political-Thriller-Drama
-189	2	Lolita	40.35	Kubrick, Stanley	1962	UK	Drama
-190	2	Harakiri	39.87	Kobayashi, Masaki	1962	Japan	Drama-Action-History
-191	2	Trial, The	67.95	Welles, Orson	1962	France-West Germany-Italy	Drama-Fantasy-Thriller
-192	2	Knife in the Water	114.53	Polanski, Roman	1962	Poland	Drama
-193	2	Ride the High Country	58.62	Peckinpah, Sam	1962	USA	Western
-194	2	Mamma Roma	12.51	Pasolini, Pier Paolo	1962	Italy	Drama
-195	2	Loneliness of the Long Distance Runner, The	152.2	Richardson, Tony	1962	UK	Drama-Sport
-196	2	8½	66.42	Fellini, Federico	1963	Italy	Drama
-197	2	Contempt	19.71	Godard, Jean-Luc	1963	France-Italy	Drama
-198	2	Leopard, The	46.9	Visconti, Luchino	1963	Italy	History-Drama-War
-199	2	Birds, The	24.18	Hitchcock, Alfred	1963	USA	Horror
-200	2	Verdugo, El	81.53	García Berlanga, Luis	1963	Spain-Italy	Drama-Comedy
-201	2	High and Low	51.39	Kurosawa, Akira	1963	Japan	Thriller-Crime-Drama
-202	2	Barren Lives	50.65	dos Santos, Nelson Pereira	1963	Brazil	Drama
-203	2	House is Black, The	69.76	Farrokhzad, Forugh	1963	Iran	Documentary-Short
-204	2	Muriel	30.03	Resnais, Alain	1963	France-Italy	Drama
-205	2	Silence, The	70.35	Bergman, Ingmar	1963	Sweden	Drama
-206	2	Servant, The	12.99	Losey, Joseph	1963	UK	Drama
-207	2	Great Escape, The	8.04	Sturges, John	1963	USA	War-Prison-Adventure
-208	2	Shock Corridor	15.15	Fuller, Samuel	1963	USA	Drama-Mystery
-209	2	Flaming Creatures	6.22	Smith, Jack	1963	USA	Drama
-210	2	Mothlight	35.57	Brakhage, Stan	1963	USA	Short
-211	2	Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb	99.92	Kubrick, Stanley	1964	UK-USA	War-Comedy
-212	2	Gertrud	12.6	Dreyer, Carl Theodor	1964	Denmark	Drama
-213	2	Gospel According to St. Matthew, The	167.23	Pasolini, Pier Paolo	1964	Italy-France	Religious-Drama
-214	2	Umbrellas of Cherbourg, The	167.54	Demy, Jacques	1964	France-Germany	Romance-Musical-Drama
-215	2	Black God, White Devil	32.92	Rocha, Glauber	1964	Brazil	Political-Drama-Crime
-216	2	Red Desert	60.62	Antonioni, Michelangelo	1964	Italy-France	Drama
-217	2	Marnie	20.91	Hitchcock, Alfred	1964	USA	Romance-Thriller-Mystery
-218	2	I Am Cuba	89.91	Kalatozov, Mikhail	1964	USSR-Cuba	Political-Drama
-219	2	Woman in the Dunes	15.68	Teshigahara, Hiroshi	1964	Japan	Drama
-220	2	Charulata	1.79	Ray, Satyajit	1964	India	Romance-Drama
-221	2	Shadows of Our Forgotten Ancestors	8.81	Parajanov, Sergei	1964	USSR	Romance-Drama-History
-222	2	Scorpio Rising	163.07	Anger, Kenneth	1964	USA	Short-Avant-Garde
-223	2	Hard Day's Night, A	27.63	Lester, Richard	1964	UK	Musical-Comedy
-224	2	Bande à part	1.63	Godard, Jean-Luc	1964	France	Crime-Drama-Romance
-225	2	Dog Star Man	68.39	Brakhage, Stan	1964	USA	Short-Drama
-226	2	Kwaidan	62.96	Kobayashi, Masaki	1964	Japan	Horror-Fantasy
-227	2	Pierrot le fou	31.16	Godard, Jean-Luc	1965	France-Italy	Romance-Drama-Crime
-228	2	Chimes at Midnight	33.11	Welles, Orson	1965	France-Spain-Switzerland	War-Drama-Comedy
-229	2	Sound of Music, The	12.21	Wise, Robert	1965	USA	Musical-Drama-Family
-230	2	Repulsion	1.25	Polanski, Roman	1965	UK	Horror-Thriller
-231	2	Alphaville	7.45	Godard, Jean-Luc	1965	France	Science Fiction-Mystery-Drama
-232	2	Doctor Zhivago	129.98	Lean, David	1965	USA	War-Romance-Drama
-233	2	Loves of a Blonde	58.08	Forman, Milos	1965	Czechoslovakia	Drama-Comedy
-234	2	Faster, Pussycat! Kill! Kill!	33.34	Meyer, Russ	1965	USA	Drama-Comedy-Action
-235	2	Juliet of the Spirits	27.3	Fellini, Federico	1965	Italy	Fantasy-Drama
-236	2	Not Reconciled	50.39	Straub, Jean-Marie	1965	West Germany	Drama
-237	2	Simon of the Desert	45.96	Buñuel, Luis	1965	Mexico	Short-Drama-Comedy
-238	2	Bonheur, Le	37.76	Varda, Agnès	1965	France	Drama
-239	2	Subarnarekha	125.88	Ghatak, Ritwik	1965	India	Drama
-240	2	Saragossa Manuscript, The	87.41	Has, Wojciech	1965	Poland	Drama-Mystery-Fantasy
-241	2	Red Beard	89.78	Kurosawa, Akira	1965	Japan	Drama
-242	2	Persona	163.02	Bergman, Ingmar	1966	Sweden	Drama
-243	2	Andrei Rublev	30.99	Tarkovsky, Andrei	1966	USSR	History-Biography
-244	2	Au hasard Balthazar	1.1	Bresson, Robert	1966	France	Drama
-245	2	Battle of Algiers, The	58.88	Pontecorvo, Gillo	1966	Italy-Algeria	War-Political-Drama
-246	2	Blowup	0.09	Antonioni, Michelangelo	1966	Italy-UK	Mystery-Drama
-247	2	Good, the Bad and the Ugly, The	12.5	Leone, Sergio	1966	Italy-Spain	Western-Action
-248	2	Two or Three Things I Know About Her	90.59	Godard, Jean-Luc	1966	France	Drama
-249	2	Daisies	22.57	Chytilová, Vera	1966	Czechoslovakia	Drama-Comedy-Avant Garde
-250	2	Chelsea Girls	24.75	Warhol, Andy	1966	USA	Drama-Avant-Garde
-251	2	Masculin Feminin	10.24	Godard, Jean-Luc	1966	France-Sweden	Drama
-252	2	Closely Watched Trains	54.92	Menzel, Jirí	1966	Czechoslovakia	Drama-Comedy
-253	2	Rise to Power of Louis XIV, The	80.98	Rossellini, Roberto	1966	France	Drama-Biography-History
-254	2	Round-Up, The	23.4	Jancsó, Miklós	1966	Hungary	Political-Drama-War
-255	2	Who's Afraid of Virginia Woolf?	38.78	Nichols, Mike	1966	USA	Drama
-256	2	Black Girl	10.12	Sembene, Ousmane	1966	Senegal-France	Drama
-257	2	Seven Women	76.47	Ford, John	1966	USA	History-Drama
-258	2	Cul-de-sac	91.84	Polanski, Roman	1966	UK	Thriller-Drama
-259	2	Hawks and the Sparrows, The	45.76	Pasolini, Pier Paolo	1966	Italy	Comedy-Drama
-260	2	Man for All Seasons, A	83.25	Zinnemann, Fred	1966	UK	Drama
-261	2	Collectionneuse, La	84.01	Rohmer, Eric	1966	France	Romance-Drama-Comedy
-262	2	Unsere Afrikareise	68.42	Kubelka, Peter	1966	Austria	Short
-263	2	Playtime	46.87	Tati, Jacques	1967	France	Comedy
-264	2	Mouchette	87.54	Bresson, Robert	1967	France	Drama
-265	2	Belle de jour	177.5	Buñuel, Luis	1967	France-Italy	Drama
-266	2	Samouraï, Le	18.97	Melville, Jean-Pierre	1967	France	Thriller-Crime
-267	2	Graduate, The	27.58	Nichols, Mike	1967	USA	Romance-Drama-Comedy
-268	2	Wavelength	58.49	Snow, Michael	1967	Canada-USA	Avant-Garde
-269	2	Bonnie and Clyde	2.76	Penn, Arthur	1967	USA	Drama-Crime-Biography
-270	2	Week-End	45.15	Godard, Jean-Luc	1967	France-Italy	Drama
-271	2	Terra em Transe	6.82	Rocha, Glauber	1967	Brazil	Drama-Political
-272	2	Don't Look Back	55.24	Pennebaker, D.A.	1967	USA	Documentary-Musical
-273	2	Young Girls of Rochefort, The	85.58	Demy, Jacques	1967	France	Musical-Dance-Comedy
-274	2	Marketa Lazarová	26.47	Vlácil, Frantisek	1967	Czechoslovakia	History-Drama
-275	2	Point Blank	7.47	Boorman, John	1967	USA	Thriller-Crime-Action
-276	2	Titicut Follies	31.59	Wiseman, Frederick	1967	USA	Documentary-Drama
-277	2	Cool Hand Luke	120.76	Rosenberg, Stuart	1967	USA	Prison-Drama
-278	2	Branded to Kill	0.02	Suzuki, Seijun	1967	Japan	Crime-Action-Drama
-279	2	El Dorado	60.37	Hawks, Howard	1967	USA	Western
-280	2	Firemen's Ball, The	6.61	Forman, Milos	1967	Czechoslovakia	Comedy
-281	2	War and Peace	20.43	Bondarchuk, Sergei	1967	USSR	War-History-Drama
-282	2	2001: A Space Odyssey	17.36	Kubrick, Stanley	1968	UK-USA	Science Fiction
-283	2	Once Upon a Time in the West	14.4	Leone, Sergio	1968	Italy-USA	Western
-284	2	Rosemary's Baby	37.22	Polanski, Roman	1968	USA	Thriller-Horror-Drama
-285	2	Night of the Living Dead	21.9	Romero, George A.	1968	USA	Horror
-286	2	Faces	13.6	Cassavetes, John	1968	USA	Drama
-287	2	Memories of Underdevelopment	35.4	Gutiérrez Alea, Tomás	1968	Cuba	Political-Romance-Drama
-288	2	Teorema	3.26	Pasolini, Pier Paolo	1968	Italy	Drama
-289	2	If….	0.14	Anderson, Lindsay	1968	UK	Drama
-290	2	Hour of the Wolf	6.25	Bergman, Ingmar	1968	Sweden	Horror-Drama
-291	2	Hour of the Furnaces, The	5.39	Getino, Octavio & Fernando E. Solanas	1968	Argentina	Political-Documentary-History
-292	2	Party, The	111.28	Edwards, Blake	1968	USA	Comedy
-293	2	Chronicle of Anna Magdalena Bach, The	49.46	Straub, Jean-Marie	1968	West Germany-Italy	Drama-History-Musical
-294	2	Producers, The	86.24	Brooks, Mel	1968	USA	Comedy
-295	2	Enfance nue, L'	0.27	Pialat, Maurice	1968	France	Drama
-296	2	Bandido da Luz Vermelha, O	0.53	Sganzerla, Rogério	1968	Brazil	Thriller-Crime
-297	2	Amour fou, L'	72.86	Rivette, Jacques	1968	France	Drama
-298	2	Wild Bunch, The	0.66	Peckinpah, Sam	1969	USA	Western
-299	2	Kes	22.97	Loach, Ken	1969	UK	Drama
-300	2	Colour of Pomegranate, The	56.94	Parajanov, Sergei	1969	USSR	History-Avant-Garde
-301	2	My Night at Maud's	140.8	Rohmer, Eric	1969	France	Romance-Drama
-302	2	Midnight Cowboy	30.93	Schlesinger, John	1969	USA	Drama
-303	2	Butch Cassidy and the Sundance Kid	160.8	Hill, George Roy	1969	USA	Western
-304	2	Army of Shadows	94.54	Melville, Jean-Pierre	1969	France-Italy	War-Drama
-305	2	Sorrow and the Pity, The	26.34	Ophüls, Marcel	1969	France-Switzerland-Germany	Documentary-War-History
-306	2	Easy Rider	69.02	Hopper, Dennis	1969	USA	Drama
-307	2	Damned, The	127.69	Visconti, Luchino	1969	Italy-West Germany	War-Drama
-308	2	Salesman	16.69	Maysles, Albert/David Maysles/Charlotte Zwerin	1969	USA	Documentary
-309	2	Fellini Satyricon	8.86	Fellini, Federico	1969	Italy	History-Drama
-310	2	Antonio das Mortes	0.03	Rocha, Glauber	1969	Brazil	Drama-Western-Political
-311	2	Z	1.12	Costa-Gavras, Constantin	1969	France	Political-Thriller-History
-312	2	Diaries, Notes and Sketches	2.33	Mekas, Jonas	1969	USA	Documentary
-313	2	Conformist, The	106.9	Bertolucci, Bernardo	1970	Italy-France-West Germany	Political-Drama
-314	2	Performance	46.61	Roeg, Nicolas/Donald Cammell	1970	UK	Drama
-315	2	Husbands	178.75	Cassavetes, John	1970	USA	Drama
-316	2	Wanda	94.51	Loden, Barbara	1970	USA	Drama-Crime
-317	2	Tristana	8.79	Buñuel, Luis	1970	France-Spain	Drama
-318	2	Five Easy Pieces	69.22	Rafelson, Bob	1970	USA	Drama
-319	2	Gimme Shelter	145.24	Maysles, Albert/David Maysles/Charlotte Zwerin	1970	USA	Documentary-Musical-History
-320	2	Red Circle, The	0.56	Melville, Jean-Pierre	1970	France-Italy	Thriller-Crime
-321	2	Wild Child, The	129.48	Truffaut, François	1970	France	Drama
-322	2	Claire's Knee	88.96	Rohmer, Eric	1970	France	Romance-Drama-Comedy
-323	2	Dodes'ka-den	52.83	Kurosawa, Akira	1970	Japan	Fantasy-Drama
-324	2	Deep End	138.44	Skolimowski, Jerzy	1970	UK-West Germany	Drama-Comedy-Romance
-325	2	Hart of London, The	109.8	Chambers, Jack	1970	Canada	Avant-Garde
-326	2	M*A*S*H	17.5	Altman, Robert	1970	USA	War-Comedy
-327	2	Topo, El	137.46	Jodorowsky, Alejandro	1970	Mexico	Western-Fantasy
-328	2	Zabriskie Point	3.74	Antonioni, Michelangelo	1970	USA	Drama
-329	2	Beyond the Valley of the Dolls	146.11	Meyer, Russ	1970	USA	Drama-Comedy
-330	2	Clockwork Orange, A	34.93	Kubrick, Stanley	1971	UK	Science Fiction-Crime-Drama
-331	2	Death in Venice	27.8	Visconti, Luchino	1971	Italy	Drama
-332	2	McCabe & Mrs. Miller	118.93	Altman, Robert	1971	USA	Western-Drama
-333	2	Harold and Maude	93.83	Ashby, Hal	1971	USA	Comedy
-334	2	Last Picture Show, The	92.58	Bogdanovich, Peter	1971	USA	Drama
-335	2	Touch of Zen, A	83.6	Hu, King	1971	Taiwan	Adventure-Action-Drama
-336	2	Out 1, noli me tangere	19.48	Rivette, Jacques	1971	France	Comedy-Drama-Thriller
-337	2	Two-Lane Blacktop	20.69	Hellman, Monte	1971	USA	Drama
-338	2	Région centrale, La	88.89	Snow, Michael	1971	Canada	Avant-Garde
-339	2	Devils, The	3.99	Russell, Ken	1971	UK	History-Drama-Horror
-340	2	French Connection, The	23.1	Friedkin, William	1971	USA	Crime
-341	2	Walkabout	193.66	Roeg, Nicolas	1971	Australia	Drama-Adventure
-342	2	W.R.: Mysteries of the Organism	55.99	Makavejev, Dusan	1971	Yugoslavia	Drama-Comedy-Fantasy
-343	2	Dirty Harry	166	Siegel, Don	1971	USA	Crime-Action
-344	2	Two English Girls	62.62	Truffaut, François	1971	France	Drama
-345	2	Get Carter	23.96	Hodges, Mike	1971	UK	Crime
-346	2	Johnny Got His Gun	34.6	Trumbo, Dalton	1971	USA	War-Drama
-347	2	Godfather, The	48.79	Coppola, Francis Ford	1972	USA	Drama-Crime
-348	2	Aguirre: The Wrath of God	37.93	Herzog, Werner	1972	West Germany	History-Drama-Adventure
-349	2	Cries and Whispers	10.86	Bergman, Ingmar	1972	Sweden	Drama
-350	2	Discreet Charm of the Bourgeoisie, The	3.94	Buñuel, Luis	1972	France	Fantasy-Drama-Comedy
-351	2	Solaris	96.76	Tarkovsky, Andrei	1972	USSR	Science Fiction-Drama-Mystery
-352	2	Cabaret	73.98	Fosse, Bob	1972	USA	Musical-Drama-Dance
-353	2	Last Tango in Paris	33.7	Bertolucci, Bernardo	1972	France-Italy	Romance-Drama-Adult
-354	2	Bitter Tears of Petra von Kant, The	9.75	Fassbinder, Rainer Werner	1972	West Germany	Drama
-355	2	Deliverance	41.41	Boorman, John	1972	USA	Adventure-Thriller-Drama
-356	2	Fat City	69.61	Huston, John	1972	USA	Sport
-357	2	Fellini's Roma	82.92	Fellini, Federico	1972	Italy	Drama-Comedy
-358	2	Pink Flamingos	36.12	Waters, John	1972	USA	Comedy-Crime
-359	2	Amarcord	82.76	Fellini, Federico	1973	Italy	Drama-Comedy
-360	2	Mother and the Whore, The	21.34	Eustache, Jean	1973	France	Drama
-361	2	Spirit of the Beehive, The	55.55	Erice, Victor	1973	Spain	Drama
-362	2	Don't Look Now	34.73	Roeg, Nicolas	1973	UK	Mystery-Thriller
-363	2	Badlands	114.82	Malick, Terrence	1973	USA	Drama-Crime
-364	2	Exorcist, The	86.79	Friedkin, William	1973	USA	Horror
-365	2	Mean Streets	170.63	Scorsese, Martin	1973	USA	Drama-Crime
-366	2	F for Fake	2.62	Welles, Orson	1973	France-Iran-West Germany	Documentary-Avant-Garde
-367	2	Touki Bouki	15.1	Mambéty, Djibril Diop	1973	Senegal	Drama
-368	2	Scenes from a Marriage	80.03	Bergman, Ingmar	1973	Sweden	Drama
-369	2	Day for Night	94.13	Truffaut, François	1973	France	Drama-Comedy
-370	2	Long Goodbye, The	3.25	Altman, Robert	1973	USA	Drama-Crime
-371	2	Pat Garrett and Billy the Kid	8.47	Peckinpah, Sam	1973	USA	Western
-372	2	Wicker Man, The	2.8	Hardy, Robin	1973	UK	Mystery-Horror
-373	2	Holy Mountain, The	20.15	Jodorowsky, Alejandro	1973	Mexico-USA	Adventure-Drama-Fantasy
-374	2	Last Detail, The	16.28	Ashby, Hal	1973	USA	Drama
-375	2	Ludwig	49.8	Visconti, Luchino	1973	Italy-France-West Germany	Drama-Biography-History
-376	2	American Graffiti	100.75	Lucas, George	1973	USA	Drama-Comedy
-377	2	O Lucky Man!	0.28	Anderson, Lindsay	1973	UK	Fantasy-Drama-Comedy
-378	2	Sting, The	182.82	Hill, George Roy	1973	USA	Crime-Comedy-Drama
-379	2	Scarecrow	5.04	Schatzberg, Jerry	1973	USA	Drama
-380	2	Godfather Part II, The	169.09	Coppola, Francis Ford	1974	USA	Drama-Crime
-381	2	Chinatown	15.04	Polanski, Roman	1974	USA	Mystery-Crime
-382	2	Woman Under the Influence, A	124.15	Cassavetes, John	1974	USA	Drama
-383	2	Ali: Fear Eats the Soul	13.39	Fassbinder, Rainer Werner	1974	West Germany	Romance-Drama
-384	2	Conversation, The	40.45	Coppola, Francis Ford	1974	USA	Thriller-Drama-Crime
-385	2	Celine and Julie Go Boating	69.33	Rivette, Jacques	1974	France	Fantasy-Drama-Avant-Garde
-386	2	Texas Chainsaw Massacre, The	20.27	Hooper, Tobe	1974	USA	Thriller-Horror
-387	2	Enigma of Kaspar Hauser, The	74.49	Herzog, Werner	1974	West Germany	Biography-Drama
-388	2	Phantom of Liberty, The	6.65	Buñuel, Luis	1974	France	Drama-Comedy-Avant Garde
-389	2	Bring Me the Head of Alfredo Garcia	14.7	Peckinpah, Sam	1974	USA	Crime-Thriller-Action
-390	2	Alice in the Cities	84.66	Wenders, Wim	1974	West Germany	Drama
-391	2	Young Frankenstein	41.06	Brooks, Mel	1974	USA	Horror-Comedy-Science Fiction
-392	2	Lancelot du Lac	117.62	Bresson, Robert	1974	France-Italy	Fantasy-Drama
-393	2	Edvard Munch	35.38	Watkins, Peter	1974	Sweden-Norway	Drama-Biography
-394	2	We All Loved Each Other So Much	43.91	Scola, Ettore	1974	Italy	Comedy
-395	2	Arabian Nights	89.83	Pasolini, Pier Paolo	1974	Italy-France	Fantasy-Adventure-Drama
-396	2	My Little Loves	25.8	Eustache, Jean	1974	France	Drama
-397	2	Phantom of the Paradise	110.02	De Palma, Brian	1974	USA	Musical-Horror-Comedy
-398	2	Mirror, The	188.49	Tarkovsky, Andrei	1975	USSR	Drama-Biography
-399	2	Barry Lyndon	12.36	Kubrick, Stanley	1975	UK	Drama
-400	2	Nashville	11.61	Altman, Robert	1975	USA	Drama
-401	2	Jaws	10.48	Spielberg, Steven	1975	USA	Horror-Thriller-Adventure
-402	2	Jeanne Dielman, 23 Quai du Commerce, 1080 Bruxelles	34.47	Akerman, Chantal	1975	Belgium-France	Drama-Avant-Garde
-403	2	One Flew Over the Cuckoo's Nest	0.19	Forman, Milos	1975	USA	Drama
-404	2	Passenger, The	94.23	Antonioni, Michelangelo	1975	Italy	Drama
-405	2	Travelling Players, The	2.64	Angelopoulos, Theo	1975	Greece	Political-Drama
-406	2	Salò, or the 120 Days of Sodom	22.09	Pasolini, Pier Paolo	1975	Italy	Horror-Drama-Political
-407	2	Dog Day Afternoon	62.91	Lumet, Sidney	1975	USA	Drama-Crime
-408	2	Dersu Uzala	70.41	Kurosawa, Akira	1975	USSR-Japan	Drama-Adventure
-409	2	Grey Gardens	25.59	Maysles, David/Albert Maysles/Ellen Hovde/Muffie Meyer	1975	USA	Documentary-Comedy
-410	2	India Song	1.39	Duras, Marguerite	1975	France	Drama
-411	2	Picnic at Hanging Rock	11.86	Weir, Peter	1975	Australia	Mystery-Drama
-412	2	Monty Python and the Holy Grail	4.28	Gilliam, Terry/Terry Jones	1975	UK	History-Comedy
-413	2	Man Who Would Be King, The	27.97	Huston, John	1975	USA	Adventure
-414	2	Xala	50.76	Sembene, Ousmane	1975	Senegal	Comedy
-415	2	Seasons, The	13	Peleshian, Artavazd	1975	USSR	Documentary-Short
-416	2	Numéro deux	36.7	Godard, Jean-Luc	1975	France	Drama
-417	2	Love and Death	78.73	Allen, Woody	1975	USA	War-Comedy
-418	2	Sholay	84.51	Sippy, Ramesh	1975	India	Action-Drama-Musical
-419	2	Rocky Horror Picture Show, The	11.17	Sharman, Jim	1975	UK	Musical-Horror-Dance-Comedy
-420	2	Taxi Driver	42.05	Scorsese, Martin	1976	USA	Drama-Crime
-421	2	Kings of the Road	50.72	Wenders, Wim	1976	West Germany	Drama
-422	2	Killing of a Chinese Bookie, The	35.12	Cassavetes, John	1976	USA	Drama-Crime
-423	2	In the Realm of the Senses	5.53	Oshima, Nagisa	1976	Japan-France	Drama-Adult-Romance
-424	2	Tenant, The	2.18	Polanski, Roman	1976	France-USA	Horror-Thriller-Mystery
-425	2	Network	44.15	Lumet, Sidney	1976	USA	Drama
-426	2	1900	164.72	Bertolucci, Bernardo	1976	Italy-France-West Germany	Political-Drama-History
-427	2	Carrie	103.76	De Palma, Brian	1976	USA	Horror-Thriller
-428	2	All the President's Men	94.46	Pakula, Alan J.	1976	USA	Political-Drama
-429	2	Rocky	26.44	Avildsen, John G.	1976	USA	Sport-Drama
-430	2	Harlan County, U.S.A.	80.85	Kopple, Barbara	1976	USA	Documentary
-431	2	Ascent, The	114.35	Shepitko, Larisa	1976	USSR	War-Drama
-432	2	Assault on Precinct 13	2.3	Carpenter, John	1976	USA	Action
-433	2	News from Home	128.23	Akerman, Chantal	1976	France-Belgium-West Germany	Drama
-434	2	Outlaw Josey Wales, The	103.31	Eastwood, Clint	1976	USA	Western-Drama
-435	2	Fellini's Casanova	39.18	Fellini, Federico	1976	Italy	Drama-Biography
-436	2	Man Who Fell to Earth, The	172.96	Roeg, Nicolas	1976	UK	Science Fiction-Drama
-437	2	Ceddo	1.46	Sembene, Ousmane	1976	Senegal	Drama-Political-Avant Garde
-438	2	Annie Hall	139.44	Allen, Woody	1977	USA	Romance-Comedy
-439	2	Star Wars	66.77	Lucas, George	1977	USA	Science Fiction-Fantasy-Adventure
-440	2	Close Encounters of the Third Kind	72.74	Spielberg, Steven	1977	USA	Science Fiction-Adventure
-441	2	Eraserhead	125.32	Lynch, David	1977	USA	Horror-Fantasy-Science Fiction
-442	2	Killer of Sheep	108.55	Burnett, Charles	1977	USA	Drama
-443	2	Suspiria	24.59	Argento, Dario	1977	Italy	Horror
-444	2	Opening Night	7.72	Cassavetes, John	1977	USA	Drama
-445	2	Providence	45.76	Resnais, Alain	1977	France-Switzerland	Drama
-446	2	That Obscure Object of Desire	22.76	Buñuel, Luis	1977	France-Spain	Drama
-447	2	Devil, Probably, The	34.05	Bresson, Robert	1977	France	Drama
-448	2	Hitler: A Film from Germany	7.22	Syberberg, Hans-Jürgen	1977	West Germany-France-UK	Biography-Drama-History
-449	2	Saturday Night Fever	14.31	Badham, John	1977	USA	Drama
-450	2	New York, New York	15.23	Scorsese, Martin	1977	USA	Musical
-451	2	3 Women	44.65	Altman, Robert	1977	USA	Drama
-452	2	Grin Without a Cat, A	0.53	Marker, Chris	1977	France	Documentary
-453	2	Sorcerer	14.82	Friedkin, William	1977	USA	Adventure-Thriller
-454	2	Days of Heaven	114.19	Malick, Terrence	1978	USA	Romance-Drama
-455	2	Deer Hunter, The	161.32	Cimino, Michael	1978	USA	War-Drama
-456	2	Dawn of the Dead	12.83	Romero, George A.	1978	USA	Horror-Action
-457	2	In a Year with 13 Moons	38.36	Fassbinder, Rainer Werner	1978	West Germany	Drama
-458	2	Tree of Wooden Clogs, The	45.6	Olmi, Ermanno	1978	Italy	Drama
-459	2	Halloween	48.87	Carpenter, John	1978	USA	Horror-Thriller
-460	2	Superman	52.57	Donner, Richard	1978	USA	Science Fiction-Action-Adventure
-461	2	National Lampoon's Animal House	84.35	Landis, John	1978	USA	Comedy
-462	2	Apocalypse Now	13.53	Coppola, Francis Ford	1979	USA	War-Drama-Adventure
-463	2	Stalker	7.34	Tarkovsky, Andrei	1979	USSR	Science Fiction-Mystery
-464	2	Manhattan	25.67	Allen, Woody	1979	USA	Romance-Comedy
-465	2	Alien	9.64	Scott, Ridley	1979	USA	Science Fiction-Horror
-466	2	Monty Python's Life of Brian	4.79	Jones, Terry	1979	UK	Religious-Comedy
-467	2	All That Jazz	147.57	Fosse, Bob	1979	USA	Musical-Fantasy-Drama
-468	2	Tale of Tales	143.98	Norshteyn, Yuriy	1979	USSR	Animated-Short
-469	2	Being There	7.7	Ashby, Hal	1979	USA	Drama-Comedy
-470	2	Arrebato	117.6	Zulueta, Iván	1979	Spain	Drama-Horror
-471	2	Marriage of Maria Braun, The	12.88	Fassbinder, Rainer Werner	1979	West Germany	War-Drama
-472	2	Tin Drum, The	28.31	Schlöndorff, Volker	1979	West Germany-France-Poland-Yugoslavia	War-Drama
-473	2	Vengeance is Mine	25.21	Imamura, Shohei	1979	Japan	Thriller-Crime-Drama
-474	2	From the Clouds to the Resistance	180.46	Straub, Jean-Marie & Danièle Huillet	1979	Italy-West Germany-UK-France	Drama
-475	2	Raging Bull	166.71	Scorsese, Martin	1980	USA	Sport-Drama-Biography
-476	2	Shining, The	97.13	Kubrick, Stanley	1980	USA	Horror
-477	2	Empire Strikes Back, The	167.68	Kershner, Irvin	1980	USA	Science Fiction-Fantasy-Adventure
-478	2	Berlin Alexanderplatz	25.67	Fassbinder, Rainer Werner	1980	West Germany-Italy	Drama-History-Political
-479	2	Heaven's Gate	8.43	Cimino, Michael	1980	USA	Western-Drama-History
-480	2	Elephant Man, The	14.86	Lynch, David	1980	USA	Drama-Biography
-481	2	Kagemusha	136.06	Kurosawa, Akira	1980	Japan	War-Drama-History
-482	2	Airplane!	193.74	Abrahams, Jim/David Zucker/Jerry Zucker	1980	USA	Comedy
-483	2	Age of the Earth, The	93.09	Rocha, Glauber	1980	Brazil	Political-Drama-Religious
-484	2	Blues Brothers, The	30.22	Landis, John	1980	USA	Action-Comedy-Musical
-485	2	Sauve qui peut (la vie)	76.64	Godard, Jean-Luc	1980	France-Switzerland	Drama
-486	2	Mon oncle d'Amérique	21.07	Resnais, Alain	1980	France	Drama-Comedy
-487	2	Gregory's Girl	111.72	Forsyth, Bill	1980	UK	Romance-Comedy
-488	2	Bad Timing	82.84	Roeg, Nicolas	1980	UK	Drama
-489	2	Big Red One, The	147.16	Fuller, Samuel	1980	USA	War-Action-Drama
-490	2	Raiders of the Lost Ark	6.97	Spielberg, Steven	1981	USA	Adventure-Action
-491	2	Mad Max 2	56.65	Miller, George	1981	Australia	Science Fiction-Action-Adventure
-492	2	Possession	56.37	Zulawski, Andrzej	1981	France-West Germany	Horror-Drama
-493	2	Woman Next Door, The	35.89	Truffaut, François	1981	France	Romance-Drama
-494	2	Blow Out	13.63	De Palma, Brian	1981	USA	Thriller-Mystery
-495	2	Excalibur	16.99	Boorman, John	1981	UK	Fantasy-Adventure-Action
-496	2	Boot, Das	24.29	Petersen, Wolfgang	1981	West Germany	Action-Adventure-Drama
-497	2	Reds	12.11	Beatty, Warren	1981	USA	History-Drama-Biography
-498	2	Too Early, Too Late	67.53	Straub, Jean-Marie & Danièle Huillet	1981	Germany	Documentary
-499	2	Blade Runner	3.79	Scott, Ridley	1982	USA	Science Fiction-Thriller-Drama
-500	2	Fanny and Alexander	43.33	Bergman, Ingmar	1982	Sweden	Drama
-501	2	E.T. The Extra-Terrestrial	125.49	Spielberg, Steven	1982	USA	Science Fiction-Family
-502	2	Thing, The	46.87	Carpenter, John	1982	USA	Science Fiction-Action-Horror
-503	2	Fitzcarraldo	38.23	Herzog, Werner	1982	West Germany	Drama-Adventure
-504	2	Koyaanisqatsi	43.81	Reggio, Godfrey	1982	USA	Documentary
-505	2	Tootsie	28.49	Pollack, Sydney	1982	USA	Romance-Comedy
-506	2	Passion	48.61	Godard, Jean-Luc	1982	France-Switzerland	Drama
-507	2	Veronika Voss	56.58	Fassbinder, Rainer Werner	1982	West Germany	Drama
-508	2	Enfant secret, L'	145.03	Garrel, Philippe	1982	France	Romance-Drama
-509	2	Verdict, The	9.09	Lumet, Sidney	1982	USA	Drama
-510	2	Yol	26.91	Gören, Serif & Yilmaz Güney	1982	Turkey-Switzerland-France	Drama
-511	2	Sans soleil	136.91	Marker, Chris	1983	France	Avant-Garde-Documentary
-512	2	Argent, L'	37.5	Bresson, Robert	1983	France-Switzerland	Drama-Crime
-513	2	Videodrome	33.89	Cronenberg, David	1983	Canada	Horror-Science Fiction
-514	2	King of Comedy, The	8.35	Scorsese, Martin	1983	USA	Drama-Comedy
-515	2	Nostalghia	77.05	Tarkovsky, Andrei	1983	Italy	Drama
-516	2	À nos amours	0.41	Pialat, Maurice	1983	France	Drama
-517	2	Scarface	22.71	De Palma, Brian	1983	USA	Drama-Crime
-518	2	Local Hero	37.14	Forsyth, Bill	1983	UK	Drama-Comedy
-519	2	Zelig	37.33	Allen, Woody	1983	USA	Comedy
-520	2	Sur, El	73.9	Erice, Victor	1983	Spain-France	Romance-Drama
-521	2	Right Stuff, The	84.13	Kaufman, Philip	1983	USA	Drama-Biography
-522	2	Ballad of Narayama, The	79.83	Imamura, Shohei	1983	Japan	Drama
-523	2	Once Upon a Time in America	5.59	Leone, Sergio	1984	Italy-USA	Drama-Crime
-524	2	Paris, Texas	71.21	Wenders, Wim	1984	USA	Drama
-525	2	Love Streams	3.58	Cassavetes, John	1984	USA	Drama
-526	2	This is Spinal Tap	17.71	Reiner, Rob	1984	USA	Comedy-Musical
-527	2	Amadeus	38.18	Forman, Milos	1984	USA	Musical-Biography-Drama
-528	2	Stranger Than Paradise	66.28	Jarmusch, Jim	1984	USA	Comedy
-529	2	Yellow Earth	62.47	Chen Kaige	1984	China	Drama-Political
-530	2	Terminator, The	23.74	Cameron, James	1984	USA	Science Fiction-Action
-531	2	Twenty Years Later	25.51	Coutinho, Eduardo	1984	Brazil	Documentary
-532	2	Ghostbusters	35.83	Reitman, Ivan	1984	USA	Science Fiction-Comedy
-533	2	Blood Simple	14.28	Coen, Joel & Ethan Coen	1984	USA	Thriller-Drama-Crime
-534	2	Heimat	141.82	Reitz, Edgar	1984	West Germany	Drama
-535	2	Shoah	24.08	Lanzmann, Claude	1985	France	Documentary
-536	2	Come and See	6.67	Klimov, Elem	1985	USSR	War-Drama-History
-537	2	Brazil	19.3	Gilliam, Terry	1985	UK	Science Fiction-Fantasy
-538	2	Ran	0.8	Kurosawa, Akira	1985	France-Japan	War-History-Drama
-539	2	Back to the Future	35.21	Zemeckis, Robert	1985	USA	Science Fiction-Comedy
-540	2	Time to Live and the Time to Die, The	1.71	Hou Hsiao-hsien	1985	Taiwan	Drama
-541	2	Purple Rose of Cairo, The	188.6	Allen, Woody	1985	USA	Fantasy-Comedy-Romance
-542	2	My Life as a Dog	17.38	Hallström, Lasse	1985	Sweden	Drama-Comedy
-543	2	Vagabond	17.44	Varda, Agnès	1985	France	Drama
-544	2	My Friend Ivan Lapshin	0.51	German, Aleksey	1985	USSR	Drama
-545	2	Breakfast Club, The	1.92	Hughes, John	1985	USA	Drama-Comedy
-546	2	Taipei Story	41.53	Yang, Edward	1985	Taiwan	Drama
-547	2	Witness	8.02	Weir, Peter	1985	USA	Crime-Drama-Romance
-548	2	Blue Velvet	102.42	Lynch, David	1986	USA	Mystery-Crime-Drama
-549	2	Sacrifice, The	40.83	Tarkovsky, Andrei	1986	France-Sweden	Drama
-550	2	Green Ray, The	42.57	Rohmer, Eric	1986	France	Romance-Drama
-551	2	Aliens	3.94	Cameron, James	1986	USA	Science Fiction-Horror-Action
-552	2	Hannah and Her Sisters	40.61	Allen, Woody	1986	USA	Drama-Comedy-Romance
-553	2	Down by Law	3.6	Jarmusch, Jim	1986	USA	Comedy
-554	2	Fly, The	32.18	Cronenberg, David	1986	USA	Horror
-555	2	Ferris Bueller's Day Off	4.92	Hughes, John	1986	USA	Comedy
-556	2	Wings of Desire	149.67	Wenders, Wim	1987	West Germany-France	Fantasy-Drama
-557	2	Where is the Friend's Home?	2.64	Kiarostami, Abbas	1987	Iran	Drama
-558	2	Dead, The	81.59	Huston, John	1987	USA	Drama
-559	2	Withnail & I	5.15	Robinson, Bruce	1987	UK	Drama-Comedy
-560	2	Full Metal Jacket	127	Kubrick, Stanley	1987	USA	War-Drama-Action
-561	2	Evil Dead II	5.63	Raimi, Sam	1987	USA	Horror
-562	2	Raising Arizona	17.3	Coen, Joel & Ethan Coen	1987	USA	Comedy
-563	2	Yeelen	51.81	Cissé, Souleymane	1987	Mali-Burkina Faso-France-West Germany-Japan	Drama-Fantasy
-564	2	Short Film About Killing, A	14.68	Kieslowski, Krzysztof	1987	Poland	Drama-Crime
-565	2	Robocop	57.72	Verhoeven, Paul	1987	USA	Science Fiction-Crime
-566	2	Emperor's Naked Army Marches On, The	1.09	Hara, Kazuo	1987	Japan	Documentary-War-Political
-567	2	Red Sorghum	74.13	Zhang Yimou	1987	China	Drama
-568	2	Last Emperor, The	54.03	Bertolucci, Bernardo	1987	China-Italy-UK-France	History-Biography
-569	2	Princess Bride, The	33.67	Reiner, Rob	1987	USA	Comedy-Family-Adventure
-570	2	Au revoir les enfants	43.49	Malle, Louis	1987	France	War-Drama
-571	2	Hôtel Terminus	17.48	Ophüls, Marcel	1987	USA	Documentary-History-War
-572	2	Dust in the Wind	15.47	Hou Hsiao-hsien	1987	Taiwan	Romance-Drama
-573	2	Near Dark	16.88	Bigelow, Kathryn	1987	USA	Horror-Drama-Thriller
-574	2	Dekalog	108.2	Kieslowski, Krzysztof	1988	Poland	Drama
-575	2	Thin Blue Line, The	17.69	Morris, Errol	1988	USA	Documentary
-576	2	Distant Voices, Still Lives	8.56	Davies, Terence	1988	UK	Drama
-577	2	My Neighbour Totoro	46.01	Miyazaki, Hayao	1988	Japan	Fantasy-Family-Animated
-578	2	Cinema Paradiso	94.84	Tornatore, Giuseppe	1988	Italy-France	Drama-Comedy
-579	2	Landscape in the Mist	28.49	Angelopoulos, Theo	1988	Greece-Italy-France	Drama
-580	2	Dead Ringers	41.5	Cronenberg, David	1988	Canada	Thriller-Horror-Drama
-581	2	Die Hard	7.74	McTiernan, John	1988	USA	Thriller-Action
-582	2	Last Temptation of Christ, The	1.49	Scorsese, Martin	1988	USA-Canada	Religious-Drama
-583	2	Women on the Verge of a Nervous Breakdown	2.11	Almodóvar, Pedro	1988	Spain	Drama-Comedy
-584	2	Akira	32.64	Otomo, Katsuhiro	1988	Japan	Animated-Science Fiction-Action
-585	2	Grave of the Fireflies	73.99	Takahata, Isao	1988	Japan	Animated-War-Drama
-586	2	Tale of the Wind, A	1.23	Ivens, Joris	1988	France-UK-West Germany-Netherlands	Documentary
-587	2	Midnight Run	59.62	Brest, Martin	1988	USA	Crime-Comedy
-588	2	They Live	111.52	Carpenter, John	1988	USA	Science Fiction-Thriller-Action
-589	2	Do the Right Thing	103.94	Lee, Spike	1989	USA	Drama-Comedy
-590	2	City of Sadness, A	17.2	Hou Hsiao-hsien	1989	Taiwan-Hong Kong	Political-Drama
-591	2	Crimes and Misdemeanors	5.12	Allen, Woody	1989	USA	Drama-Comedy
-592	2	Killer, The	172.09	Woo, John	1989	Hong Kong	Thriller-Crime-Action
-593	2	When Harry Met Sally...	18.5	Reiner, Rob	1989	USA	Romance-Comedy
-594	2	Time of the Gypsies	5.57	Kusturica, Emir	1989	Yugoslavia	Drama
-595	2	Cook, the Thief, His Wife & Her Lover, The	0.62	Greenaway, Peter	1989	UK-France	Drama
-596	2	Elephant	77.58	Clarke, Alan	1989	UK	Short-Crime-Drama
-597	2	Dead Poets Society	4.55	Weir, Peter	1989	USA	Drama
-598	2	GoodFellas	52.56	Scorsese, Martin	1990	USA	Drama-Crime
-599	2	Close-Up	11	Kiarostami, Abbas	1990	Iran	Documentary-Drama-Crime
-600	2	Days of Being Wild	50	Wong Kar-wai	1990	Hong Kong	Drama
-601	2	Nouvelle vague	45.56	Godard, Jean-Luc	1990	France-Switzerland	Drama
-602	2	Edward Scissorhands	58.95	Burton, Tim	1990	USA	Romance-Fantasy
-603	2	Miller's Crossing	24.24	Coen, Joel & Ethan Coen	1990	USA	Crime
-604	2	Angel at My Table, An	7.11	Campion, Jane	1990	New Zealand-Australia-UK-USA	Drama-Biography
-605	2	Wild at Heart	12.73	Lynch, David	1990	USA	Romance-Drama-Crime
-606	2	Match Factory Girl, The	135.37	Kaurismäki, Aki	1990	Finland-Sweden	Drama-Comedy
-607	2	Godfather Part III, The	57.51	Coppola, Francis Ford	1990	USA	Drama-Crime
-608	2	Akira Kurosawa's Dreams	150.53	Kurosawa, Akira	1990	USA	Fantasy
-609	2	Brighter Summer Day, A	0.17	Yang, Edward	1991	Taiwan	Crime-Romance-Drama
-610	2	Silence of the Lambs, The	11.04	Demme, Jonathan	1991	USA	Thriller-Mystery
-611	2	Double Life of Veronique, The	27.93	Kieslowski, Krzysztof	1991	France	Fantasy-Drama-Romance
-612	2	Raise the Red Lantern	15.98	Zhang Yimou	1991	China-Hong Kong-Taiwan	Drama
-613	2	Barton Fink	31.56	Coen, Joel & Ethan Coen	1991	USA	Drama-Comedy
-614	2	My Own Private Idaho	61.08	Van Sant, Gus	1991	USA	Drama
-615	2	Amants du Pont-Neuf, Les	142.97	Carax, Leos	1991	France	Drama
-616	2	Belle noiseuse, La	27.13	Rivette, Jacques	1991	France	Drama
-617	2	Terminator 2: Judgment Day	112.27	Cameron, James	1991	USA	Science Fiction-Action
-618	2	JFK	49.91	Stone, Oliver	1991	USA	History-Drama
-619	2	Thelma & Louise	83.62	Scott, Ridley	1991	USA	Drama-Comedy-Adventure
-620	2	Van Gogh	15.85	Pialat, Maurice	1991	France	Drama-Biography
-621	2	Unforgiven	23.45	Eastwood, Clint	1992	USA	Western
-622	2	Reservoir Dogs	93.73	Tarantino, Quentin	1992	USA	Drama-Crime-Thriller
-623	2	Quince Tree of the Sun	78.63	Erice, Victor	1992	Spain	Documentary-Biography-Drama
-624	2	And Life Goes On...	82.23	Kiarostami, Abbas	1992	Iran	Drama-Documentary
-625	2	Orlando	6.31	Potter, Sally	1992	UK-Russia-France-Italy-Netherlands	History-Drama-Fantasy
-626	2	Long Day Closes, The	88.59	Davies, Terence	1992	UK	Drama
-627	2	Twin Peaks: Fire Walk with Me	6.26	Lynch, David	1992	USA	Drama-Horror-Mystery
-628	2	Story of Qiu Ju, The	16.25	Zhang Yimou	1992	China-Hong Kong	Drama
-629	2	Husbands and Wives	84.66	Allen, Woody	1992	USA	Drama
-630	2	Piano, The	0.22	Campion, Jane	1993	New Zealand-Australia-France	History-Drama-Romance
-631	2	Schindler's List	3.78	Spielberg, Steven	1993	USA	War-History-Drama
-632	2	Groundhog Day	30.52	Ramis, Harold	1993	USA	Romance-Fantasy-Comedy
-633	2	Three Colours: Blue	15.08	Kieslowski, Krzysztof	1993	France-Poland-Switzerland	Drama
-634	2	Puppetmaster, The	63.86	Hou Hsiao-hsien	1993	Taiwan	Drama-Biography
-635	2	Short Cuts	8.76	Altman, Robert	1993	USA	Drama
-636	2	Naked	16.19	Leigh, Mike	1993	UK	Drama
-637	2	Farewell, My Concubine	100.73	Chen Kaige	1993	China-Hong Kong	History-Drama-Romance
-638	2	Age of Innocence, The	8.35	Scorsese, Martin	1993	USA	Romance-Drama
-639	2	Dazed and Confused	25.99	Linklater, Richard	1993	USA	Drama
-640	2	Abraham's Valley	166.02	Oliveira, Manoel de	1993	Portugal-France-Switzerland	Drama
-641	2	Blue	6.87	Jarman, Derek	1993	UK	Documentary-Drama
-642	2	Jurassic Park	0.09	Spielberg, Steven	1993	USA	Science Fiction-Adventure-Action
-643	2	Nightmare Before Christmas, The	6.47	Selick, Henry	1993	USA	Family-Fantasy-Animated
-644	2	Pulp Fiction	64.93	Tarantino, Quentin	1994	USA	Drama-Crime-Comedy
-645	2	Sátántangó	5.75	Tarr, Béla	1994	Hungary-Germany-Switzerland	Drama-Comedy-Mystery
-646	2	Chungking Express	30.87	Wong Kar-wai	1994	Hong Kong	Romance-Drama
-647	2	Three Colours: Red	1.26	Kieslowski, Krzysztof	1994	France-Switzerland-Poland	Drama
-648	2	Through the Olive Trees	105.64	Kiarostami, Abbas	1994	Iran-France	Drama
-649	2	Shawshank Redemption, The	118.01	Darabont, Frank	1994	USA	Prison-Drama
-650	2	Hoop Dreams	49.84	James, Steve	1994	USA	Documentary-Drama-Sport
-651	2	Forrest Gump	45.49	Zemeckis, Robert	1994	USA	Drama-Comedy
-652	2	Vive L'Amour	31.64	Tsai Ming-liang	1994	Taiwan	Drama
-653	2	Crumb	9.93	Zwigoff, Terry	1994	USA	Documentary-Biography
-654	2	Burnt by the Sun	4.51	Mikhalkov, Nikita	1994	Russia-France	History-Drama
-655	2	Léon	20.64	Besson, Luc	1994	France	Thriller-Crime
-656	2	To Live	42.65	Zhang Yimou	1994	China-Hong Kong	Drama
-657	2	Ed Wood	5.96	Burton, Tim	1994	USA	Drama-Comedy-Biography
-658	2	Exotica	90.89	Egoyan, Atom	1994	Canada	Drama
-659	2	Underground	42.24	Kusturica, Emir	1995	France-Germany-Hungary	War-Drama-Comedy
-660	2	Heat	51.55	Mann, Michael	1995	USA	Thriller-Drama-Crime
-661	2	Toy Story	1.43	Lasseter, John	1995	USA	Fantasy-Comedy-Family-Animated
-662	2	Safe	35.06	Haynes, Todd	1995	USA	Drama
-663	2	Dead Man	2.14	Jarmusch, Jim	1995	USA-Germany	Western-Drama
-664	2	Casino	49.07	Scorsese, Martin	1995	USA	Drama-Crime
-665	2	Haine, La	5.43	Kassovitz, Mathieu	1995	France	Drama
-666	2	Se7en	34.7	Fincher, David	1995	USA	Thriller-Mystery-Drama
-667	2	Bridges of Madison County, The	44.5	Eastwood, Clint	1995	USA	Romance-Drama
-668	2	Usual Suspects, The	14.98	Singer, Bryan	1995	USA	Thriller-Mystery-Crime
-669	2	Before Sunrise	35.9	Linklater, Richard	1995	USA	Romance-Drama
-670	2	Fargo	3.86	Coen, Joel & Ethan Coen	1996	USA	Drama-Crime-Comedy
-671	2	Breaking the Waves	6.49	von Trier, Lars	1996	Denmark-Sweden-France-Netherlands-Norway-Iceland-Spain	Romance-Drama
-672	2	Moment of Innocence, A	18.45	Makhmalbaf, Mohsen	1996	Iran-France	Drama-Comedy
-673	2	Trainspotting	0.54	Boyle, Danny	1996	UK	Drama-Comedy
-674	2	Secrets & Lies	13.39	Leigh, Mike	1996	UK	Drama-Comedy
-675	2	Crash	33.17	Cronenberg, David	1996	Canada	Drama
-676	2	Lone Star	61.18	Sayles, John	1996	USA	Mystery-Drama
-677	2	Lost Highway	8.69	Lynch, David	1997	USA-France	Mystery-Drama-Thriller
-678	2	Happy Together	5.58	Wong Kar-wai	1997	Hong Kong	Romance-Drama
-679	2	Taste of Cherry	65.65	Kiarostami, Abbas	1997	Iran	Drama
-680	2	Boogie Nights	10.55	Anderson, Paul Thomas	1997	USA	Drama
-681	2	Hana-Bi	146.69	Kitano, Takeshi	1997	Japan	Drama-Crime
-682	2	Funny Games	33.04	Haneke, Michael	1997	Austria	Thriller-Drama
-683	2	Mother and Son	14.13	Sokurov, Aleksandr	1997	Russia-Germany	Drama
-684	2	Gummo	26.3	Korine, Harmony	1997	USA	Drama
-685	2	Titanic	95.6	Cameron, James	1997	USA	Romance-History-Action-Disaster
-686	2	L.A. Confidential	3.83	Hanson, Curtis	1997	USA	Thriller-Crime
-687	2	Starship Troopers	5.95	Verhoeven, Paul	1997	USA	Science Fiction-Action-Adventure-War
-688	2	Sweet Hereafter, The	1.15	Egoyan, Atom	1997	Canada	Drama
-689	2	Princess Mononoke	60.39	Miyazaki, Hayao	1997	Japan	Animated-Adventure-Fantasy
-690	2	River, The	105.86	Tsai Ming-liang	1997	Taiwan	Drama
-691	2	Ice Storm, The	29.99	Lee, Ang	1997	USA	Drama-Comedy
-692	2	Pickpocket	6.49	Jia Zhangke	1997	China-Hong Kong	Drama
-693	2	Histoire(s) du cinéma	9.68	Godard, Jean-Luc	1998	France	Documentary
-694	2	Thin Red Line, The	36.43	Malick, Terrence	1998	USA	War-Drama-Action
-695	2	Big Lebowski, The	34.98	Coen, Joel & Ethan Coen	1998	USA-UK	Comedy-Crime
-696	2	Festen	65	Vinterberg, Thomas	1998	Denmark	Drama
-697	2	Flowers of Shanghai	156.97	Hou Hsiao-hsien	1998	Taiwan	Drama
-698	2	Rushmore	1.18	Anderson, Wes	1998	USA	Comedy
-699	2	After Life	25.77	Koreeda, Hirokazu	1998	Japan	Drama-Fantasy
-700	2	Saving Private Ryan	1.79	Spielberg, Steven	1998	USA	War-Drama-Action
-701	2	Idiots, The	15.77	von Trier, Lars	1998	Denmark-Spain-Sweden-France-Netherlands-Italy	Drama-Comedy
-702	2	Central Station	27.84	Salles, Walter	1998	Brazil-France-Spain-Japan	Drama
-703	2	Beau travail	22.26	Denis, Claire	1999	France	Drama
-704	2	Magnolia	3.47	Anderson, Paul Thomas	1999	USA	Drama
-705	2	Matrix, The	114.7	Wachowski, Lana & Lilly Wachowski	1999	USA-Australia	Science Fiction-Action-Adventure
-706	2	All About My Mother	17.43	Almodóvar, Pedro	1999	Spain-France	Drama-Comedy
-707	2	Eyes Wide Shut	23.85	Kubrick, Stanley	1999	USA-UK	Thriller-Drama
-708	2	Fight Club	6.8	Fincher, David	1999	USA-Germany	Drama
-709	2	Wind Will Carry Us, The	14.52	Kiarostami, Abbas	1999	France-Iran	Drama
-710	2	Rosetta	166.07	Dardenne, Jean-Pierre & Luc Dardenne	1999	Belgium-France	Drama
-711	2	American Beauty	139.87	Mendes, Sam	1999	USA	Drama-Comedy
-712	2	Topsy-Turvy	42.94	Leigh, Mike	1999	UK-USA	Musical-Drama-Comedy
-713	2	Sicilia!	10.76	Straub, Jean-Marie & Danièle Huillet	1999	Italy-France-Germany	Drama
-714	2	Outer Space	89.66	Tscherkassky, Peter	1999	Austria	Animated-Short
-715	2	Being John Malkovich	82.98	Jonze, Spike	1999	USA	Fantasy-Comedy-Science Fiction
-716	2	Humanité, L'	45.83	Dumont, Bruno	1999	France	Drama
-717	2	In the Mood for Love	17.8	Wong Kar-wai	2000	Hong Kong-France	Romance-Drama
-718	2	Yi yi	31.05	Yang, Edward	2000	Taiwan-Japan	Drama
-719	2	Werckmeister Harmonies	19.41	Tarr, Béla	2000	Hungary-Germany-France-Switzerland-Italy	Drama
-720	2	Gleaners & I, The	25.25	Varda, Agnès	2000	France	Documentary
-721	2	Crouching Tiger, Hidden Dragon	12.33	Lee, Ang	2000	Taiwan-Hong Kong-USA-China	Drama-Adventure-Action
-722	2	Platform	24.9	Jia Zhangke	2000	China-Hong Kong-Japan-France	Drama-History
-723	2	In Vanda's Room	99.44	Costa, Pedro	2000	Portugal-Germany-Switzerland-Italy	Drama
-724	2	Songs from the Second Floor	5.73	Andersson, Roy	2000	Sweden-France-Denmark-Norway-Germany	Drama
-725	2	Memento	7.42	Nolan, Christopher	2000	USA	Thriller-Mystery-Drama
-726	2	Dancer in the Dark	11.62	von Trier, Lars	2000	Denmark-France-Sweden-Italy-Germany-Norway-Netherlands-Iceland-Finland-UK-USA	Musical-Drama
-727	2	Requiem for a Dream	4.48	Aronofsky, Darren	2000	USA	Drama
-728	2	Code Unknown	35.77	Haneke, Michael	2000	France-Germany-Romania	Drama
-729	2	As I Was Moving Ahead Occasionally I Saw Brief Glimpses of Beauty	135.62	Mekas, Jonas	2000	USA	Documentary-Biography
-730	2	Mulholland Dr.	3.33	Lynch, David	2001	France-USA	Mystery-Drama-Thriller
-731	2	Spirited Away	178.04	Miyazaki, Hayao	2001	Japan	Animated-Adventure-Fantasy
-732	2	A.I. Artificial Intelligence	8.63	Spielberg, Steven	2001	USA	Science Fiction-Drama
-733	2	Amélie	183.34	Jeunet, Jean-Pierre	2001	France-Germany	Romance-Comedy
-734	2	Royal Tenenbaums, The	46.2	Anderson, Wes	2001	USA	Drama-Comedy
-735	2	Lord of the Rings: The Fellowship of the Ring, The	109.32	Jackson, Peter	2001	New Zealand-USA	Fantasy-Adventure
-736	2	Y tu mamá también	51.87	Cuarón, Alfonso	2001	Mexico	Drama-Comedy
-737	2	Moulin Rouge!	147.69	Luhrmann, Baz	2001	Australia-USA	Drama-Musical-Romance
-738	2	Piano Teacher, The	23.97	Haneke, Michael	2001	Austria-France-Germany	Drama
-739	2	Ciénaga, La	3.04	Martel, Lucrecia	2001	Argentina-France-Spain	Drama-Comedy
-740	2	Donnie Darko	25.05	Kelly, Richard	2001	USA	Fantasy-Drama
-741	2	In Praise of Love	86.22	Godard, Jean-Luc	2001	France	Drama
-742	2	City of God	13.87	Meirelles, Fernando & Kátia Lund	2002	Brazil-Germany-France	Drama-Crime-Action
-743	2	Russian Ark	61.04	Sokurov, Aleksandr	2002	Russia-Germany-Japan-Canada-Finland-Denmark	Fantasy-Drama
-744	2	Talk to Her	0.91	Almodóvar, Pedro	2002	Spain	Romance-Drama
-745	2	Punch-Drunk Love	45.29	Anderson, Paul Thomas	2002	USA	Romance-Drama-Comedy
-746	2	Blissfully Yours	57.14	Weerasethakul, Apichatpong	2002	Thailand-France	Romance-Drama
-747	2	Son, The	78.67	Dardenne, Jean-Pierre & Luc Dardenne	2002	Belgium-France	Drama
-748	2	Distant	134.94	Ceylan, Nuri Bilge	2002	Turkey-Netherlands	Drama
-749	2	Ten	36	Kiarostami, Abbas	2002	France-Iran	Drama
-750	2	Oasis	70.24	Lee Chang-dong	2002	South Korea	Romance-Drama
-751	2	Tie Xi Qu: West of the Tracks	138.13	Wang Bing	2003	China	Documentary
-752	2	Dogville	113.08	von Trier, Lars	2003	Denmark-Sweden-France-UK-Germany-Finland-Italy-Netherlands-Norway	Drama
-753	2	Elephant	10.81	Van Sant, Gus	2003	USA	Drama
-754	2	Oldboy	1.05	Park Chan-wook	2003	South Korea	Action-Mystery-Thriller
-755	2	Lost in Translation	40.68	Coppola, Sofia	2003	USA-Japan	Romance-Drama-Comedy
-756	2	Goodbye, Dragon Inn	25.87	Tsai Ming-liang	2003	Taiwan	Drama-Comedy
-757	2	Memories of Murder	151.13	Bong Joon-ho	2003	South Korea	Crime-Drama-Mystery
-758	2	Return, The	110.64	Zvyagintsev, Andrey	2003	Russia	Drama
-759	2	Lord of the Rings: The Return of the King, The	34.02	Jackson, Peter	2003	New Zealand-USA	Fantasy-Adventure-Action
-760	2	Spring, Summer, Autumn, Winter… and Spring	48.02	Kim Ki-duk	2003	South Korea-Germany	Drama
-761	2	Finding Nemo	7.22	Stanton, Andrew & Lee Unkrich	2003	USA	Family-Animated-Adventure
-762	2	Kill Bill Vol. 1	54.83	Tarantino, Quentin	2003	USA	Crime-Action
-763	2	Eternal Sunshine of the Spotless Mind	46.76	Gondry, Michel	2004	USA	Romance-Drama-Comedy
-764	2	Tropical Malady	135.4	Weerasethakul, Apichatpong	2004	Thailand-France-Germany-Italy	Drama-Fantasy-Romance
-765	2	Before Sunset	8.82	Linklater, Richard	2004	USA	Romance-Drama
-766	2	Million Dollar Baby	37.11	Eastwood, Clint	2004	USA	Drama
-767	2	Intruder, The	66.56	Denis, Claire	2004	France-South Korea	Drama
-768	2	2046	85.81	Wong Kar-wai	2004	Hong Kong-China-France-Italy-Germany	Science Fiction-Drama-Romance
-769	2	Caché	7.83	Haneke, Michael	2005	France-Austria-Germany-Italy-USA	Thriller-Drama
-770	2	Brokeback Mountain	134.34	Lee, Ang	2005	USA-Canada	Romance-Drama
-771	2	Death of Mr. Lazarescu, The	66.94	Puiu, Cristi	2005	Romania	Drama
-772	2	Grizzly Man	76.26	Herzog, Werner	2005	USA	Documentary
-773	2	History of Violence, A	23.66	Cronenberg, David	2005	USA-Germany	Crime-Drama-Mystery
-774	2	New World, The	20.96	Malick, Terrence	2005	USA	Drama-History-Romance
-775	2	Lives of Others, The	40.19	von Donnersmarck, Florian Henckel	2006	Germany	Drama
-776	2	Inland Empire	159.62	Lynch, David	2006	USA-France-Poland	Drama-Mystery-Thriller
-777	2	Colossal Youth	87.86	Costa, Pedro	2006	France-Portugal-Switzerland	Drama
-778	2	Pan's Labyrinth	10.3	del Toro, Guillermo	2006	Spain-Mexico-USA	Drama-Fantasy-Thriller
-779	2	Children of Men	49.54	Cuarón, Alfonso	2006	USA-UK	Drama-Science Fiction-Thriller
-780	2	Still Life	98.33	Jia Zhangke	2006	China-Hong Kong	Drama-Romance
-781	2	Syndromes and a Century	10.07	Weerasethakul, Apichatpong	2006	Thailand-France-Austria-Netherlands	Drama
-782	2	Host, The	0.11	Bong Joon-ho	2006	South Korea-Japan	Action-Comedy-Horror
-783	2	There Will Be Blood	117.9	Anderson, Paul Thomas	2007	USA	Drama
-784	2	No Country for Old Men	19.93	Coen, Joel & Ethan Coen	2007	USA	Crime-Drama
-785	2	Silent Light	3.3	Reygadas, Carlos	2007	Mexico-France-Netherlands	Drama
-786	2	Zodiac	91.68	Fincher, David	2007	USA	Crime-Drama-Thriller
-787	2	4 Months, 3 Weeks and 2 Days	61.44	Mungiu, Cristian	2007	Romania-Netherlands-France-Germany	Drama
-788	2	WALL-E	64.08	Stanton, Andrew	2008	USA	Animated-Adventure-Science Fiction
-789	2	Synecdoche, New York	1.47	Kaufman, Charlie	2008	USA	Drama
-790	2	Dark Knight, The	38.63	Nolan, Christopher	2008	USA-UK	Action-Crime-Thriller
-791	2	Headless Woman, The	82.71	Martel, Lucrecia	2008	Argentina-Spain-France-Italy	Drama-Mystery-Thriller
-792	2	Hunger	34.23	McQueen, Steve	2008	UK-Ireland	Drama-History
-793	2	White Ribbon, The	65.44	Haneke, Michael	2009	Germany-Austria-France-Italy	Crime-Drama-Mystery
-794	2	Avatar	26.83	Cameron, James	2009	USA-UK	Action-Science Fiction-Adventure
-795	2	Uncle Boonmee Who Can Recall His Past Lives	106.58	Weerasethakul, Apichatpong	2010	Thailand-UK-France-Germany-Spain-Netherlands	Drama-Fantasy
-796	2	Nostalgia for the Light	44.21	Guzmán, Patricio	2010	France-Germany-Chile-Spain-USA	Documentary-Drama
-797	2	Tree of Life, The	5.49	Malick, Terrence	2011	USA	Drama
-798	2	Turin Horse, The	41.68	Tarr, Béla	2011	Hungary-France-Germany-Switzerland-USA	Drama
-799	2	Melancholia	28.69	von Trier, Lars	2011	Denmark-Sweden-France-Germany	Drama-Science Fiction
-800	2	Separation, A	3.14	Farhadi, Asghar	2011	Iran	Drama
+1	2	Juurakon Hulda	82.92	Valentin Vaala	1937	Finland	Drama
+2	2	Varastettu kuolema	161.32	Nyrki Tapiovaara	1938	Finland	Drama
+3	2	Rashomon	13.89	Kurosawa, Akira	1950	Japan	Drama-Crime
+4	2	Sunset Blvd.	122.3	Wilder, Billy	1950	USA	Drama
+5	2	Strangers on a Train	36.16	Hitchcock, Alfred	1951	USA	Thriller-Drama-Crime
+6	2	The African Queen	64.15	Huston, John	1951	USA	Romance-Adventure
+7	2	A Place in the Sun	18.46	Stevens, George	1951	USA	Romance-Drama
+8	2	Singin' in the Rain	36.88	Donen, Stanley/Gene Kelly	1952	USA	Musical-Dance-Comedy
+9	2	Ikiru	192.52	Kurosawa, Akira	1952	Japan	Drama
+10	2	Valkoinen peura	2.76	Erik Blomberg	1952	Finland	Thriller-Action
+11	2	Gentlemen Prefer Blondes	102.91	Hawks, Howard	1953	USA	Romance-Musical-Comedy
+12	2	Seven Samurai	84.97	Kurosawa, Akira	1954	Japan	Drama-Action-History
+13	2	Rear Window	12.91	Hitchcock, Alfred	1954	USA	Thriller-Mystery
+14	2	Strada, La	88.26	Fellini, Federico	1954	Italy	Drama
+15	2	East of Eden	8.93	Kazan, Elia	1955	USA	Drama
+16	2	Rebel Without a Cause	5.31	Ray, Nicholas	1955	USA	Drama
+17	2	Tuntematon sotilas	17.36	Edvin Laine	1955	Finland	War
+18	2	Elokuu	0.19	Matti Kassila	1956	Finland	Drama
+19	2	The Seventh Seal	83.08	Bergman, Ingmar	1957	Sweden	Fantasy-Drama
+20	2	Sweet Smell of Success	19.51	Mackendrick, Alexander	1957	USA	Drama
+21	2	Nights of Cabiria	111.53	Fellini, Federico	1957	Italy-France	Drama
+22	2	Paths of Glory	44.51	Kubrick, Stanley	1957	USA	War-Drama
+23	2	Throne of Blood	4.29	Kurosawa, Akira	1957	Japan	War-Drama
+24	2	An Affair to Remember	5.92	McCarey, Leo	1957	USA	Romance-Drama
+25	2	The Bridge on the River Kwai	55.09	Lean, David	1957	UK	War-Drama-Action
+26	2	Some Like it Hot	6.33	Wilder, Billy	1959	USA	Romance-Crime-Comedy
+27	2	Rio Bravo	105.46	Hawks, Howard	1959	USA	Western
+28	2	Ben-Hur	38.97	Wyler, William	1959	USA	Religious-History
+29	2	Psycho	125.33	Hitchcock, Alfred	1960	USA	Thriller-Horror
+30	2	Spartacus	60.3	Kubrick, Stanley	1960	USA	Adventure-History-Drama
+31	2	Komisario Palmun erehdys	38.78	Matti Kassila	1960	Finland	Crime-Drama
+32	2	Yojimbo	0.68	Kurosawa, Akira	1961	Japan	Drama-Action
+33	2	Breakfast at Tiffany's	35.71	Edwards, Blake	1961	USA	Romance-Drama-Comedy
+34	2	Kaasua, komisario Palmu	7.34	Matti Kassila	1961	Finland	Crime
+35	2	The Man Who Shot Liberty Valance	46.85	Ford, John	1962	USA	Western
+36	2	To Kill a Mockingbird	30.22	Mulligan, Robert	1962	USA	Drama
+37	2	Hatari!	28.43	Hawks, Howard	1962	USA	Drama
+38	2	The Manchurian Candidate	25.82	Frankenheimer, John	1962	USA	Political-Thriller-Drama
+39	2	Ride the High Country	58.62	Peckinpah, Sam	1962	USA	Western
+40	2	Pojat	3.25	Mikko Niskanen	1962	Finland	Drama
+41	2	Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb	99.92	Kubrick, Stanley	1964	UK-USA	War-Comedy
+42	2	A Hard Day's Night	27.63	Lester, Richard	1964	UK	Musical-Comedy
+43	2	The Good, the Bad and the Ugly	12.5	Leone, Sergio	1966	Italy-Spain	Western-Action
+44	2	Who's Afraid of Virginia Woolf?	38.78	Nichols, Mike	1966	USA	Drama
+45	2	Käpy selän alla	97.13	Mikko Niskanen	1966	Finland	Drama
+46	2	The Graduate	27.58	Nichols, Mike	1967	USA	Romance-Drama-Comedy
+47	2	Bonnie and Clyde	2.76	Penn, Arthur	1967	USA	Drama-Crime-Biography
+48	2	2001: A Space Odyssey	17.36	Kubrick, Stanley	1968	UK-USA	Science Fiction
+49	2	Once Upon a Time in the West	14.4	Leone, Sergio	1968	Italy-USA	Western
+50	2	Rosemary's Baby	37.22	Polanski, Roman	1968	USA	Thriller-Horror-Drama
+51	2	Night of the Living Dead	21.9	Romero, George A.	1968	USA	Horror
+52	2	The Wild Bunch,	0.66	Peckinpah, Sam	1969	USA	Western
+53	2	Easy Rider	69.02	Hopper, Dennis	1969	USA	Drama
+54	2	Ruusujen aika	24.29	Risto Jarva	1969	Finland	Drama
+55	2	M*A*S*H	17.5	Altman, Robert	1970	USA	War-Comedy
+56	2	Naisenkuvia	136.06	Jörn Donner	1970	Finland	Drama
+57	2	Dirty Harry	166	Siegel, Don	1971	USA	Crime-Action
+58	2	Solaris	96.76	Tarkovsky, Andrei	1972	USSR	Science Fiction-Drama-Mystery
+59	2	Last Tango in Paris	33.7	Bertolucci, Bernardo	1972	France-Italy	Romance-Drama-Adult
+60	2	Fellini's Roma	82.92	Fellini, Federico	1972	Italy	Drama-Comedy
+61	2	Kahdeksan surmanluotia	14.4	Mikko Niskanen	1972	Finland	Thriller-Action
+62	2	Kun taivas putoaa...	166.71	Risto Jarva	1972	Finland	Drama
+63	2	Long Goodbye, The	3.25	Altman, Robert	1973	USA	Drama-Crime
+64	2	Pat Garrett and Billy the Kid	8.47	Peckinpah, Sam	1973	USA	Western
+65	2	Sensuela	69.02	Teuvo Tulio	1973	Finland	Erotic
+66	2	Maa on syntinen laulu	166	Rauni Mollberg	1973	Finland	Drama
+67	2	Yhden miehen sota	3.79	Risto Jarva	1973	Finland	War
+68	2	Bring Me the Head of Alfredo Garcia	14.7	Peckinpah, Sam	1974	USA	Crime-Thriller-Action
+69	2	One Flew Over the Cuckoo's Nest	0.19	Forman, Milos	1975	USA	Drama
+70	2	Monty Python and the Holy Grail	4.28	Gilliam, Terry/Terry Jones	1975	UK	History-Comedy
+71	2	Taxi Driver	42.05	Scorsese, Martin	1976	USA	Drama-Crime
+72	2	The Outlaw Josey Wales	103.31	Eastwood, Clint	1976	USA	Western-Drama
+73	2	Loma	4.28	Risto Jarva	1976	Finland	Comedy
+74	2	Star Wars	66.77	Lucas, George	1977	USA	Science Fiction-Fantasy-Adventure
+75	2	Close Encounters of the Third Kind	72.74	Spielberg, Steven	1977	USA	Science Fiction-Adventure
+76	2	Jäniksen vuosi	0.66	Risto Jarva	1977	Finland	Comedy
+77	2	The Deer Hunter	161.32	Cimino, Michael	1978	USA	War-Drama
+78	2	Apocalypse Now	13.53	Coppola, Francis Ford	1979	USA	War-Drama-Adventure
+79	2	Stalker	7.34	Tarkovsky, Andrei	1979	USSR	Science Fiction-Mystery
+80	2	Alien	9.64	Scott, Ridley	1979	USA	Science Fiction-Horror
+81	2	Monty Python's Life of Brian	4.79	Jones, Terry	1979	UK	Religious-Comedy
+82	2	Raging Bull	166.71	Scorsese, Martin	1980	USA	Sport-Drama-Biography
+83	2	The Shining	97.13	Kubrick, Stanley	1980	USA	Horror
+84	2	The Empire Strikes Back	167.68	Kershner, Irvin	1980	USA	Science Fiction-Fantasy-Adventure
+85	2	Kagemusha	136.06	Kurosawa, Akira	1980	Japan	War-Drama-History
+86	2	Täältä tullaan elämä!	72.74	Tapio Suominen	1980	Finland	Drama
+87	2	Raiders of the Lost Ark	6.97	Spielberg, Steven	1981	USA	Adventure-Action
+88	2	Mad Max 2	56.65	Miller, George	1981	Australia	Science Fiction-Action-Adventure
+89	2	Excalibur	16.99	Boorman, John	1981	UK	Fantasy-Adventure-Action
+90	2	Das Boot	24.29	Petersen, Wolfgang	1981	West Germany	Action-Adventure-Drama
+91	2	Reds	12.11	Beatty, Warren	1981	USA	History-Drama-Biography
+92	2	Blade Runner	3.79	Scott, Ridley	1982	USA	Science Fiction-Thriller-Drama
+93	2	Fanny and Alexander	43.33	Bergman, Ingmar	1982	Sweden	Drama
+94	2	E.T. The Extra-Terrestrial	125.49	Spielberg, Steven	1982	USA	Science Fiction-Family
+95	2	The Thing	46.87	Carpenter, John	1982	USA	Science Fiction-Action-Horror
+96	2	Arvottomat	33.7	Mika Kaurismäki	1982	Finland	Drama
+97	2	Scarface	22.71	De Palma, Brian	1983	USA	Drama-Crime
+98	2	Once Upon a Time in America	5.59	Leone, Sergio	1984	Italy-USA	Drama-Crime
+99	2	Paris, Texas	71.21	Wenders, Wim	1984	USA	Drama
+100	2	This is Spinal Tap	17.71	Reiner, Rob	1984	USA	Comedy-Musical
+101	2	Amadeus	38.18	Forman, Milos	1984	USA	Musical-Biography-Drama
+102	2	The Terminator	23.74	Cameron, James	1984	USA	Science Fiction-Action
+103	2	Brazil	19.3	Gilliam, Terry	1985	UK	Science Fiction-Fantasy
+104	2	Ran	0.8	Kurosawa, Akira	1985	France-Japan	War-History-Drama
+105	2	Back to the Future	35.21	Zemeckis, Robert	1985	USA	Science Fiction-Comedy
+106	2	Calamari Union	17.5	Aki Kaurismäki	1985	Finland	Drama
+107	2	Tuntematon sotilas	96.76	Rauni Mollberg	1985	Finland	War
+108	2	Blue Velvet	102.42	Lynch, David	1986	USA	Mystery-Crime-Drama
+109	2	Varjoja paratiisissa	8.47	Aki Kaurismäki	1986	Finland	Drama
+110	2	Lumikuningatar	167.68	Päivi Hartzell	1986	Finland	Drama
+111	2	Full Metal Jacket	127	Kubrick, Stanley	1987	USA	War-Drama-Action
+112	2	Die Hard	7.74	McTiernan, John	1988	USA	Thriller-Action
+113	2	The Last Temptation of Christ	1.49	Scorsese, Martin	1988	USA-Canada	Religious-Drama
+114	2	Akira	32.64	Otomo, Katsuhiro	1988	Japan	Animated-Science Fiction-Action
+115	2	Katsastus	9.64	Matti Ijäs	1988	Finland	Drama
+116	2	Do the Right Thing	103.94	Lee, Spike	1989	USA	Drama-Comedy
+117	2	Cook, the Thief, His Wife & Her Lover, The	0.62	Greenaway, Peter	1989	UK-France	Drama
+118	2	Dead Poets Society	4.55	Weir, Peter	1989	USA	Drama
+119	2	GoodFellas	52.56	Scorsese, Martin	1990	USA	Drama-Crime
+120	2	Miller's Crossing	24.24	Coen, Joel & Ethan Coen	1990	USA	Crime
+121	2	Akira Kurosawa's Dreams	150.53	Kurosawa, Akira	1990	USA	Fantasy
+122	2	Tulitikkutehtaan tyttö	66.77	Aki Kaurismäki	1990	Finland	Drama
+123	2	Silence of the Lambs, The	11.04	Demme, Jonathan	1991	USA	Thriller-Mystery
+124	2	JFK	49.91	Stone, Oliver	1991	USA	History-Drama
+125	2	Thelma & Louise	83.62	Scott, Ridley	1991	USA	Drama-Comedy-Adventure
+126	2	Zombie ja kummitusjuna	43.33	Mika Kaurismäki	1991	Finland	Drama
+127	2	Unforgiven	23.45	Eastwood, Clint	1992	USA	Western
+128	2	Reservoir Dogs	93.73	Tarantino, Quentin	1992	USA	Drama-Crime-Thriller
+129	2	Tuhlaajapoika	103.31	Veikko Aaltonen	1992	Finland	Drama
+130	2	Takaisin ryssiin	12.11	Jari Halonen	1992	Finland	Drama
+131	2	The Piano	0.22	Campion, Jane	1993	New Zealand-Australia-France	History-Drama-Romance
+132	2	Schindler's List	3.78	Spielberg, Steven	1993	USA	War-History-Drama
+133	2	Groundhog Day	30.52	Ramis, Harold	1993	USA	Romance-Fantasy-Comedy
+134	2	Pulp Fiction	64.93	Tarantino, Quentin	1994	USA	Drama-Crime-Comedy
+135	2	Forrest Gump	45.49	Zemeckis, Robert	1994	USA	Drama-Comedy
+136	2	Léon	20.64	Besson, Luc	1994	France	Thriller-Crime
+137	2	Heat	51.55	Mann, Michael	1995	USA	Thriller-Drama-Crime
+138	2	Casino	49.07	Scorsese, Martin	1995	USA	Drama-Crime
+139	2	The Bridges of Madison County	44.5	Eastwood, Clint	1995	USA	Romance-Drama
+140	2	Usual Suspects, The	14.98	Singer, Bryan	1995	USA	Thriller-Mystery-Crime
+141	2	Fargo	3.86	Coen, Joel & Ethan Coen	1996	USA	Drama-Crime-Comedy
+142	2	Trainspotting	0.54	Boyle, Danny	1996	UK	Drama-Comedy
+143	2	Kauas pilvet karkaavat	27.58	Aki Kaurismäki	1996	Finland	Drama
+144	2	L.A. Confidential	3.83	Hanson, Curtis	1997	USA	Thriller-Crime
+145	2	Starship Troopers	5.95	Verhoeven, Paul	1997	USA	Science Fiction-Action-Adventure-War
+146	2	Neitoperho	42.05	Auli Mantila	1997	Finland	Drama
+147	2	Magnolia	3.47	Anderson, Paul Thomas	1999	USA	Drama
+148	2	The Matrix	114.7	Wachowski, Lana & Lilly Wachowski	1999	USA-Australia	Science Fiction-Action-Adventure
+149	2	Eyes Wide Shut	23.85	Kubrick, Stanley	1999	USA-UK	Thriller-Drama
+150	2	Fight Club	6.8	Fincher, David	1999	USA-Germany	Drama
+151	2	American Beauty	139.87	Mendes, Sam	1999	USA	Drama-Comedy
+152	2	Pitkä kuuma kesä	6.97	Perttu Leppä	1999	Finland	Drama
+153	2	Mulholland Dr.	3.33	Lynch, David	2001	France-USA	Mystery-Drama-Thriller
+154	2	A.I. Artificial Intelligence	8.63	Spielberg, Steven	2001	USA	Science Fiction-Drama
+155	2	Amélie	183.34	Jeunet, Jean-Pierre	2001	France-Germany	Romance-Comedy
+156	2	Mies vailla menneisyyttä	37.22	Aki Kaurismäki	2002	Finland	Drama
+157	2	Aleksis Kiven elämä	14.7	Jari Halonen	2002	Finland	Drama
+158	2	Million Dollar Baby	37.11	Eastwood, Clint	2004	USA	Drama
+159	2	Koirankynnen leikkaaja	4.79	Markku Pölönen	2004	Finland	Drama
+160	2	Brokeback Mountain	134.34	Lee, Ang	2005	USA-Canada	Romance-Drama
+161	2	History of Violence, A	23.66	Cronenberg, David	2005	USA-Germany	Crime-Drama-Mystery
+162	2	Paha maa	21.9	Aku Louhimies	2005	Finland	Drama
+163	2	Äideistä parhain	125.49	Klaus Härö	2005	Finland	Drama
+164	2	There Will Be Blood	117.9	Anderson, Paul Thomas	2007	USA	Drama
+165	2	No Country for Old Men	19.93	Coen, Joel & Ethan Coen	2007	USA	Crime-Drama
+166	2	Avatar	26.83	Cameron, James	2009	USA-UK	Action-Science Fiction-Adventure
+167	2	Postia pappi Jaakobille	56.65	Klaus Härö	2009	Finland	Drama
+168	2	Rare Exports	16.99	Jalmari Helander	2010	Finland	Thriller-Action
+169	2	Hyvä poika	13.53	Zaida Bergroth	2011	Finland	Drama
