@@ -29,3 +29,5 @@ I must say that I really enjoyed implementing both the frontend and server side 
 
 Using the same language to implement the frontend was also really nice. You can use the same data structures and other language primitives to process the data returned from the server in the frontend side. Using Reagent was also easy. An old backend developer educated himself from zero to hero frontend developer in a few days. :-)
 
+BTW. I wrote a blog post in [my Medium publication](https://medium.com/@kari.marttila) about the experiences when implementing this demonstration. See article: "Become a Full Stack Developer with Clojure and ClojureScript!"
+
