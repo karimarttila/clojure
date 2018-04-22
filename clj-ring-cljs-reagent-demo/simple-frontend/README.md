@@ -27,7 +27,10 @@
 
 Simple Frontend is a simple frontend for demonstrating how to create a Single Page Application (SPA) using [ClojureScript](https://clojurescript.org/) and [Reagent](https://reagent-project.github.io/). The Simple Frontend application is a hypothetical web store which sells books and movies.
 
-**Disclaimer**: I didn't worry about CSS styles since I'm not artistic and our corporation usually provides some graphical designer who creates the styles for HTML pages - so I only focused on getting the frontend functionality right. The UI look and feel is horrific, I know, don't worry about that, relax and have a home brew.
+**Disclaimer**: 
+
+- **UI**. I didn't worry about CSS styles since I'm not artistic and our corporation usually provides some graphical designer who creates the styles for HTML pages - so I only focused on getting the frontend functionality right. The UI look and feel is horrific, I know, don't worry about that, relax and have a home brew.
+- **Security**. I didn't worry too much about the security either since this is just a learning demonstration for myself how to do REST interaction between ClojureScript/React/ajax-cljs and Clojure/Ring applications. You shouldn't show password in plaintext, you should send credentials using https etc.
 
 
 ## Techical Description

@@ -6,7 +6,7 @@
 
 
 (defn input
-  "Input field component for First name, Last name, Email address and Password."
+  "Input field component for e.g. First name, Last name, Email address and Password."
   [label name type my-atom]
   (fn []
     [:div
