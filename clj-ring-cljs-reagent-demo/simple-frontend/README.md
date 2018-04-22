@@ -275,5 +275,7 @@ Anyway, these are some features for future implementation:
 - Logout functionality: Add a logout link once user is logged in - invalidate the token (remove it from atom and browser local storage) when the user loggs out.
 - Some shopping cart functionality for the user to choose the items for purchasing. Simulate payment somehow.
 - Some basic CSS to make the Simple Frontend look at least a little bit less horrific. :-)
+- If this were a real production system you should implement tests in both frontend and backend sides - unit tests, integration tests and e2e tests.
+
 
 
