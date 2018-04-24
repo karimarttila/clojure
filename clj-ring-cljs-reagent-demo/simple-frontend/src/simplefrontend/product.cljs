@@ -99,4 +99,3 @@
        [:div [:a {:href (str "#/products/" pg-id)} "Back to Products page"]]
        [:div [:a {:href "#/productgroups"} "Back to Product Groups page"]]
        [:div [:a {:href "#/"} "Back to Web Store Home Page"]]])))
-

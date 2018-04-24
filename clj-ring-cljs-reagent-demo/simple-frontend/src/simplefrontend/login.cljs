@@ -9,7 +9,6 @@
     [simplefrontend.config :as sf-config]))
 
 
-
 ;; ***** Namespace vars. *****
 (def my-error-msg-atom (r/atom nil))
 (def my-success-msg-atom (r/atom nil))
@@ -45,7 +44,6 @@
       (set! (.-location js/document) "/#/productgroups"))))
 
 
-
 (defn -error-handler
   "The error (http status not 200) handler."
   [response]
@@ -55,7 +53,6 @@
       (reset! my-response-atom response)
       (reset! my-error-msg-atom error-msg)
       (reset! my-success-msg-atom nil))))
-
 
 
 (defn -submit-form
@@ -71,13 +68,9 @@
                                  :response-format :json
                                  :headers         {"Accept"       "application/json"
                                                    "Content-Type" "application/json"}
-
                                  :handler         -handler
                                  :error-handler   -error-handler})]
-
-
       (.log js/console (str "Response: " response)))))
-
 
 
 (defn login-page
@@ -86,7 +79,6 @@
   (.log js/console (str "ENTER login-page"))
   (let [email-address-atom (r/atom nil)
         password-atom (r/atom nil)]
-
     (fn []
       [:div
        [:h1 "Login"]
@@ -102,14 +94,9 @@
        [:div [:input {:type     "button" :value "Submit"
                       :on-click #(-submit-form @email-address-atom
                                                @password-atom)}]]
-
-
        (if (not (nil? @my-error-msg-atom))
          [(sf-components/msg-field "Error: " "error" "text" "red" @my-error-msg-atom)])
        (if (not (nil? @my-success-msg-atom))
          [(sf-components/msg-field "Success: " "success" "text" "greenyellow" @my-success-msg-atom)])
 
        [:div [:a {:href "#/"} "Back to Web Store Home Page"]]])))
-
-
-

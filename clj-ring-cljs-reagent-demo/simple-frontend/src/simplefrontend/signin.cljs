@@ -21,7 +21,6 @@
   (reset! my-success-msg-atom nil))
 
 
-
 (defn -handler
   "The success (http status 200) handler."
   [response]
@@ -30,8 +29,6 @@
     (reset! my-response-atom response)
     (reset! my-success-msg-atom "Cool, sign-in successful! You can now proceed to Web store home page to login using your new credentials!")
     (reset! my-error-msg-atom nil)))
-
-
 
 
 (defn -error-handler
@@ -43,7 +40,6 @@
       (reset! my-response-atom response)
       (reset! my-error-msg-atom error-msg)
       (reset! my-success-msg-atom nil))))
-
 
 
 (defn -submit-form
@@ -69,9 +65,6 @@
       (.log js/console (str "Response: " response)))))
 
 
-
-
-
 (defn signin-page
   "The actual page function called by simplefrontend.core."
   []
@@ -86,21 +79,21 @@
        [:h1 "Sign-in"]
        [:form
         [:div [(sf-components/input "First name: "
-                       "first-name"
-                       "text"
-                       first-name-atom)]]
+                                    "first-name"
+                                    "text"
+                                    first-name-atom)]]
         [:div [(sf-components/input "Last name: "
-                       "last-name"
-                       "text"
-                       last-name-atom)]]
+                                    "last-name"
+                                    "text"
+                                    last-name-atom)]]
         [:div [(sf-components/input "Email address: "
-                       "email-address"
-                       "text"
-                       email-address-atom)]]
+                                    "email-address"
+                                    "text"
+                                    email-address-atom)]]
         [:div [(sf-components/input "Password: "
-                       "password"
-                       "text"
-                       password-atom)]]]
+                                    "password"
+                                    "text"
+                                    password-atom)]]]
        [:div [:input {:type     "button" :value "Submit"
                       :on-click #(-submit-form @first-name-atom
                                                @last-name-atom

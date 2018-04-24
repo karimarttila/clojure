@@ -5,7 +5,9 @@
                  [reagent "0.7.0"]
                  [reagent-utils "0.3.1"]
                  [secretary "1.2.3"]
-                 [cljs-ajax "0.7.3"]]
+                 [cljs-ajax "0.7.3"]
+                 [cljsjs/react-bootstrap "0.31.5-0"]
+                 ]
 
 
   :plugins [[lein-cljsbuild "1.1.5"]

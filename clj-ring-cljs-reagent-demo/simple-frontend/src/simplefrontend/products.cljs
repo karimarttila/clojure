@@ -79,10 +79,7 @@
               [:td p-id]
               [:td [:a {:href (str "#/product/" pg-id "/" p-id)} name]]
               [:td price]]))
-
-
          data)]])
-
 
 
 (defn products-page
@@ -105,4 +102,3 @@
        ;  )
        [:div [:a {:href "#/productgroups"} "Back to Product Groups page"]]
        [:div [:a {:href "#/"} "Back to Web Store Home Page"]]])))
-

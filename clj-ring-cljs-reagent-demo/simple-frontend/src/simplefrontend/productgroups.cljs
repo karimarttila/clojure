@@ -80,7 +80,6 @@
          data)]])
 
 
-
 (defn productgroups-page
   "The actual page function called by simplefrontend.core."
   [token]
@@ -92,10 +91,8 @@
        [:h1 "Product Groups"]
        (if (not (nil? @my-product-groups-atom))
          [:div (-product-groups-table @my-product-groups-atom)])
-
        ;; During development:
        ;(if (not (nil? @my-dev-product-groups-atom))
        ;  [:div (-product-groups-table @my-dev-product-groups-atom)]
        ;  )
        [:div [:a {:href "#/"} "Back to Web Store Home Page"]]])))
-

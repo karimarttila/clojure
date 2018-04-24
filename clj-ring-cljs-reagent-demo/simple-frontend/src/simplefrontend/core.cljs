@@ -7,17 +7,14 @@
     [goog.history.EventType :as EventType]
     [reagent.core :as r]
     [simplefrontend.session :as sf-session]
+    [simplefrontend.layout :as sf-layout]
+    [simplefrontend.home :as sf-home]
     [simplefrontend.login :as sf-login]
     [simplefrontend.signin :as sf-signin]
     [simplefrontend.productgroups :as sf-productgroups]
     [simplefrontend.products :as sf-products]
     [simplefrontend.product :as sf-product]))
 
-
-
-
-;; -------------------------
-;; Views.
 
 (defn hook-browser-navigation! []
   (doto (History.)
@@ -50,12 +47,7 @@
 
 (defn home
   []
-  [:div [:h1 "Web Store"]
-   [:a {:href "#/signin"} "Sign-in"]
-   [:div]
-   [:a {:href "#/login"} "Login"]
-   [:div]
-   [:a {:href "#/productgroups"} "Product Groups"]])
+  (sf-home/home-page))
 
 
 (defn signin
@@ -63,20 +55,23 @@
   (sf-signin/reset-page)
   (sf-signin/signin-page))
 
+
 (defn login
   []
   (sf-login/reset-page)
   (sf-login/login-page))
+
 
 (defn productgroups
   []
   (sf-productgroups/reset-page)
   (sf-productgroups/productgroups-page (sf-session/get-encoded-token)))
 
+
 (defn products
   []
   (sf-products/reset-page)
-  (sf-products/products-page (sf-session/get-encoded-token)
+    (sf-products/products-page (sf-session/get-encoded-token)
                              ((sf-session/get-page-params :products) :pg-id)))
 
 (defn product
@@ -87,7 +82,6 @@
                            ((sf-session/get-page-params :product) :p-id)))
 
 
-; (defmulti current-page #(@sf-session/app-state :page))
 (defmulti current-page #(sf-session/get-current-page))
 (defmethod current-page :home []
   [home])
@@ -112,7 +106,10 @@
 
 (defn mount-root []
   (app-routes)
-  (r/render [current-page] (.getElementById js/document "app")))
+  ;; Wraps the page around the main layout.
+  (r/render [sf-layout/main-layout [current-page]]
+            (.getElementById js/document "app")))
+
 
 (defn init! []
   (mount-root))
