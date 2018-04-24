@@ -2,6 +2,7 @@
   (:require
     [reagent.core :as r]
     [ajax.core :as a-core]
+    [simplefrontend.reagent-wrapper :as sf-rw]
     [simplefrontend.components :as sf-components]
     [simplefrontend.config :as sf-config]))
 
@@ -78,33 +79,33 @@
       [:div
        [:h1 "Sign-in"]
        [:form
-        [:div [(sf-components/input "First name: "
-                                    "first-name"
-                                    "text"
-                                    first-name-atom)]]
-        [:div [(sf-components/input "Last name: "
-                                    "last-name"
-                                    "text"
-                                    last-name-atom)]]
-        [:div [(sf-components/input "Email address: "
-                                    "email-address"
-                                    "text"
-                                    email-address-atom)]]
-        [:div [(sf-components/input "Password: "
-                                    "password"
-                                    "text"
-                                    password-atom)]]]
+        [sf-rw/grid
+         [:div [(sf-components/input "First name: "
+                                     "first-name"
+                                     "text"
+                                     first-name-atom)]]
+         [:div [(sf-components/input "Last name: "
+                                     "last-name"
+                                     "text"
+                                     last-name-atom)]]
+         [:div [(sf-components/input "Email address: "
+                                     "email-address"
+                                     "text"
+                                     email-address-atom)]]
+         [:div [(sf-components/input "Password: "
+                                     "password"
+                                     "text"
+                                     password-atom)]]]]
        [:div [:input {:type     "button" :value "Submit"
                       :on-click #(-submit-form @first-name-atom
                                                @last-name-atom
                                                @email-address-atom
                                                @password-atom)}]]
-
-
-       (if (not (nil? @my-error-msg-atom))
-         [(sf-components/msg-field "Error: " "error" "text" "red" @my-error-msg-atom)])
-       (if (not (nil? @my-success-msg-atom))
-         [(sf-components/msg-field "Success: " "success" "text" "greenyellow" @my-success-msg-atom)])
+       [sf-rw/grid
+        (if (not (nil? @my-error-msg-atom))
+          [(sf-components/msg-field "Error: " "error" "text" "red" @my-error-msg-atom)])
+        (if (not (nil? @my-success-msg-atom))
+          [(sf-components/msg-field "Success: " "success" "text" "greenyellow" @my-success-msg-atom)])]
 
        [:div [:a {:href "#/"} "Back to Web Store Home Page"]]])))
 

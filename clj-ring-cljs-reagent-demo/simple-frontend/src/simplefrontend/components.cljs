@@ -1,6 +1,7 @@
 (ns simplefrontend.components
   (:require
     [reagent.core :as r]
+    [simplefrontend.reagent-wrapper :as sf-rw]
     [ajax.core :as a-core]))
 
 
@@ -10,12 +11,16 @@
   [label name type my-atom]
   (fn []
     [:div
-     [:label label]
-     [:input {:id        name
-              :name      name
-              :type      type
-              :value     @my-atom
-              :on-change #(reset! my-atom (-> % .-target .-value))}]]))
+     [sf-rw/row {:class "show-grid"}
+      [sf-rw/col {:xs 3 :md 2}
+       [:label label]]
+      [sf-rw/col {:xs 3 :md 2}
+       [:input {:id        name
+                :name      name
+                :type      type
+                :value     @my-atom
+                :on-change #(reset! my-atom (-> % .-target .-value))}]]
+      ]]))
 
 
 (defn msg-field
@@ -23,14 +28,17 @@
   [label name type color err-msg]
   (fn []
     [:div
-     [:label label]
-     [:textarea
-      {:id        name
-       :name      name
-       :type      type
-       :rows      3
-       :style     {:background-color color}
-       :cols      50
-       :value     err-msg
-       :read-only true}]]))
+     [sf-rw/row {:class "show-grid"}
+      [sf-rw/col {:xs 3 :md 2}
+       [:label label]]
+      [sf-rw/col {:xs 3 :md 2}
+       [:textarea
+        {:id        name
+         :name      name
+         :type      type
+         :rows      2
+         :style     {:background-color color}
+         :cols      50
+         :value     err-msg
+         :read-only true}]]]]))
 

@@ -5,7 +5,7 @@
     [secretary.core :as secretary]
     [simplefrontend.session :as sf-session]
     [simplefrontend.components :as sf-components]
-    [simplefrontend.productgroups :as sf-productgroups]
+    [simplefrontend.reagent-wrapper :as sf-rw]
     [simplefrontend.config :as sf-config]))
 
 
@@ -83,20 +83,22 @@
       [:div
        [:h1 "Login"]
        [:form
-        [:div [(sf-components/input "Email address: "
-                                    "email-address"
-                                    "text"
-                                    email-address-atom)]]
-        [:div [(sf-components/input "Password: "
-                                    "password"
-                                    "text"
-                                    password-atom)]]]
+        [sf-rw/grid
+         [:div [(sf-components/input "Email address: "
+                                     "email-address"
+                                     "text"
+                                     email-address-atom)]]
+         [:div [(sf-components/input "Password: "
+                                     "password"
+                                     "text"
+                                     password-atom)]]]]
        [:div [:input {:type     "button" :value "Submit"
                       :on-click #(-submit-form @email-address-atom
                                                @password-atom)}]]
-       (if (not (nil? @my-error-msg-atom))
-         [(sf-components/msg-field "Error: " "error" "text" "red" @my-error-msg-atom)])
-       (if (not (nil? @my-success-msg-atom))
-         [(sf-components/msg-field "Success: " "success" "text" "greenyellow" @my-success-msg-atom)])
+       [sf-rw/grid
+        (if (not (nil? @my-error-msg-atom))
+          [(sf-components/msg-field "Error: " "error" "text" "red" @my-error-msg-atom)])
+        (if (not (nil? @my-success-msg-atom))
+          [(sf-components/msg-field "Success: " "success" "text" "greenyellow" @my-success-msg-atom)])]
 
        [:div [:a {:href "#/"} "Back to Web Store Home Page"]]])))
