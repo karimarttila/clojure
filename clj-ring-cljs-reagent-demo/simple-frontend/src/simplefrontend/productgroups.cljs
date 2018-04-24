@@ -2,6 +2,7 @@
   (:require
     [reagent.core :as r]
     [ajax.core :as a-core]
+    [simplefrontend.reagent-wrapper :as sf-rw]
     [simplefrontend.config :as sf-config]))
 
 
@@ -65,7 +66,10 @@
 
 (defn -product-groups-table
   [data]
-  [:table
+  [sf-rw/table {:striped   true
+                :bordered  true
+                :condensed true
+                :hover     true}
    [:thead
     [:tr
      [:th "Id"]
