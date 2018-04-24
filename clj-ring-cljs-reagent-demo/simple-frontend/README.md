@@ -29,7 +29,7 @@ Simple Frontend is a simple frontend for demonstrating how to create a Single Pa
 
 **Disclaimer**: 
 
-- **UI**. I didn't worry about CSS styles since I'm not artistic and our corporation usually provides some graphical designer who creates the styles for HTML pages - so I only focused on getting the frontend functionality right. The UI look and feel is horrific, I know, don't worry about that, relax and have a home brew.
+- **UI**. I didn't worry about CSS styles since I'm not artistic and our corporation usually provides some graphical designer who creates the styles for HTML pages - so I only focused on getting the frontend functionality right. The UI look and feel is horrific, I know, don't worry about that, relax and have a home brew. (**Update 2018-04-24**: I wanted to learn how to do at least some basic CSS styling in a ClojureScript SPA, and I studied how to use the popular [Bootstrap](https://getbootstrap.com/) library for this - I updated the pictures according the latest UI look-and-feel).
 - **Security**. I didn't worry too much about the security either since this is just a learning demonstration for myself how to do REST interaction between ClojureScript/React/ajax-cljs and Clojure/Ring applications. You shouldn't show password in plaintext, you should send credentials using https etc.
 
 
@@ -39,6 +39,7 @@ The Simple Frontend is a [ClojureScript](http://clojurescript.org) application w
 
 - [Reagent](http://reagent-project.github.io/index.html) framework which provides the ClojureScript integration for the [React](https://reactjs.org/) JavaScript library
 - [Secretary](https://github.com/gf3/secretary) which provides client side routing for the Single Page Application.
+- [Bootstrap](https://getbootstrap.com/) - I implemented the basic CSS using Bootstrap. I used [cljsjs/react-bootstrap](https://github.com/cljsjs/packages/tree/master/react-bootstrap) to wrap Bootstrap entities to be used from ClojureScript.
 
 
 ## Development Instructions
@@ -274,7 +275,6 @@ Anyway, these are some features for future implementation:
 - Do not show any other pages than Sign-in and Login if there is no valid session in the browser.
 - Logout functionality: Add a logout link once user is logged in - invalidate the token (remove it from atom and browser local storage) when the user loggs out.
 - Some shopping cart functionality for the user to choose the items for purchasing. Simulate payment somehow.
-- Some basic CSS to make the Simple Frontend look at least a little bit less horrific. :-)
 - If this were a real production system you should implement tests in both frontend and backend sides - unit tests, integration tests and e2e tests.
 
 
