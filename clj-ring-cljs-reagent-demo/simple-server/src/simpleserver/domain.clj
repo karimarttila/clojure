@@ -6,7 +6,6 @@
     [clojure.tools.logging :as log])
   )
 
-
 ; Store all domain objects to this cache once read from csv files.
 (def my-domain-atom (atom {}))
 
@@ -27,7 +26,6 @@
       product-groups-from-file)))
 
 
-
 (defn -get-raw-products
   "Get raw products for a product group, returns the whole product information for each product"
   [pg-id]
@@ -46,7 +44,6 @@
             raw-products-from-file)
           nil)))))
 
-
 (defn get-products
   "Get products for a product group, returns list of items: [p-id, pg-id, name, price]"
   [pg-id]
@@ -64,7 +61,6 @@
             (swap! my-domain-atom assoc my-key products-from-file)
             products-from-file)
           nil)))))
-
 
 (defn get-product
   "Gets product info for a product, returned item varies related to product group"
