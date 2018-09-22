@@ -49,9 +49,6 @@
         {:email email, :ret :ok}))))
 
 
-
-
-
 (defn credentials-ok?
   "Checks given credentials"
   [email password]
