@@ -71,7 +71,9 @@
     ring-response
     (ri-resp/status ring-response 400)))
 
-
+;; Note: you can simulate signin API http POST in REPL as:
+;; (simpleserver.webserver.server/-signin {:body {:first-name "Pena", :last-name "Neponen", :email "pena.neponen@foo.com", :password  "Pena"}})
+;; => {:status 200, :headers {}, :body {:email "pena.neponen@foo.com", :ret :ok}}
 (defn -signin
   "Provides API for sign-in page."
   [req]
@@ -89,7 +91,8 @@
                          {:ret :failed, :msg "Validation failed - some fields were empty"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
-
+;; Note: you can simulate login API http POST in REPL as:
+;;(simpleserver.webserver.server/-login  {:body {:email "pena.neponen@foo.com", :password "Pena"}})
 (defn -login
   "Provides API for login page."
   [req]
@@ -116,11 +119,29 @@
 
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
+;; This is just internal testing method for experimenting -valid-token? with REPL
+(defn -create-testing-basic-authentication-from-json-webtoken
+  [json-webtoken]
+  (log/trace "ENTER -create-testing-basic-authentication-from-json-webtoken")
+  (let [added-token (str json-webtoken ":NOT")
+        encoded-token (apply str (map char (base64/encode (.getBytes added-token))))
+        basic-str (str "Basic " encoded-token)]
+    {:headers {"authorization" basic-str
+               :uri            "/product-groups",
+               :server-name    "localhost",
+               :query-string   nil,
+               :body           nil,
+               :scheme         :http,
+               :request-method :get}}))
 
+;; Use curl and simple server log to see how token is parsed.
+;; Or use this trick: You got a JSON web token from -login. Supply JSON web token to:
+;; (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token" )
+;; I.e. (simpleserver.webserver.server/-valid-token? (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token>"))
 (defn -valid-token?
   "Parses the token from the http authorization header and asks session ns to validate the token"
   [req]
-  (log/trace "ENTER -validate-token")
+  (log/trace "ENTER -valid-token?")
   (let [basic ((:headers req) "authorization")
         dummy (log/trace (str "basic: " basic))
         basic-str (and basic
@@ -136,7 +157,8 @@
       nil
       (ss-session/validate-token token))))
 
-
+;; In REPL e.g.;
+;; (simpleserver.webserver.server/-product-groups (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token>"))
 (defn -product-groups
   "Get product groups"
   [req]
@@ -148,7 +170,9 @@
                          {:ret :ok, :product-groups (ss-domain/get-product-groups)})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
-
+;; In REPL:
+;; (simpleserver.webserver.server/-products (conj (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token>") {:params {:pg-id "1"}}))
+;; I.e. you inject the params to the req which is parsed in this function.
 (defn -products
   "Get products for a product group"
   [req]
