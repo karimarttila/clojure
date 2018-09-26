@@ -6,11 +6,14 @@
     [clojure.tools.logging :as log])
   )
 
-; Store all domain objects to this cache once read from csv files.
-(def my-domain-atom (atom {}))
+
+(def my-domain-atom
+  "Stores all domain objects into this cache once read from csv files."
+  (atom {}))
+
 
 (defn get-product-groups
-  "Get product groups"
+  "Gets product groups."
   []
   (log/trace "ENTER get-product-groups")
   (if-let [product-groups (@my-domain-atom :product-groups)]
@@ -27,7 +30,7 @@
 
 
 (defn -get-raw-products
-  "Get raw products for a product group, returns the whole product information for each product"
+  "Gets raw products for a product group, returns the whole product information for each product."
   [pg-id]
   (log/trace (str "ENTER get-raw-products, pg-id: " pg-id))
   (let [my-key (str "pg-" pg-id "-raw-products")]
@@ -44,8 +47,9 @@
             raw-products-from-file)
           nil)))))
 
+
 (defn get-products
-  "Get products for a product group, returns list of items: [p-id, pg-id, name, price]"
+  "Gets products for a product group, returns list of items: [p-id, pg-id, name, price]."
   [pg-id]
   (log/trace (str "ENTER get-products, pg-id: " pg-id))
   (let [my-key (str "pg-" pg-id "-products")]
@@ -62,8 +66,9 @@
             products-from-file)
           nil)))))
 
+
 (defn get-product
-  "Gets product info for a product, returned item varies related to product group"
+  "Gets product info for a product, returned item varies related to product group."
   [pg-id p-id]
   (log/trace (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
   (let [products (-get-raw-products pg-id)]

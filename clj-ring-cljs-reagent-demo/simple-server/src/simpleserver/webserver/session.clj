@@ -8,16 +8,21 @@
     [simpleserver.util.prop :as ss-prop]))
 
 
-;; Atom to store the JSON Web Token expiration as seconds.
 ;; The rational we have it here is that we can change the value in
 ;; remote REPL for debugging purposes, i.e. test token invalidation
 ;; dynamically.
 (def my-expiration-time
+  "Atom to store the JSON Web Token expiration as seconds.
+   The rational we have it here is that we can change the value in
+   remote REPL for debugging purposes, i.e. test token invalidation
+   dynamically."
   (atom
     (ss-prop/get-int-value "json-web-token-expiration-as-seconds")))
 
-;; Atom to store the sessions.
-(def my-sessions (atom #{}))
+
+(def my-sessions
+  "Atom to store the sessions."
+  (atom #{}))
 
 
 (def my-hex-secret
@@ -62,8 +67,9 @@
             (log/error (str "Some unknown exception when handling expired token, exception: " (.getMessage e)) ", token: " token)
             (throw e)))))))
 
+
 (defn create-json-web-token
-  "Creates the JSON web token and adds it to sessions atom"
+  "Creates the JSON web token and adds it to sessions atom."
   [email]
   (log/trace (str "ENTER create-json-web-token, email: " email))
   (let [my-secret my-hex-secret

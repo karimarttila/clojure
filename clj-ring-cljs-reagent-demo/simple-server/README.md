@@ -316,6 +316,9 @@ Now that the actual application logic to validate token is ready, it is just a m
 
 ```
 
+## Integration Testing
+
+TODO: Create integration tests for API methods as in scripts directory.
 
 ## Building for Production
 

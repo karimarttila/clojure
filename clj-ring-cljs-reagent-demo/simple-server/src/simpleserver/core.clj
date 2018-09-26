@@ -29,7 +29,7 @@
 ;; <ctrl><X>-<ctrl><O> (In editor) => Switch to next editor window (as in Emacs)
 ;;
 (defn -main
-  "Main entry point to clickstream data generation application."
+  "Main not used since a Ring application."
   [& args]
   (throw (ex-info (str "Use ring to start the server, example: "
                        "SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties lein with-profile +log-dev ring server-headless") {})))

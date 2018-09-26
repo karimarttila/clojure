@@ -6,8 +6,10 @@
             [clojure.pprint :as pp]))
 
 
-;; Global configuration.
-(def config (atom nil))
+(def config
+  "Global configuration as atom (which is read from property file)."
+  (atom nil))
+
 
 (defn reset-config!
   "Use to reset configuration (e.g. if you change properties and
@@ -16,21 +18,25 @@
   (reset! simpleserver.util.prop/config nil))
 
 
-;; Property file, must be initialized.
-(def property-filename (atom nil))
+(def property-filename
+  "Property file, must be initialized."
+  (atom nil))
 
 
 (defn -check-file
+  "Checks if `file` exists."
   [file]
   (.isFile (io/file file)))
 
 
 (defn set-property-file
+  "Initializes property file with `filename`."
   [filename]
   (reset! property-filename filename))
 
 
 (defn -load-property-filename
+  "Loads the property file name from environmental variable `SIMPLESERVER_CONFIG_FILE`."
   []
   (let [configfile-name (env :simpleserver-config-file)]
     (if (nil? configfile-name)
@@ -44,6 +50,8 @@
 
 
 (defn -load-props
+  "Loads properties from property file and returns a map of properties."
+  {:doc/format :markdown}
   [filename]
   (let [io (java.io.FileInputStream. filename)
         prop (java.util.Properties.)]
@@ -51,6 +59,7 @@
     (into {} prop)))
 
 (defn -load-configuration
+  "Loads the configuration (property file) to [[config]] atom."
   []
   (if (nil? @property-filename)
     (-load-property-filename))
@@ -58,12 +67,14 @@
 
 
 (defn get-int-value
+  "Gets int value of `key`."
   [key]
   (if (nil? @config)
     (-load-configuration))
   (Integer/parseInt (get @config key)))
 
 (defn get-double-value
+  "Gets double value of `key`."
   [key]
   (if (nil? @config)
     (-load-configuration))
@@ -71,6 +82,7 @@
 
 
 (defn get-str-value
+  "Gets string value of `key`."
   [key]
   (if (nil? @config)
     (-load-configuration))
@@ -78,6 +90,7 @@
 
 
 (defn get-vec-value
+  "Gets vector (list) value of `key`."
   [key]
   (if (nil? @config)
     (-load-configuration))

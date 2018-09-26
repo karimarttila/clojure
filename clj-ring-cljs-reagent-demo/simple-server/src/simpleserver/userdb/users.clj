@@ -2,8 +2,10 @@
   (:require
     [clojure.tools.logging :as log]))
 
-; A simple dynamic user database for demonstration purposes.
-(def users (atom
+
+(def users
+  "A simple dynamic user database for demonstration purposes."
+  (atom
              {1 {:userid          "1",
                  :email           "kari.karttinen@foo.com",
                  :first-name      "Kari",
@@ -20,13 +22,15 @@
                  :last-name       "Erkkilä"
                  :hashed-password "1655387230"}}))
 
+
 (defn -email-already-exists?
-  "Checks if the email address already exists in the database."
+  "Checks if the `email` already exists in the database."
   [email]
   (some
     (fn [user]
       (= (:email user) email))
     (vals @users)))
+
 
 (defn add-new-user
   "Adds new user to database."
@@ -50,7 +54,7 @@
 
 
 (defn credentials-ok?
-  "Checks given credentials"
+  "Checks if given credentials are ok (if they can be found in the user db)."
   [email password]
   (some
    (fn [user]
@@ -59,4 +63,3 @@
        (= (:hashed-password user) (str (hash password)))))
 
    (vals @users)))
-

@@ -20,24 +20,26 @@
 ;; and then in remote REPL you can check the body like:
 ;; user=> @simpleserver.webserver.server/my-body
 ;; => {:first-name "Jamppa", :last-name "Tuominen", :email "jamppa.tuominen@foo.com", :password "p"}
-
-(def my-body (atom nil))
+(def my-body
+  "my-body atom is just for testing purposes using remote REPL.
+  See the comment in source file."
+  (atom nil))
 
 
 (defn -reset-body
-  "Resets the my body atom which is just for debugging purposes."
+  "Resets the my-body atom which is just for debugging purposes."
   [body]
   (reset! my-body body))
 
+
 (defn -read-configuration
-  "Reads configuration for web server."
+  "Reads configuration for web server. Not used at the moment."
   []
   (log/trace "ENTER -read-configuration"))
 
 
-
 (defn initialize-web-server
-  "Initializes the web server. See :ring in project.clj."
+  "Initializes the web server. See :ring in file project.clj."
   []
   (log/trace "ENTER initialize-web-server")
   (log/trace "***** ***** SIMPLE SERVER STARTING... ***** ***** ")
@@ -67,11 +69,13 @@
     ring-response
     (ri-resp/status ring-response 400)))
 
+
 ;; Note: you can simulate signin API http POST in REPL as:
 ;; (simpleserver.webserver.server/-signin {:body {:first-name "Pena", :last-name "Neponen", :email "pena.neponen@foo.com", :password  "Pena"}})
 ;; => {:status 200, :headers {}, :body {:email "pena.neponen@foo.com", :ret :ok}}
 (defn -signin
-  "Provides API for sign-in page. `req` provides post body."
+  "Provides API for sign-in page. `req` provides post body.
+  See source code how to experiment with REPL."
   [req]
   (log/trace "ENTER -signin")
   (log/trace (str "req: " req))
@@ -87,10 +91,12 @@
                          {:ret :failed, :msg "Validation failed - some fields were empty"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
+
 ;; Note: you can simulate login API http POST in REPL as:
 ;;(simpleserver.webserver.server/-login  {:body {:email "pena.neponen@foo.com", :password "Pena"}})
 (defn -login
-  "Provides API for login page."
+  "Provides API for login page.
+  See source code how to experiment with REPL."
   [req]
   (log/trace "ENTER -login")
   (log/trace (str "req: " req))
@@ -115,8 +121,11 @@
 
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
+
 ;; This is just internal testing method for experimenting -valid-token? with REPL
 (defn -create-testing-basic-authentication-from-json-webtoken
+  "A helper method just for experimenting API calls with REPL.
+  See source code how to experiment with REPL."
   [json-webtoken]
   (log/trace "ENTER -create-testing-basic-authentication-from-json-webtoken")
   (let [added-token (str json-webtoken ":NOT")
@@ -130,12 +139,14 @@
                :scheme         :http,
                :request-method :get}}))
 
+
 ;; Use curl and simple server log to see how token is parsed.
 ;; Or use this trick: You got a JSON web token from -login. Supply JSON web token to:
 ;; (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token" )
 ;; I.e. (simpleserver.webserver.server/-valid-token? (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token>"))
 (defn -valid-token?
-  "Parses the token from the http authorization header and asks session ns to validate the token"
+  "Parses the token from the http authorization header and asks session ns to validate the token.
+  See source code how to experiment with REPL."
   [req]
   (log/trace "ENTER -valid-token?")
   (let [basic ((:headers req) "authorization")
@@ -153,10 +164,12 @@
       nil
       (ss-session/validate-token token))))
 
+
 ;; In REPL e.g.;
 ;; (simpleserver.webserver.server/-product-groups (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token>"))
 (defn -product-groups
-  "Get product groups"
+  "Gets product groups.
+  See source code how to experiment with REPL."
   [req]
   (log/trace "ENTER -product-groups")
   (log/trace (str "req: " req))
@@ -166,11 +179,13 @@
                          {:ret :ok, :product-groups (ss-domain/get-product-groups)})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
+
 ;; In REPL:
 ;; (simpleserver.webserver.server/-products (conj (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token>") {:params {:pg-id "1"}}))
 ;; I.e. you inject the params to the req which is parsed in this function.
 (defn -products
-  "Get products for a product group"
+  "Gets products for a product group.
+  See source code how to experiment with REPL."
   [req]
   (log/trace "ENTER -products")
   (log/trace (str "req: " req))
@@ -187,7 +202,7 @@
 
 
 (defn -product
-  "Get product"
+  "Gets product."
   [req]
   (log/trace "ENTER -product")
   (log/trace (str "req: " req))
@@ -206,6 +221,7 @@
 
 
 (co-core/defroutes app-routes
+                   "Compojure routes."
                    (co-core/GET "/info" [] (-get-info))
                    (co-core/GET "/product-groups" req (-product-groups req))
                    (co-core/GET "/products/:pg-id" req (-products req))
@@ -226,10 +242,11 @@
              :access-control-allow-methods [:get :put :post :delete :options]))
 
 
-
 ;; NOTE: Start web-server in development mode like:
 ;; CS_CONFIG_FILE=resources/simpleserver.properties lein with-profile +log-dev ring server-headless
 (def web-server
+  "Web server startup function.
+  See source code how to experiment with REPL."
   (->
     app-routes
     ;; NOTE: Not working with wrap-cors, why?
