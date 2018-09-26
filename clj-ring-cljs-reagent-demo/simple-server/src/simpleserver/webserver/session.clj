@@ -52,7 +52,7 @@
       (catch Exception e
         (if (.contains (.getMessage e) "Token is expired")
           (do
-            (log/trace (str "Token is expired, removing it from my sessions and returnin nil: " token))
+            (log/trace (str "Token is expired, removing it from my sessions and returning nil: " token))
             ; Token just expired, remove expired token and return nil.
             (if (contains? @my-sessions token)
               (swap! my-sessions disj token)
