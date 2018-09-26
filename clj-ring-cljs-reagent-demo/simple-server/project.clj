@@ -27,12 +27,15 @@
    [ring-cors "0.1.12"]
    [buddy/buddy-sign "2.2.0"]]
 
+  :codox {:output-path "doc-gen"}
 
   :plugins
   [
    [lein-environ "1.1.0"]
    [lein-pprint "1.1.2"]
-   [lein-ring "0.12.3"]]
+   [lein-ring "0.12.3"]
+   [lein-codox "0.10.4"]
+   ]
 
 
   :ring {:handler simpleserver.webserver.server/web-server

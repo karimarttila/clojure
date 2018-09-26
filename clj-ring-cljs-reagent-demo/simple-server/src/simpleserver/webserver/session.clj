@@ -8,7 +8,6 @@
     [simpleserver.util.prop :as ss-prop]))
 
 
-
 ;; Atom to store the JSON Web Token expiration as seconds.
 ;; The rational we have it here is that we can change the value in
 ;; remote REPL for debugging purposes, i.e. test token invalidation
@@ -21,8 +20,8 @@
 (def my-sessions (atom #{}))
 
 
-;; Creates dynamically a hex secret when the server boots.
 (def my-hex-secret
+  "Creates dynamically a hex secret when the server boots."
   ((fn []
      (let [my-chars (->> (range (int \a) (inc (int \z))) (map char))
            my-ints (->> (range (int \0) (inc (int \9))) (map char))

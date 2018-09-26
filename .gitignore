@@ -4,6 +4,9 @@ venv/
 # Emacs backups
 *~
 
+# Generated documentation
+doc-gen/
+
 # Python class files
 *.pyc
 

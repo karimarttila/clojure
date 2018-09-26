@@ -7,16 +7,11 @@
     [compojure.route :as co-route]
     [ring.util.response :as ri-resp]
     [ring.middleware.json :as ri-json]
-    [ring.middleware.defaults :as ri-defaults]
     [ring.middleware.cors :refer [wrap-cors]]
-    [buddy.sign.jwt :as buddy-jwt]
     [environ.core :refer [env]]
-    [simpleserver.util.prop :as ss-prop]
     [simpleserver.userdb.users :as ss-users]
     [simpleserver.webserver.session :as ss-session]
     [simpleserver.domain :as ss-domain]))
-
-
 
 
 ;; NOTE: my-body atom is just for testing purposes using remote REPL:
@@ -58,7 +53,8 @@
 
 
 (defn -validate-parameters
-  "Extremely simple validator - just request that all fields must have some value."
+  "Extremely simple validator - just request that all fields must have some value.
+  `field-values` - a list of fields to validate."
   [field-values]
   (every? #(not (empty? %)) field-values))
 
@@ -75,7 +71,7 @@
 ;; (simpleserver.webserver.server/-signin {:body {:first-name "Pena", :last-name "Neponen", :email "pena.neponen@foo.com", :password  "Pena"}})
 ;; => {:status 200, :headers {}, :body {:email "pena.neponen@foo.com", :ret :ok}}
 (defn -signin
-  "Provides API for sign-in page."
+  "Provides API for sign-in page. `req` provides post body."
   [req]
   (log/trace "ENTER -signin")
   (log/trace (str "req: " req))
