@@ -21,7 +21,7 @@
 
 
 (def my-sessions
-  "Atom to store the sessions."
+  "Atom to store the sessions. NOTE: Not a map but a set."
   (atom #{}))
 
 
@@ -77,6 +77,5 @@
         my-claim {:email email :exp exp-time}
         json-web-token (buddy-jwt/sign my-claim my-secret)
         dummy (swap! my-sessions conj json-web-token)]
-
     json-web-token))
 
