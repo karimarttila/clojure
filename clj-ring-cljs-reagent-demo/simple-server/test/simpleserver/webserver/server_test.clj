@@ -4,7 +4,8 @@
             [simpleserver.userdb.users :as user-db]
             [simpleserver.webserver.session :as sess]
             [simpleserver.webserver.server :as ws]
-            [simpleserver.testutils.users-util :as utu]))
+            [simpleserver.testutils.users-util :as utu]
+            [clojure.data.codec.base64 :as base64]))
 
 ;; A simple end-to-end testing of main API calls.
 
@@ -26,9 +27,15 @@
 (use-fixtures :each server-test-fixture)
 
 
-;; Used for testing purposes.
-(def my-json-web-token
-  (atom ""))
+(defn -create-basic-authentication
+  "A helper method to create basic authentication for certain get methods which
+  require the json-web-token in header."
+  [json-webtoken]
+  (log/trace "ENTER -create-basic-authentication")
+  (let [added-token (str json-webtoken ":NOT")
+        encoded-token (apply str (map char (base64/encode (.getBytes added-token))))
+        basic-str (str "Basic " encoded-token)]
+    {"authorization" basic-str}))
 
 
 (defn -call-request [routes uri method params body]
@@ -116,10 +123,10 @@
     (let [initial-sessions @sess/my-sessions
           dummy (log/trace (str "Initial sessions " initial-sessions))
           req-body {:email "kari.karttinen@foo.com", :password "WRONG-PASSWORD"}
-          ret (-call-request ws/app-routes "/login" :post nil req-body)
-          dummy (log/trace (str "Got result: " ret))
-          status (:status ret)
-          body (:body ret)
+          login-ret (-call-request ws/app-routes "/login" :post nil req-body)
+          dummy (log/trace (str "Got result: " login-ret))
+          status (:status login-ret)
+          body (:body login-ret)
           json-web-token (:json-web-token body)
           msg (:msg body)
           ret (:ret body)
@@ -134,4 +141,22 @@
       (is (= (count new-sessions) 1)))))
 
 
+(deftest get-product-groups-test
+  (log/trace "ENTER get-product-group-test")
+  (testing "GET: /product-groups"
+    (let [req-body {:email "kari.karttinen@foo.com", :password "Kari"}
+          login-ret (-call-request ws/app-routes "/login" :post nil req-body)
+          dummy (log/trace (str "Got login-ret: " login-ret))
+          login-body (:body login-ret)
+          json-web-token (:json-web-token login-body)
+          params (-create-basic-authentication json-web-token)
+          get-ret (-call-request ws/app-routes "/product-groups" :get params nil)
+          dummy (log/trace (str "Got body: " get-ret))
+          status (:status get-ret)
+          body (:body get-ret)
+          right-body {:ret :ok, :product-groups {"1" "Books", "2" "Movies"}}
+          ]
+      (is (not (nil? json-web-token)))
+      (is (= status 200))
+      (is (= body right-body)))))
 

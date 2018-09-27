@@ -122,28 +122,10 @@
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 
-;; This is just internal testing method for experimenting -valid-token? with REPL
-(defn -create-testing-basic-authentication-from-json-webtoken
-  "A helper method just for experimenting API calls with REPL.
-  See source code how to experiment with REPL."
-  [json-webtoken]
-  (log/trace "ENTER -create-testing-basic-authentication-from-json-webtoken")
-  (let [added-token (str json-webtoken ":NOT")
-        encoded-token (apply str (map char (base64/encode (.getBytes added-token))))
-        basic-str (str "Basic " encoded-token)]
-    {:headers {"authorization" basic-str
-               :uri            "/product-groups",
-               :server-name    "localhost",
-               :query-string   nil,
-               :body           nil,
-               :scheme         :http,
-               :request-method :get}}))
-
-
 ;; Use curl and simple server log to see how token is parsed.
 ;; Or use this trick: You got a JSON web token from -login. Supply JSON web token to:
 ;; (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token" )
-;; I.e. (simpleserver.webserver.server/-valid-token? (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token>"))
+;; I.e. (simpleserver.webserver.server/-valid-token? (simpleserver.webserver.server_test/-create-testing-basic-authentication-from-json-webtoken "<token>"))
 (defn -valid-token?
   "Parses the token from the http authorization header and asks session ns to validate the token.
   See source code how to experiment with REPL."
