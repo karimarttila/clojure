@@ -1,10 +1,12 @@
 (ns simpleserver.testutils.users-util
   (:require [clojure.test :refer :all]
+            [clojure.tools.logging :as log]
             [simpleserver.userdb.users :as my-user-db]))
 
 
 (defn initialize-userdb
   []
+  (log/trace "ENTERED initialize-userdb")
   (let [test-users (atom
              {1 {:userid          "1",
                  :email           "kari.karttinen@foo.com",
