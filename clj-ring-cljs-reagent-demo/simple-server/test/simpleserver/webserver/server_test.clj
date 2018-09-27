@@ -112,7 +112,7 @@
       (is (> (count json-web-token) 10))
       (is (= (count initial-sessions) 0))
       (is (= (count new-sessions) 1))))
-  (testing "Successful POST: /login"
+  (testing "Unsuccessful POST: /login"
     (let [initial-sessions @sess/my-sessions
           dummy (log/trace (str "Initial sessions " initial-sessions))
           req-body {:email "kari.karttinen@foo.com", :password "WRONG-PASSWORD"}
