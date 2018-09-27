@@ -56,7 +56,7 @@
 
 (deftest post-signin-test
   (log/trace "ENTER post-signin-test")
-  (testing "Successful POST: /login"
+  (testing "Successful POST: /signin"
     (let [initial-users @user-db/users
           dummy (log/trace (str "Initial users: " initial-users))
           req-body {:first-name "Pena", :last-name "Neponen", :email "pena.neponen@foo.com", :password "Pena"}
@@ -72,7 +72,7 @@
       (is (= (count initial-users) 3))
       (is (= (count new-users) 4))))
   ; So, we have added Mr. Neponen to user db, let's try to add him again - should fail.
-  (testing "Unsuccessful POST: /login (email already used)"
+  (testing "Unsuccessful POST: /signin (email already used)"
     (let [initial-users @user-db/users
           dummy (log/trace (str "Initial users: " initial-users))
           req-body {:first-name "Pena", :last-name "Neponen", :email "pena.neponen@foo.com", :password "Pena"}
