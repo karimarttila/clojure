@@ -58,6 +58,7 @@
     (.load prop io)
     (into {} prop)))
 
+
 (defn -load-configuration
   "Loads the configuration (property file) to [[config]] atom."
   []
@@ -72,6 +73,7 @@
   (if (nil? @config)
     (-load-configuration))
   (Integer/parseInt (get @config key)))
+
 
 (defn get-double-value
   "Gets double value of `key`."

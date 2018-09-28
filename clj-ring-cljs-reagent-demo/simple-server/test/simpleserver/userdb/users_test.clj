@@ -21,6 +21,7 @@
     (let [initialLen (count @user-db/users )]
       (is (= initialLen 3)))))
 
+
 (deftest email-already-exists?-test
   (log/trace "ENTER email-already-exists?-test")
   (testing "Existing email should return true"
@@ -30,6 +31,7 @@
     (let [ret (user-db/-email-already-exists? "non-existing@foo.com")]
       (is (= ret nil)))))
 
+
 (deftest add-new-user-test
   (log/trace "ENTER add-new-user-test")
   (testing "Adding a new non-existing user, should succeed"
@@ -38,6 +40,7 @@
   (testing "Adding a new existing user, should fail"
     (let [ret (user-db/add-new-user "foo1@foo.com" "Steve" "Stevenson" "passw0rd")]
       (is (= ret {:email "foo1@foo.com", :ret :failed, :msg "Email already exists"}))))  )
+
 
 (deftest credentials-ok?-test
   (log/trace "ENTER credentials-ok?-test")
