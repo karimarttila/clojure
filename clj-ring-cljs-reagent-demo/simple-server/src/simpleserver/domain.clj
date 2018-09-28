@@ -21,10 +21,11 @@
     (let [raw (with-open [reader (io/reader "resources/product-groups.csv")]
                 (doall
                   (csv/read-csv reader)))
-          product-groups-from-file (into {} (map
-                                              (fn [[item]]
-                                                (str/split item #"\t"))
-                                              raw))]
+          product-groups-from-file (into {}
+                                         (map
+                                           (fn [[item]]
+                                             (str/split item #"\t"))
+                                           raw))]
       (swap! my-domain-atom assoc :product-groups product-groups-from-file)
       product-groups-from-file)))
 
@@ -36,11 +37,12 @@
   (let [my-key (str "pg-" pg-id "-raw-products")]
     (if-let [raw-products (@my-domain-atom my-key)]
       raw-products
-      (let [raw-products-from-file (try
-                  (with-open [reader (io/reader (str "resources/pg-" pg-id "-products.csv"))]
-                    (doall
-                      (csv/read-csv reader :separator \tab)))
-                  (catch java.io.FileNotFoundException e nil))]
+      (let [raw-products-from-file
+            (try
+              (with-open [reader (io/reader (str "resources/pg-" pg-id "-products.csv"))]
+                (doall
+                  (csv/read-csv reader :separator \tab)))
+              (catch java.io.FileNotFoundException e nil))]
         (if raw-products-from-file
           (do
             (swap! my-domain-atom assoc my-key raw-products-from-file)

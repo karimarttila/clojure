@@ -6,21 +6,21 @@
 (def users
   "A simple dynamic user database for demonstration purposes."
   (atom
-             {1 {:userid          "1",
-                 :email           "kari.karttinen@foo.com",
-                 :first-name      "Kari",
-                 :last-name       "Karttinen"
-                 :hashed-password "1340477763"}
-              2 {:userid          "2",
-                 :email           "timo.tillinen@foo.com",
-                 :first-name      "Timo",
-                 :last-name       "Tillinen"
-                 :hashed-password "-36072128"}
-              3 {:userid          "3",
-                 :email           "erkka.erkkila@foo.com",
-                 :first-name      "Erkka",
-                 :last-name       "Erkkilä"
-                 :hashed-password "1655387230"}}))
+    {1 {:userid          "1",
+        :email           "kari.karttinen@foo.com",
+        :first-name      "Kari",
+        :last-name       "Karttinen"
+        :hashed-password "1340477763"}
+     2 {:userid          "2",
+        :email           "timo.tillinen@foo.com",
+        :first-name      "Timo",
+        :last-name       "Tillinen"
+        :hashed-password "-36072128"}
+     3 {:userid          "3",
+        :email           "erkka.erkkila@foo.com",
+        :first-name      "Erkka",
+        :last-name       "Erkkilä"
+        :hashed-password "1655387230"}}))
 
 
 (defn -email-already-exists?
@@ -57,9 +57,9 @@
   "Checks if given credentials are ok (if they can be found in the user db)."
   [email password]
   (some
-   (fn [user]
-     (and
-       (= (:email user) email)
-       (= (:hashed-password user) (str (hash password)))))
+    (fn [user]
+      (and
+        (= (:email user) email)
+        (= (:hashed-password user) (str (hash password)))))
 
-   (vals @users)))
+    (vals @users)))
