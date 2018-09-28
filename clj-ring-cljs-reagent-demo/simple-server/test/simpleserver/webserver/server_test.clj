@@ -142,7 +142,7 @@
 
 
 (deftest get-product-groups-test
-  (log/trace "ENTER get-product-group-test")
+  (log/trace "ENTER get-product-groups-test")
   (testing "GET: /product-groups"
     (let [req-body {:email "kari.karttinen@foo.com", :password "Kari"}
           login-ret (-call-request ws/app-routes "/login" :post nil req-body)
@@ -159,4 +159,61 @@
       (is (not (nil? json-web-token)))
       (is (= status 200))
       (is (= body right-body)))))
+
+
+(deftest get-products-test
+  (log/trace "ENTER get-products-test")
+  (testing "GET: /products/1"
+    (let [req-body {:email "kari.karttinen@foo.com", :password "Kari"}
+          login-ret (-call-request ws/app-routes "/login" :post nil req-body)
+          dummy (log/trace (str "Got login-ret: " login-ret))
+          login-body (:body login-ret)
+          json-web-token (:json-web-token login-body)
+          params (-create-basic-authentication json-web-token)
+          get-ret (-call-request ws/app-routes "/products/1" :get params nil)
+          dummy (log/trace (str "Got body: " get-ret))
+          status (:status get-ret)
+          body (:body get-ret)
+          pg-id (:pg-id body)
+          ret (:ret body)
+          products (:products body)
+          ]
+      (is (not (nil? json-web-token)))
+      (is (= status 200))
+      (is (= pg-id "1"))
+      (is (= ret :ok))
+      (is (= (count products) 35)))))
+
+
+(deftest get-product-test
+  (log/trace "ENTER get-product-test")
+  (testing "GET: /product/1/10"
+    (let [req-body {:email "kari.karttinen@foo.com", :password "Kari"}
+          login-ret (-call-request ws/app-routes "/login" :post nil req-body)
+          dummy (log/trace (str "Got login-ret: " login-ret))
+          login-body (:body login-ret)
+          json-web-token (:json-web-token login-body)
+          params (-create-basic-authentication json-web-token)
+          get-ret (-call-request ws/app-routes "/product/2/49" :get params nil)
+          dummy (log/trace (str "Got body: " get-ret))
+          status (:status get-ret)
+          body (:body get-ret)
+          pg-id (:pg-id body)
+          p-id (:p-id body)
+          ret (:ret body)
+          product (:product body)
+          ;; What a coincidence! The chosen movie is the best western of all times!
+          right-product ["49" "2" "Once Upon a Time in the West" "14.4" "Leone, Sergio" "1968" "Italy-USA" "Western"]
+          ]
+      (is (not (nil? json-web-token)))
+      (is (= status 200))
+      (is (= pg-id "2"))
+      (is (= p-id "49"))
+      (is (= ret :ok))
+      (is (= product right-product)))))
+
+
+
+
+
 
