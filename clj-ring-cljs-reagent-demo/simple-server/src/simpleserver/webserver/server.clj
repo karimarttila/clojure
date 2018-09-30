@@ -11,7 +11,7 @@
     [environ.core :refer [env]]
     [simpleserver.userdb.users :as ss-users]
     [simpleserver.webserver.session :as ss-session]
-    [simpleserver.domain :as ss-domain]))
+    [simpleserver.domaindb.domain :as ss-domain]))
 
 
 ;; NOTE: my-body atom is just for testing purposes using remote REPL:

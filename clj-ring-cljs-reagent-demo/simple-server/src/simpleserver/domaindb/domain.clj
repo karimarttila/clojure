@@ -1,4 +1,4 @@
-(ns simpleserver.domain
+(ns simpleserver.domaindb.domain
   (:require
     [clojure.data.csv :as csv]
     [clojure.java.io :as io]
