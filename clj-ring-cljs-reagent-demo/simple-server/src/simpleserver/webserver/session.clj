@@ -25,6 +25,14 @@
   (atom #{}))
 
 
+(defn reset-mysessions
+  "A helper method for tests."
+  []
+  (log/trace (str "my-sessions before reset: " @my-sessions))
+  (reset! my-sessions #{})
+  (log/trace (str "my-sessions after reset: " @my-sessions)))
+
+
 (def my-hex-secret
   "Creates dynamically a hex secret when the server boots."
   ((fn []
@@ -39,7 +47,7 @@
 
 
 (defn validate-token
-  "Validates the token. Returns email if session ok, nil otherwise.
+  "Validates the token. Returns {:email :exp} from token if session ok, nil otherwise.
   Token validation has two parts:
   1. Check that we actually created the token in the first place (should find it in my-sessions set.
   2. Validate the token with buddy (can unsign it, token is not expired)."

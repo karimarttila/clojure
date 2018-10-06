@@ -1,4 +1,4 @@
-(ns simpleserver.webserver.server_test
+(ns simpleserver.webserver.server-test
   (:require [clojure.test :refer :all]
             [clojure.tools.logging :as log]
             [simpleserver.userdb.users :as user-db]
