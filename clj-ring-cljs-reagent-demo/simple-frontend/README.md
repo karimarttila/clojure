@@ -53,6 +53,19 @@ lein new reagent-frontend simple-frontend
 
 ```
 
+### Using Ready-Made Application
+
+If you are not able to build the application I have created a [public-demo.tar.gz](public-demo.tar.gz) file. Untar (tar -xvzf public-demo.tar.gz) and you'll get a public-demo directory. 
+
+Start the server e.g. using Python2:
+
+```bash
+cd <to this public-demo directory>
+python -m SimpleHTTPServer
+```
+The Simple Frontent wants to connect to the server that listens port 3045 in localhost.
+
+
 ### Figwheel
 
 To start the [Figwheel](https://github.com/bhauman/lein-figwheel) compiler, navigate to the project folder and run the following command in the terminal:
