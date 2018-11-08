@@ -27,6 +27,9 @@
 
 Simple Server serves as a backend server for the Simple Frontend.
 
+I also wrote a bit more concise summary in my [Medium blog](https://medium.com/@kari.marttila/become-a-full-stack-developer-with-clojure-and-clojurescript-c58c93479294) compared to the longer text you can find here in this readme.md.
+
+
 
 ## Technical Description
 
