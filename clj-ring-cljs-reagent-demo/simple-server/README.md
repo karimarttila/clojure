@@ -136,9 +136,46 @@ lein repl :connect localhost:55444
 See instructions in [lein-ring documentation](https://github.com/weavejester/lein-ring).
 
 
-#### Connect to Remote REPL using Cursive REPL
+#### Connect to Ring App using Remote REPL in IDEA/Cursive
 
-Very simple: Just create a remote REPL configuration with hostname: localhost, and port 55444.
+You can first create a IntelliJ IDEA / Cursive Leiningen Run Configuration:
+
+- Edit Configurations
+- "+" -> Leiningen
+- Name: lein-ring-for-remote-repl
+- Leiningen project: simple-server:1.0
+- Arguments: with-profile +log-dev ring server-headless
+
+Since you already have the nrepl configured in [project.clj](project.clj):
+
+```clojure
+  :ring {:handler simpleserver.webserver.server/web-server
+         :init simpleserver.webserver.server/initialize-web-server
+         :port 3045
+         :nrepl {:start? true
+                 :port 55444}}
+```
+You get a nREPL port open when you start this configuration in IDEA. Ok, now start "lein-ring-for-remote-repl".
+
+Now create a new Remote REPL Run Configuration:
+
+- Edit Configurations
+- "+" -> Clojure REPL -> Remote
+- Name: remote REPL 55444
+- Host: localhost
+- Port: 55444
+- Context module: simple-server:1.0
+
+Now start this "remote REPL 55444" Run Configuration as well.
+
+Now you can call any function in remote REPL and the application reacts basically the same way as if you curled the app. E.g. in remote REPL:
+
+```clojure
+(simpleserver.domaindb.domain/get-product-groups)
+;=> {"1" "Books", "2" "Movies"}
+```
+
+Cool, uh?
 
 
 ### Static Code Analysis
