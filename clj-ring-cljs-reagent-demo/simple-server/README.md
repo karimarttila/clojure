@@ -1,26 +1,26 @@
 # Simple Server
 
 ## Table of Contents
-
-  * [Table of Contents](#table-of-contents)
-  * [Introduction](#introduction)
-  * [Technical Description](#technical-description)
-  * [Clojure Development](#clojure-development)
-     * [IntelliJ IDEA / Cursive](#intellij-idea--cursive)
-     * [Command Line](#command-line)
-     * [Hot Code Reloading](#hot-code-reloading)
-     * [Connecting REPL to Running Ring Server](#connecting-repl-to-running-ring-server)
-        * [The Hard Way](#the-hard-way)
-        * [The Easy Way](#the-easy-way)
-        * [Connect to Remote REPL using Cursive REPL](#connect-to-remote-repl-using-cursive-repl)
-     * [Static Code Analysis](#static-code-analysis)
-     * [CORS Issues](#cors-issues)
-        * [Simple Server](#simple-server-1)
-        * [Simple Frontend](#simple-frontend)
-        * [Using Remote REPL to Debug CORS Issues](#using-remote-repl-to-debug-cors-issues)
-     * [Session Handling](#session-handling)
-  * [Building for Production](#building-for-production)
-
+- [Simple Server](#simple-server)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Technical Description](#technical-description)
+  - [Clojure Development](#clojure-development)
+    - [IntelliJ IDEA / Cursive](#intellij-idea--cursive)
+    - [Command Line](#command-line)
+    - [Hot Code Reloading](#hot-code-reloading)
+    - [Connecting REPL to Running Ring Server](#connecting-repl-to-running-ring-server)
+      - [The Hard Way](#the-hard-way)
+      - [The Easy Way](#the-easy-way)
+      - [Connect to Ring App using Remote REPL in IDEA/Cursive](#connect-to-ring-app-using-remote-repl-in-ideacursive)
+    - [Static Code Analysis](#static-code-analysis)
+    - [CORS Issues](#cors-issues)
+      - [Simple Server](#simple-server-1)
+      - [Simple Frontend](#simple-frontend)
+      - [Using Remote REPL to Debug CORS Issues](#using-remote-repl-to-debug-cors-issues)
+    - [Session Handling](#session-handling)
+  - [Integration Testing](#integration-testing)
+  - [Building for Production](#building-for-production)
 
 
 ## Introduction
