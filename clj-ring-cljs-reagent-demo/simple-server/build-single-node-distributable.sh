@@ -1,7 +1,7 @@
 #!/bin/bash
 
 lein clean
-SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties lein with-profile +log-prod ring uberjar
+SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties lein with-profile +single-node,+log-prod ring uberjar
 
 echo "Distributable ready."
 echo "You can start the distributable as:"
