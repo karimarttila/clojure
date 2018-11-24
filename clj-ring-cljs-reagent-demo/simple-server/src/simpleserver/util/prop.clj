@@ -42,12 +42,11 @@
     (if (nil? configfile-name)
       (do (log/info (str "Property file: " configfile-name " is nil, using default in resources/simpleserver.properties"))
           "resources/simpleserver.properties")
-      (let [configfile-name (str "resources/simpleserver.properties")]
-        (if (-check-file configfile-name)
-          (do (log/info (str "Using poperty file: " configfile-name))
-              (set-property-file configfile-name))
-          (do (log/info (str "Property file: " configfile-name " not found, exiting."))
-              (throw (ex-info (str "Property file: " configfile-name " not found") {}))))))))
+      (if (-check-file configfile-name)
+        (do (log/info (str "Using poperty file: " configfile-name))
+            (set-property-file configfile-name))
+        (do (log/info (str "Property file: " configfile-name " not found, exiting."))
+            (throw (ex-info (str "Property file: " configfile-name " not found") {})))))))
 
 
 (defn -load-props

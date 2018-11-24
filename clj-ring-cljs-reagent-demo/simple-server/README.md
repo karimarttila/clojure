@@ -1,29 +1,30 @@
 # Simple Server
 
-## Table of Contents
+# Table of Contents
 - [Simple Server](#simple-server)
-  - [Table of Contents](#table-of-contents)
-  - [Introduction](#introduction)
-  - [Technical Description](#technical-description)
-  - [Clojure Development](#clojure-development)
-    - [IntelliJ IDEA / Cursive](#intellij-idea--cursive)
-    - [Command Line](#command-line)
-    - [Hot Code Reloading](#hot-code-reloading)
-    - [Connecting REPL to Running Ring Server](#connecting-repl-to-running-ring-server)
-      - [The Hard Way](#the-hard-way)
-      - [The Easy Way](#the-easy-way)
-      - [Connect to Ring App using Remote REPL in IDEA/Cursive](#connect-to-ring-app-using-remote-repl-in-ideacursive)
-    - [Static Code Analysis](#static-code-analysis)
-    - [CORS Issues](#cors-issues)
-      - [Simple Server](#simple-server-1)
-      - [Simple Frontend](#simple-frontend)
-      - [Using Remote REPL to Debug CORS Issues](#using-remote-repl-to-debug-cors-issues)
-    - [Session Handling](#session-handling)
-  - [Integration Testing](#integration-testing)
-  - [Building for Production](#building-for-production)
+- [Table of Contents](#table-of-contents)
+- [Introduction](#introduction)
+- [Technical Description](#technical-description)
+- [Clojure Development](#clojure-development)
+  - [IntelliJ IDEA / Cursive](#intellij-idea--cursive)
+  - [Command Line](#command-line)
+  - [Hot Code Reloading](#hot-code-reloading)
+  - [Connecting REPL to Running Ring Server](#connecting-repl-to-running-ring-server)
+    - [The Hard Way](#the-hard-way)
+    - [The Easy Way](#the-easy-way)
+    - [Connect to Ring App using Remote REPL in IDEA/Cursive](#connect-to-ring-app-using-remote-repl-in-ideacursive)
+  - [Static Code Analysis](#static-code-analysis)
+  - [CORS Issues](#cors-issues)
+    - [Simple Server](#simple-server-1)
+    - [Simple Frontend](#simple-frontend)
+    - [Using Remote REPL to Debug CORS Issues](#using-remote-repl-to-debug-cors-issues)
+  - [Session Handling](#session-handling)
+- [Unit Testing](#unit-testing)
+- [Building for Production](#building-for-production)
+- [Simple Server Goes AWS](#simple-server-goes-aws)
 
 
-## Introduction
+# Introduction
 
 Simple Server serves as a backend server for the Simple Frontend.
 
@@ -31,19 +32,19 @@ I also wrote a bit more concise summary in my [Medium blog](https://medium.com/@
 
 
 
-## Technical Description
+# Technical Description
 
 Simple Server is implemented using [Clojure](https://clojure.org/) and [Ring](https://github.com/ring-clojure).
 
-## Clojure Development
+# Clojure Development
 
-### IntelliJ IDEA / Cursive
+## IntelliJ IDEA / Cursive
 
 If you are using IntelliJ IDEA with Cursive plugin you can configure REPL with properties:
 - Profiles: +log-dev
 - Environment: SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties
 
-### Command Line
+## Command Line
 
 Start server in command line: 
 
@@ -51,15 +52,15 @@ Start server in command line:
 SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties lein with-profile +log-dev ring server-headless
 ```
 
-### Hot Code Reloading
+## Hot Code Reloading
 
 Ring starts the server in hot code reloading mode which is pretty nice when developing the backend application - you can start your server using the command given above and just make code changes and test the server APIs using Curl without restarting the server.
 
 When you want to create the production version follow [Ring Setup for Production](https://github.com/ring-clojure/ring/wiki/Setup-for-production) instructions.
 
-### Connecting REPL to Running Ring Server
+## Connecting REPL to Running Ring Server
 
-#### The Hard Way
+### The Hard Way
 
 I added this hard way just as a curiosity. You should use the easy way I describe below since hot code reload works only with the easy way. :-)
 
@@ -111,7 +112,7 @@ simpleserver.core=> (count (vals @simpleserver.userdb.users/users))
 
 The issue using this scenario is that hot code reload is not working. 
 
-#### The Easy Way
+### The Easy Way
 
 I added the following nrepl configuration to the ring configuration (in project.clj):
 
@@ -136,7 +137,7 @@ lein repl :connect localhost:55444
 See instructions in [lein-ring documentation](https://github.com/weavejester/lein-ring).
 
 
-#### Connect to Ring App using Remote REPL in IDEA/Cursive
+### Connect to Ring App using Remote REPL in IDEA/Cursive
 
 You can first create a IntelliJ IDEA / Cursive Leiningen Run Configuration:
 
@@ -178,7 +179,7 @@ Now you can call any function in remote REPL and the application reacts basicall
 Cool, uh?
 
 
-### Static Code Analysis
+## Static Code Analysis
 
 You can use [Eastwood](https://github.com/jonase/eastwood) for static code analysis. Add Eastwood plugin to your home profile as instructed in Eastwood documentation. Then give command:
 
@@ -190,11 +191,11 @@ Other useful tools in blog article [The state of code quality tools in Clojure](
 
 
 
-### CORS Issues
+## CORS Issues
 
 I had to spend quite a lot of time before I got the [CORS](https://en.wikipedia.org/wiki/Cross-origin_resource_sharing) configurations done properly:
 
-#### Simple Server
+### Simple Server
 
 In the backend side I use [ring-cors](https://github.com/r0man/ring-cors) library to configure the CORS related headers:
 
@@ -206,7 +207,7 @@ In the backend side I use [ring-cors](https://github.com/r0man/ring-cors) librar
 
 The reason why I had to spend such a long time with this is that I first didn't realize that wrap-cors was not working with (ri-defaults/wrap-defaults ri-defaults/api-defaults) - I need to figure out later why this is so.
 
-#### Simple Frontend
+### Simple Frontend
 
 Now that you have the CORS configurations done in the server side, you can post the form values to server using [cljs-ajax](https://github.com/JulianBirch/cljs-ajax) library:
 
@@ -222,7 +223,7 @@ Now that you have the CORS configurations done in the server side, you can post 
 ...                          
 ```
 
-#### Using Remote REPL to Debug CORS Issues
+### Using Remote REPL to Debug CORS Issues
 
 I first forgot the ":format :json" part of the request. This also puzzled me quite a lot since the server side POST processing was working just fine when I tested the POST interface with [curl](http://manpages.ubuntu.com/manpages/trusty/man1/curl.1.html) or [Postman](https://www.getpostman.com/). Then I used the power of Lisp and added a simple debugging trace to server side code:
 
@@ -268,7 +269,7 @@ clojure.lang.LazySeq
 
 Remote REPL really is a powerful way to debug your running application.
 
-### Session Handling
+## Session Handling
 
 In the backend side (Simple Server) I use the Clojure [buddy](https://github.com/funcool/buddy) library to create the [JSON Web Token](https://en.wikipedia.org/wiki/JSON_Web_Token) which is then passed to the Simple Frontend which needs to add the token to the http Authorization header for all API calls that needs authorization. Simple server then checks the validity of the session token (i.e. the token has not expired and the server has actually created the token). Internally the session is stored in the Simple Server in an atom in the session namespace. I could have used other buddy services to automate REST API authorization but I wanted to make the session handling more transparent for learning purposes and therefore handled the token storing / validation myself.
 
@@ -356,14 +357,28 @@ Now that the actual application logic to validate token is ready, it is just a m
 
 ```
 
-## Integration Testing
+# Unit Testing
 
-TODO: Create integration tests for API methods as in scripts directory.
+To run the unit tests: ([run-tests.sh](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-server/run-tests.sh))
 
-## Building for Production
+```bash
+./run-tests.sh
+```
+
+
+
+# Building for Production
 
 Run:
 
 ```bash
 ./build-distributable.sh
 ```
+
+
+
+# Simple Server Goes AWS
+
+After my [Five Languages](https://medium.com/@kari.marttila/five-languages-five-stories-1afd7b0b583f) project I was searching something new to create and learn. I decided to refresh my AWS skills a bit and change this Clojure Simple Server implementation a bit to make it stateless and keep all data (web store product data, user data and session data) in [DynamoDB](https://aws.amazon.com/dynamodb/). This way I could have a reason to use the [local DynamoDb Docker](https://hub.docker.com/r/amazon/dynamodb-local/) version for development and also create some Terraform code which I haven't touch for a few month since in my corporate universe I'm using Azure and ARM at the moment. I decided to [deploy Simple Server to AWS using EKS](https://github.com/karimarttila/aws/tree/master/simple-server-eks) so I could have a chance to deploy [Kubernetes](https://kubernetes.io/) configuration in the [AWS / Elastic Kubernetes Server](https://aws.amazon.com/eks/) (I have some [experience using Azure AKS](https://medium.com/@kari.marttila/running-azure-kubernetes-service-aks-882faad43f2c) - so it is also interesting to compare these services). 
+
+
