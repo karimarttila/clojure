@@ -390,4 +390,11 @@ Get DynamoDb Docker Image:
 docker pull amazon/dynamodb-local
 ```
 
+Create a ```local-dynamodb``` aws profile. Then you are able to use aws cli with ```--endpoint-url http://localhost:8000``` endpoint which points to DynamoDB local Docker version listening in port 8000). Example:
+
+```bash
+AWS_PROFILE=local-dynamodb aws dynamodb create-table --endpoint-url http://localhost:8000 --table-name sseks-dev-session --attribute-definitions AttributeName=token,AttributeType=S --key-schema AttributeName=token,KeyType=HASH --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+```
+
+There are scripts in [dynamodb](https://github.com/karimarttila/clojure/tree/master/clj-ring-cljs-reagent-demo/simple-server/docker/dynamodb) directory to create/describe/delete tables needed running Clojure Simple Server using ```local-dynamodb``` profile (which uses DynamoDB local Docker version). 
 
