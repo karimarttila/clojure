@@ -31,7 +31,7 @@
 
 
 	<!-- Send logs to both console and file audit -->
-	<logger name="csgen" level="trace"
+	<logger name="simpleserver" level="trace"
 		additivity="false">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="FILE" />

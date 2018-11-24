@@ -22,6 +22,7 @@
 - [Unit Testing](#unit-testing)
 - [Building for Production](#building-for-production)
 - [Simple Server Goes AWS](#simple-server-goes-aws)
+  - [DynamoDB Docker Image](#dynamodb-docker-image)
 
 
 # Introduction
@@ -380,5 +381,13 @@ Run:
 # Simple Server Goes AWS
 
 After my [Five Languages](https://medium.com/@kari.marttila/five-languages-five-stories-1afd7b0b583f) project I was searching something new to create and learn. I decided to refresh my AWS skills a bit and change this Clojure Simple Server implementation a bit to make it stateless and keep all data (web store product data, user data and session data) in [DynamoDB](https://aws.amazon.com/dynamodb/). This way I could have a reason to use the [local DynamoDb Docker](https://hub.docker.com/r/amazon/dynamodb-local/) version for development and also create some Terraform code which I haven't touch for a few month since in my corporate universe I'm using Azure and ARM at the moment. I decided to [deploy Simple Server to AWS using EKS](https://github.com/karimarttila/aws/tree/master/simple-server-eks) so I could have a chance to deploy [Kubernetes](https://kubernetes.io/) configuration in the [AWS / Elastic Kubernetes Server](https://aws.amazon.com/eks/) (I have some [experience using Azure AKS](https://medium.com/@kari.marttila/running-azure-kubernetes-service-aks-882faad43f2c) - so it is also interesting to compare these services). 
+
+
+## DynamoDB Docker Image
+
+Get DynamoDb Docker Image:
+```bash
+docker pull amazon/dynamodb-local
+```
 
 

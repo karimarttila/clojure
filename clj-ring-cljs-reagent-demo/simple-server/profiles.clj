@@ -14,6 +14,19 @@
 ;; **********************************************
  ;; Logging profiles, choose only one.
 
+ :single-node
+ {
+ }
+
+ :local-dynamodb
+ {
+ }
+
+ :aws
+ {
+ }
+
+
  :log-dev
  {
   :resource-paths
