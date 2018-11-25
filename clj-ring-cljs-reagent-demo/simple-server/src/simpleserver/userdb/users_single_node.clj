@@ -2,12 +2,8 @@
   (:require
     [clojure.tools.logging :as log]
     [simpleserver.userdb.users-protocol :as ss-users-protocol]
-    [simpleserver.util.environment :as ss-util-env]
-    [simpleserver.userdb.users-protocol :as ss-users-protocol]
     [environ.core :refer [env]]
-    )
-  (:import [simpleserver.util.environment Env-single-node])
-  )
+    ))
 
 (defn -get-test-userdb
   []
@@ -42,7 +38,7 @@
   (reset! users (-get-test-userdb)))
 
 
-(extend-type Env-single-node
+(defrecord Env-single-node [env]
   ss-users-protocol/UsersProtocol
   (email-already-exists?
     [env email]

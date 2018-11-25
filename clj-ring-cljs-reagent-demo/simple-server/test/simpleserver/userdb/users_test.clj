@@ -3,10 +3,10 @@
             [clojure.tools.logging :as log]
             [environ.core :refer [env]]
             [simpleserver.userdb.users :as user-db]
-            [simpleserver.util.environment :as ss-util-env]
+            [simpleserver.userdb.environment :as ss-user-env]
             [simpleserver.testutils.users-util :as utu]))
 
-(def my-env (ss-util-env/-m-create-my-env (env :ss-env)))
+(def my-env (ss-user-env/-m-create-my-env (env :ss-env)))
 
 (defn userdb-test-fixture
   [f]

@@ -3,11 +3,11 @@
     [clojure.tools.logging :as log]
     [environ.core :refer [env]]
     [simpleserver.userdb.users-protocol :as ss-user-protocol]
-    [simpleserver.util.environment :as ss-util-env])
+    [simpleserver.userdb.environment :as ss-user-env])
   )
 
 
-(def my-env (ss-util-env/-m-create-my-env (env :ss-env)))
+(def my-env (ss-user-env/-m-create-my-env (env :ss-env)))
 
 
 (defn email-already-exists?
