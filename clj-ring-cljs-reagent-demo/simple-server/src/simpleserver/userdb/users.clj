@@ -41,6 +41,11 @@
   (throw (IllegalArgumentException.
            (str "Not yet implemented for local-dynamodb"))))
 
+(defmethod -m-email-already-exists? "aws"
+  [mymap]
+  (throw (IllegalArgumentException.
+           (str "Not yet implemented for local-dynamodb"))))
+
 (defmethod -m-email-already-exists? :default
   [mymap]
   (throw (IllegalArgumentException.
