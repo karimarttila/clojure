@@ -4,27 +4,36 @@
 {
 
  :dev
-
  {
   ;:plugins [[test2junit "1.3.3"]]
   :dependencies [[javax.servlet/servlet-api "2.5"]
                  [ring/ring-mock "0.3.0"]]}
 
 
-;; **********************************************
+ ;; **********************************************
  ;; Logging profiles, choose only one.
 
  :single-node
  {
- }
+  :env {
+        :ss-env "single-node"
+        }
+  }
 
  :local-dynamodb
  {
- }
+  :env {
+        :ss-env "local-dynamodb"
+        :endpoint "http://localhost:8000"}
+  }
 
  :aws
  {
- }
+  :env {
+        :ss-env "aws"
+        }
+
+  }
 
 
  :log-dev

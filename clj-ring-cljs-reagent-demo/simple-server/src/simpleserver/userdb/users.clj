@@ -1,6 +1,7 @@
 (ns simpleserver.userdb.users
   (:require
-    [clojure.tools.logging :as log]))
+    [clojure.tools.logging :as log]
+    [environ.core :refer [env]]))
 
 
 (def users
@@ -23,13 +24,36 @@
         :hashed-password "1655387230"}}))
 
 
+;; *** Multimethod -email-already-exists for various environments. BEGINS ***
+
+(defmulti -m-email-already-exists? (fn [mymap] (mymap :myenv)))
+
+(defmethod -m-email-already-exists? "single-node"
+  [mymap]
+  (let [email (mymap :myemail)]
+    (some
+      (fn [user]
+        (= (:email user) email))
+      (vals @users))))
+
+(defmethod -m-email-already-exists? "local-dynamodb"
+  [mymap]
+  (throw (IllegalArgumentException.
+           (str "Not yet implemented for local-dynamodb"))))
+
+(defmethod -m-email-already-exists? :default
+  [mymap]
+  (throw (IllegalArgumentException.
+           (str "Env " (mymap :myenv) " not supported"))))
+
+
 (defn -email-already-exists?
   "Checks if the `email` already exists in the database."
   [email]
-  (some
-    (fn [user]
-      (= (:email user) email))
-    (vals @users)))
+  ; Dispatching based on environment.
+  (-m-email-already-exists? {:myemail email, :myenv (env :ss-env)}))
+
+;; *** Multimethod -email-already-exists for various environments. BEGINS ***
 
 
 (defn add-new-user

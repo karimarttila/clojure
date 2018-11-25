@@ -6,6 +6,8 @@
     [simpleserver.webserver.server :as ss-ws]))
 
 
+;; Development:
+;; (do (require '[clojure.tools.namespace.repl :refer [refresh]]) (refresh))
 
 
 ;; NOTE: When testing in REPL you can call (-main 1 2 3 4) directly
