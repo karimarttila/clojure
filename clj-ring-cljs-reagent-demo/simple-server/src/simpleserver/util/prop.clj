@@ -38,15 +38,17 @@
 (defn -load-property-filename
   "Loads the property file name from environmental variable `SIMPLESERVER_CONFIG_FILE`."
   []
-  (let [configfile-name (env :simpleserver-config-file)]
-    (if (nil? configfile-name)
-      (do (log/info (str "Property file: " configfile-name " is nil, using default in resources/simpleserver.properties"))
-          "resources/simpleserver.properties")
-      (if (-check-file configfile-name)
-        (do (log/info (str "Using poperty file: " configfile-name))
-            (set-property-file configfile-name))
-        (do (log/info (str "Property file: " configfile-name " not found, exiting."))
-            (throw (ex-info (str "Property file: " configfile-name " not found") {})))))))
+  (log/debug (str "ENTER -load-property-filename"))
+  (log/trace (str "Current directory: " (-> (java.io.File. ".") .getAbsolutePath)))
+  (let [from-env (env :simpleserver-config-file)
+        configfile-name (if (nil? from-env)
+                          "resources/simpleserver.properties"
+                          from-env)]
+    (if (-check-file configfile-name)
+      (do (log/info (str "Using poperty file: " configfile-name))
+          (set-property-file configfile-name))
+      (do (log/info (str "Property file: " configfile-name " not found, exiting."))
+          (throw (ex-info (str "Property file: " configfile-name " not found") {}))))))
 
 
 (defn -load-props

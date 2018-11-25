@@ -1,7 +1,7 @@
 (ns simpleserver.webserver.server-test
   (:require [clojure.test :refer :all]
             [clojure.tools.logging :as log]
-            [simpleserver.userdb.users :as user-db]
+            [simpleserver.userdb.users-single-node :as user-db]
             [simpleserver.webserver.session :as sess]
             [simpleserver.webserver.server :as ws]
             [simpleserver.testutils.users-util :as utu]
@@ -11,14 +11,14 @@
 
 (defn -reset-sessions
   []
-  (log/trace "ENTERED -reset-sessions")
+  (log/debug "ENTERED -reset-sessions")
   (reset! sess/my-sessions #{}))
 
 
 (defn server-test-fixture
   [f]
   (do
-    (log/trace "ENTERED server-test-fixture")
+    (log/debug "ENTERED server-test-fixture")
     (utu/initialize-userdb)
     (-reset-sessions)
     (f)))
@@ -31,7 +31,7 @@
   "A helper method to create basic authentication for certain get methods which
   require the json-web-token in header."
   [json-webtoken]
-  (log/trace "ENTER -create-basic-authentication")
+  (log/debug "ENTER -create-basic-authentication")
   (let [added-token (str json-webtoken ":NOT")
         encoded-token (apply str (map char (base64/encode (.getBytes added-token))))
         basic-str (str "Basic " encoded-token)]
@@ -50,10 +50,10 @@
 
 
 (deftest get-info-test
-  (log/trace "ENTER get-info-test")
+  (log/debug "ENTER get-info-test")
   (testing "GET: /info"
     (let [ret (-call-request ws/app-routes "/info" :get nil nil)
-          dummy (log/trace (str "Got result: " ret))
+          dummy (log/debug (str "Got result: " ret))
           status (:status ret)
           body (:body ret)
           right-body "{\"info\":\"index.html => Info in HTML format\"}"]
@@ -62,18 +62,18 @@
 
 
 (deftest post-signin-test
-  (log/trace "ENTER post-signin-test")
+  (log/debug "ENTER post-signin-test")
   (testing "Successful POST: /signin"
     (let [initial-users @user-db/users
-          dummy (log/trace (str "Initial users: " initial-users))
+          dummy (log/debug (str "Initial users: " initial-users))
           req-body {:first-name "Pena", :last-name "Neponen", :email "pena.neponen@foo.com", :password "Pena"}
           ret (-call-request ws/app-routes "/signin" :post nil req-body)
-          dummy (log/trace (str "Got result: " ret))
+          dummy (log/debug (str "Got result: " ret))
           status (:status ret)
           body (:body ret)
           right-body {:email "pena.neponen@foo.com" :ret :ok}
           new-users @user-db/users
-          dummy (log/trace (str "New users: " new-users))]
+          dummy (log/debug (str "New users: " new-users))]
       (is (= status 200))
       (is (= body right-body))
       (is (= (count initial-users) 3))
@@ -81,15 +81,15 @@
   ; So, we have added Mr. Neponen to user db, let's try to add him again - should fail.
   (testing "Unsuccessful POST: /signin (email already used)"
     (let [initial-users @user-db/users
-          dummy (log/trace (str "Initial users: " initial-users))
+          dummy (log/debug (str "Initial users: " initial-users))
           req-body {:first-name "Pena", :last-name "Neponen", :email "pena.neponen@foo.com", :password "Pena"}
           ret (-call-request ws/app-routes "/signin" :post nil req-body)
-          dummy (log/trace (str "Got result: " ret))
+          dummy (log/debug (str "Got result: " ret))
           status (:status ret)
           body (:body ret)
           right-body {:email "pena.neponen@foo.com", :ret :failed, :msg "Email already exists"}
           new-users @user-db/users
-          dummy (log/trace (str "New users: " new-users))]
+          dummy (log/debug (str "New users: " new-users))]
       (is (= status 400))
       (is (= body right-body))
       (is (= (count initial-users) 4))
@@ -97,13 +97,13 @@
 
 
 (deftest post-login-test
-  (log/trace "ENTER post-login-test")
+  (log/debug "ENTER post-login-test")
   (testing "Successful POST: /login"
     (let [initial-sessions @sess/my-sessions
-          dummy (log/trace (str "Initial sessions " initial-sessions))
+          dummy (log/debug (str "Initial sessions " initial-sessions))
           req-body {:email "kari.karttinen@foo.com", :password "Kari"}
           ret (-call-request ws/app-routes "/login" :post nil req-body)
-          dummy (log/trace (str "Got result: " ret))
+          dummy (log/debug (str "Got result: " ret))
           status (:status ret)
           body (:body ret)
           json-web-token (:json-web-token body)
@@ -111,7 +111,7 @@
           ret (:ret body)
           right-body {:email "pena.neponen@foo.com" :ret :ok}
           new-sessions @sess/my-sessions
-          dummy (log/trace (str "New sessions: " new-sessions))]
+          dummy (log/debug (str "New sessions: " new-sessions))]
       (is (= status 200))
       (is (= ret :ok))
       (is (= msg "Credentials ok"))
@@ -121,10 +121,10 @@
       (is (= (count new-sessions) 1))))
   (testing "Unsuccessful POST: /login"
     (let [initial-sessions @sess/my-sessions
-          dummy (log/trace (str "Initial sessions " initial-sessions))
+          dummy (log/debug (str "Initial sessions " initial-sessions))
           req-body {:email "kari.karttinen@foo.com", :password "WRONG-PASSWORD"}
           login-ret (-call-request ws/app-routes "/login" :post nil req-body)
-          dummy (log/trace (str "Got result: " login-ret))
+          dummy (log/debug (str "Got result: " login-ret))
           status (:status login-ret)
           body (:body login-ret)
           json-web-token (:json-web-token body)
@@ -132,7 +132,7 @@
           ret (:ret body)
           right-body {:email "pena.neponen@foo.com" :ret :ok}
           new-sessions @sess/my-sessions
-          dummy (log/trace (str "New sessions: " new-sessions))]
+          dummy (log/debug (str "New sessions: " new-sessions))]
       (is (= status 400))
       (is (= ret :failed))
       (is (= msg "Credentials are not good - either email or password is not correct"))
@@ -142,16 +142,16 @@
 
 
 (deftest get-product-groups-test
-  (log/trace "ENTER get-product-groups-test")
+  (log/debug "ENTER get-product-groups-test")
   (testing "GET: /product-groups"
     (let [req-body {:email "kari.karttinen@foo.com", :password "Kari"}
           login-ret (-call-request ws/app-routes "/login" :post nil req-body)
-          dummy (log/trace (str "Got login-ret: " login-ret))
+          dummy (log/debug (str "Got login-ret: " login-ret))
           login-body (:body login-ret)
           json-web-token (:json-web-token login-body)
           params (-create-basic-authentication json-web-token)
           get-ret (-call-request ws/app-routes "/product-groups" :get params nil)
-          dummy (log/trace (str "Got body: " get-ret))
+          dummy (log/debug (str "Got body: " get-ret))
           status (:status get-ret)
           body (:body get-ret)
           right-body {:ret :ok, :product-groups {"1" "Books", "2" "Movies"}}
@@ -162,16 +162,16 @@
 
 
 (deftest get-products-test
-  (log/trace "ENTER get-products-test")
+  (log/debug "ENTER get-products-test")
   (testing "GET: /products/1"
     (let [req-body {:email "kari.karttinen@foo.com", :password "Kari"}
           login-ret (-call-request ws/app-routes "/login" :post nil req-body)
-          dummy (log/trace (str "Got login-ret: " login-ret))
+          dummy (log/debug (str "Got login-ret: " login-ret))
           login-body (:body login-ret)
           json-web-token (:json-web-token login-body)
           params (-create-basic-authentication json-web-token)
           get-ret (-call-request ws/app-routes "/products/1" :get params nil)
-          dummy (log/trace (str "Got body: " get-ret))
+          dummy (log/debug (str "Got body: " get-ret))
           status (:status get-ret)
           body (:body get-ret)
           pg-id (:pg-id body)
@@ -186,16 +186,16 @@
 
 
 (deftest get-product-test
-  (log/trace "ENTER get-product-test")
+  (log/debug "ENTER get-product-test")
   (testing "GET: /product/1/10"
     (let [req-body {:email "kari.karttinen@foo.com", :password "Kari"}
           login-ret (-call-request ws/app-routes "/login" :post nil req-body)
-          dummy (log/trace (str "Got login-ret: " login-ret))
+          dummy (log/debug (str "Got login-ret: " login-ret))
           login-body (:body login-ret)
           json-web-token (:json-web-token login-body)
           params (-create-basic-authentication json-web-token)
           get-ret (-call-request ws/app-routes "/product/2/49" :get params nil)
-          dummy (log/trace (str "Got body: " get-ret))
+          dummy (log/debug (str "Got body: " get-ret))
           status (:status get-ret)
           body (:body get-ret)
           pg-id (:pg-id body)

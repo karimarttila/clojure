@@ -1,14 +1,17 @@
 (ns simpleserver.userdb.users-test
   (:require [clojure.test :refer :all]
             [clojure.tools.logging :as log]
+            [environ.core :refer [env]]
             [simpleserver.userdb.users :as user-db]
+            [simpleserver.util.environment :as ss-util-env]
             [simpleserver.testutils.users-util :as utu]))
 
+(def my-env (ss-util-env/-m-create-my-env (env :ss-env)))
 
 (defn userdb-test-fixture
   [f]
   (do
-    (log/trace "ENTERED userdb-test-fixture")
+    (log/debug "ENTERED userdb-test-fixture")
     (utu/initialize-userdb)
     (f)))
 
@@ -16,24 +19,24 @@
 
 
 (deftest initial-users-db-test
-  (log/trace "ENTER initial-users-db-test")
+  (log/debug "ENTER initial-users-db-test")
   (testing "Initial usersdb count"
-    (let [initial-len (count @user-db/users)]
+    (let [initial-len (count (user-db/get-users))]
       (is (= initial-len 3)))))
 
 
 (deftest email-already-exists?-test
-  (log/trace "ENTER email-already-exists?-test")
+  (log/debug "ENTER email-already-exists?-test")
   (testing "Existing email should return true"
-    (let [ret (user-db/-email-already-exists? "kari.karttinen@foo.com")]
+    (let [ret (user-db/email-already-exists? "kari.karttinen@foo.com")]
       (is (= ret true))))
   (testing "Non-existing email should return nil"
-    (let [ret (user-db/-email-already-exists? "non-existing@foo.com")]
+    (let [ret (user-db/email-already-exists? "non-existing@foo.com")]
       (is (= ret nil)))))
 
 
 (deftest add-new-user-test
-  (log/trace "ENTER add-new-user-test")
+  (log/debug "ENTER add-new-user-test")
   (testing "Adding a new non-existing user, should succeed"
     (let [ret (user-db/add-new-user "foo1@foo.com" "Steve" "Stevenson" "passw0rd")]
       (is (= ret {:email "foo1@foo.com", :ret :ok}))))
@@ -43,7 +46,7 @@
 
 
 (deftest credentials-ok?-test
-  (log/trace "ENTER credentials-ok?-test")
+  (log/debug "ENTER credentials-ok?-test")
   (testing "Testing good credentials"
     (let [email "foo1@foo.com"
           password "passw0rd"

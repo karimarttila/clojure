@@ -1,28 +1,37 @@
 (ns simpleserver.testutils.users-util
   (:require [clojure.test :refer :all]
             [clojure.tools.logging :as log]
-            [simpleserver.userdb.users :as my-user-db]))
+            [environ.core :refer [env]]
+            [simpleserver.userdb.users :as my-user-db]
+            [simpleserver.userdb.users-single-node :as my-user-single-node]))
 
+
+(defmulti -m-initialize-userdb (fn [env] env))
+
+(defmethod -m-initialize-userdb "single-node"
+  [env]
+  (log/debug "ENTERED -m-initialize-userdb - single-node")
+  (my-user-single-node/-swap-userdb!))
+
+(defmethod -m-initialize-userdb "local-dynamodb"
+  [env]
+  (log/debug "ENTERED -m-initialize-userdb - local-dynamodb")
+  (throw (IllegalArgumentException.
+           (str "Not yet implemented for local-dynamodb environment"))))
+
+(defmethod -m-initialize-userdb "aws"
+  [env]
+  (log/debug "ENTERED -m-initialize-userdb - aws")
+  (throw (IllegalArgumentException.
+           (str "Not yet implemented for aws environment"))))
+
+(defmethod -m-initialize-userdb :default
+  [env]
+  (log/debug "ENTERED -m-initialize-userdb - default")
+  (throw (IllegalArgumentException.
+           (str "Unknown environment: " env))))
 
 (defn initialize-userdb
   []
-  (log/trace "ENTERED initialize-userdb")
-  (let [test-users
-        (atom
-          {1 {:userid          "1",
-              :email           "kari.karttinen@foo.com",
-              :first-name      "Kari",
-              :last-name       "Karttinen"
-              :hashed-password "1340477763"}
-           2 {:userid          "2",
-              :email           "timo.tillinen@foo.com",
-              :first-name      "Timo",
-              :last-name       "Tillinen"
-              :hashed-password "-36072128"}
-           3 {:userid          "3",
-              :email           "erkka.erkkila@foo.com",
-              :first-name      "Erkka",
-              :last-name       "Erkkilä"
-              :hashed-password "1655387230"}})
-        ]
-    (reset! my-user-db/users @test-users)))
+  (log/debug "ENTERED initialize-userdb")
+  (-m-initialize-userdb (env :ss-env)))

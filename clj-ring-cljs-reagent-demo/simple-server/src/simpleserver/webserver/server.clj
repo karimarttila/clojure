@@ -35,21 +35,21 @@
 (defn -read-configuration
   "Reads configuration for web server. Not used at the moment."
   []
-  (log/trace "ENTER -read-configuration"))
+  (log/debug "ENTER -read-configuration"))
 
 
 (defn initialize-web-server
   "Initializes the web server. See :ring in file project.clj."
   []
-  (log/trace "ENTER initialize-web-server")
-  (log/trace "***** ***** SIMPLE SERVER STARTING... ***** ***** ")
+  (log/debug "ENTER initialize-web-server")
+  (log/debug "***** ***** SIMPLE SERVER STARTING... ***** ***** ")
   (-read-configuration))
 
 
 (defn -get-info
   "Gets the info page."
   []
-  (log/trace "ENTER -get-info")
+  (log/debug "ENTER -get-info")
   (let [response {:info "index.html => Info in HTML format"}]
     (json/write-str response)))
 
@@ -77,8 +77,8 @@
   "Provides API for sign-in page. `req` provides post body.
   See source code how to experiment with REPL."
   [req]
-  (log/trace "ENTER -signin")
-  (log/trace (str "req: " req))
+  (log/debug "ENTER -signin")
+  (log/debug (str "req: " req))
   (let [body (:body req)
         dummy (-reset-body body)
         first-name (:first-name body)
@@ -98,8 +98,8 @@
   "Provides API for login page.
   See source code how to experiment with REPL."
   [req]
-  (log/trace "ENTER -login")
-  (log/trace (str "req: " req))
+  (log/debug "ENTER -login")
+  (log/debug (str "req: " req))
   (let [body (:body req)
         dummy (-reset-body body)
         email (:email body)
@@ -130,14 +130,14 @@
   "Parses the token from the http authorization header and asks session ns to validate the token.
   See source code how to experiment with REPL."
   [req]
-  (log/trace "ENTER -valid-token?")
+  (log/debug "ENTER -valid-token?")
   (let [basic ((:headers req) "authorization")
-        dummy (log/trace (str "basic: " basic))
+        dummy (log/debug (str "basic: " basic))
         basic-str (and basic
                        (last (re-find #"^Basic (.*)$" basic)))
         raw-token (and basic-str
                        (apply str (map char (base64/decode (.getBytes basic-str)))))
-        dummy (log/trace (str "raw-token: " raw-token))
+        dummy (log/debug (str "raw-token: " raw-token))
         ; Finally strip the password part if testing with curl
         token (and raw-token
                    (clojure.string/replace raw-token #":NOT" ""))]
@@ -153,8 +153,8 @@
   "Gets product groups.
   See source code how to experiment with REPL."
   [req]
-  (log/trace "ENTER -product-groups")
-  (log/trace (str "req: " req))
+  (log/debug "ENTER -product-groups")
+  (log/debug (str "req: " req))
   (let [token-ok? (-valid-token? req)
         response-value (if (not token-ok?)
                          {:ret :failed, :msg "Given token is not valid"}
@@ -169,10 +169,10 @@
   "Gets products for a product group.
   See source code how to experiment with REPL."
   [req]
-  (log/trace "ENTER -products")
-  (log/trace (str "req: " req))
+  (log/debug "ENTER -products")
+  (log/debug (str "req: " req))
   (let [pg-id ((req :params) :pg-id)
-        dummy (log/trace (str "pg-id: " pg-id))
+        dummy (log/debug (str "pg-id: " pg-id))
         token-ok? (-valid-token? req)
         products (ss-domain/get-products pg-id)
         response-value (if (not token-ok?)
@@ -186,12 +186,12 @@
 (defn -product
   "Gets product."
   [req]
-  (log/trace "ENTER -product")
-  (log/trace (str "req: " req))
+  (log/debug "ENTER -product")
+  (log/debug (str "req: " req))
   (let [pg-id ((req :params) :pg-id)
         p-id ((req :params) :p-id)
-        dummy (log/trace (str "pg-id: " pg-id))
-        dummy (log/trace (str "p-id: " p-id))
+        dummy (log/debug (str "pg-id: " pg-id))
+        dummy (log/debug (str "p-id: " p-id))
         token-ok? (-valid-token? req)
         product (ss-domain/get-product pg-id p-id)
         response-value (if (not token-ok?)
@@ -218,7 +218,7 @@
   "Adds cors handling to response."
   [routes]
   ; TODO: Why cannot we see this log entry?
-  (log/trace "ENTER -cors-handler")
+  (log/debug "ENTER -cors-handler")
   (wrap-cors routes :access-control-allow-origin [#".*"]
              :access-control-allow-headers ["Content-Type" "Authorization"]
              :access-control-allow-methods [:get :put :post :delete :options]))

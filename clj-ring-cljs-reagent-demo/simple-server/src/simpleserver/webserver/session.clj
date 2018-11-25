@@ -28,9 +28,9 @@
 (defn reset-mysessions
   "A helper method for tests."
   []
-  (log/trace (str "my-sessions before reset: " @my-sessions))
+  (log/debug (str "my-sessions before reset: " @my-sessions))
   (reset! my-sessions #{})
-  (log/trace (str "my-sessions after reset: " @my-sessions)))
+  (log/debug (str "my-sessions after reset: " @my-sessions)))
 
 
 (def my-hex-secret
@@ -52,7 +52,7 @@
   1. Check that we actually created the token in the first place (should find it in my-sessions set.
   2. Validate the token with buddy (can unsign it, token is not expired)."
   [token]
-  (log/trace (str "ENTER validate-token, token: " token))
+  (log/debug (str "ENTER validate-token, token: " token))
   (if (not (contains? @my-sessions token))
     ;; Part #1 of validation.
     (do
@@ -64,7 +64,7 @@
       (catch Exception e
         (if (.contains (.getMessage e) "Token is expired")
           (do
-            (log/trace (str "Token is expired, removing it from my sessions and returning nil: " token))
+            (log/debug (str "Token is expired, removing it from my sessions and returning nil: " token))
             ; Token just expired, remove expired token and return nil.
             (if (contains? @my-sessions token)
               (swap! my-sessions disj token)
@@ -79,7 +79,7 @@
 (defn create-json-web-token
   "Creates the JSON web token and adds it to sessions atom."
   [email]
-  (log/trace (str "ENTER create-json-web-token, email: " email))
+  (log/debug (str "ENTER create-json-web-token, email: " email))
   (let [my-secret my-hex-secret
         exp-time (c-time/plus (c-time/now) (c-time/seconds @my-expiration-time))
         my-claim {:email email :exp exp-time}
