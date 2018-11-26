@@ -9,10 +9,15 @@
     [ring.middleware.json :as ri-json]
     [ring.middleware.cors :refer [wrap-cors]]
     [environ.core :refer [env]]
-    [simpleserver.userdb.users :as ss-users]
+    [simpleserver.userdb.users-factory :as ss-users-factory]
+    [simpleserver.userdb.users-service-interface :as ss-users-svc]
+    [simpleserver.domaindb.domain-factory :as ss-domain-factory]
+    [simpleserver.domaindb.domain-service-interface :as ss-domain-svc]
     [simpleserver.webserver.session :as ss-session]
-    [simpleserver.domaindb.domain :as ss-domain]))
+    ))
 
+(def users-svc (ss-users-factory/create-users))
+(def domain-svc (ss-domain-factory/create-domain))
 
 ;; NOTE: my-body atom is just for testing purposes using remote REPL:
 ;; lein repl :connect localhost:55444
@@ -87,7 +92,7 @@
         email (:email body)
         validation-passed (-validate-parameters [email first-name last-name password])
         response-value (if validation-passed
-                         (ss-users/add-new-user email first-name last-name password)
+                         (ss-users-svc/add-new-user users-svc email first-name last-name password)
                          {:ret :failed, :msg "Validation failed - some fields were empty"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
@@ -106,7 +111,7 @@
         password (:password body)
         validation-passed (-validate-parameters [email password])
         credentials-ok (if validation-passed
-                         (ss-users/credentials-ok? email password)
+                         (ss-users-svc/credentials-ok? users-svc email password)
                          nil)
         json-web-token (if credentials-ok
                          (ss-session/create-json-web-token email)
@@ -158,7 +163,7 @@
   (let [token-ok? (-valid-token? req)
         response-value (if (not token-ok?)
                          {:ret :failed, :msg "Given token is not valid"}
-                         {:ret :ok, :product-groups (ss-domain/get-product-groups)})]
+                         {:ret :ok, :product-groups (ss-domain-svc/get-product-groups domain-svc)})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 
@@ -174,7 +179,7 @@
   (let [pg-id ((req :params) :pg-id)
         dummy (log/debug (str "pg-id: " pg-id))
         token-ok? (-valid-token? req)
-        products (ss-domain/get-products pg-id)
+        products (ss-domain-svc/get-products domain-svc pg-id)
         response-value (if (not token-ok?)
                          {:ret :failed, :msg "Given token is not valid"}
                          (if (not products)
@@ -193,7 +198,7 @@
         dummy (log/debug (str "pg-id: " pg-id))
         dummy (log/debug (str "p-id: " p-id))
         token-ok? (-valid-token? req)
-        product (ss-domain/get-product pg-id p-id)
+        product (ss-domain-svc/get-product domain-svc pg-id p-id)
         response-value (if (not token-ok?)
                          {:ret :failed, :msg "Given token is not valid"}
                          (if (not product)

@@ -1,7 +1,7 @@
-(ns simpleserver.userdb.users-protocol)
+(ns simpleserver.userdb.users-service-interface)
 
 
-(defprotocol UsersProtocol
+(defprotocol UsersServiceInterface
   (email-already-exists? [env email]
     "True if email already exists in the user db, false otherwise")
   (add-new-user [env email first-name last-name password]

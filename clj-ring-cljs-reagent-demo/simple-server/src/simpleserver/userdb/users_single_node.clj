@@ -1,7 +1,7 @@
 (ns simpleserver.userdb.users-single-node
   (:require
     [clojure.tools.logging :as log]
-    [simpleserver.userdb.users-protocol :as ss-users-protocol]
+    [simpleserver.userdb.users-service-interface :as ss-users-service-interface]
     [environ.core :refer [env]]
     ))
 
@@ -39,7 +39,7 @@
 
 
 (defrecord Env-single-node [env]
-  ss-users-protocol/UsersProtocol
+  ss-users-service-interface/UsersServiceInterface
   (email-already-exists?
     [env email]
     (some
@@ -49,7 +49,7 @@
 
   (add-new-user [env email first-name last-name password]
     (log/debug (str "ENTER add-new-user, email: " email))
-    (let [already-exists (ss-users-protocol/email-already-exists? env email)]
+    (let [already-exists (ss-users-service-interface/email-already-exists? env email)]
       (if already-exists
         (do
           (log/debug (str "Failure: email already exists: " email))

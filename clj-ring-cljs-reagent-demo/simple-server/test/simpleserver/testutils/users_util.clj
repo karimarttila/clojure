@@ -2,7 +2,6 @@
   (:require [clojure.test :refer :all]
             [clojure.tools.logging :as log]
             [environ.core :refer [env]]
-            [simpleserver.userdb.users :as my-user-db]
             [simpleserver.userdb.users-single-node :as my-user-single-node]))
 
 

@@ -2,11 +2,11 @@
   (:require [clojure.test :refer :all]
             [clojure.tools.logging :as log]
             [environ.core :refer [env]]
-            [simpleserver.userdb.users :as user-db]
-            [simpleserver.userdb.environment :as ss-user-env]
+            [simpleserver.userdb.users-factory :as ss-users-factory]
+            [simpleserver.userdb.users-service-interface :as ss-users-svc]
             [simpleserver.testutils.users-util :as utu]))
 
-(def my-env (ss-user-env/-m-create-my-env (env :ss-env)))
+(def users-svc (ss-users-factory/create-users))
 
 (defn userdb-test-fixture
   [f]
@@ -21,27 +21,27 @@
 (deftest initial-users-db-test
   (log/debug "ENTER initial-users-db-test")
   (testing "Initial usersdb count"
-    (let [initial-len (count (user-db/get-users))]
+    (let [initial-len (count (ss-users-svc/get-users users-svc))]
       (is (= initial-len 3)))))
 
 
 (deftest email-already-exists?-test
   (log/debug "ENTER email-already-exists?-test")
   (testing "Existing email should return true"
-    (let [ret (user-db/email-already-exists? "kari.karttinen@foo.com")]
+    (let [ret (ss-users-svc/email-already-exists? users-svc "kari.karttinen@foo.com")]
       (is (= ret true))))
   (testing "Non-existing email should return nil"
-    (let [ret (user-db/email-already-exists? "non-existing@foo.com")]
+    (let [ret (ss-users-svc/email-already-exists? users-svc "non-existing@foo.com")]
       (is (= ret nil)))))
 
 
 (deftest add-new-user-test
   (log/debug "ENTER add-new-user-test")
   (testing "Adding a new non-existing user, should succeed"
-    (let [ret (user-db/add-new-user "foo1@foo.com" "Steve" "Stevenson" "passw0rd")]
+    (let [ret (ss-users-svc/add-new-user users-svc "foo1@foo.com" "Steve" "Stevenson" "passw0rd")]
       (is (= ret {:email "foo1@foo.com", :ret :ok}))))
   (testing "Adding a new existing user, should fail"
-    (let [ret (user-db/add-new-user "foo1@foo.com" "Steve" "Stevenson" "passw0rd")]
+    (let [ret (ss-users-svc/add-new-user users-svc "foo1@foo.com" "Steve" "Stevenson" "passw0rd")]
       (is (= ret {:email "foo1@foo.com", :ret :failed, :msg "Email already exists"})))))
 
 
@@ -50,12 +50,12 @@
   (testing "Testing good credentials"
     (let [email "foo1@foo.com"
           password "passw0rd"
-          newUser (user-db/add-new-user email "Steve" "Stevenson" password)
-          ret (user-db/credentials-ok? email password)]
+          newUser (ss-users-svc/add-new-user users-svc email "Steve" "Stevenson" password)
+          ret (ss-users-svc/credentials-ok? users-svc email password)]
       (is (= ret true))))
   (testing "Testing bad credentials"
     (let [email "foo1@foo.com"
           password "wrong-password"
-          ret (user-db/credentials-ok? email password)]
+          ret (ss-users-svc/credentials-ok? users-svc email password)]
       (is (= ret nil)))))
 
