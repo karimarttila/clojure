@@ -35,8 +35,10 @@
    [lein-pprint "1.1.2"]
    [lein-ring "0.12.3"]
    [lein-codox "0.10.4"]
+   [jonase/eastwood "0.3.3"]
+   [lein-nvd "0.5.6"]
+   [lein-cloverage "1.0.13"]
    ]
-
 
   :ring {:handler simpleserver.webserver.server/web-server
          :init simpleserver.webserver.server/initialize-web-server

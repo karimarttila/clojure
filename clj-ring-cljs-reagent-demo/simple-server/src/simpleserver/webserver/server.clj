@@ -1,5 +1,6 @@
 (ns simpleserver.webserver.server
   (:require
+    [clojure.string :as string]
     [clojure.data.json :as json]
     [clojure.tools.logging :as log]
     [clojure.data.codec.base64 :as base64]
@@ -145,7 +146,7 @@
         dummy (log/debug (str "raw-token: " raw-token))
         ; Finally strip the password part if testing with curl
         token (and raw-token
-                   (clojure.string/replace raw-token #":NOT" ""))]
+                   (string/replace raw-token #":NOT" ""))]
     ;; Session namespace does the actual validation logic.
     (if (not token)
       nil
