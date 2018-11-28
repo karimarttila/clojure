@@ -1,6 +1,5 @@
 (ns simpleserver.testutils.users-util
-  (:require [clojure.test :refer :all]
-            [clojure.tools.logging :as log]
+  (:require [clojure.tools.logging :as log]
             [environ.core :refer [env]]
             [simpleserver.userdb.users-single-node :as my-user-single-node]))
 
@@ -10,6 +9,7 @@
 (defmethod -m-initialize-userdb "single-node"
   [env]
   (log/debug "ENTERED -m-initialize-userdb - single-node")
+  ; In single-node env we just swap the userdb :-)
   (my-user-single-node/-swap-userdb!))
 
 (defmethod -m-initialize-userdb "local-dynamodb"
