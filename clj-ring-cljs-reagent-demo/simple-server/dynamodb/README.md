@@ -41,4 +41,8 @@ Then import data:
 ./import-table.sh local-dynamodb dev product ../resources/pg-2-products.csv
 ```
 
+I tested the scripts using local DynamoDB (running in Docker container) and real AWS DynamoDB table - scripts worked the same way in both environments.
+
+Someone might ask: "Why did you use Python and not Clojure since this is a Clojure exercises repo?" Well, I'll be using Clojure to manipulate the data in production code and unit tests - I just wanted to see how easy it is to import the test data using Python boto3 library (it was pretty easy). I'm not that sure at the moment if I am even going to need these Python data importers.
+
 
