@@ -35,3 +35,5 @@ personal-info/
 # Javascript generated stuff
 clj-ring-cljs-reagent-demo/simple-frontend/public/js/
 
+# Python virtual environments
+venv3/
