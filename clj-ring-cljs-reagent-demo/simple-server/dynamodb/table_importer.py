@@ -14,7 +14,7 @@ class MyTableImporter:
         if (self.DEBUG_FLAG):
             print("DEBUG - " + buf)
 
-    def get_table(self, my_aws_profile, my_env, my_table, my_csv_file):
+    def get_table(self, my_aws_profile, my_env, my_table):
         self.debug("ENTER - " + "get_table")
         session = boto3.Session(profile_name=my_aws_profile)
         if my_aws_profile == 'local-dynamodb':
@@ -27,7 +27,7 @@ class MyTableImporter:
 
     def import_product_groups(self, my_aws_profile, my_env, my_table, my_csv_file):
         self.debug("ENTER - " + "import_product_groups")
-        table = self.get_table(my_aws_profile, my_env, my_table, my_csv_file)
+        table = self.get_table(my_aws_profile, my_env, my_table)
         with open(my_csv_file, 'r') as csvfile:
             reader = csv.reader(csvfile,delimiter='\t')
             with table.batch_writer() as batch:
@@ -39,7 +39,7 @@ class MyTableImporter:
 
     def import_products(self, my_aws_profile, my_env, my_table, my_csv_file):
         self.debug("ENTER - " + "import_products")
-        table = self.get_table(my_aws_profile, my_env, my_table, my_csv_file)
+        table = self.get_table(my_aws_profile, my_env, my_table)
         with open(my_csv_file, 'r') as csvfile:
             reader = csv.reader(csvfile,delimiter='\t')
             with table.batch_writer() as batch:
