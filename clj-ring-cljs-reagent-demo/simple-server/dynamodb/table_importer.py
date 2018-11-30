@@ -6,7 +6,7 @@ import datetime
 import boto3
 import csv
 
-class MyProductGroupImporter:
+class MyTableImporter:
 
     DEBUG_FLAG = True
 
@@ -14,7 +14,7 @@ class MyProductGroupImporter:
         if (self.DEBUG_FLAG):
             print("DEBUG - " + buf)
 
-    def process_import(self, my_aws_profile, my_env, my_table, my_csv_file):
+    def import_product_groups(self, my_aws_profile, my_env, my_table, my_csv_file):
         self.debug("ENTER - " + "process_import")
         session = boto3.Session(profile_name=my_aws_profile)
         if my_aws_profile == 'local-dynamodb':
@@ -32,22 +32,31 @@ class MyProductGroupImporter:
         return ret
 
 def import_csv(my_aws_profile, my_env, my_table, my_csv_file):
-    importer = MyProductGroupImporter()
+    importer = MyTableImporter()
     ret = 0
     importer.debug("ENTER - " + "import_csv, params:")
     importer.debug("  my_aws_profile: " + my_aws_profile)
     importer.debug("  my_env: " + my_env)
     importer.debug("  my_table: " + my_table)
     importer.debug("  my_csv_file: " + my_csv_file)
-
-    ret = importer.process_import(my_aws_profile, my_env, my_table, my_csv_file)
+    if my_table == 'product-group':
+        ret = importer.import_product_groups(my_aws_profile, my_env, my_table, my_csv_file)
+    elif my_table == 'product':
+        print("Not yet implemented")
+    elif my_table == 'users':
+        print("Not yet implemented")
+    elif my_table == 'session':
+        print("Not yet implemented")
+    else:
+        print("Unknown table: " + my_table)
+        ret = -1
     importer.debug("EXIT - " + "import_csv, ret: " + str(ret))
     print(str(ret))
 
 
 if __name__ == '__main__':
     if len(sys.argv) != 5:
-        print("Usage: python3 import-product-groups.sh <aws-profile> <env> <table> <csv file>")
+        print("Usage: python3 table_importer.sh <aws-profile> <env> <table> <csv file>")
         exit(-1)
     my_aws_profile = sys.argv[1]
     my_env = sys.argv[2]
