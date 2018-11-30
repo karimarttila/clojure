@@ -22,7 +22,7 @@ MY_PRODUCT_GROUP_TABLE="sseks-${MY_ENV}-product-group"
 MY_PRODUCT_TABLE="sseks-${MY_ENV}-product"
 
 echo "************  Create tables  ************"
-echo "Using AWS profile: $AWS_PROFILE"
+echo "Using AWS profile: $MY_AWS_PROFILE"
 
 echo "Creating sseks-dev-session table ***************************************"
 

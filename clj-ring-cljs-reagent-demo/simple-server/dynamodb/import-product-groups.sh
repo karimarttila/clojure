@@ -4,7 +4,7 @@
 if [ $# -ne 4 ]
   then
       echo "Usage: ./import-product-groups.sh  <aws-profile> <env> <table> <csv file>"
-      echo "Example: ./import-product-groups.sh local-dynamodb dev sseks-dev-product-group ../resources/product-groups.csv"
+      echo "Example: ./import-product-groups.sh local-dynamodb dev product-group ../resources/product-groups.csv"
     exit 1
 fi
 

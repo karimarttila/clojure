@@ -23,7 +23,7 @@ MY_PRODUCT_TABLE="sseks-${MY_ENV}-product"
 echo "MY_SESSION_TABLE: $MY_SESSION_TABLE"
 
 echo "************  Describe tables  ************"
-echo "Using AWS profile: $AWS_PROFILE"
+echo "Using AWS profile: $MY_AWS_PROFILE"
 
 AWS_PROFILE=$MY_AWS_PROFILE aws dynamodb describe-table $MY_ENDPOINT --table-name $MY_SESSION_TABLE
 AWS_PROFILE=$MY_AWS_PROFILE aws dynamodb describe-table $MY_ENDPOINT --table-name $MY_USERS_TABLE

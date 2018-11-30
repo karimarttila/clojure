@@ -22,3 +22,13 @@ The tables in dev env are:
 - sseks-dev-product-group
 - sseks-dev-product
 
+You can use the import-*.sh scripts to import the csv data into the dynamodb.
+
+First you need to make some installations:
+```bash
+# Create the virtual environment for Python.
+./create-virtual-env.sh
+# Install aws library boto3.
+pip install boto3
+```
+

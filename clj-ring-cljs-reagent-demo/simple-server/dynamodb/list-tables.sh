@@ -15,7 +15,7 @@ else
 fi
 
 echo "************  List tables  ************"
-echo "Using AWS profile: $AWS_PROFILE"
+echo "Using AWS profile: $MY_AWS_PROFILE"
 
 AWS_PROFILE=$MY_AWS_PROFILE aws dynamodb list-tables $MY_ENDPOINT
 

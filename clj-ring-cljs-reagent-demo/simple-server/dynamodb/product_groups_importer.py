@@ -3,6 +3,8 @@
 import sys
 import re
 import datetime
+import boto3
+import csv
 
 class MyProductGroupImporter:
 
@@ -14,7 +16,17 @@ class MyProductGroupImporter:
 
     def process_import(self, my_aws_profile, my_env, my_table, my_csv_file):
         self.debug("ENTER - " + "process_import")
-
+        session = boto3.Session(profile_name=my_aws_profile)
+        if my_aws_profile == 'local-dynamodb':
+            dynamodb = session.resource(service_name='dynamodb', endpoint_url='http://localhost:8000')
+        else:
+            dynamodb = session.resource(service_name='dynamodb')
+        table = dynamodb.Table('sseks-' + my_env + '-' + my_table)
+        with open(my_csv_file, 'r') as csvfile:
+            reader = csv.reader(csvfile,delimiter='\t')
+            with table.batch_writer() as batch:
+                for pg_id, pg_name in reader:
+                    batch.put_item(Item={"pgid": pg_id, "pgname": pg_name})
         ret = 0
         self.debug("EXIT - " + "process_import")
         return ret
