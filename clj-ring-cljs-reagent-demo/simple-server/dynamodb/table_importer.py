@@ -14,21 +14,41 @@ class MyTableImporter:
         if (self.DEBUG_FLAG):
             print("DEBUG - " + buf)
 
-    def import_product_groups(self, my_aws_profile, my_env, my_table, my_csv_file):
-        self.debug("ENTER - " + "process_import")
+    def get_table(self, my_aws_profile, my_env, my_table, my_csv_file):
+        self.debug("ENTER - " + "get_table")
         session = boto3.Session(profile_name=my_aws_profile)
         if my_aws_profile == 'local-dynamodb':
             dynamodb = session.resource(service_name='dynamodb', endpoint_url='http://localhost:8000')
         else:
             dynamodb = session.resource(service_name='dynamodb')
         table = dynamodb.Table('sseks-' + my_env + '-' + my_table)
+        self.debug("EXIT - " + "get_table")
+        return table
+
+    def import_product_groups(self, my_aws_profile, my_env, my_table, my_csv_file):
+        self.debug("ENTER - " + "import_product_groups")
+        table = self.get_table(my_aws_profile, my_env, my_table, my_csv_file)
         with open(my_csv_file, 'r') as csvfile:
             reader = csv.reader(csvfile,delimiter='\t')
             with table.batch_writer() as batch:
                 for pg_id, pg_name in reader:
                     batch.put_item(Item={"pgid": pg_id, "pgname": pg_name})
         ret = 0
-        self.debug("EXIT - " + "process_import")
+        self.debug("EXIT - " + "import_product_groups")
+        return ret
+
+    def import_products(self, my_aws_profile, my_env, my_table, my_csv_file):
+        self.debug("ENTER - " + "import_products")
+        table = self.get_table(my_aws_profile, my_env, my_table, my_csv_file)
+        with open(my_csv_file, 'r') as csvfile:
+            reader = csv.reader(csvfile,delimiter='\t')
+            with table.batch_writer() as batch:
+                for p_id, pg_id, title, price, author_or_director, year, country, genre_or_language in reader:
+                    batch.put_item(Item={"pid": p_id, "pgid": pg_id, "title": title, "price": price,
+                                         "a_or_d": author_or_director, "year": year, "country": country,
+                                         "g_or_l": genre_or_language})
+        ret = 0
+        self.debug("EXIT - " + "import_products")
         return ret
 
 def import_csv(my_aws_profile, my_env, my_table, my_csv_file):
@@ -42,7 +62,7 @@ def import_csv(my_aws_profile, my_env, my_table, my_csv_file):
     if my_table == 'product-group':
         ret = importer.import_product_groups(my_aws_profile, my_env, my_table, my_csv_file)
     elif my_table == 'product':
-        print("Not yet implemented")
+        ret = importer.import_products(my_aws_profile, my_env, my_table, my_csv_file)
     elif my_table == 'users':
         print("Not yet implemented")
     elif my_table == 'session':
