@@ -2,7 +2,8 @@
 
 if [ $# -ne 1 ]
 then
-  echo "Usage: ./list-tables <aws-profile>"
+  echo "Usage: ./list-tables.sh <aws-profile>"
+  echo "Example: ./list-tables.sh local-dynamodb"
   exit 1
 fi
 

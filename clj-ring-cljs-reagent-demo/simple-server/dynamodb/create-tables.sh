@@ -2,8 +2,8 @@
 
 if [ $# -ne 2 ]
 then
-  echo "Usage: ./create-tables <aws-profile> <env>"
-  echo "Example: ./create-tables local-dynamodb dev"
+  echo "Usage: ./create-tables.sh <aws-profile> <env>"
+  echo "Example: ./create-tables.sh local-dynamodb dev"
   exit 1
 fi
 

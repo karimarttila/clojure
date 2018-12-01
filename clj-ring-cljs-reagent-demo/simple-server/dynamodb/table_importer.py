@@ -51,6 +51,19 @@ class MyTableImporter:
         self.debug("EXIT - " + "import_products")
         return ret
 
+    def import_users(self, my_aws_profile, my_env, my_table, my_csv_file):
+        self.debug("ENTER - " + "import_users")
+        table = self.get_table(my_aws_profile, my_env, my_table)
+        with open(my_csv_file, 'r') as csvfile:
+            reader = csv.reader(csvfile,delimiter='\t')
+            with table.batch_writer() as batch:
+                for user_id, email, first_name, last_name, hashed_password in reader:
+                    batch.put_item(Item={"userid": user_id, "email": email, "firstname": first_name,
+                                         "lastname": last_name, "hpwd": hashed_password})
+        ret = 0
+        self.debug("EXIT - " + "import_users")
+        return ret
+
 def import_csv(my_aws_profile, my_env, my_table, my_csv_file):
     importer = MyTableImporter()
     ret = 0
@@ -64,7 +77,7 @@ def import_csv(my_aws_profile, my_env, my_table, my_csv_file):
     elif my_table == 'product':
         ret = importer.import_products(my_aws_profile, my_env, my_table, my_csv_file)
     elif my_table == 'users':
-        print("Not yet implemented")
+        ret = importer.import_users(my_aws_profile, my_env, my_table, my_csv_file)
     elif my_table == 'session':
         print("Not yet implemented")
     else:

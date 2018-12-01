@@ -3,8 +3,8 @@
 
 if [ $# -ne 2 ]
 then
-  echo "Usage: ./delete-tables <aws-profile> <env>"
-  echo "Example: ./delete-tables local-dynamodb dev"
+  echo "Usage: ./delete-tables.sh <aws-profile> <env>"
+  echo "Example: ./delete-tables.sh local-dynamodb dev"
   exit 1
 fi
 
