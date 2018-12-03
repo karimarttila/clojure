@@ -4,8 +4,7 @@
     [clojure.java.io :as io]
     [clojure.string :as str]
     [clojure.tools.logging :as log]
-    [simpleserver.domaindb.domain-service-interface :as ss-domain-service-interface])
-  )
+    [simpleserver.domaindb.domain-service-interface :as ss-domain-service-interface]))
 
 
 (def my-domain-atom

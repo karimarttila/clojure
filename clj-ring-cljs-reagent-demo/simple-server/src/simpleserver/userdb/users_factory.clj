@@ -2,7 +2,8 @@
   (:require
     [clojure.tools.logging :as log]
     [environ.core :refer [env]]
-    [simpleserver.userdb.users-single-node :as ss-user-single-node]))
+    [simpleserver.userdb.users-single-node :as ss-user-single-node]
+    [simpleserver.userdb.users-local-dynamodb :as ss-user-local-dynamodb]))
 
 (defmulti -m-create-users (fn [env] env))
 
@@ -12,8 +13,7 @@
 
 (defmethod -m-create-users "local-dynamodb"
   [env]
-  (throw (IllegalArgumentException.
-           (str "Not yet implemented for local-dynamodb environment"))))
+  (ss-user-local-dynamodb/->Env-local-dynamodb env))
 
 (defmethod -m-create-users "aws"
   [env]

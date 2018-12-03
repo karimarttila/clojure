@@ -2,8 +2,7 @@
   (:require
     [clojure.tools.logging :as log]
     [simpleserver.userdb.users-service-interface :as ss-users-service-interface]
-    [environ.core :refer [env]]
-    ))
+    [environ.core :refer [env]]))
 
 (defn -get-test-userdb
   []
@@ -40,8 +39,10 @@
 
 (defrecord Env-single-node [env]
   ss-users-service-interface/UsersServiceInterface
+
   (email-already-exists?
     [env email]
+    (log/debug (str "ENTER email-already-exists?, email: " email))
     (some
       (fn [user]
         (= (:email user) email))

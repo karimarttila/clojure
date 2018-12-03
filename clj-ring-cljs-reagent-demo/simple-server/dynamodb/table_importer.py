@@ -79,7 +79,7 @@ def import_csv(my_aws_profile, my_env, my_table, my_csv_file):
     elif my_table == 'users':
         ret = importer.import_users(my_aws_profile, my_env, my_table, my_csv_file)
     elif my_table == 'session':
-        print("Not yet implemented")
+        print("Not implemented - there is no need for initial sessions")
     else:
         print("Unknown table: " + my_table)
         ret = -1
