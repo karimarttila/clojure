@@ -24,7 +24,12 @@
  {
   :env {
         :ss-env "local-dynamodb"
-        :endpoint "http://localhost:8000"}
+        ; NOTE: Endpoint format was tricky to realize.
+        :endpoint "http://dynamodb.eu-west-1.localhost:8000"
+        ; Local DynamoDB: dummy but must be the same length as real keys.
+        :access-key "AKIAJHUUNGRH4G___NOT"
+        :secret-key "H+lvqSe61HHy1s+iZLUpO9W6xrBBwdqQKY___NOT"
+        }
   }
 
  :aws

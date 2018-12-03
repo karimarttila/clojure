@@ -1,8 +1,10 @@
 (ns simpleserver.userdb.users-local-dynamodb
   (:require
     [clojure.tools.logging :as log]
-    [simpleserver.userdb.users-service-interface :as ss-users-service-interface]
-    [environ.core :refer [env]]))
+    [environ.core :refer [env]]
+    [simpleserver.userdb.users-service-interface :as ss-users-service-interface]))
+
+
 
 
 (defrecord Env-local-dynamodb [env]

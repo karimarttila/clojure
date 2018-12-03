@@ -27,10 +27,11 @@
    [ring-cors "0.1.12"]
    [buddy/buddy-sign "2.2.0"]
    ;; Include just the dynamodb part of amazonica which we need in this app.
-   [amazonica "0.3.135" :exclusions [com.amazonaws/aws-java-sdk
-                                     com.amazonaws/amazon-kinesis-client]]
-   [com.amazonaws/aws-java-sdk "1.11.237"]
-   [com.amazonaws/aws-java-sdk-dynamodb "1.11.237"]
+   ;[amazonica "0.3.135" :exclusions [com.amazonaws/aws-java-sdk
+   ;                                  com.amazonaws/amazon-kinesis-client]]
+   ;[com.amazonaws/aws-java-sdk "1.11.237"]
+   ;[com.amazonaws/aws-java-sdk-dynamodb "1.11.237"]
+   [amazonica "0.3.135"]
    ]
 
   :codox {:output-path "doc-gen"}
