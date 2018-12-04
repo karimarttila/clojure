@@ -35,10 +35,10 @@
   (testing "Testing products"
     (let [products (ss-domain-svc/get-products domain-svc 2)
           products-len (count products)
-          right-product ["49" "2" "Once Upon a Time in the West" "14.4"]
-          ]
+          product (into [] (first (filter (fn [item] (= (first item) "49")) products)))
+          right-product ["49" "2" "Once Upon a Time in the West" "14.4"]]
       (is (= products-len 169))
-      (is (= (nth products 48) right-product)))))
+      (is (= product right-product)))))
 
 (deftest get-product-test
   (log/debug "ENTER get-product-test")

@@ -10,9 +10,6 @@
                  [ring/ring-mock "0.3.0"]]}
 
 
- ;; **********************************************
- ;; Logging profiles, choose only one.
-
  :single-node
  {
   :env {
@@ -41,11 +38,13 @@
   }
 
 
+ ;; **********************************************
+ ;; Logging profiles, choose only one.
+
  :log-dev
  {
   :resource-paths
   ["logconfig/dev"]}
-
 
  :log-prod
  {
