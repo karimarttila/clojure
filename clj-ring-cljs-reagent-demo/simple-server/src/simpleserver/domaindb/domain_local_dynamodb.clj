@@ -30,7 +30,8 @@
           ret (dynamodb/scan local-dynamodb-config :table-name my-table)
           items (ret :items)]
       (reduce
-        (fn [mymap item]
+        (fn
+          [mymap item]
           (conj mymap {(item :pgid) (item :pgname)}))
         {}
         items)))
@@ -40,10 +41,18 @@
     (log/debug (str "ENTER get-products, pg-id: " pg-id))
     (let [my-env (environ/env :my-env)
           my-table (str "sseks-" my-env "-product")
-          ret (dynamodb/query local-dynamodb-config :table-name my-table :select "ALL_ATTRIBUTES" :index-name "PGIndex" :key-conditions
-                              {:pgid {:attribute-value-list [(str pg-id)] :comparison-operator "EQ"}})
+          ret (dynamodb/query local-dynamodb-config
+                              :table-name my-table
+                              :select "ALL_ATTRIBUTES"
+                              :index-name "PGIndex"
+                              :key-conditions {:pgid {:attribute-value-list [(str pg-id)]
+                                                      :comparison-operator  "EQ"}})
           items (ret :items)
-          result-list (seq (map (fn [item] (seq [(item :pid) (item :pgid) (item :title) (item :price)])) items))]
+          result-list (seq (map
+                             (fn
+                               [item]
+                               (seq [(item :pid) (item :pgid) (item :title) (item :price)]))
+                             items))]
       (if (nil? result-list)
         '()
         result-list)))
@@ -54,13 +63,16 @@
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
     (let [my-env (environ/env :my-env)
           my-table (str "sseks-" my-env "-product")
-          ret (dynamodb/query local-dynamodb-config :table-name my-table :select "ALL_ATTRIBUTES" :key-conditions
-                {:pgid {:attribute-value-list [(str pg-id)] :comparison-operator "EQ"}
-                 :pid {:attribute-value-list [(str p-id)] :comparison-operator "EQ"}}
-                )
+          ret (dynamodb/query local-dynamodb-config
+                              :table-name my-table
+                              :select "ALL_ATTRIBUTES"
+                              :key-conditions {:pgid {:attribute-value-list [(str pg-id)]
+                                                      :comparison-operator  "EQ"}
+                                               :pid  {:attribute-value-list [(str p-id)]
+                                                      :comparison-operator  "EQ"}})
           items (ret :items)
           product (first items)]
 
       (if (nil? product)
         nil
-        [(product :pid)(product :pgid)(product :title)(product :price)(product :a_or_d)(product :year)(product :country)(product :g_or_l)]))))
+        [(product :pid) (product :pgid) (product :title) (product :price) (product :a_or_d) (product :year) (product :country) (product :g_or_l)]))))
