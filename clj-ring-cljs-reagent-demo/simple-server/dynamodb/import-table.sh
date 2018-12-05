@@ -3,7 +3,7 @@
 
 if [ $# -ne 4 ]
   then
-      echo "Usage: ./import-table.sh  <aws-profile> <env> <table> <csv file>"
+      echo "Usage: ./import-table.sh <aws-profile> <env> <table> <csv file>"
       echo "Example: ./import-table.sh local-dynamodb dev product-group ../resources/product-groups.csv"
     exit 1
 fi

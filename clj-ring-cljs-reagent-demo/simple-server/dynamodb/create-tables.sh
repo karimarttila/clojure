@@ -32,7 +32,7 @@ echo "Creating sseks-dev-users table ***************************************"
 
 # NOTE: You don't define the email, first-name, last-name, hashed-password since
 # DynamoDB is schemaless (you just add rows with those fields).
-AWS_PROFILE=$MY_AWS_PROFILE aws dynamodb create-table $MY_ENDPOINT --table-name $MY_USERS_TABLE --attribute-definitions AttributeName=userid,AttributeType=S --key-schema AttributeName=userid,KeyType=HASH --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+AWS_PROFILE=$MY_AWS_PROFILE aws dynamodb create-table $MY_ENDPOINT --table-name $MY_USERS_TABLE --attribute-definitions AttributeName=userid,AttributeType=S AttributeName=email,AttributeType=S --key-schema AttributeName=email,KeyType=HASH AttributeName=userid,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
 
 echo "Creating sseks-dev-product-group table ***************************************"
 

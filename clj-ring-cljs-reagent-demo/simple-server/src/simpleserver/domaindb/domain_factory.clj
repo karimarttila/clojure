@@ -4,7 +4,7 @@
     [simpleserver.domaindb.domain-single-node :as ss-domain-single-node]
     [simpleserver.domaindb.domain-local-dynamodb :as ss-domain-local-dynamodb]))
 
-(defmulti -m-create-domain (fn [env] env))
+(defmulti -m-create-domain (fn [ssenv] ssenv))
 
 (defmethod -m-create-domain "single-node"
   [env]
@@ -14,7 +14,7 @@
   [env]
   (ss-domain-local-dynamodb/->Env-local-dynamodb env))
 
-(defmethod -m-create-domain "aws"
+(defmethod -m-create-domain "aws-dynamodb"
   [env]
   (throw (IllegalArgumentException.
            (str "Not yet implemented for aws environment"))))
@@ -27,5 +27,5 @@
 
 (defn create-domain
   []
-  (let [myenv (env :ss-env)]
-    (-m-create-domain myenv)))
+  (let [ssenv (env :ss-env)]
+    (-m-create-domain ssenv)))

@@ -5,7 +5,7 @@
     [simpleserver.userdb.users-single-node :as ss-user-single-node]
     [simpleserver.userdb.users-local-dynamodb :as ss-user-local-dynamodb]))
 
-(defmulti -m-create-users (fn [env] env))
+(defmulti -m-create-users (fn [ssenv] ssenv))
 
 (defmethod -m-create-users "single-node"
   [env]
@@ -15,7 +15,7 @@
   [env]
   (ss-user-local-dynamodb/->Env-local-dynamodb env))
 
-(defmethod -m-create-users "aws"
+(defmethod -m-create-users "aws-dynamodb"
   [env]
   (throw (IllegalArgumentException.
            (str "Not yet implemented for aws environment"))))
@@ -28,5 +28,5 @@
 
 (defn create-users
   []
-  (let [myenv (env :ss-env)]
-    (-m-create-users myenv)))
+  (let [ssenv (env :ss-env)]
+    (-m-create-users ssenv)))

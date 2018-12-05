@@ -14,6 +14,7 @@
  {
   :env {
         :ss-env "single-node"
+        :my-env "dev"
         }
   }
 
@@ -21,6 +22,7 @@
  {
   :env {
         :ss-env "local-dynamodb"
+        :my-env "dev"
         ; NOTE: Endpoint format was tricky to realize.
         :endpoint "http://dynamodb.eu-west-1.localhost:8000"
         ; Local DynamoDB: dummy but must be the same length as real keys.
@@ -29,12 +31,20 @@
         }
   }
 
- :aws
+ :aws-dynamodb-dev
  {
   :env {
-        :ss-env "aws"
+        :ss-env "aws-dynamodb"
+        :my-env "dev"
         }
+  }
 
+ :aws-dynamodb-prod
+ {
+  :env {
+        :ss-env "aws-dynamodb"
+        :my-env "prod"
+        }
   }
 
 
