@@ -17,7 +17,7 @@
 ;; NOTE: We are skipping the pagination here since this is an exercise and
 ;; we know that the query results will always be less than 1MB.
 ;; See: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.Pagination
-;; In real life we should anticipate and test pagination.
+;; In real life we should anticipate pagination and also test it.
 
 (defrecord Env-local-dynamodb [ssenv]
   ss-users-service-interface/UsersServiceInterface
