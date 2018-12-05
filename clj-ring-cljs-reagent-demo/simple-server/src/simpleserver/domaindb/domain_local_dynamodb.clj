@@ -40,7 +40,7 @@
     (log/debug (str "ENTER get-products, pg-id: " pg-id))
     (let [my-env (environ/env :my-env)
           my-table (str "sseks-" my-env "-product")
-          ret (dynamodb/query local-dynamodb-config :table-name my-table :select "ALL_ATTRIBUTES" :key-conditions
+          ret (dynamodb/query local-dynamodb-config :table-name my-table :select "ALL_ATTRIBUTES" :index-name "PGIndex" :key-conditions
                               {:pgid {:attribute-value-list [(str pg-id)] :comparison-operator "EQ"}})
           items (ret :items)
           result-list (seq (map (fn [item] (seq [(item :pid) (item :pgid) (item :title) (item :price)])) items))]

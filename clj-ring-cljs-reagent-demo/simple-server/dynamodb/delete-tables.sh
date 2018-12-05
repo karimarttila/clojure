@@ -26,18 +26,18 @@ MY_PRODUCT_TABLE="sseks-${MY_ENV}-product"
 echo "************  Delete tables  ************"
 echo "Using AWS profile: $MY_AWS_PROFILE"
 
-echo "************  Deleting: sseks-dev-session  ************"
+echo "************  Deleting: sseks-$MY_ENV-session  ************"
 
 AWS_PROFILE=$MY_AWS_PROFILE aws dynamodb delete-table $MY_ENDPOINT --table-name $MY_SESSION_TABLE
 
-echo "************  Deleting: sseks-dev-users  ************"
+echo "************  Deleting: sseks-$MY_ENV-users  ************"
 
 AWS_PROFILE=$MY_AWS_PROFILE aws dynamodb delete-table $MY_ENDPOINT --table-name $MY_USERS_TABLE
 
-echo "************  Deleting: sseks-dev-product-group  ************"
+echo "************  Deleting: sseks-$MY_ENV-product-group  ************"
 
 AWS_PROFILE=$MY_AWS_PROFILE aws dynamodb delete-table $MY_ENDPOINT --table-name $MY_PRODUCT_GROUP_TABLE
 
-echo "************  Deleting: sseks-dev-product  ************"
+echo "************  Deleting: sseks-$MY_ENV-product  ************"
 
 AWS_PROFILE=$MY_AWS_PROFILE aws dynamodb delete-table $MY_ENDPOINT --table-name $MY_PRODUCT_TABLE

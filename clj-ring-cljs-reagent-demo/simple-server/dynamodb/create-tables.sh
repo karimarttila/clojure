@@ -24,21 +24,21 @@ MY_PRODUCT_TABLE="sseks-${MY_ENV}-product"
 echo "************  Create tables  ************"
 echo "Using AWS profile: $MY_AWS_PROFILE"
 
-echo "Creating sseks-dev-session table ***************************************"
+echo "Creating sseks-$MY_ENV-session table ***************************************"
 
 AWS_PROFILE=$MY_AWS_PROFILE aws dynamodb create-table $MY_ENDPOINT --table-name $MY_SESSION_TABLE --attribute-definitions AttributeName=token,AttributeType=S --key-schema AttributeName=token,KeyType=HASH --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
 
-echo "Creating sseks-dev-users table ***************************************"
+echo "Creating sseks-$MY_ENV-users table ***************************************"
 
 # NOTE: You don't define the email, first-name, last-name, hashed-password since
 # DynamoDB is schemaless (you just add rows with those fields).
-AWS_PROFILE=$MY_AWS_PROFILE aws dynamodb create-table $MY_ENDPOINT --table-name $MY_USERS_TABLE --attribute-definitions AttributeName=userid,AttributeType=S AttributeName=email,AttributeType=S --key-schema AttributeName=email,KeyType=HASH AttributeName=userid,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+AWS_PROFILE=$MY_AWS_PROFILE aws dynamodb create-table $MY_ENDPOINT --table-name $MY_USERS_TABLE --attribute-definitions AttributeName=email,AttributeType=S --key-schema AttributeName=email,KeyType=HASH --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
 
-echo "Creating sseks-dev-product-group table ***************************************"
+echo "Creating sseks-$MY_ENV-product-group table ***************************************"
 
 AWS_PROFILE=$MY_AWS_PROFILE aws dynamodb create-table $MY_ENDPOINT --table-name $MY_PRODUCT_GROUP_TABLE --attribute-definitions AttributeName=pgid,AttributeType=S --key-schema AttributeName=pgid,KeyType=HASH --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
 
-echo "Creating sseks-dev-product table ***************************************"
+echo "Creating sseks-$MY_ENV-product table ***************************************"
 
-AWS_PROFILE=$MY_AWS_PROFILE aws dynamodb create-table $MY_ENDPOINT --table-name $MY_PRODUCT_TABLE --attribute-definitions AttributeName=pgid,AttributeType=S AttributeName=pid,AttributeType=S --key-schema AttributeName=pgid,KeyType=HASH AttributeName=pid,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+AWS_PROFILE=$MY_AWS_PROFILE aws dynamodb create-table $MY_ENDPOINT --table-name $MY_PRODUCT_TABLE --attribute-definitions AttributeName=pgid,AttributeType=S AttributeName=pid,AttributeType=S --key-schema AttributeName=pid,KeyType=HASH AttributeName=pgid,KeyType=RANGE --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 --global-secondary-indexes IndexName=PGIndex,KeySchema=["{AttributeName=pgid,KeyType=HASH}","{AttributeName=pid,KeyType=RANGE}"],Projection="{ProjectionType=INCLUDE ,NonKeyAttributes=["title","price"]}",ProvisionedThroughput="{ReadCapacityUnits=5,WriteCapacityUnits=5}"
 
