@@ -4,25 +4,30 @@
     [environ.core :refer [env]]
     [simpleserver.userdb.users-service-interface :as ss-users-service-interface]))
 
+(defn uuid
+  []
+  (.toString (java.util.UUID/randomUUID)))
+
+
 (defn -get-test-userdb
   []
   (log/debug "ENTERED -get-test-userdb")
   (let [test-users
-        {1 {:userid          "1",
-            :email           "kari.karttinen@foo.com",
-            :first-name      "Kari",
-            :last-name       "Karttinen"
-            :hashed-password "1340477763"}
-         2 {:userid          "2",
-            :email           "timo.tillinen@foo.com",
-            :first-name      "Timo",
-            :last-name       "Tillinen"
-            :hashed-password "-36072128"}
-         3 {:userid          "3",
-            :email           "erkka.erkkila@foo.com",
-            :first-name      "Erkka",
-            :last-name       "Erkkilä"
-            :hashed-password "1655387230"}}
+        {"1" {:userid          "1",
+              :email           "kari.karttinen@foo.com",
+              :first-name      "Kari",
+              :last-name       "Karttinen"
+              :hashed-password "1340477763"}
+         "2" {:userid          "2",
+              :email           "timo.tillinen@foo.com",
+              :first-name      "Timo",
+              :last-name       "Tillinen"
+              :hashed-password "-36072128"}
+         "3" {:userid          "3",
+              :email           "erkka.erkkila@foo.com",
+              :first-name      "Erkka",
+              :last-name       "Erkkilä"
+              :hashed-password "1655387230"}}
         ]
     test-users))
 
@@ -56,7 +61,7 @@
           (log/debug (str "Failure: email already exists: " email))
           {:email email, :ret :failed :msg "Email already exists"})
         (do
-          (let [new-id (inc (apply max (keys @users)))]
+          (let [new-id (uuid)]
             (swap! users assoc
                    new-id
                    {:userid          (str new-id),

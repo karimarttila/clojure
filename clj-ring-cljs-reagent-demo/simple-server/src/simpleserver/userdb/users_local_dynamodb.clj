@@ -50,7 +50,7 @@
                                    :item {:userid     (uuid)
                                           :email      email
                                           :first-name first-name
-                                          :lastname   last-name
+                                          :last-name  last-name
                                           :hpwd       hashed-password})
                 (catch AmazonDynamoDBException e {:email email, :ret :failed :msg (str "Exception occured: " (.toString e))}))]
       ; If ret was empty then no errors.
@@ -77,8 +77,17 @@
   (get-users
     [ssenv]
     (log/debug (str "ENTER get-users"))
-    )
-  )
+    (let [ret (dynamodb/scan local-dynamodb-config
+                             :table-name "sseks-dev-users")
+          items (ret :items)]
+      (reduce (fn [users user]
+                (assoc users (user :userid)
+                             {:userid          (user :userid)
+                              :first-name      (user :firstname)
+                              :last-name       (user :lastname)
+                              :hashed-password (user :hpwd)}))
+              {}
+              items))))
 
 
 
