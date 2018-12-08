@@ -3,11 +3,12 @@
     [clojure.tools.logging :as log]
     [amazonica.aws.dynamodbv2 :as dynamodb]
     [environ.core :as environ]
-    [simpleserver.userdb.users-service-interface :as ss-users-service-interface]))
+    [simpleserver.userdb.users-service-interface :as ss-users-service-interface])
+  (:import (com.amazonaws.services.dynamodbv2.model AmazonDynamoDBException)))
 
-(def local-dynamodb-config {:access-key (env :access-key)
-                            :secret-key (env :secret-key)
-                            :endpoint   (env :endpoint)})
+(def local-dynamodb-config {:access-key (environ/env :access-key)
+                            :secret-key (environ/env :secret-key)
+                            :endpoint   (environ/env :endpoint)})
 
 ;; NOTE: We don't use incremental user ids since it is a bit anti-pattern in DynamoDB (since email is the hash key). So, we create uuid for userid.
 (defn uuid
@@ -31,7 +32,7 @@
                               :table-name my-table
                               :select "COUNT"
                               :key-conditions {:email {:attribute-value-list [email]
-                                                       :comparison-operator "EQ"}})
+                                                       :comparison-operator  "EQ"}})
           count (ret :count)]
       (if (= count 0)
         false
@@ -40,7 +41,22 @@
   (add-new-user
     [ssenv email first-name last-name password]
     (log/debug (str "ENTER add-new-user, email: " email))
-    )
+    (let [my-env (environ/env :my-env)
+          my-table (str "sseks-" my-env "-users")
+          hashed-password (str (hash password))
+          ret (try
+                (dynamodb/put-item local-dynamodb-config
+                                   :table-name my-table
+                                   :item {:userid     (uuid)
+                                          :email      email
+                                          :first-name first-name
+                                          :lastname   last-name
+                                          :hpwd       hashed-password})
+                (catch AmazonDynamoDBException e {:email email, :ret :failed :msg (str "Exception occured: " (.toString e))}) )]
+      ; If ret was empty then no errors.
+      (if (empty? ret)
+        {:email email, :ret :ok}
+        ret)))
 
   (credentials-ok?
     [ssenv email password]

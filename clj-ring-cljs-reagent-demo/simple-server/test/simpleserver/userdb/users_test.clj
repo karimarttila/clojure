@@ -38,23 +38,23 @@
 (deftest add-new-user-test
   (log/debug "ENTER add-new-user-test")
   (testing "Adding a new non-existing user, should succeed"
-    (let [ret (ss-users-svc/add-new-user users-svc "foo1@foo.com" "Steve" "Stevenson" "passw0rd")]
-      (is (= ret {:email "foo1@foo.com", :ret :ok}))))
+    (let [ret (ss-users-svc/add-new-user users-svc "jamppa.tuominen@foo.com" "Jamppa" "Tuominen" "passw0rd")]
+      (is (= ret {:email "jamppa.tuominen@foo.com", :ret :ok}))))
   (testing "Adding a new existing user, should fail"
-    (let [ret (ss-users-svc/add-new-user users-svc "foo1@foo.com" "Steve" "Stevenson" "passw0rd")]
-      (is (= ret {:email "foo1@foo.com", :ret :failed, :msg "Email already exists"})))))
+    (let [ret (ss-users-svc/add-new-user users-svc "jamppa.tuominen@foo.com" "Jamppa" "Tuominen" "passw0rd")]
+      (is (= ret {:email "jamppa.tuominen@foo.com", :ret :failed, :msg "Email already exists"})))))
 
 
 (deftest credentials-ok?-test
   (log/debug "ENTER credentials-ok?-test")
   (testing "Testing good credentials"
-    (let [email "foo1@foo.com"
+    (let [email "jamppa.tuominen@foo.com"
           password "passw0rd"
-          newUser (ss-users-svc/add-new-user users-svc email "Steve" "Stevenson" password)
+          newUser (ss-users-svc/add-new-user users-svc email "Jamppa" "Tuominen" password)
           ret (ss-users-svc/credentials-ok? users-svc email password)]
       (is (= ret true))))
   (testing "Testing bad credentials"
-    (let [email "foo1@foo.com"
+    (let [email "jamppa.tuominen@foo.com"
           password "wrong-password"
           ret (ss-users-svc/credentials-ok? users-svc email password)]
       (is (= ret nil)))))

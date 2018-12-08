@@ -18,11 +18,11 @@
   (throw (IllegalArgumentException.
            (str "Not yet implemented for local-dynamodb environment"))))
 
-(defmethod -m-initialize-userdb "aws"
+(defmethod -m-initialize-userdb "aws-dynamodb"
   [env]
   (log/debug "ENTERED -m-initialize-userdb - aws")
   (throw (IllegalArgumentException.
-           (str "Not yet implemented for aws environment"))))
+           (str "Not yet implemented for aws-dynamodb environment"))))
 
 (defmethod -m-initialize-userdb :default
   [env]
