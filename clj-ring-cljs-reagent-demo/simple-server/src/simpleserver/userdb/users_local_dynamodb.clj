@@ -52,7 +52,7 @@
                                           :first-name first-name
                                           :lastname   last-name
                                           :hpwd       hashed-password})
-                (catch AmazonDynamoDBException e {:email email, :ret :failed :msg (str "Exception occured: " (.toString e))}) )]
+                (catch AmazonDynamoDBException e {:email email, :ret :failed :msg (str "Exception occured: " (.toString e))}))]
       ; If ret was empty then no errors.
       (if (empty? ret)
         {:email email, :ret :ok}
@@ -61,7 +61,18 @@
   (credentials-ok?
     [ssenv email password]
     (log/debug (str "ENTER credentials-ok?, email: " email))
-    )
+    (let [my-env (environ/env :my-env)
+          my-table (str "sseks-" my-env "-users")
+          ret (dynamodb/query local-dynamodb-config
+                              :table-name my-table
+                              :select "ALL_ATTRIBUTES"
+                              :key-conditions {:email {:attribute-value-list [email]
+                                                       :comparison-operator  "EQ"}})
+          users (ret :items)]
+      (if (empty? users)
+        false
+        (let [hashed-password (:hpwd (first users))]
+          (= hashed-password (str (hash password)))))))
 
   (get-users
     [ssenv]
