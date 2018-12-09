@@ -1,7 +1,7 @@
 (ns simpleserver.userdb.users-test
   (:require [clojure.test :refer :all]
             [clojure.tools.logging :as log]
-            [environ.core :refer [env]]
+            [environ.core :as environ]
             [simpleserver.userdb.users-factory :as ss-users-factory]
             [simpleserver.userdb.users-service-interface :as ss-users-svc]
             [simpleserver.testutils.users-util :as utu]))
@@ -32,7 +32,7 @@
       (is (= ret true))))
   (testing "Non-existing email should return nil"
     (let [ret (ss-users-svc/email-already-exists? users-svc "non-existing@foo.com")]
-      (is (= ret nil)))))
+      (is (= ret false)))))
 
 
 (deftest add-new-user-test
@@ -57,5 +57,5 @@
     (let [email "jamppa.tuominen@foo.com"
           password "wrong-password"
           ret (ss-users-svc/credentials-ok? users-svc email password)]
-      (is (= ret nil)))))
+      (is (= ret false)))))
 

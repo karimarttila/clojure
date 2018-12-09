@@ -2,7 +2,8 @@
   (:require
     [clojure.tools.logging :as log]
     [environ.core :refer [env]]
-    [simpleserver.userdb.users-service-interface :as ss-users-service-interface]))
+    [simpleserver.userdb.users-service-interface :as ss-users-service-interface]
+    [simpleserver.userdb.initial-users :as ss-users-initial-users]))
 
 (defn uuid
   []
@@ -12,24 +13,7 @@
 (defn -get-test-userdb
   []
   (log/debug "ENTERED -get-test-userdb")
-  (let [test-users
-        {"1" {:userid          "1",
-              :email           "kari.karttinen@foo.com",
-              :first-name      "Kari",
-              :last-name       "Karttinen"
-              :hashed-password "1340477763"}
-         "2" {:userid          "2",
-              :email           "timo.tillinen@foo.com",
-              :first-name      "Timo",
-              :last-name       "Tillinen"
-              :hashed-password "-36072128"}
-         "3" {:userid          "3",
-              :email           "erkka.erkkila@foo.com",
-              :first-name      "Erkka",
-              :last-name       "Erkkilä"
-              :hashed-password "1655387230"}}
-        ]
-    test-users))
+  (ss-users-initial-users/get-initial-users))
 
 (def users
   "A simple dynamic user database for demonstration purposes."
@@ -48,10 +32,11 @@
   (email-already-exists?
     [env email]
     (log/debug (str "ENTER email-already-exists?, email: " email))
-    (some
-      (fn [user]
-        (= (:email user) email))
-      (vals @users)))
+    (let [ret (some
+                (fn [user]
+                  (= (:email user) email))
+                (vals @users))]
+      (not (nil? ret))))
 
   (add-new-user [env email first-name last-name password]
     (log/debug (str "ENTER add-new-user, email: " email))
@@ -74,12 +59,13 @@
   (credentials-ok?
     [env email password]
     (log/debug (str "ENTER credentials-ok?, email: " email))
-    (some
-      (fn [user]
-        (and
-          (= (:email user) email)
-          (= (:hashed-password user) (str (hash password)))))
-      (vals @users)))
+    (let [ret (some
+                (fn [user]
+                  (and
+                    (= (:email user) email)
+                    (= (:hashed-password user) (str (hash password)))))
+                (vals @users))]
+      (not (nil? ret))))
 
   (get-users
     [env]

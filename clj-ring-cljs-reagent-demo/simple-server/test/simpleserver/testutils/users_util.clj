@@ -1,7 +1,8 @@
 (ns simpleserver.testutils.users-util
   (:require [clojure.tools.logging :as log]
             [environ.core :refer [env]]
-            [simpleserver.userdb.users-single-node :as my-user-single-node]))
+            [simpleserver.userdb.users-single-node :as my-user-single-node]
+            [simpleserver.testutils.reset-dynamodb-users-table :as my-reset-dynamodb-users]))
 
 
 (defmulti -m-initialize-userdb (fn [env] env))
@@ -15,8 +16,7 @@
 (defmethod -m-initialize-userdb "local-dynamodb"
   [env]
   (log/debug "ENTERED -m-initialize-userdb - local-dynamodb")
-  (throw (IllegalArgumentException.
-           (str "Not yet implemented for local-dynamodb environment"))))
+  (my-reset-dynamodb-users/reset-local-dynamodb-userdb))
 
 (defmethod -m-initialize-userdb "aws-dynamodb"
   [env]

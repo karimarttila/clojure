@@ -34,9 +34,7 @@
                               :key-conditions {:email {:attribute-value-list [email]
                                                        :comparison-operator  "EQ"}})
           count (ret :count)]
-      (if (= count 0)
-        false
-        true)))
+      (= count 0)))
 
   (add-new-user
     [ssenv email first-name last-name password]
@@ -47,11 +45,11 @@
           ret (try
                 (dynamodb/put-item local-dynamodb-config
                                    :table-name my-table
-                                   :item {:userid     (uuid)
-                                          :email      email
-                                          :first-name first-name
-                                          :last-name  last-name
-                                          :hpwd       hashed-password})
+                                   :item {:userid    (uuid)
+                                          :email     email
+                                          :firstname first-name
+                                          :lastname  last-name
+                                          :hpwd      hashed-password})
                 (catch AmazonDynamoDBException e {:email email, :ret :failed :msg (str "Exception occured: " (.toString e))}))]
       ; If ret was empty then no errors.
       (if (empty? ret)
@@ -83,6 +81,7 @@
       (reduce (fn [users user]
                 (assoc users (user :userid)
                              {:userid          (user :userid)
+                              :email           (user :email)
                               :first-name      (user :firstname)
                               :last-name       (user :lastname)
                               :hashed-password (user :hpwd)}))

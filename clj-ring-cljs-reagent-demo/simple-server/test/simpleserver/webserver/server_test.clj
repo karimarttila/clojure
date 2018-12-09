@@ -1,6 +1,7 @@
 (ns simpleserver.webserver.server-test
   (:require [clojure.test :refer :all]
             [clojure.tools.logging :as log]
+            [environ.core :as environ]
             [simpleserver.userdb.users-single-node :as user-db]
             [simpleserver.webserver.session :as sess]
             [simpleserver.webserver.server :as ws]
