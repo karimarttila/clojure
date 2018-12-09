@@ -1,6 +1,6 @@
 (ns simpleserver.testutils.users-util
   (:require [clojure.tools.logging :as log]
-            [environ.core :refer [env]]
+            [environ.core :as environ]
             [simpleserver.userdb.users-single-node :as my-user-single-node]
             [simpleserver.testutils.reset-dynamodb-users-table :as my-reset-dynamodb-users]))
 
@@ -20,7 +20,7 @@
 
 (defmethod -m-initialize-userdb "aws-dynamodb"
   [env]
-  (log/debug "ENTERED -m-initialize-userdb - aws")
+  (log/debug "ENTERED -m-initialize-userdb - aws-dynamodb")
   (throw (IllegalArgumentException.
            (str "Not yet implemented for aws-dynamodb environment"))))
 
@@ -33,4 +33,4 @@
 (defn initialize-userdb
   []
   (log/debug "ENTERED initialize-userdb")
-  (-m-initialize-userdb (env :ss-env)))
+  (-m-initialize-userdb (environ/env :ss-env)))

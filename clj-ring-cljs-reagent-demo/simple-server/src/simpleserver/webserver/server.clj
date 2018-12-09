@@ -14,11 +14,13 @@
     [simpleserver.userdb.users-service-interface :as ss-users-svc]
     [simpleserver.domaindb.domain-factory :as ss-domain-factory]
     [simpleserver.domaindb.domain-service-interface :as ss-domain-svc]
-    [simpleserver.webserver.session :as ss-session]
+    [simpleserver.sessiondb.session-factory :as ss-session-factory]
+    [simpleserver.sessiondb.session-service-interface :as ss-session-svc]
     ))
 
 (def users-svc (ss-users-factory/create-users))
 (def domain-svc (ss-domain-factory/create-domain))
+(def session-svc (ss-session-factory/create-session))
 
 ;; NOTE: my-body atom is just for testing purposes using remote REPL:
 ;; lein repl :connect localhost:55444
@@ -115,7 +117,7 @@
                          (ss-users-svc/credentials-ok? users-svc email password)
                          nil)
         json-web-token (if credentials-ok
-                         (ss-session/create-json-web-token email)
+                         (ss-session-svc/create-json-web-token session-svc email)
                          nil)
         response-value (if (not validation-passed)
                          {:ret :failed, :msg "Validation failed - some fields were empty"}
@@ -150,7 +152,7 @@
     ;; Session namespace does the actual validation logic.
     (if (not token)
       nil
-      (ss-session/validate-token token))))
+      (ss-session-svc/validate-token session-svc token))))
 
 
 ;; In REPL e.g.;

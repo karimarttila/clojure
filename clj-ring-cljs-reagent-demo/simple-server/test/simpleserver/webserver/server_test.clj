@@ -3,24 +3,33 @@
             [clojure.tools.logging :as log]
             [environ.core :as environ]
             [simpleserver.userdb.users-single-node :as user-db]
-            [simpleserver.webserver.session :as sess]
+            [simpleserver.sessiondb.session-single-node :as sess]
             [simpleserver.webserver.server :as ws]
-            [simpleserver.testutils.users-util :as utu]
-            [clojure.data.codec.base64 :as base64]))
+            [simpleserver.testutils.users-util :as ss-users-test-util]
+            [clojure.data.codec.base64 :as base64]
+            [simpleserver.userdb.users-factory :as ss-users-factory]
+            [simpleserver.userdb.users-service-interface :as ss-users-svc]
+            [simpleserver.sessiondb.session-factory :as ss-session-factory]
+            [simpleserver.testutils.session-util :as ss-session-test-util]
+            ))
 
 ;; A simple end-to-end testing of main API calls.
+
+(def users-svc (ss-users-factory/create-users))
+(def session-svc (ss-session-factory/create-session))
+
 
 (defn -reset-sessions
   []
   (log/debug "ENTERED -reset-sessions")
-  (reset! sess/my-sessions #{}))
+  (ss-session-test-util/initialize-sessions))
 
 
 (defn server-test-fixture
   [f]
   (do
     (log/debug "ENTERED server-test-fixture")
-    (utu/initialize-userdb)
+    (ss-users-test-util/initialize-userdb)
     (-reset-sessions)
     (f)))
 
@@ -29,7 +38,7 @@
 
 
 (defn -create-basic-authentication
-  "A helper method to create basic authentication for certain get methods which
+  "A helper method to create basic authentication for ceNrtain get methods which
   require the json-web-token in header."
   [json-webtoken]
   (log/debug "ENTER -create-basic-authentication")
@@ -73,7 +82,7 @@
           status (:status ret)
           body (:body ret)
           right-body {:email "pena.neponen@foo.com" :ret :ok}
-          new-users @user-db/users
+          new-users (ss-users-svc/get-users users-svc)
           dummy (log/debug (str "New users: " new-users))]
       (is (= status 200))
       (is (= body right-body))
@@ -81,7 +90,7 @@
       (is (= (count new-users) 4))))
   ; So, we have added Mr. Neponen to user db, let's try to add him again - should fail.
   (testing "Unsuccessful POST: /signin (email already used)"
-    (let [initial-users @user-db/users
+    (let [initial-users (ss-users-svc/get-users users-svc)
           dummy (log/debug (str "Initial users: " initial-users))
           req-body {:first-name "Pena", :last-name "Neponen", :email "pena.neponen@foo.com", :password "Pena"}
           ret (-call-request ws/app-routes "/signin" :post nil req-body)
@@ -89,7 +98,7 @@
           status (:status ret)
           body (:body ret)
           right-body {:email "pena.neponen@foo.com", :ret :failed, :msg "Email already exists"}
-          new-users @user-db/users
+          new-users (ss-users-svc/get-users users-svc)
           dummy (log/debug (str "New users: " new-users))]
       (is (= status 400))
       (is (= body right-body))
