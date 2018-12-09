@@ -10,16 +10,6 @@
     [simpleserver.sessiondb.session-utils :as ss-session-utils]))
 
 
-;; The rational we have it here is that we can change the value in
-;; remote REPL for debugging purposes, i.e. test token invalidation
-;; dynamically.
-(def my-expiration-time
-  "Atom to store the JSON Web Token expiration as seconds.
-   The rational we have it here is that we can change the value in
-   remote REPL for debugging purposes, i.e. test token invalidation
-   dynamically."
-  (atom
-    (ss-prop/get-int-value "json-web-token-expiration-as-seconds")))
 
 
 (def my-sessions
@@ -41,10 +31,7 @@
   (create-json-web-token
     [env email]
     (log/debug (str "ENTER create-json-web-token, email: " email))
-    (let [my-secret ss-session-utils/my-hex-secret
-          exp-time (c-time/plus (c-time/now) (c-time/seconds @my-expiration-time))
-          my-claim {:email email :exp exp-time}
-          json-web-token (buddy-jwt/sign my-claim my-secret)
+    (let [json-web-token (ss-session-utils/create-json-web-token email)
           dummy (swap! my-sessions conj json-web-token)]
       json-web-token))
 

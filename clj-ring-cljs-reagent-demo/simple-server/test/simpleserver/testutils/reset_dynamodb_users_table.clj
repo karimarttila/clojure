@@ -5,19 +5,17 @@
             [simpleserver.userdb.initial-users :as ss-users-initial-users]
             [simpleserver.userdb.users-factory :as ss-users-factory]
             [simpleserver.userdb.users-service-interface :as ss-users-svc]
+            [simpleserver.util.aws-utils :as ss-aws-utils]
             ))
 
 (def users-svc (ss-users-factory/create-users))
 
-(def local-dynamodb-config {:access-key (environ/env :access-key)
-                            :secret-key (environ/env :secret-key)
-                            :endpoint   (environ/env :endpoint)})
 
 (defn delete-user
   [email]
   (let [my-env (environ/env :my-env)
         my-table (str "sseks-" my-env "-users")]
-    (dynamodb/delete-item local-dynamodb-config :table-name my-table :key {:email {:s email}})))
+    (dynamodb/delete-item ss-aws-utils/local-dynamodb-config :table-name my-table :key {:email {:s email}})))
 
 
 (defn -create-delete-requests
@@ -51,9 +49,9 @@
   (log/debug "ENTER reset-local-dynamodb-userdb")
   (let [my-env (environ/env :my-env)
         my-table (str "sseks-" my-env "-users")]
-    (dynamodb/batch-write-item local-dynamodb-config
+    (dynamodb/batch-write-item ss-aws-utils/local-dynamodb-config
                                :request-items {my-table (into [] (-create-delete-requests))})
-    (dynamodb/batch-write-item local-dynamodb-config
+    (dynamodb/batch-write-item ss-aws-utils/local-dynamodb-config
                                :request-items {my-table (into [] (-create-put-requests))})))
 
 
