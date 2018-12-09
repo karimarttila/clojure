@@ -6,7 +6,8 @@
     [buddy.sign.jwt :as buddy-jwt]
     [environ.core :refer [env]]
     [simpleserver.util.prop :as ss-prop]
-    [simpleserver.sessiondb.session-service-interface :as ss-session-service-interface]))
+    [simpleserver.sessiondb.session-service-interface :as ss-session-service-interface]
+    [simpleserver.sessiondb.session-utils :as ss-session-utils]))
 
 
 ;; The rational we have it here is that we can change the value in
@@ -34,26 +35,13 @@
   (log/debug (str "my-sessions after reset: " @my-sessions)))
 
 
-(def my-hex-secret
-  "Creates dynamically a hex secret when the server boots."
-  ((fn []
-     (let [my-chars (->> (range (int \a) (inc (int \z))) (map char))
-           my-ints (->> (range (int \0) (inc (int \9))) (map char))
-           my-set (lazy-cat my-chars my-ints)
-           hexify (fn [s]
-                    (apply str
-                           (map #(format "%02x" (int %)) s)))]
-
-       (hexify (repeatedly 24 #(rand-nth my-set)))))))
-
-
 (defrecord Env-single-node [env]
   ss-session-service-interface/SessionServiceInterface
 
   (create-json-web-token
     [env email]
     (log/debug (str "ENTER create-json-web-token, email: " email))
-    (let [my-secret my-hex-secret
+    (let [my-secret ss-session-utils/my-hex-secret
           exp-time (c-time/plus (c-time/now) (c-time/seconds @my-expiration-time))
           my-claim {:email email :exp exp-time}
           json-web-token (buddy-jwt/sign my-claim my-secret)
@@ -71,7 +59,7 @@
         nil)
       ;; Part #2 of validation.
       (try
-        (buddy-jwt/unsign token my-hex-secret)
+        (buddy-jwt/unsign token ss-session-utils/my-hex-secret)
         (catch Exception e
           (if (.contains (.getMessage e) "Token is expired")
             (do
