@@ -48,12 +48,12 @@
 
 (defn reset-local-dynamodb-userdb
   []
+  (log/debug "ENTER reset-local-dynamodb-userdb")
   (let [my-env (environ/env :my-env)
         my-table (str "sseks-" my-env "-users")]
-    (do
-      (dynamodb/batch-write-item local-dynamodb-config
-                                 :request-items {my-table (into [] (-create-delete-requests))})
-      (dynamodb/batch-write-item local-dynamodb-config
-                                 :request-items {my-table (into [] (-create-put-requests))}))))
+    (dynamodb/batch-write-item local-dynamodb-config
+                               :request-items {my-table (into [] (-create-delete-requests))})
+    (dynamodb/batch-write-item local-dynamodb-config
+                               :request-items {my-table (into [] (-create-put-requests))})))
 
 

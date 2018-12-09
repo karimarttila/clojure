@@ -398,3 +398,7 @@ AWS_PROFILE=local-dynamodb aws dynamodb create-table --endpoint-url http://local
 
 There are scripts in [dynamodb](https://github.com/karimarttila/clojure/tree/master/clj-ring-cljs-reagent-demo/simple-server/docker/dynamodb) directory to create/describe/delete tables needed running Clojure Simple Server using ```local-dynamodb``` profile (which uses DynamoDB local Docker version). 
 
+
+## New Development Profile: local-dynamodb
+
+As explained in the 

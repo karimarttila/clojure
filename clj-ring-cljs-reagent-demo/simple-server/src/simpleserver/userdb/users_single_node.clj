@@ -26,11 +26,11 @@
   (reset! users (-get-test-userdb)))
 
 
-(defrecord Env-single-node [env]
+(defrecord Env-single-node [ssenv]
   ss-users-service-interface/UsersServiceInterface
 
   (email-already-exists?
-    [env email]
+    [ssenv email]
     (log/debug (str "ENTER email-already-exists?, email: " email))
     (let [ret (some
                 (fn [user]
@@ -38,9 +38,10 @@
                 (vals @users))]
       (not (nil? ret))))
 
-  (add-new-user [env email first-name last-name password]
+  (add-new-user
+    [ssenv email first-name last-name password]
     (log/debug (str "ENTER add-new-user, email: " email))
-    (let [already-exists (ss-users-service-interface/email-already-exists? env email)]
+    (let [already-exists (ss-users-service-interface/email-already-exists? ssenv email)]
       (if already-exists
         (do
           (log/debug (str "Failure: email already exists: " email))
@@ -57,7 +58,7 @@
           {:email email, :ret :ok}))))
 
   (credentials-ok?
-    [env email password]
+    [ssenv email password]
     (log/debug (str "ENTER credentials-ok?, email: " email))
     (let [ret (some
                 (fn [user]
@@ -68,7 +69,7 @@
       (not (nil? ret))))
 
   (get-users
-    [env]
+    [ssenv]
     (log/debug (str "ENTER get-users"))
     @users)
   )

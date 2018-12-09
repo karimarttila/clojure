@@ -34,27 +34,32 @@
                               :key-conditions {:email {:attribute-value-list [email]
                                                        :comparison-operator  "EQ"}})
           count (ret :count)]
-      (= count 0)))
+      (not (= count 0))))
 
   (add-new-user
     [ssenv email first-name last-name password]
     (log/debug (str "ENTER add-new-user, email: " email))
-    (let [my-env (environ/env :my-env)
-          my-table (str "sseks-" my-env "-users")
-          hashed-password (str (hash password))
-          ret (try
-                (dynamodb/put-item local-dynamodb-config
-                                   :table-name my-table
-                                   :item {:userid    (uuid)
-                                          :email     email
-                                          :firstname first-name
-                                          :lastname  last-name
-                                          :hpwd      hashed-password})
-                (catch AmazonDynamoDBException e {:email email, :ret :failed :msg (str "Exception occured: " (.toString e))}))]
-      ; If ret was empty then no errors.
-      (if (empty? ret)
-        {:email email, :ret :ok}
-        ret)))
+    (let [already-exists (ss-users-service-interface/email-already-exists? ssenv email)]
+      (if already-exists
+        (do
+          (log/debug (str "Failure: email already exists: " email))
+          {:email email, :ret :failed :msg "Email already exists"})
+        (let [my-env (environ/env :my-env)
+              my-table (str "sseks-" my-env "-users")
+              hashed-password (str (hash password))
+              ret (try
+                    (dynamodb/put-item local-dynamodb-config
+                                       :table-name my-table
+                                       :item {:userid    (uuid)
+                                              :email     email
+                                              :firstname first-name
+                                              :lastname  last-name
+                                              :hpwd      hashed-password})
+                    (catch AmazonDynamoDBException e {:email email, :ret :failed :msg (str "Exception occured: " (.toString e))}))]
+          ; If ret was empty then no errors.
+          (if (empty? ret)
+            {:email email, :ret :ok}
+            ret)))))
 
   (credentials-ok?
     [ssenv email password]
