@@ -2,19 +2,30 @@
   (:require [clojure.tools.logging :as log]
             [environ.core :as environ]
             [amazonica.aws.dynamodbv2 :as dynamodb]
-            [simpleserver.sessiondb.session-factory :as ss-session-factory]))
+            [simpleserver.sessiondb.session-factory :as ss-session-factory]
+            [simpleserver.sessiondb.session-service-interface :as ss-session-interface]
+            [simpleserver.util.aws-utils :as ss-aws-utils]))
 
 (def session-svc (ss-session-factory/create-session))
+
+
+(defn -create-delete-requests
+  []
+  (let [current-sessions (ss-session-interface/get-sessions (ss-session-factory/create-session))
+        delete-requests (map (fn [session]
+                               {:delete-request {:key {:token session}}})
+                             current-sessions)]
+    delete-requests))
 
 (defn reset-local-dynamodb-sessions
   []
   (log/debug "ENTER reset-local-dynamodb-sessions")
   (let [my-env (environ/env :my-env)
-        my-table (str "sseks-" my-env "-session")]
-
-    ;; TODO: CONTINUE HERE: SCAN ALL SESSIONS, THEN DELETE THEM
-    ;; SEE HOW YOU DID IT IN RESET USERS TABLE!
-
-    ))
+        my-table (str "sseks-" my-env "-session")
+        delete-requests (-create-delete-requests)]
+    ; Calling with empty request list causes exception.
+    (if (not (empty? delete-requests))
+      (dynamodb/batch-write-item ss-aws-utils/local-dynamodb-config
+                                 :request-items {my-table (into [] delete-requests)}))))
 
 

@@ -6,7 +6,10 @@
             [simpleserver.domaindb.domain-service-interface :as ss-domain-svc]
             ))
 
-
+; NOTE: If running against DynamoDB:
+; 1. In local DynamoDB: start Docker container.
+; 2. Both (local and aws): import Domain table.
+; NOTE: Maybe later add test fixture to import domain data?
 
 (def domain-svc (ss-domain-factory/create-domain))
 
