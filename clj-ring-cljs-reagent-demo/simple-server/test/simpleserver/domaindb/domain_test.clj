@@ -31,7 +31,7 @@
           product-groups-len (count product-groups)
           right-map {"1" "Books", "2" "Movies"}]
       (is (= product-groups-len 2))
-      (is product-groups right-map))))
+      (is (= product-groups right-map)))))
 
 (deftest get-products-test
   (log/debug "ENTER get-products-test")
@@ -43,7 +43,7 @@
           no-products (ss-domain-svc/get-products domain-svc 3)]
       (is (= products-len 169))
       (is (= product right-product))
-      (is (count no-products) 0)
+      (is (= (count no-products) 0))
       )))
 
 (deftest get-product-test

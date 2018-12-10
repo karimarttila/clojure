@@ -126,7 +126,7 @@
       (is (= status 200))
       (is (= ret :ok))
       (is (= msg "Credentials ok"))
-      (is (not (nil? json-web-token)))
+      (is (= (not (nil? json-web-token)) true))
       (is (> (count json-web-token) 10))
       (is (= (count initial-sessions) 0))
       (is (= (count new-sessions) 1))))
@@ -147,7 +147,7 @@
       (is (= status 400))
       (is (= ret :failed))
       (is (= msg "Credentials are not good - either email or password is not correct"))
-      (is (nil? json-web-token))
+      (is (= (nil? json-web-token) true))
       (is (= (count initial-sessions) 1))
       (is (= (count new-sessions) 1)))))
 
@@ -167,7 +167,7 @@
           body (:body get-ret)
           right-body {:ret :ok, :product-groups {"1" "Books", "2" "Movies"}}
           ]
-      (is (not (nil? json-web-token)))
+      (is (= (not (nil? json-web-token)) true))
       (is (= status 200))
       (is (= body right-body)))))
 
@@ -189,7 +189,7 @@
           ret (:ret body)
           products (:products body)
           ]
-      (is (not (nil? json-web-token)))
+      (is (= (not (nil? json-web-token)) true))
       (is (= status 200))
       (is (= pg-id "1"))
       (is (= ret :ok))
@@ -216,7 +216,7 @@
           ;; What a coincidence! The chosen movie is the best western of all times!
           right-product ["49" "2" "Once Upon a Time in the West" "14.4" "Leone, Sergio" "1968" "Italy-USA" "Western"]
           ]
-      (is (not (nil? json-web-token)))
+      (is (= (not (nil? json-web-token)) true))
       (is (= status 200))
       (is (= pg-id "2"))
       (is (= p-id "49"))
