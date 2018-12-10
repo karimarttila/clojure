@@ -10,6 +10,7 @@
             [simpleserver.userdb.users-factory :as ss-users-factory]
             [simpleserver.userdb.users-service-interface :as ss-users-svc]
             [simpleserver.sessiondb.session-factory :as ss-session-factory]
+            [simpleserver.sessiondb.session-service-interface :as ss-session-interface]
             [simpleserver.testutils.session-util :as ss-session-test-util]
             ))
 
@@ -120,7 +121,7 @@
           msg (:msg body)
           ret (:ret body)
           right-body {:email "pena.neponen@foo.com" :ret :ok}
-          new-sessions @sess/my-sessions
+          new-sessions (ss-session-interface/get-sessions (ss-session-factory/create-session))
           dummy (log/debug (str "New sessions: " new-sessions))]
       (is (= status 200))
       (is (= ret :ok))
@@ -130,7 +131,7 @@
       (is (= (count initial-sessions) 0))
       (is (= (count new-sessions) 1))))
   (testing "Unsuccessful POST: /login"
-    (let [initial-sessions @sess/my-sessions
+    (let [initial-sessions (ss-session-interface/get-sessions (ss-session-factory/create-session))
           dummy (log/debug (str "Initial sessions " initial-sessions))
           req-body {:email "kari.karttinen@foo.com", :password "WRONG-PASSWORD"}
           login-ret (-call-request ws/app-routes "/login" :post nil req-body)
@@ -141,7 +142,7 @@
           msg (:msg body)
           ret (:ret body)
           right-body {:email "pena.neponen@foo.com" :ret :ok}
-          new-sessions @sess/my-sessions
+          new-sessions (ss-session-interface/get-sessions (ss-session-factory/create-session))
           dummy (log/debug (str "New sessions: " new-sessions))]
       (is (= status 400))
       (is (= ret :failed))
