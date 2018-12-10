@@ -25,7 +25,7 @@
         delete-requests (-create-delete-requests)]
     ; Calling with empty request list causes exception.
     (if (not (empty? delete-requests))
-      (dynamodb/batch-write-item ss-aws-utils/local-dynamodb-config
+      (dynamodb/batch-write-item (ss-aws-utils/get-dynamodb-config)
                                  :request-items {my-table (into [] delete-requests)}))))
 
 

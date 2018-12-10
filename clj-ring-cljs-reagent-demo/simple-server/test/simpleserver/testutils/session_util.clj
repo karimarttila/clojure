@@ -23,7 +23,7 @@
   [env]
   (log/debug "ENTERED -m-initialize-sessions - aws-dynamodb")
   (throw (IllegalArgumentException.
-           (str "Not yet implemented for aws-dynamodb environment"))))
+           (str "Not yet implemented for aws-dynamodb-dev environment"))))
 
 (defmethod -m-initialize-sessions :default
   [env]

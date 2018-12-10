@@ -27,7 +27,7 @@
     (log/debug (str "ENTER email-already-exists?, email: " email))
     (let [my-env (environ/env :my-env)
           my-table (str "sseks-" my-env "-users")
-          ret (dynamodb/query ss-aws-utils/local-dynamodb-config
+          ret (dynamodb/query (ss-aws-utils/get-dynamodb-config)
                               :table-name my-table
                               :select "COUNT"
                               :key-conditions {:email {:attribute-value-list [email]
@@ -47,7 +47,7 @@
               my-table (str "sseks-" my-env "-users")
               hashed-password (str (hash password))
               ret (try
-                    (dynamodb/put-item ss-aws-utils/local-dynamodb-config
+                    (dynamodb/put-item (ss-aws-utils/get-dynamodb-config)
                                        :table-name my-table
                                        :item {:userid    (uuid)
                                               :email     email
@@ -67,7 +67,7 @@
     (log/debug (str "ENTER credentials-ok?, email: " email))
     (let [my-env (environ/env :my-env)
           my-table (str "sseks-" my-env "-users")
-          ret (dynamodb/query ss-aws-utils/local-dynamodb-config
+          ret (dynamodb/query (ss-aws-utils/get-dynamodb-config)
                               :table-name my-table
                               :select "ALL_ATTRIBUTES"
                               :key-conditions {:email {:attribute-value-list [email]
@@ -81,7 +81,7 @@
   (get-users
     [ssenv]
     (log/debug (str "ENTER get-users"))
-    (let [ret (dynamodb/scan ss-aws-utils/local-dynamodb-config
+    (let [ret (dynamodb/scan (ss-aws-utils/get-dynamodb-config)
                              :table-name "sseks-dev-users")
           items (ret :items)]
       (reduce (fn [users user]

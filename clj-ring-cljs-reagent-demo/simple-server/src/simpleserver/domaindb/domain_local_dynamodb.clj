@@ -26,7 +26,7 @@
     (log/debug "ENTER get-product-groups")
     (let [my-env (environ/env :my-env)
           my-table (str "sseks-" my-env "-product-group")
-          ret (dynamodb/scan ss-aws-utils/local-dynamodb-config :table-name my-table)
+          ret (dynamodb/scan (ss-aws-utils/get-dynamodb-config) :table-name my-table)
           items (ret :items)]
       (reduce
         (fn
@@ -40,7 +40,7 @@
     (log/debug (str "ENTER get-products, pg-id: " pg-id))
     (let [my-env (environ/env :my-env)
           my-table (str "sseks-" my-env "-product")
-          ret (dynamodb/query ss-aws-utils/local-dynamodb-config
+          ret (dynamodb/query (ss-aws-utils/get-dynamodb-config)
                               :table-name my-table
                               :select "ALL_ATTRIBUTES"
                               :index-name "PGIndex"
@@ -62,7 +62,7 @@
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
     (let [my-env (environ/env :my-env)
           my-table (str "sseks-" my-env "-product")
-          ret (dynamodb/query ss-aws-utils/local-dynamodb-config
+          ret (dynamodb/query (ss-aws-utils/get-dynamodb-config)
                               :table-name my-table
                               :select "ALL_ATTRIBUTES"
                               :key-conditions {:pgid {:attribute-value-list [(str pg-id)]

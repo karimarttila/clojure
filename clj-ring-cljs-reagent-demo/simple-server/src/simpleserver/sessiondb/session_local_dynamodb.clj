@@ -17,7 +17,7 @@
   [token]
   (let [my-env (environ/env :my-env)
         my-table (str "sseks-" my-env "-session")
-        ret (dynamodb/query ss-aws-utils/local-dynamodb-config
+        ret (dynamodb/query (ss-aws-utils/get-dynamodb-config)
                             :table-name my-table
                             :select "ALL_ATTRIBUTES"
                             :key-conditions {:token {:attribute-value-list [token]
@@ -31,7 +31,7 @@
   [token]
   (let [my-env (environ/env :my-env)
         my-table (str "sseks-" my-env "-session")]
-    (dynamodb/delete-item ss-aws-utils/local-dynamodb-config :table-name my-table :key {:token {:s token}})))
+    (dynamodb/delete-item (ss-aws-utils/get-dynamodb-config) :table-name my-table :key {:token {:s token}})))
 
 
 (defrecord Env-local-dynamodb [env]
@@ -44,7 +44,7 @@
           my-table (str "sseks-" my-env "-session")
           json-web-token (ss-session-utils/create-json-web-token email)
           ret (try
-                (dynamodb/put-item ss-aws-utils/local-dynamodb-config
+                (dynamodb/put-item (ss-aws-utils/get-dynamodb-config)
                                    :table-name my-table
                                    :item {
                                           :token json-web-token
@@ -86,7 +86,7 @@
   (get-sessions
     [env]
     (log/debug (str "ENTER get-sessions"))
-    (let [ret (dynamodb/scan ss-aws-utils/local-dynamodb-config
+    (let [ret (dynamodb/scan (ss-aws-utils/get-dynamodb-config)
                              :table-name "sseks-dev-session")
           items (ret :items)]
       (reduce (fn [sessions session]

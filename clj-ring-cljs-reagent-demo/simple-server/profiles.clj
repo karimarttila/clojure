@@ -36,6 +36,7 @@
   :env {
         :ss-env "aws-dynamodb"
         :my-env "dev"
+        :aws-profile "tmv-test"
         }
   }
 
@@ -44,6 +45,7 @@
   :env {
         :ss-env "aws-dynamodb"
         :my-env "prod"
+        :aws-profile "tmv-prod"
         }
   }
 
