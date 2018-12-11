@@ -1,4 +1,4 @@
-(ns simpleserver.userdb.users-local-dynamodb
+(ns simpleserver.userdb.users-dynamodb
   (:require
     [clojure.tools.logging :as log]
     [amazonica.aws.dynamodbv2 :as dynamodb]
@@ -19,7 +19,7 @@
 ;; See: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.Pagination
 ;; In real life we should anticipate pagination and also test it.
 
-(defrecord Env-local-dynamodb [ssenv]
+(defrecord Env-dynamodb [ssenv]
   ss-users-service-interface/UsersServiceInterface
 
   (email-already-exists?

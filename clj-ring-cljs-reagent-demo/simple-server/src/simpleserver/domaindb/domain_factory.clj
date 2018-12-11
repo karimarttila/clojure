@@ -2,8 +2,9 @@
   (:require
     [environ.core :refer [env]]
     [simpleserver.domaindb.domain-single-node :as ss-domain-single-node]
-    [simpleserver.domaindb.domain-local-dynamodb :as ss-domain-local-dynamodb]
+    [simpleserver.domaindb.domain-dynamodb :as ss-domain-dynamodb]
     [clojure.tools.logging :as log]))
+
 
 (defmulti -m-create-domain (fn [ssenv] ssenv))
 
@@ -15,13 +16,12 @@
 (defmethod -m-create-domain "local-dynamodb"
   [env]
   (log/debug "ENTERED -m-create-domain - local-dynamodb")
-  (ss-domain-local-dynamodb/->Env-local-dynamodb env))
+  (ss-domain-dynamodb/->Env-dynamodb env))
 
 (defmethod -m-create-domain "aws-dynamodb"
   [env]
   (log/debug "ENTERED -m-create-domain - aws-dynamodb")
-  (throw (IllegalArgumentException.
-           (str "Not yet implemented for aws-dynamodb environment"))))
+  (ss-domain-dynamodb/->Env-dynamodb env))
 
 (defmethod -m-create-domain :default
   [env]

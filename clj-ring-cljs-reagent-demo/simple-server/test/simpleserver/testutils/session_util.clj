@@ -22,8 +22,10 @@
 (defmethod -m-initialize-sessions "aws-dynamodb"
   [env]
   (log/debug "ENTERED -m-initialize-sessions - aws-dynamodb")
-  (throw (IllegalArgumentException.
-           (str "Not yet implemented for aws-dynamodb-dev environment"))))
+  (let [my-env (environ/env :my-env)]
+    ; Sanity check: allow resetting DynamoDB only in dev env (not in prod env).
+    (if (= my-env "dev")
+      (my-session-reset-sessions/reset-local-dynamodb-sessions))))
 
 (defmethod -m-initialize-sessions :default
   [env]

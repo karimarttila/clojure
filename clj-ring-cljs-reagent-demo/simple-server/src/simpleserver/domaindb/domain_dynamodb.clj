@@ -1,4 +1,4 @@
-(ns simpleserver.domaindb.domain-local-dynamodb
+(ns simpleserver.domaindb.domain-dynamodb
   (:require
     [clojure.java.io :as io]
     [clojure.string :as str]
@@ -18,7 +18,7 @@
 ;; See: https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Query.html#Query.Pagination
 ;; In real life we should anticipate pagination and also test it.
 
-(defrecord Env-local-dynamodb [ssenv]
+(defrecord Env-dynamodb [ssenv]
   ss-domain-service-interface/DomainServiceInterface
 
   (get-product-groups
@@ -42,7 +42,7 @@
           my-table (str "sseks-" my-env "-product")
           ret (dynamodb/query (ss-aws-utils/get-dynamodb-config)
                               :table-name my-table
-                              :select "ALL_ATTRIBUTES"
+                              :select "ALL_PROJECTED_ATTRIBUTES"
                               :index-name "PGIndex"
                               :key-conditions {:pgid {:attribute-value-list [(str pg-id)]
                                                       :comparison-operator  "EQ"}})

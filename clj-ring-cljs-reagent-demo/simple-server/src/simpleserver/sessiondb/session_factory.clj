@@ -3,7 +3,7 @@
     [clojure.tools.logging :as log]
     [environ.core :refer [env]]
     [simpleserver.sessiondb.session-single-node :as ss-session-single-node]
-    [simpleserver.sessiondb.session-local-dynamodb :as ss-session-local-dynamodb]))
+    [simpleserver.sessiondb.session-dynamodb :as ss-session-dynamodb]))
 
 
 (defmulti -m-create-session (fn [ssenv] ssenv))
@@ -16,13 +16,12 @@
 (defmethod -m-create-session "local-dynamodb"
   [env]
   (log/debug "ENTERED -m-create-session - local-dynamodb")
-  (ss-session-local-dynamodb/->Env-local-dynamodb env))
+  (ss-session-dynamodb/->Env-dynamodb env))
 
 (defmethod -m-create-session "aws-dynamodb"
   [env]
   (log/debug "ENTERED -m-create-session - aws-dynamodb")
-  (throw (IllegalArgumentException.
-           (str "Not yet implemented for aws-dynamodb environment"))))
+  (ss-session-dynamodb/->Env-dynamodb env))
 
 (defmethod -m-create-session :default
   [env]

@@ -21,8 +21,10 @@
 (defmethod -m-initialize-userdb "aws-dynamodb"
   [env]
   (log/debug "ENTERED -m-initialize-userdb - aws-dynamodb")
-  (throw (IllegalArgumentException.
-           (str "Not yet implemented for aws-dynamodb environment"))))
+  (let [my-env (environ/env :my-env)]
+    ; Sanity check: allow resetting DynamoDB only in dev env (not in prod env).
+    (if (= my-env "dev")
+      (my-reset-dynamodb-users/reset-local-dynamodb-userdb))))
 
 (defmethod -m-initialize-userdb :default
   [env]

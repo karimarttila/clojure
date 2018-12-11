@@ -1,4 +1,4 @@
-(ns simpleserver.sessiondb.session-local-dynamodb
+(ns simpleserver.sessiondb.session-dynamodb
   (:require
     [clojure.tools.logging :as log]
     [clj-time.core :as c-time]
@@ -34,7 +34,7 @@
     (dynamodb/delete-item (ss-aws-utils/get-dynamodb-config) :table-name my-table :key {:token {:s token}})))
 
 
-(defrecord Env-local-dynamodb [env]
+(defrecord Env-dynamodb [env]
   ss-session-service-interface/SessionServiceInterface
 
   (create-json-web-token

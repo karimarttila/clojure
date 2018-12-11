@@ -3,7 +3,7 @@
     [clojure.tools.logging :as log]
     [environ.core :refer [env]]
     [simpleserver.userdb.users-single-node :as ss-user-single-node]
-    [simpleserver.userdb.users-local-dynamodb :as ss-user-local-dynamodb]))
+    [simpleserver.userdb.users-dynamodb :as ss-user-dynamodb]))
 
 (defmulti -m-create-users (fn [ssenv] ssenv))
 
@@ -15,13 +15,12 @@
 (defmethod -m-create-users "local-dynamodb"
   [env]
   (log/debug "ENTERED -m-create-users - local-dynamodb")
-  (ss-user-local-dynamodb/->Env-local-dynamodb env))
+  (ss-user-dynamodb/->Env-dynamodb env))
 
 (defmethod -m-create-users "aws-dynamodb"
   [env]
   (log/debug "ENTERED -m-create-users - aws-dynamodb")
-  (throw (IllegalArgumentException.
-           (str "Not yet implemented for aws-dynamodb environment"))))
+  (ss-user-dynamodb/->Env-dynamodb env))
 
 (defmethod -m-create-users :default
   [env]
