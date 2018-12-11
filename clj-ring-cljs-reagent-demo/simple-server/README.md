@@ -23,6 +23,8 @@
 - [Building for Production](#building-for-production)
 - [Simple Server Goes AWS](#simple-server-goes-aws)
   - [DynamoDB Docker Image](#dynamodb-docker-image)
+  - [New Development Profiles: local-dynamodb and dynamodb-dev](#new-development-profiles-local-dynamodb-and-dynamodb-dev)
+  - [Static Code Analysis and Test Coverage](#static-code-analysis-and-test-coverage)
 
 
 # Introduction
@@ -399,16 +401,53 @@ AWS_PROFILE=local-dynamodb aws dynamodb create-table --endpoint-url http://local
 There are scripts in [dynamodb](https://github.com/karimarttila/clojure/tree/master/clj-ring-cljs-reagent-demo/simple-server/docker/dynamodb) directory to create/describe/delete tables needed running Clojure Simple Server using ```local-dynamodb``` profile (which uses DynamoDB local Docker version). 
 
 
-## New Development Profile: local-dynamodb
+## New Development Profiles: local-dynamodb and dynamodb-dev
 
 As explained in the previous chapter I use "local-dynamodb" profile for developing the DynamoDB version using local DynamoDB test instance running in a Docker container. The DynamoDB Docker container based development has a couple of cons: you don't have to pay for the actual DynamoDB ingress/egress while developing your API that stores/fetches data to/from DynamoDB, and development cycle is faster using the local DynamoDB Docker container that accessing every time the actual DynamoDB database.
 
 I used a couple of Clojure mechanism that provide nice polymorphism: [multimethods](https://clojure.org/reference/multimethods) and [protocols](https://clojure.org/reference/protocols). Examples:
  
  - Multimethod: namespace [simpleserver.domaindb.domain-factory](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-server/src/simpleserver/domaindb/domain_factory.clj) which provides the domain service entity which is needed for the domain protocol. The namespace provides one public function "create-domain" which calls the internal -m-create-domain multimethod which dispatches based on the environment variable "ss-env" (our profiles: single-node, local-dynamodb...) and returns the domain entity for that profile. 
- - Protocol: namespace [simpleserver.domaindb.domain-service-interface](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-server/src/simpleserver/domaindb/domain_service_interface.clj) which is the actual domain interface (DomainServiceInterface) - server uses domain functions using the protocol interface which hides the actual implementations which are provided in the profile based implementation namespaces, e.g. namespace [simpleserver.domaindb.domain-local-dynamodb](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-server/src/simpleserver/domaindb/domain_local_dynamodb.clj) which provides the defrecord which implements the generic DomainServiceInterface protocol for local-dynamodb profile.
+ - Protocol: namespace [simpleserver.domaindb.domain-service-interface](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-server/src/simpleserver/domaindb/domain_service_interface.clj) which is the actual domain interface (DomainServiceInterface) - server uses domain functions using the protocol interface which hides the actual implementations which are provided in the profile based implementation namespaces, e.g. namespace [simpleserver.domaindb.domain-local-dynamodb](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-server/src/simpleserver/domaindb/domain_dynamodb.clj) which provides the defrecord which implements the generic DomainServiceInterface protocol for local-dynamodb profile and aws-dynamodb-dev profile.
  
  The unit tests and server namespaces just ask the domain/user factories to give the entity and then call domaindb and usersdb layers using the generic protocols with the provided entity and know nothing about the actual implementations that are running under the hood.
- 
- 
+
+ The dynamodb handling is the same for both local dynamodb instance and real aws dynamodb instance. You can test this as described below.
+
+ **Single-node**: (i.e. not using dynamodb but reading the data files to Clojure data structures - statefull service)
+
+```bash
+./run-tests-profile-single-node-logs.sh
+```
+
+ **Local DynamoDB**: (i.e. DynamoDB running locally in a Docker container)
+
+```bash
+cd dynamodb
+./run-local-dynamodb.sh
+./create-tables.sh local-dynamodb dev
+./import-all-tables.sh local-dynamodb dev
+cd ..
+./run-tests-profile-local-dynamodb.sh
+```
+
+ **Real AWS DynamoDB**: (and finally hitting the real AWS DynamoDB with our tests)
+
+```bash
+cd dynamodb
+./create-tables.sh <your-aws-profile> dev
+./import-all-tables.sh <your-aws-profile> dev
+cd ..
+run-tests-profile-aws-dynamodb-dev.sh
+```
+
+## Static Code Analysis and Test Coverage
+
+I created a utility script to run two Static code analysis tools ([eastwood](https://github.com/jonase/eastwood) and [nvd](https://github.com/rm-hull/lein-nvd)) and one Code Coverage tool ([cloverage](https://github.com/cloverage/cloverage)):
+
+```bash
+./run-static-code-analysis.sh
+```
+
+
 
