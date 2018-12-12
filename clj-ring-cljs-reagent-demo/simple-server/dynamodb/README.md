@@ -30,10 +30,10 @@ First you need to make some installations:
 ```bash
 # Create the virtual environment for Python.
 ./create-virtual-env.sh
-# Install aws library boto3.
-pip install boto3
 # Activate the virtual env.
 source venv3/bin/activate
+# Install aws library boto3.
+pip install boto3
 ```
 
 Create the credential section in you ~/.aws/credentials file, e.g.
