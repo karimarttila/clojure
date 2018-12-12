@@ -15,8 +15,8 @@
   [env]
   (log/debug "ENTERED -m-get-dynamodb-config - local-dynamodb")
   {:access-key (environ/env :access-key)
-      :secret-key (environ/env :secret-key)
-      :endpoint   (environ/env :endpoint)})
+   :secret-key (environ/env :secret-key)
+   :endpoint   (environ/env :endpoint)})
 
 (defmethod -m-get-dynamodb-config "aws-dynamodb"
   [env]
