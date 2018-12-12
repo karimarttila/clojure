@@ -21,7 +21,7 @@
   - [Session Handling](#session-handling)
 - [Unit Testing](#unit-testing)
 - [Building for Production](#building-for-production)
-- [Simple Server Goes AWS](#simple-server-goes-aws)
+- [Simple Server Goes AWS - New Development Autumn 2018](#simple-server-goes-aws---new-development-autumn-2018)
   - [DynamoDB Docker Image](#dynamodb-docker-image)
   - [New Development Profiles: local-dynamodb and dynamodb-dev](#new-development-profiles-local-dynamodb-and-dynamodb-dev)
   - [Static Code Analysis and Test Coverage](#static-code-analysis-and-test-coverage)
@@ -192,6 +192,8 @@ lein eastwood
 
 Other useful tools in blog article [The state of code quality tools in Clojure](https://blog.jeaye.com/2017/08/31/clojure-code-quality/).
 
+NOTE: In autumn 2018 I one more static code analysis tool and test coverage tool, see chapter "Simple Server Goes AWS - New Development Autumn 2018".
+
 
 
 ## CORS Issues
@@ -274,7 +276,7 @@ Remote REPL really is a powerful way to debug your running application.
 
 ## Session Handling
 
-In the backend side (Simple Server) I use the Clojure [buddy](https://github.com/funcool/buddy) library to create the [JSON Web Token](https://en.wikipedia.org/wiki/JSON_Web_Token) which is then passed to the Simple Frontend which needs to add the token to the http Authorization header for all API calls that needs authorization. Simple server then checks the validity of the session token (i.e. the token has not expired and the server has actually created the token). Internally the session is stored in the Simple Server in an atom in the session namespace. I could have used other buddy services to automate REST API authorization but I wanted to make the session handling more transparent for learning purposes and therefore handled the token storing / validation myself.
+In the backend side (Simple Server) I use the Clojure [buddy](https://github.com/funcool/buddy) library to create the [JSON Web Token](https://en.wikipedia.org/wiki/JSON_Web_Token) which is then passed to the Simple Frontend which needs to add the token to the http Authorization header for all API calls that needs authorization. Simple server then checks the validity of the session token (i.e. the token has not expired and the server has actually created the token). Internally the session is stored in the Simple Server in an atom in the session namespace (in autumn 2018 I added support for AWS DynamoDB, see chapter "Simple Server Goes AWS - New Development Autumn 2018"). I could have used other buddy services to automate REST API authorization but I wanted to make the session handling more transparent for learning purposes and therefore handled the token storing / validation myself.
 
 BTW. Using local REPL it is very easy to validate that the token handling works as expected, e.g.  (first set the json-web-token-expiration-as-seconds property in the simpleserver.properties file to some small number (e.g. 10 (seconds) so that you are able to test token expiration):
 
@@ -379,10 +381,9 @@ Run:
 ```
 
 
+# Simple Server Goes AWS - New Development Autumn 2018
 
-# Simple Server Goes AWS
-
-After my [Five Languages](https://medium.com/@kari.marttila/five-languages-five-stories-1afd7b0b583f) project I was searching something new to create and learn. I decided to refresh my AWS skills a bit and change this Clojure Simple Server implementation making it stateless and keeping all data (web store product data, user data and session data) in [DynamoDB](https://aws.amazon.com/dynamodb/). This way I could have a reason to use the [local DynamoDb Docker](https://hub.docker.com/r/amazon/dynamodb-local/) version for development and also create some Terraform code which I haven't touch for a few month since in my corporate universe I'm using Azure and ARM at the moment. I decided to [deploy Simple Server to AWS using EKS](https://github.com/karimarttila/aws/tree/master/simple-server-eks) so I could have a chance to deploy [Kubernetes](https://kubernetes.io/) configuration in the [AWS / Elastic Kubernetes Server](https://aws.amazon.com/eks/) (I have some [experience using Azure AKS](https://medium.com/@kari.marttila/running-azure-kubernetes-service-aks-882faad43f2c) - so it is also interesting to compare these services). Maybe I later start another project "Simple Server Goes Azure", who knows.
+After my [Five Languages](https://medium.com/@kari.marttila/five-languages-five-stories-1afd7b0b583f) project I was searching something new to learn. I decided to refresh my AWS skills a bit and change the Clojure Simple Server implementation making it stateless and keeping all data (web store product data, user data and session data) in [DynamoDB](https://aws.amazon.com/dynamodb/). Therefore I also had a nice excuse to learn how to use the [local DynamoDb Docker container](https://hub.docker.com/r/amazon/dynamodb-local/) version for development and also create some Terraform code which I haven't touch for a few month since in my corporate universe I'm using Azure and ARM at the moment. I'll later on [deploy Simple Server to AWS using EKS](https://github.com/karimarttila/aws/tree/master/simple-server-eks) so I could have a chance to deploy [Kubernetes](https://kubernetes.io/) configuration in the [AWS / Elastic Kubernetes Server](https://aws.amazon.com/eks/) (I have some [experience using Azure AKS](https://medium.com/@kari.marttila/running-azure-kubernetes-service-aks-882faad43f2c) - so it is also interesting to compare these services). I think I'll also try to [deploy Simple Server to AWS using Fargate](https://github.com/karimarttila/aws/tree/master/simple-server-fargate) to learn to use [Fargate](https://aws.amazon.com/fargate/) deployment model as well (and compare Fargate and EKS as container platforms. Maybe I later start another project "Simple Server Goes Azure", who knows.
 
 
 ## DynamoDB Docker Image
@@ -403,12 +404,12 @@ There are scripts in [dynamodb](https://github.com/karimarttila/clojure/tree/mas
 
 ## New Development Profiles: local-dynamodb and dynamodb-dev
 
-As explained in the previous chapter I use "local-dynamodb" profile for developing the DynamoDB version using local DynamoDB test instance running in a Docker container. The DynamoDB Docker container based development has a couple of cons: you don't have to pay for the actual DynamoDB ingress/egress while developing your API that stores/fetches data to/from DynamoDB, and development cycle is faster using the local DynamoDB Docker container that accessing every time the actual DynamoDB database.
+As explained in the previous chapter I use "local-dynamodb" profile for developing the DynamoDB version using local DynamoDB test instance running in a Docker container. The DynamoDB Docker container based development has a couple of cons: you don't have to pay for the actual DynamoDB ingress/egress while developing your API that stores/fetches data to/from DynamoDB, and development cycle is faster using the local DynamoDB Docker container than accessing every time the actual DynamoDB database.
 
 I used a couple of Clojure mechanism that provide nice polymorphism: [multimethods](https://clojure.org/reference/multimethods) and [protocols](https://clojure.org/reference/protocols). Examples:
  
  - Multimethod: namespace [simpleserver.domaindb.domain-factory](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-server/src/simpleserver/domaindb/domain_factory.clj) which provides the domain service entity which is needed for the domain protocol. The namespace provides one public function "create-domain" which calls the internal -m-create-domain multimethod which dispatches based on the environment variable "ss-env" (our profiles: single-node, local-dynamodb...) and returns the domain entity for that profile. 
- - Protocol: namespace [simpleserver.domaindb.domain-service-interface](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-server/src/simpleserver/domaindb/domain_service_interface.clj) which is the actual domain interface (DomainServiceInterface) - server uses domain functions using the protocol interface which hides the actual implementations which are provided in the profile based implementation namespaces, e.g. namespace [simpleserver.domaindb.domain-local-dynamodb](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-server/src/simpleserver/domaindb/domain_dynamodb.clj) which provides the defrecord which implements the generic DomainServiceInterface protocol for local-dynamodb profile and aws-dynamodb-dev profile.
+ - Protocol: namespace [simpleserver.domaindb.domain-service-interface](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-server/src/simpleserver/domaindb/domain_service_interface.clj) which is the actual domain interface (DomainServiceInterface) - server uses domain functions using the protocol interface which hides the actual implementations which are provided in the profile based implementation namespaces, e.g. namespace [simpleserver.domaindb.domain-local-dynamodb](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-server/src/simpleserver/domaindb/domain_dynamodb.clj) which provides the defrecord which implements the generic DomainServiceInterface protocol for the local-dynamodb profile and the aws-dynamodb-dev profile.
  
  The unit tests and server namespaces just ask the domain/user factories to give the entity and then call domaindb and usersdb layers using the generic protocols with the provided entity and know nothing about the actual implementations that are running under the hood.
 

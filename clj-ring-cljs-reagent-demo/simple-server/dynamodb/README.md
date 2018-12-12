@@ -32,6 +32,8 @@ First you need to make some installations:
 ./create-virtual-env.sh
 # Install aws library boto3.
 pip install boto3
+# Activate the virtual env.
+source venv3/bin/activate
 ```
 
 Create the credential section in you ~/.aws/credentials file, e.g.
