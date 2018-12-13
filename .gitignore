@@ -37,3 +37,6 @@ clj-ring-cljs-reagent-demo/simple-frontend/public/js/
 
 # Python virtual environments
 venv3/
+
+# Azurite installation
+clj-ring-cljs-reagent-demo/simple-server/azure-table-storage/azurite/
