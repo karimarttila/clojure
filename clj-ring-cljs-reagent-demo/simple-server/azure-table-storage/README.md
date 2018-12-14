@@ -47,7 +47,7 @@ First you need to make some installations:
 # Activate the virtual env.
 source venv3/bin/activate
 # Install aws library boto3.
-pip install boto3
+pip install azure-cosmosdb-table
 ```
 
 TODO ****************************************** REWRITE ************

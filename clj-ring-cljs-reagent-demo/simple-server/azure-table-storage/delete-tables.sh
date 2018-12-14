@@ -2,8 +2,8 @@
 
 if [ $# -ne 2 ]
 then
-  echo "Usage: ./create-tables.sh <azure-profile> <env>"
-  echo "Example: ./create-tables.sh local-table dev"
+  echo "Usage: ./delete-tables.sh <azure-profile> <env>"
+  echo "Example: ./delete-tables.sh local-table dev"
   exit 1
 fi
 
@@ -15,6 +15,7 @@ if [ "$MY_AZURE_PROFILE" == "local-table" ]; then
   MY_CONNECTION_STRING='--connection-string DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;'
   MY_AZURE_STORAGE_ACCOUNT=
   MY_AZURE_STORAGE_KEY=
+  echo "Due to a bug in azurite you cannot delete local tables"
 elif [ "$MY_AZURE_PROFILE" == "ss-aks-profile" ]; then
   MY_CONNECTION_STRING=
   MY_AZURE_STORAGE_ACCOUNT="--account-name $AZURE_STORAGE_ACCOUNT"
@@ -29,13 +30,13 @@ MY_USERS_TABLE="sseks${MY_ENV}users"
 MY_PRODUCT_GROUP_TABLE="sseks${MY_ENV}productgroup"
 MY_PRODUCT_TABLE="sseks${MY_ENV}product"
 
-echo "************  Create tables  ************"
+echo "************  Delete tables  ************"
 echo "Using AZURE profile: $MY_AZURE_PROFILE"
 
-az storage table create $MY_AZURE_STORAGE_ACCOUNT $MY_AZURE_STORAGE_KEY $MY_CONNECTION_STRING --name $MY_SESSION_TABLE
+az storage table delete $MY_AZURE_STORAGE_ACCOUNT $MY_AZURE_STORAGE_KEY $MY_CONNECTION_STRING --name $MY_SESSION_TABLE
 
-az storage table create $MY_AZURE_STORAGE_ACCOUNT $MY_AZURE_STORAGE_KEY $MY_CONNECTION_STRING --name $MY_USERS_TABLE
+az storage table delete $MY_AZURE_STORAGE_ACCOUNT $MY_AZURE_STORAGE_KEY $MY_CONNECTION_STRING --name $MY_USERS_TABLE
 
-az storage table create $MY_AZURE_STORAGE_ACCOUNT $MY_AZURE_STORAGE_KEY $MY_CONNECTION_STRING --name $MY_PRODUCT_GROUP_TABLE
+az storage table delete $MY_AZURE_STORAGE_ACCOUNT $MY_AZURE_STORAGE_KEY $MY_CONNECTION_STRING --name $MY_PRODUCT_GROUP_TABLE
 
-az storage table create $MY_AZURE_STORAGE_ACCOUNT $MY_AZURE_STORAGE_KEY $MY_CONNECTION_STRING --name $MY_PRODUCT_TABLE
+az storage table delete $MY_AZURE_STORAGE_ACCOUNT $MY_AZURE_STORAGE_KEY $MY_CONNECTION_STRING --name $MY_PRODUCT_TABLE

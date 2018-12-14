@@ -1,0 +1,16 @@
+asn1crypto==0.24.0
+azure-common==1.1.16
+azure-cosmosdb-nspkg==2.0.2
+azure-cosmosdb-table==1.0.5
+azure-nspkg==3.0.2
+azure-storage-common==1.4.0
+certifi==2018.11.29
+cffi==1.11.5
+chardet==3.0.4
+cryptography==2.4.2
+idna==2.8
+pycparser==2.19
+python-dateutil==2.7.5
+requests==2.21.0
+six==1.12.0
+urllib3==1.24.1
