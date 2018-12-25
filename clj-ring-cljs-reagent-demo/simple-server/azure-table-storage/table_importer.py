@@ -1,15 +1,11 @@
 #!/usr/bin/python3
 
 import sys
+import os
 import re
 import datetime
-import azure.storage.table
+from azure.storage.table import TableService, Entity
 import csv
-
-
-
-TODO CONTINUE HERE!
-SEE THIS EXAMPLE: https://github.com/Azure-Samples/storage-table-python-getting-started
 
 
 class MyTableImporter:
@@ -20,58 +16,59 @@ class MyTableImporter:
         if (self.DEBUG_FLAG):
             print("DEBUG - " + buf)
 
-    def get_table(self, my_aws_profile, my_env, my_table):
+    def get_table_service(self, my_azure_profile):
         self.debug("ENTER - " + "get_table")
-        session = boto3.Session(profile_name=my_aws_profile)
-        if my_aws_profile == 'local-table':
-            dynamodb = session.resource(service_name='dynamodb', endpoint_url='http://localhost:8000')
+        if my_azure_profile == 'local-table':
+            table_service = TableService(connection_string = 'DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;')
         elif my_aws_profile == 'ss-aks-profile':
-            dynamodb = session.resource(service_name='dynamodb')
+            azure_storage_account_name = os.environ['AZURE_STORAGE_ACCOUNT']
+            azure_storage_account_key = os.environ['AZURE_STORAGE_KEY']
+            table_service = TableService(account_name = azure_storage_account_name, account_key=azure_storage_account_key) # TODO: What more?
         else:
-            self.debug("Unknown profile: " + my_aws_profile)
+            self.debug("Unknown profile: " + my_azure_profile)
             sys.exit(-1)
-        table = dynamodb.Table('sseks' + my_env + my_table)
         self.debug("EXIT - " + "get_table")
-        return table
+        return table_service
 
     def import_product_groups(self, my_aws_profile, my_env, my_table, my_csv_file):
         self.debug("ENTER - " + "import_product_groups")
-        table = self.get_table(my_aws_profile, my_env, my_table)
+        table_service = self.get_table_service(my_aws_profile)
+        table_name = "sseks" + my_env + my_table
         with open(my_csv_file, 'r') as csvfile:
             reader = csv.reader(csvfile,delimiter='\t')
-            with table.batch_writer() as batch:
-                for pg_id, pg_name in reader:
-                    batch.put_item(Item={"pgid": pg_id, "pgname": pg_name})
+            for pg_id, pg_name in reader:
+                pg_entity = {'PartitionKey': pg_id, 'RowKey': pg_name}
+                table_service.insert_entity(table_name, pg_entity)
         ret = 0
         self.debug("EXIT - " + "import_product_groups")
         return ret
 
-    def import_products(self, my_aws_profile, my_env, my_table, my_csv_file):
-        self.debug("ENTER - " + "import_products")
-        table = self.get_table(my_aws_profile, my_env, my_table)
-        with open(my_csv_file, 'r') as csvfile:
-            reader = csv.reader(csvfile,delimiter='\t')
-            with table.batch_writer() as batch:
-                for p_id, pg_id, title, price, author_or_director, year, country, genre_or_language in reader:
-                    batch.put_item(Item={"pid": p_id, "pgid": pg_id, "title": title, "price": price,
-                                         "a_or_d": author_or_director, "year": year, "country": country,
-                                         "g_or_l": genre_or_language})
-        ret = 0
-        self.debug("EXIT - " + "import_products")
-        return ret
-
-    def import_users(self, my_aws_profile, my_env, my_table, my_csv_file):
-        self.debug("ENTER - " + "import_users")
-        table = self.get_table(my_aws_profile, my_env, my_table)
-        with open(my_csv_file, 'r') as csvfile:
-            reader = csv.reader(csvfile,delimiter='\t')
-            with table.batch_writer() as batch:
-                for user_id, email, first_name, last_name, hashed_password in reader:
-                    batch.put_item(Item={"userid": user_id, "email": email, "firstname": first_name,
-                                         "lastname": last_name, "hpwd": hashed_password})
-        ret = 0
-        self.debug("EXIT - " + "import_users")
-        return ret
+    # def import_products(self, my_aws_profile, my_env, my_table, my_csv_file):
+    #     self.debug("ENTER - " + "import_products")
+    #     table_service = self.get_table_service(my_aws_profile)
+    #     with open(my_csv_file, 'r') as csvfile:
+    #         reader = csv.reader(csvfile,delimiter='\t')
+    #         with table.batch_writer() as batch:
+    #             for p_id, pg_id, title, price, author_or_director, year, country, genre_or_language in reader:
+    #                 batch.put_item(Item={"pid": p_id, "pgid": pg_id, "title": title, "price": price,
+    #                                      "a_or_d": author_or_director, "year": year, "country": country,
+    #                                      "g_or_l": genre_or_language})
+    #     ret = 0
+    #     self.debug("EXIT - " + "import_products")
+    #     return ret
+    #
+    # def import_users(self, my_aws_profile, my_env, my_table, my_csv_file):
+    #     self.debug("ENTER - " + "import_users")
+    #     table_service = self.get_table_service(my_aws_profile)
+    #     with open(my_csv_file, 'r') as csvfile:
+    #         reader = csv.reader(csvfile,delimiter='\t')
+    #         with table.batch_writer() as batch:
+    #             for user_id, email, first_name, last_name, hashed_password in reader:
+    #                 batch.put_item(Item={"userid": user_id, "email": email, "firstname": first_name,
+    #                                      "lastname": last_name, "hpwd": hashed_password})
+    #     ret = 0
+    #     self.debug("EXIT - " + "import_users")
+    #     return ret
 
 def import_csv(my_aws_profile, my_env, my_table, my_csv_file):
     importer = MyTableImporter()
@@ -83,12 +80,12 @@ def import_csv(my_aws_profile, my_env, my_table, my_csv_file):
     importer.debug("  my_csv_file: " + my_csv_file)
     if my_table == 'productgroup':
         ret = importer.import_product_groups(my_aws_profile, my_env, my_table, my_csv_file)
-    elif my_table == 'product':
-        ret = importer.import_products(my_aws_profile, my_env, my_table, my_csv_file)
-    elif my_table == 'users':
-        ret = importer.import_users(my_aws_profile, my_env, my_table, my_csv_file)
-    elif my_table == 'session':
-        print("Not implemented - there is no need for initial sessions")
+    # elif my_table == 'product':
+    #     ret = importer.import_products(my_aws_profile, my_env, my_table, my_csv_file)
+    # elif my_table == 'users':
+    #     ret = importer.import_users(my_aws_profile, my_env, my_table, my_csv_file)
+    # elif my_table == 'session':
+    #     print("Not implemented - there is no need for initial sessions")
     else:
         print("Unknown table: " + my_table)
         ret = -1
