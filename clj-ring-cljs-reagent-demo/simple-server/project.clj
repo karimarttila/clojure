@@ -2,7 +2,7 @@
   :description "Simple Server."
   :dependencies
   [
-   [org.clojure/clojure "1.9.0"]
+   [org.clojure/clojure "1.10.0"]
    [org.clojure/data.json "0.2.6"]
    [org.clojure/core.async "0.4.474"]
    [org.clojure/data.csv "0.1.4"]

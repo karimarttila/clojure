@@ -23,7 +23,7 @@ class MyTableImporter:
         elif my_azure_profile == 'ss-aks-profile':
             azure_storage_account_name = os.environ['AZURE_STORAGE_ACCOUNT']
             azure_storage_account_key = os.environ['AZURE_STORAGE_KEY']
-            table_service = TableService(account_name = azure_storage_account_name, account_key=azure_storage_account_key) # TODO: What more?
+            table_service = TableService(account_name = azure_storage_account_name, account_key=azure_storage_account_key)
         else:
             self.debug("Unknown profile: " + my_azure_profile)
             sys.exit(-1)
