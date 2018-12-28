@@ -18,36 +18,52 @@
         }
   }
 
+
  :local-dynamodb
  {
   :env {
-        :ss-env "local-dynamodb"
-        :my-env "dev"
+        :ss-env     "local-dynamodb"
+        :my-env     "dev"
         ; NOTE: Endpoint format was tricky to realize.
-        :endpoint "http://dynamodb.eu-west-1.localhost:8000"
+        :endpoint   "http://dynamodb.eu-west-1.localhost:8000"
         ; Local DynamoDB: dummy but must be the same length as real keys.
         :access-key "XXXXXXXXXXXXXX___NOT"
         :secret-key "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX___NOT"
         }
   }
 
+
  :aws-dynamodb-dev
  {
   :env {
-        :ss-env "aws-dynamodb"
-        :my-env "dev"
+        :ss-env      "aws-dynamodb"
+        :my-env      "dev"
         :aws-profile "tmv-test"
         }
   }
 
+
  :aws-dynamodb-prod
  {
   :env {
-        :ss-env "aws-dynamodb"
-        :my-env "prod"
+        :ss-env      "aws-dynamodb"
+        :my-env      "prod"
         :aws-profile "tmv-prod"
         }
   }
+
+
+;; For Azurite, i.e. for Azure Table Storage local testing.
+ :local-table
+ {
+  :env {
+        :ss-env     "local-table"
+        :my-env     "dev"
+        ; NOTE: Endpoint for Azurite is hard coded.
+        :endpoint   "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
+        }
+  }
+
 
 
  ;; **********************************************
@@ -57,6 +73,7 @@
  {
   :resource-paths
   ["logconfig/dev"]}
+
 
  :log-prod
  {

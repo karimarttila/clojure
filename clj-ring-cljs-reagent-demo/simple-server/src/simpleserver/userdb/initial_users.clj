@@ -2,8 +2,7 @@
   (:require
     [clojure.data.csv :as csv]
     [clojure.java.io :as io]
-    [clojure.tools.logging :as log]
-    [environ.core :refer [env]]))
+    [clojure.tools.logging :as log]))
 
 
 (defn -get-initial-users

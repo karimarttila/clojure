@@ -9,7 +9,6 @@
     [ring.util.response :as ri-resp]
     [ring.middleware.json :as ri-json]
     [ring.middleware.cors :refer [wrap-cors]]
-    [environ.core :refer [env]]
     [simpleserver.userdb.users-factory :as ss-users-factory]
     [simpleserver.userdb.users-service-interface :as ss-users-svc]
     [simpleserver.domaindb.domain-factory :as ss-domain-factory]

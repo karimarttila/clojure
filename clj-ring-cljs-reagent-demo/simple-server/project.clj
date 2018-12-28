@@ -32,6 +32,8 @@
    ;[com.amazonaws/aws-java-sdk "1.11.237"]
    ;[com.amazonaws/aws-java-sdk-dynamodb "1.11.237"]
    [amazonica "0.3.135"]
+   ;; https://mvnrepository.com/artifact/com.microsoft.azure/azure-storage
+   [com.microsoft.azure/azure-storage "8.0.0"]
    ]
 
   :codox {:output-path "doc-gen"}

@@ -4,7 +4,6 @@
     [clj-time.core :as c-time]
     [ring.middleware.cors :refer [wrap-cors]]
     [buddy.sign.jwt :as buddy-jwt]
-    [environ.core :refer [env]]
     [amazonica.aws.dynamodbv2 :as dynamodb]
     [simpleserver.util.prop :as ss-prop]
     [simpleserver.sessiondb.session-service-interface :as ss-session-service-interface]

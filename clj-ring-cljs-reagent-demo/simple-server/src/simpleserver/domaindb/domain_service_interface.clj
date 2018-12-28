@@ -3,7 +3,7 @@
 
 (defprotocol DomainServiceInterface
   (get-product-groups [env]
-    "Get product groups")
+    "Gets product groups")
   (get-products [env pg-id]
     "Gets products for a product group, returns list of items: [p-id, pg-id, name, price]")
   (get-product [env pg-id p-id]

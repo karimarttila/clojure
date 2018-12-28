@@ -510,7 +510,7 @@ cd ..
 run-tests-profile-local-table-dev.sh   TODO
 ```
 
-**Azurite local table storage**: (and finally hitting the real Azure Table Storage service)
+**Real Azure Table Storage service**: (and finally hitting the real Azure Table Storage service)
 
 ```bash
 cd azure-table-storage

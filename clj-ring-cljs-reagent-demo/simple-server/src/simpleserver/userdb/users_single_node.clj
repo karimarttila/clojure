@@ -1,7 +1,6 @@
 (ns simpleserver.userdb.users-single-node
   (:require
     [clojure.tools.logging :as log]
-    [environ.core :refer [env]]
     [simpleserver.userdb.users-service-interface :as ss-users-service-interface]
     [simpleserver.userdb.initial-users :as ss-users-initial-users]))
 

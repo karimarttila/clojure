@@ -2,7 +2,7 @@
   (:require [clojure.string :as str]
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
-            [environ.core :refer [env]]
+            [environ.core :as environ]
             [clojure.pprint :as pp]))
 
 
@@ -40,7 +40,7 @@
   []
   (log/debug (str "ENTER -load-property-filename"))
   (log/trace (str "Current directory: " (-> (java.io.File. ".") .getAbsolutePath)))
-  (let [from-env (env :simpleserver-config-file)
+  (let [from-env (environ/env :simpleserver-config-file)
         configfile-name (if (nil? from-env)
                           "resources/simpleserver.properties"
                           from-env)]
