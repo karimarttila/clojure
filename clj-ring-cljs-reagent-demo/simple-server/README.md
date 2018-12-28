@@ -415,13 +415,13 @@ I used a couple of Clojure mechanism that provide nice polymorphism: [multimetho
 
  The dynamodb handling is the same for both local dynamodb instance and real aws dynamodb instance. You can test this as described below.
 
- **Single-node**: (i.e. not using dynamodb but reading the data files to Clojure data structures - statefull service)
+**Single-node**: (i.e. not using dynamodb but reading the data files to Clojure data structures - statefull service)
 
 ```bash
 ./run-tests-profile-single-node-logs.sh
 ```
 
- **Local DynamoDB**: (i.e. DynamoDB running locally in a Docker container)
+**Local DynamoDB**: (i.e. DynamoDB running locally in a Docker container)
 
 ```bash
 cd dynamodb
@@ -432,7 +432,7 @@ cd ..
 ./run-tests-profile-local-dynamodb.sh
 ```
 
- **Real AWS DynamoDB**: (and finally hitting the real AWS DynamoDB with our tests)
+**Real AWS DynamoDB**: (and finally hitting the real AWS DynamoDB with our tests)
 
 ```bash
 cd dynamodb
@@ -451,4 +451,95 @@ I created a utility script to run two Static code analysis tools ([eastwood](htt
 ```
 
 
+# Simple Server Goes Azure - New Development Winter 2018/2019
+
+After my implementing the Simple Server to use DynamoDB I thought I'm going to create the AWS EKS infra for it. But then I thought that I'm most probably going to start a new Azure project in the beginning of year 2019 and since I just passed my first Azure certification [Architecting Microsoft Azure Solutions](https://www.youracclaim.com/badges/62494509-bf1c-4cd0-ad5a-0b82d1dacfac/linked_in_profile) I thought that it might be more urgent to gather some real-life Azure experience first. Therefore I decided to implement the Simple Server to use [Azure Table Storage service](https://azure.microsoft.com/en-us/services/storage/tables/) the same way I earlier implemented the Simple Server to use AWS DynamoDB. 
+
+I used [Azurite](https://github.com/arafato/azurite) as development database. You can read in [azure-table-storage] directory the related README.md file and also browse the scripts. There are scripts to create the needed tables to Azurite and real Azure Table Storage service and also import the initial data to those tables and also scan the tables for development purposes.
+
+The application uses profile "local-table" when working with Azurite.
+
+
+## New Development Profiles: local-table and azure-table-dev
+
+As explained in the previous chapter I use "local-table" profile for developing the Azure version using local Azurite table storage test instance running in a Node module. The local Azurite based development has a couple of cons: you don't have to pay for the actual Table Storage ingress/egress while developing your API that stores/fetches data to/from Azure Table Storage, and development cycle is faster using the local Azurite Table Storage than accessing every time the actual Azure Table Storage service.
+
+In the DynamoDB version I already had implemented the dispatching between the original single-node version and the new DynamoDB version. I used the same dispatching model and just added the new Azure Table Storage multimethods and defrecords (with postfix "-table-storage" in the Clojure namespaces).
+
+The unit tests and server namespaces work the same way with this new profile as the old profiles, see the more detailed explanations in the previous DynamoDB chapter.
+ 
+The Table Storage handling is the same for both local Azurite Table Storage and real Azure Table Storage service. You can test this as described below.
+
+**Single-node**: (i.e. not using dynamodb but reading the data files to Clojure data structures - statefull service)
+
+```bash
+./run-tests-profile-single-node-logs.sh
+```
+
+**Local DynamoDB**: (i.e. DynamoDB running locally in a Docker container)
+
+```bash
+cd dynamodb
+./run-local-dynamodb.sh
+./create-tables.sh local-dynamodb dev
+./import-all-tables.sh local-dynamodb dev
+cd ..
+./run-tests-profile-local-dynamodb.sh
+```
+
+**Real AWS DynamoDB**: (and finally hitting the real AWS DynamoDB with our tests)
+
+```bash
+cd dynamodb
+./create-tables.sh <your-aws-profile> dev
+./import-all-tables.sh <your-aws-profile> dev
+cd ..
+run-tests-profile-aws-dynamodb-dev.sh
+```
+
+**Azurite local table storage**: (i.e. running local Azurite in Node module)
+
+```bash
+cd azure-table-storage
+./create-tables.sh local-table dev
+./import-all-tables.sh local-table dev
+cd ..
+run-tests-profile-local-table-dev.sh   TODO
+```
+
+**Azurite local table storage**: (and finally hitting the real Azure Table Storage service)
+
+```bash
+cd azure-table-storage
+./create-tables.sh <your-azure-profile> dev
+./import-all-tables.sh <your-azure-profile> dev
+cd ..
+run-tests-profile-azure-table-dev.sh   TODO
+```
+
+## Some Clojure/Java Interop Observations
+
+I tried to find a native Clojure API for Azure Table Storage service but couldn't find one (Microsoft, how rude!). Luckily you can find a Java API for almost anything and there is a Java API for Azure Table Storage as well: [azure-storage-java](https://github.com/Azure/azure-storage-java). There were some drastic changes in version 10 and I couldn't find the Table Storage API there. I could find it in the previous v. 8.0.0, so I just git cloned the repo and checked out the tag v.8.0.0 - there were nice samples how to use the Java API. I first considered three options: #1. Use the REST API of the Table Storage (and not use the Java API at all), #2. Create a Java proxy for Clojure implementation, i.e. use the Java API to create a Java proxy for Table Storage handling and then use this simple proxy from Clojure, or #3. Just use natively the original Java API from Simple Server Clojure code. I decided to go for option #3 since it provided real challenges to see how well Clojure/Java interop actually works (i.e. I need to access the original a bit complex Table Storage Java API directly from Clojure code). At least the beginning was pretty easy. Just add the dependency [com.microsoft.azure/azure-storage "8.0.0"] to Leiningen project.clj file. Then in Clojure namespace import the Java classes you need when accessing Table Storage using this Java API, e.g. :
+
+```clojure
+(:import (com.microsoft.azure.storage.table CloudTableClient)
+           (com.microsoft.azure.storage CloudStorageAccount))
+```
+
+Then start using the Java API from Clojure using the samples as an example, e.g.:
+
+```clojure
+(def table-config (ss-azure-utils/get-table-storage-config))
+(def cloud-storage-account (CloudStorageAccount/parse (:endpoint table-config)))
+(def table-client (. cloud-storage-account createCloudTableClient))
+```
+
+Load the file into REPL and you are able to test the Java API the first time with Azurite:
+
+```clojure
+(into [] (. table-client listTables))
+; => ["sseksdevsession" "sseksdevusers" "sseksdevproductgroup" "sseksdevproduct"]
+```
+
+Holy Moly, it works! Unbelievable. Exploring the Java API with Clojure REPL was easier than using the Java API in a Java test bench! (not to speak of the crude Java 10 REPL). Using Clojure REPL it was a breeze to experiment with the Java API and once you understood how to do certain queries just copy-pasted those code snippets to the actual Clojure code.
 
