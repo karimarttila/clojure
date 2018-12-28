@@ -16,8 +16,9 @@
 (compile 'simpleserver.util.azuregenclass.productgroup)
 
 
-(defmulti -m-get-table-client (fn [ssenv] ssenv))
 
+
+(defmulti -m-get-table-client (fn [ssenv] ssenv))
 
 (defmethod -m-get-table-client "local-table"
   [env]
@@ -34,6 +35,10 @@
   (log/debug "Doing nothing in other profiles than Azure Table Storage related profiles"))
 
 
+;; Table-client is bound once so that we call the slow multimethod gets called only once (instead of calling it every time in the defrecord functions).
+(def table-client (-m-get-table-client (environ/env :ss-env)))
+
+
 (defrecord Env-table-storage [env]
   ss-domain-service-interface/DomainServiceInterface
 
@@ -41,8 +46,7 @@
   (get-product-groups
     [env]
     (log/debug "ENTER get-product-groups")
-    (let [table-client (-m-get-table-client (environ/env :ss-env))
-          table-query (TableQuery/from simpleserver.util.azuregenclass.productgroup)
+    (let [table-query (TableQuery/from simpleserver.util.azuregenclass.productgroup)
           productgroup-table (. table-client getTableReference "sseksdevproductgroup")
           raw-product-groups (. productgroup-table execute table-query)]
       (reduce
