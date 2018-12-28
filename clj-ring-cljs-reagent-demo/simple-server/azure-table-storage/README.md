@@ -21,6 +21,7 @@ Then you are able to inject the storage name and storage key safely to scripts t
 
 If I later find out some way to create Azure profiles I fix this setup.
 
+I use [Azurite](https://github.com/arafato/azurite) as a local development database. Just install Azurite like: ```npm install azurite``` and you can use it as a node module. I created a helper script ```run-local-table-storage.sh``` to start Azurite.
 
 There are helper scripts to manipulate the four tables used for Clojure Simple Server:
 
@@ -34,10 +35,12 @@ There are helper scripts to manipulate the four tables used for Clojure Simple S
 
 The tables are:
 
-- sseks-<env>-session
-- sseks-<env>-users
-- sseks-<env>-product-group
-- sseks-<env>-product
+- sseks<env>session
+- sseks<env>users
+- sseks<env>productgroup
+- sseks<env>product
+
+NOTE: Azure Table Storage doesn't accept hyphens in table names. I also should have renamed sseks to ssaks (as Azure AKS service), but never mind that.
 
 First you need to make some installations:
 
