@@ -25,6 +25,9 @@
   - [DynamoDB Docker Image](#dynamodb-docker-image)
   - [New Development Profiles: local-dynamodb and dynamodb-dev](#new-development-profiles-local-dynamodb-and-dynamodb-dev)
   - [Static Code Analysis and Test Coverage](#static-code-analysis-and-test-coverage)
+- [Simple Server Goes Azure - New Development Winter 2018/2019](#simple-server-goes-azure---new-development-winter-20182019)
+  - [New Development Profiles: local-table and azure-table-dev](#new-development-profiles-local-table-and-azure-table-dev)
+  - [Some Clojure/Java Interop Observations](#some-clojurejava-interop-observations)
 
 
 # Introduction
