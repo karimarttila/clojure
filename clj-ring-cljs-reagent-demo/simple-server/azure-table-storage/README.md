@@ -46,29 +46,24 @@ First you need to make some installations:
 ./create-virtual-env.sh
 # Activate the virtual env.
 source venv3/bin/activate
-# Install aws library boto3.
+# Install azure table storage library.
 pip install azure-cosmosdb-table
 ```
 
-TODO ****************************************** REWRITE ************
-
-Create the credential section in you ~/.aws/credentials file, e.g.
-
-```text
-[local-table]
-aws_access_key_id = XXXXXXXXXXXXXX___NOT
-aws_secret_access_key = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX___NOT
-```
-
-Then import data:
+After sourcing the ss-aks-profile.sh profile as described earlier you are able to create the tables and import the data:
 
 ```bash
-./run-local-dynamodb.sh                      # Start the DynamoDB Docker container.
-./import-all-tables.sh local-dynamodb dev    # Import all tables to that instance.
+./run-local-table-storage.sh                      # Start Azurite container.
+./create-tables.sh local-table dev                # Create the tables in local Azurite table storage.
+./create-tables.sh ss-aks-profile dev             # Create the tables in actual Azure table storage service.
+./import-all-tables.sh local-table dev            # Import data to local Azurite table storage.
+./import-all-tables.sh ss-aks-profile dev         # Import data to actual Azure table storage service.
+./scan-table.sh local-table dev productgroup      # Scan table from local Azurite table storage.
+./scan-table.sh ss-aks-profile dev productgroup   # Scan table from actual Azure table storage service.
 ```
 
-I tested the scripts using local DynamoDB (running in Docker container) and real AWS DynamoDB table - scripts work the same way in both environments (for real aws testing you need an AWS account and provide the profile with aws_access key and secret, of course).
+I tested the scripts using local Azurite table storage (running in Docker container) and real Azure table storage service - scripts work the same way in both environments (for real Azure testing you need an Azure account and provide the profile with AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_KEY, of course).
 
-Someone might ask: "Why did you use Python and not Clojure since this is a Clojure exercises repo?" Well, I used Clojure to manipulate the data in production code and unit tests - I just wanted to see how easy it is to import the test data using Python boto3 library (it was pretty easy).
+Someone might ask: "Why did you use Python and not Clojure since this is a Clojure exercises repo?" Well, I used Clojure to manipulate the data in production code and unit tests - I just wanted to see how easy it is to import the test data using Python azure.storage.table library (it was pretty easy).
 
 
