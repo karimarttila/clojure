@@ -546,3 +546,41 @@ Load the file into REPL and you are able to test the Java API the first time wit
 
 Holy Moly, it works! Unbelievable. Exploring the Java API with Clojure REPL was easier than using the Java API in a Java test bench! (not to speak of the crude Java 10 REPL). Using Clojure REPL it was a breeze to experiment with the Java API and once you understood how to do certain queries just copy-pasted those code snippets to the actual Clojure code.
 
+The Azure Storage Java API requires Java entity classes that are extended from the com.microsoft.azure.storage.table.TableServiceEntity class. I created Clojure [gen-class](https://clojuredocs.org/clojure.core/gen-class) for each domain entity I needed. See directory [azuregenclass](https://github.com/karimarttila/clojure/tree/master/clj-ring-cljs-reagent-demo/simple-server/src/simpleserver/util/azuregenclass) for examples. Then using the generated Java class as entity class the Java interop is pretty simple. Compare the following code snippets which read the product groups from AWS DynamoDB using native Clojure API and from Azure Table Storage Service using Java API via Clojure/Java interop:
+
+**AWS DynamoDB using Native Clojure API:**
+
+```clojure
+(let [my-env (environ/env :my-env)
+          my-table (str "sseks-" my-env "-product-group")
+          ret (dynamodb/scan (ss-aws-utils/get-dynamodb-config) :table-name my-table)
+          items (ret :items)]
+      (reduce
+        (fn
+          [mymap item]
+          (conj mymap {(item :pgid) (item :pgname)}))
+        {}
+        items))
+```
+
+**Azure Table Storage Service using Java API via Clojure/Java interop:**
+
+```clojure
+(let [table-query (TableQuery/from simpleserver.util.azuregenclass.productgroup)
+          productgroup-table (. table-client getTableReference "sseksdevproductgroup")
+          raw-product-groups (. productgroup-table execute table-query)]
+      (reduce
+        (fn
+          [mymap item]
+          (conj mymap {(. item getPartitionKey) (. item getRowKey)}))
+        {}
+        raw-product-groups))
+```
+
+So, we provide the gen-class [simpleserver.util.azuregenclass.productgroup](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-server/src/simpleserver/util/azuregenclass/productgroup.clj) class as Java entity class to TableQuery, get reference to the table and then call Java API's execute method - the API uses the Java entity class (productgroup) to populate the values read from the Table Storage table. Then we use the same exact reduce function as in the AWS side but this time we call the Java class's getters 'getPartitionKey' and 'getRowKey' to get the product group id and product group name values.  
+
+
+
+## Azure Storage Explorer
+
+Microsoft provides nice tool - [Azure Storage Explorer](https://azure.microsoft.com/en-us/features/storage-explorer/) for Windows, Mac and Linux. I use Linux myself and the tool worked nicely out of the box - just extract the tar.gz file to some library, start the tool and provide your storage account name and key - the tool connected automatically to the storage account and you can experiment with the Table Storage tables you created earlier using bash scripts. The tool also discovered my Azurite Node module running in default port automatically - nice. 
