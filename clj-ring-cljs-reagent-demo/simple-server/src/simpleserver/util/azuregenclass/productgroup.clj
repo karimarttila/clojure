@@ -9,3 +9,5 @@
 (defn -initialize
   ([]
     ))
+
+(compile 'simpleserver.util.azuregenclass.productgroup)

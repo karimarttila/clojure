@@ -34,6 +34,12 @@
   (ss-domain-table-storage/->Env-table-storage env))
 
 
+(defmethod -m-create-domain "azure-table-storage"
+  [env]
+  (log/debug "ENTERED -m-create-domain - azure-table-storage")
+  (ss-domain-table-storage/->Env-table-storage env))
+
+
 (defmethod -m-create-domain :default
   [env]
   (log/debug "ENTERED -m-create-domain - default")

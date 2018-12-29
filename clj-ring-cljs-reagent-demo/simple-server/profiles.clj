@@ -10,6 +10,7 @@
                  [ring/ring-mock "0.3.0"]]}
 
 
+ ;; For running in single-node version (internal database simulation).
  :single-node
  {
   :env {
@@ -19,6 +20,7 @@
   }
 
 
+ ;; For local dynamodb development database.
  :local-dynamodb
  {
   :env {
@@ -33,6 +35,7 @@
   }
 
 
+ ;; For real AWS DynamoDB - dev env.
  :aws-dynamodb-dev
  {
   :env {
@@ -43,6 +46,7 @@
   }
 
 
+;; For real AWS DynamoDB - prod env.
  :aws-dynamodb-prod
  {
   :env {
@@ -61,6 +65,32 @@
         :my-env     "dev"
         ; NOTE: Endpoint for Azurite is hard coded.
         :endpoint   "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
+        }
+  }
+
+
+;; For real Azure Table Storage Service - dev env.
+ :azure-table-storage-dev
+ {
+  :env {
+        :ss-env     "azure-table-storage"
+        :my-env     "dev"
+        ;; Read AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_KEY
+        ;; dynamically from environmental variables.
+        :endpoint   ""
+        }
+  }
+
+
+ ;; For real Azure Table Storage Service - prod env.
+ :azure-table-storage-prod
+ {
+  :env {
+        :ss-env     "azure-table-storage"
+        :my-env     "prod"
+        ;; Read AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_KEY
+        ;; dynamically from environmental variables.
+        :endpoint   ""
         }
   }
 

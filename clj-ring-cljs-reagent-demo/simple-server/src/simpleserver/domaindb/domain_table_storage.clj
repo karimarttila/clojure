@@ -9,25 +9,33 @@
     [clojure.string :as str]
     [clojure.tools.logging :as log]
     [environ.core :as environ]
+    [simpleserver.util.azuregenclass.productgroup]
     [simpleserver.util.azure-utils :as ss-azure-utils]
     [simpleserver.domaindb.domain-service-interface :as ss-domain-service-interface])
   )
 
-(compile 'simpleserver.util.azuregenclass.productgroup)
 
-
-
-
-(defmulti -m-get-table-client (fn [ssenv] ssenv))
-
-(defmethod -m-get-table-client "local-table"
-  [env]
-  (log/debug "ENTERED -m-get-table-client - local-table")
+(defn -get-table-client
+  []
+  (log/debug "ENTERED -get-table-client")
   (let [table-config (ss-azure-utils/get-table-storage-config)
         cloud-storage-account (CloudStorageAccount/parse (:endpoint table-config))
         table-client (. cloud-storage-account createCloudTableClient)]
     table-client
     ))
+
+;; The multimethod is necessary so that table-client is properly called only for azure related profiles.
+(defmulti -m-get-table-client (fn [ssenv] ssenv))
+
+(defmethod -m-get-table-client "local-table"
+  [env]
+  (log/debug "ENTERED -m-get-table-client - local-table")
+  (-get-table-client))
+
+(defmethod -m-get-table-client "azure-table-storage"
+  [env]
+  (log/debug "ENTERED -m-get-table-client - azure-table-storage")
+  (-get-table-client))
 
 (defmethod -m-get-table-client :default
   [env]

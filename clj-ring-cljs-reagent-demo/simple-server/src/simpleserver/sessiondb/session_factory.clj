@@ -34,6 +34,12 @@
   (ss-session-table-storage/->Env-table-storage env))
 
 
+(defmethod -m-create-session "azure-table-storage"
+  [env]
+  (log/debug "ENTERED -m-create-session - azure-table-storage")
+  (ss-session-table-storage/->Env-table-storage env))
+
+
 (defmethod -m-create-session :default
   [env]
   (log/debug "ENTERED -m-create-session - default")

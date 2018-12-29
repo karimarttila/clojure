@@ -34,6 +34,12 @@
   (ss-user-table-storage/->Env-table-storage env))
 
 
+(defmethod -m-create-users "azure-table-storage"
+  [env]
+  (log/debug "ENTERED -m-create-users - azure-table-storage")
+  (ss-user-table-storage/->Env-table-storage env))
+
+
 (defmethod -m-create-users :default
   [env]
   (log/debug "ENTERED -m-create-users - default")
