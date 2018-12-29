@@ -28,6 +28,7 @@
 - [Simple Server Goes Azure - New Development Winter 2018/2019](#simple-server-goes-azure---new-development-winter-20182019)
   - [New Development Profiles: local-table and azure-table-dev](#new-development-profiles-local-table-and-azure-table-dev)
   - [Some Clojure/Java Interop Observations](#some-clojurejava-interop-observations)
+  - [Azure Storage Explorer](#azure-storage-explorer)
 
 
 # Introduction
