@@ -583,7 +583,7 @@ So, we provide the gen-class [simpleserver.util.azuregenclass.productgroup](http
 
 **WARNINGS**. 
 
-- While experimenting with REPL I did notice that in certain situations REPL didn't load the generated class but used some earlier version which caused quite a lot of confusion. I just restarted REPL which takes a bit of time. I have to experiment and google how to use REPL with gen-classes more effectively.
+- While experimenting with REPL I did notice that in certain situations REPL didn't load the generated class but used some earlier version which caused quite a lot of confusion. After making changes to gen-classes I just stopped REPL, gave command 'lein clean' in terminal and started REPL again which took a bit of time (a bit of a nuisance). I have to experiment and google how to use REPL with gen-classes more effectively.
 - I realized just by experimenting that the Azure Storage Table fields must start with capital letter or you are not able to read the fields using Java API.
  
 

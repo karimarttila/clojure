@@ -10,10 +10,15 @@
     [clojure.tools.logging :as log]
     [environ.core :as environ]
     [simpleserver.util.azuregenclass.productgroup]
+    [simpleserver.util.azuregenclass.product]
     [simpleserver.util.azure-utils :as ss-azure-utils]
     [simpleserver.domaindb.domain-service-interface :as ss-domain-service-interface])
   )
 
+;; Ask to compile here or otherwise other profiles fail.
+;; In the next project I have to figure out a better solution.
+(compile 'simpleserver.util.azuregenclass.productgroup)
+(compile 'simpleserver.util.azuregenclass.product)
 
 (defn -get-table-client
   []
@@ -76,7 +81,7 @@
           result-list (seq (map
                              (fn
                                [item]
-                               (seq [(. item getPartitionKey) (. item getRowKey) (. item getTitle)]))
+                               (seq [(. item getPartitionKey) (. item getRowKey) (. item getTitle) (. item getPrice)]))
                              raw-products))
           ]
       (if (nil? result-list)
