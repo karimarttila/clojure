@@ -2,7 +2,7 @@
   (:import (com.microsoft.azure.storage CloudStorageAccount)
            (com.microsoft.azure.storage.table CloudTableClient)
            (com.microsoft.azure.storage.table TableOperation)
-           (com.microsoft.azure.storage.table TableQuery))
+           (com.microsoft.azure.storage.table TableQuery TableQuery$QueryComparisons))
   (:require
     [clojure.data.csv :as csv]
     [clojure.java.io :as io]
@@ -68,8 +68,20 @@
   (get-products
     [env pg-id]
     (log/debug (str "ENTER get-products, pg-id: " pg-id))
-    (log/debug (str "NOT IMPLEMENTED YET"))
-    )
+    (let [table-filter (TableQuery/generateFilterCondition "RowKey" TableQuery$QueryComparisons/EQUAL (str pg-id))
+          table-query (TableQuery/from simpleserver.util.azuregenclass.product)
+          table-query (. table-query where table-filter)
+          product-table (. table-client getTableReference "sseksdevproduct")
+          raw-products (. product-table execute table-query)
+          result-list (seq (map
+                             (fn
+                               [item]
+                               (seq [(. item getPartitionKey) (. item getRowKey) (. item getTitle)]))
+                             raw-products))
+          ]
+      (if (nil? result-list)
+        '()
+        result-list)))
 
 
   (get-product

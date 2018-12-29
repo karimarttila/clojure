@@ -3,10 +3,11 @@
   (:gen-class
     :extends com.microsoft.azure.storage.table.TableServiceEntity
     :constructors {[] []}
-    :init initialize
+    :init init
+    :prefix "bean-"
     :state state))
 
-(defn -initialize
+(defn bean-init
   ([]
     ))
 

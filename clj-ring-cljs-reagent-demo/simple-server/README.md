@@ -581,6 +581,11 @@ The Azure Storage Java API requires Java entity classes that are extended from t
 So, we provide the gen-class [simpleserver.util.azuregenclass.productgroup](https://github.com/karimarttila/clojure/blob/master/clj-ring-cljs-reagent-demo/simple-server/src/simpleserver/util/azuregenclass/productgroup.clj) class as Java entity class to TableQuery, get reference to the table and then call Java API's execute method - the API uses the Java entity class (productgroup) to populate the values read from the Table Storage table. Then we use the same exact reduce function as in the AWS side but this time we call the Java class's getters 'getPartitionKey' and 'getRowKey' to get the product group id and product group name values.  
 
 
+**WARNINGS**. 
+
+- While experimenting with REPL I did notice that in certain situations REPL didn't load the generated class but used some earlier version which caused quite a lot of confusion. I just restarted REPL which takes a bit of time. I have to experiment and google how to use REPL with gen-classes more effectively.
+- I realized just by experimenting that the Azure Storage Table fields must start with capital letter or you are not able to read the fields using Java API.
+ 
 
 ## Azure Storage Explorer
 

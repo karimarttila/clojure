@@ -50,9 +50,9 @@ class MyTableImporter:
         with open(my_csv_file, 'r') as csvfile:
             reader = csv.reader(csvfile,delimiter='\t')
             for p_id, pg_id, title, price, author_or_director, year, country, genre_or_language in reader:
-                product_entity = {'PartitionKey': p_id, 'RowKey': pg_id, 'title': title, 'price': price,
-                                         'a_or_d': author_or_director, 'year': year, 'country': country,
-                                         'g_or_l': genre_or_language}
+                product_entity = {'PartitionKey': p_id, 'RowKey': pg_id, 'Title': title, 'Price': price,
+                                         'AorD': author_or_director, 'Year': year, 'Country': country,
+                                         'GorL': genre_or_language}
                 table_service.insert_entity(table_name, product_entity)
         ret = 0
         self.debug("EXIT - " + "import_products")
