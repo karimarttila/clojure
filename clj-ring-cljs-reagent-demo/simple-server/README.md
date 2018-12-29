@@ -26,7 +26,7 @@
   - [New Development Profiles: local-dynamodb and dynamodb-dev](#new-development-profiles-local-dynamodb-and-dynamodb-dev)
   - [Static Code Analysis and Test Coverage](#static-code-analysis-and-test-coverage)
 - [Simple Server Goes Azure - New Development Winter 2018/2019](#simple-server-goes-azure---new-development-winter-20182019)
-  - [New Development Profiles: local-table and azure-table-dev](#new-development-profiles-local-table-and-azure-table-dev)
+  - [New Development Profiles: local-table and azure-table-storage-dev](#new-development-profiles-local-table-and-azure-table-storage-dev)
   - [Some Clojure/Java Interop Observations](#some-clojurejava-interop-observations)
   - [Azure Storage Explorer](#azure-storage-explorer)
 
@@ -464,7 +464,7 @@ I used [Azurite](https://github.com/arafato/azurite) as development database. Yo
 The application uses profile "local-table" when working with Azurite.
 
 
-## New Development Profiles: local-table and azure-table-dev
+## New Development Profiles: local-table and azure-table-storage-dev
 
 As explained in the previous chapter I use "local-table" profile for developing the Azure version using local Azurite table storage test instance running in a Node module. The local Azurite based development has a couple of cons: you don't have to pay for the actual Table Storage ingress/egress while developing your API that stores/fetches data to/from Azure Table Storage, and development cycle is faster using the local Azurite Table Storage than accessing every time the actual Azure Table Storage service.
 
@@ -518,7 +518,7 @@ cd azure-table-storage
 ./create-tables.sh <your-azure-profile> dev
 ./import-all-tables.sh <your-azure-profile> dev
 cd ..
-run-tests-profile-azure-table-dev.sh   TODO
+run-tests-profile-azure-table-storage-dev.sh   TODO
 ```
 
 ## Some Clojure/Java Interop Observations
