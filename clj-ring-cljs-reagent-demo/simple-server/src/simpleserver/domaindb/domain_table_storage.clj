@@ -2,7 +2,8 @@
   (:import (com.microsoft.azure.storage CloudStorageAccount)
            (com.microsoft.azure.storage.table CloudTableClient)
            (com.microsoft.azure.storage.table TableOperation)
-           (com.microsoft.azure.storage.table TableQuery TableQuery$QueryComparisons))
+           (com.microsoft.azure.storage.table TableQuery TableQuery$QueryComparisons)
+           (com.microsoft.azure.storage.table TableQuery TableQuery$Operators))
   (:require
     [clojure.data.csv :as csv]
     [clojure.java.io :as io]
@@ -73,7 +74,7 @@
   (get-products
     [env pg-id]
     (log/debug (str "ENTER get-products, pg-id: " pg-id))
-    (let [table-filter (TableQuery/generateFilterCondition "RowKey" TableQuery$QueryComparisons/EQUAL (str pg-id))
+    (let [table-filter (TableQuery/generateFilterCondition "PartitionKey" TableQuery$QueryComparisons/EQUAL (str pg-id))
           table-query (TableQuery/from simpleserver.util.azuregenclass.product)
           table-query (. table-query where table-filter)
           product-table (. table-client getTableReference "sseksdevproduct")
@@ -82,8 +83,7 @@
                              (fn
                                [item]
                                (seq [(. item getPartitionKey) (. item getRowKey) (. item getTitle) (. item getPrice)]))
-                             raw-products))
-          ]
+                             raw-products))]
       (if (nil? result-list)
         '()
         result-list)))
@@ -92,5 +92,15 @@
   (get-product
     [env pg-id p-id]
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
-    (log/debug (str "NOT IMPLEMENTED YET"))
-    ))
+    (let [table-filter-rowkey (TableQuery/generateFilterCondition "RowKey" TableQuery$QueryComparisons/EQUAL (str p-id))
+          table-filter-partitionkey (TableQuery/generateFilterCondition "PartitionKey" TableQuery$QueryComparisons/EQUAL (str pg-id))
+          table-filter (TableQuery/combineFilters table-filter-rowkey TableQuery$Operators/AND table-filter-partitionkey)
+          table-query (TableQuery/from simpleserver.util.azuregenclass.product)
+          table-query (. table-query where table-filter)
+          product-table (. table-client getTableReference "sseksdevproduct")
+          items (. product-table execute table-query)
+          product (first items)]
+      (if (nil? product)
+        nil
+        [(. product getPartitionKey) (. product getRowKey) (. product getTitle) (. product getPrice) (. product getAorD) (. product getYear) (. product getCountry) (. product getGorL)]))))
+

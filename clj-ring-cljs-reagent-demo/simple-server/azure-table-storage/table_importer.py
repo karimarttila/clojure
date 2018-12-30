@@ -50,7 +50,7 @@ class MyTableImporter:
         with open(my_csv_file, 'r') as csvfile:
             reader = csv.reader(csvfile,delimiter='\t')
             for p_id, pg_id, title, price, author_or_director, year, country, genre_or_language in reader:
-                product_entity = {'PartitionKey': p_id, 'RowKey': pg_id, 'Title': title, 'Price': price,
+                product_entity = {'PartitionKey': pg_id, 'RowKey': p_id, 'Title': title, 'Price': price,
                                          'AorD': author_or_director, 'Year': year, 'Country': country,
                                          'GorL': genre_or_language}
                 table_service.insert_entity(table_name, product_entity)
@@ -65,8 +65,8 @@ class MyTableImporter:
         with open(my_csv_file, 'r') as csvfile:
             reader = csv.reader(csvfile,delimiter='\t')
             for user_id, email, first_name, last_name, hashed_password in reader:
-                user_entity = {'PartitionKey': email, 'RowKey': user_id, 'firstname': first_name,
-                                         'lastname': last_name, 'hpwd': hashed_password}
+                user_entity = {'PartitionKey': email, 'RowKey': user_id, 'Firstname': first_name,
+                                         'Lastname': last_name, 'Hpwd': hashed_password}
                 table_service.insert_entity(table_name, user_entity)
         ret = 0
         self.debug("EXIT - " + "import_users")
