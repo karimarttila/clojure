@@ -58,15 +58,16 @@
 
 
 ;; For Azurite, i.e. for Azure Table Storage local testing.
- :local-table
- {
-  :env {
-        :ss-env     "local-table"
-        :my-env     "dev"
-        ; NOTE: Endpoint for Azurite is hard coded.
-        :endpoint   "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
-        }
-  }
+;; NOTE: Stopped working with Azurite since it may not be reliable. See README.md
+; :local-table
+; {
+;  :env {
+;        :ss-env     "local-table"
+;        :my-env     "dev"
+;        ; NOTE: Endpoint for Azurite is hard coded.
+;        :endpoint   "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
+;        }
+;  }
 
 
 ;; For real Azure Table Storage Service - dev env.

@@ -82,7 +82,7 @@
           result-list (seq (map
                              (fn
                                [item]
-                               (seq [(. item getPartitionKey) (. item getRowKey) (. item getTitle) (. item getPrice)]))
+                               (seq [(. item getRowKey) (. item getPartitionKey) (. item getTitle) (. item getPrice)]))
                              raw-products))]
       (if (nil? result-list)
         '()
@@ -102,5 +102,5 @@
           product (first items)]
       (if (nil? product)
         nil
-        [(. product getPartitionKey) (. product getRowKey) (. product getTitle) (. product getPrice) (. product getAorD) (. product getYear) (. product getCountry) (. product getGorL)]))))
+        [(. product getRowKey) (. product getPartitionKey) (. product getTitle) (. product getPrice) (. product getAorD) (. product getYear) (. product getCountry) (. product getGorL)]))))
 

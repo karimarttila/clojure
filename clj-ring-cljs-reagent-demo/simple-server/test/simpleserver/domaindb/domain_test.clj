@@ -13,7 +13,7 @@
 
 (def domain-svc (ss-domain-factory/create-domain))
 
-(defn userdb-test-fixture
+(defn domaindb-test-fixture
   "NOTE: We do nothing here since unlike usersdb the domaindb is read-only
   (i.e. no need to reset data in the database for tests)"
   [f]
@@ -21,7 +21,7 @@
     (log/debug "ENTERED userdb-test-fixture")
     (f)))
 
-(use-fixtures :each userdb-test-fixture)
+(use-fixtures :each domaindb-test-fixture)
 
 
 (deftest get-product-groups-test
