@@ -54,9 +54,10 @@
       (log/warn (str "Token not found for removal: " token))
       (let [my-env (environ/env :my-env)
             session-table (. table-client getTableReference (str "sseks" my-env "session"))
-            table-delete (TableOperation/delete delete-session)]
+            table-delete (TableOperation/delete delete-session)
+            result (. session-table execute table-delete)]
         ; In real production code we should check the result value, of course.
-        (. session-table execute table-delete)))))
+        result))))
 
 
 (defrecord Env-table-storage [env]

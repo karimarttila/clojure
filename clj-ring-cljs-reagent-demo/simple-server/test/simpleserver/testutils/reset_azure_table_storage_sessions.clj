@@ -9,12 +9,10 @@
 (def session-svc (ss-session-factory/create-session))
 
 
-
-
 (defn reset-azure-table-storage-sessions
   []
   (log/debug "ENTER reset-azure-table-storage-sessions")
-  (let [current-sessions (ss-session-interface/get-sessions (ss-session-factory/create-session))]
+  (let [current-sessions (ss-session-interface/get-sessions session-svc)]
     ; Calling function directly since it is not part of the actual session interface.
     ; In real production code we should check the result values, of course.
     ; Note: we have to embed the map call with dorun since the function remove-token

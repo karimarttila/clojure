@@ -2,7 +2,8 @@
   (:require [clojure.tools.logging :as log]
             [environ.core :as environ]
             [simpleserver.userdb.users-single-node :as my-user-single-node]
-            [simpleserver.testutils.reset-dynamodb-users-table :as my-reset-dynamodb-users]))
+            [simpleserver.testutils.reset-dynamodb-users-table :as my-reset-dynamodb-users]
+            [simpleserver.testutils.reset-azure-table-storage-users-table :as my-reset-azure-users]))
 
 
 (defmulti -m-initialize-userdb (fn [env] env))
@@ -25,6 +26,16 @@
     ; Sanity check: allow resetting DynamoDB only in dev env (not in prod env).
     (if (= my-env "dev")
       (my-reset-dynamodb-users/reset-local-dynamodb-userdb))))
+
+
+(defmethod -m-initialize-userdb "azure-table-storage"
+  [env]
+  (log/debug "ENTERED -m-initialize-userdb - azure-table-storage")
+  (let [my-env (environ/env :my-env)]
+    ; Sanity check: allow resetting DynamoDB only in dev env (not in prod env).
+    (if (= my-env "dev")
+      (my-reset-azure-users/reset-azure-table-storage-users-table))))
+
 
 (defmethod -m-initialize-userdb :default
   [env]

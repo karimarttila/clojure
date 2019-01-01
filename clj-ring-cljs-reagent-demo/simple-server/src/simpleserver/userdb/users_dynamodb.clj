@@ -4,15 +4,10 @@
     [amazonica.aws.dynamodbv2 :as dynamodb]
     [environ.core :as environ]
     [simpleserver.userdb.users-service-interface :as ss-users-service-interface]
-    [simpleserver.util.aws-utils :as ss-aws-utils])
+    [simpleserver.util.aws-utils :as ss-aws-utils]
+    [simpleserver.userdb.users-common :as ss-users-common])
   (:import (com.amazonaws.services.dynamodbv2.model AmazonDynamoDBException)))
 
-
-
-;; NOTE: We don't use incremental user ids since it is a bit anti-pattern in DynamoDB (since email is the hash key). So, we create uuid for userid.
-(defn uuid
-  []
-  (.toString (java.util.UUID/randomUUID)))
 
 ;; NOTE: We are skipping the pagination here since this is an exercise and
 ;; we know that the query results will always be less than 1MB.
@@ -32,8 +27,8 @@
                               :select "COUNT"
                               :key-conditions {:email {:attribute-value-list [email]
                                                        :comparison-operator  "EQ"}})
-          count (ret :count)]
-      (not (= count 0))))
+          my-count (ret :count)]
+      (not (= my-count 0))))
 
   (add-new-user
     [ssenv email first-name last-name password]
@@ -49,7 +44,7 @@
               ret (try
                     (dynamodb/put-item (ss-aws-utils/get-dynamodb-config)
                                        :table-name my-table
-                                       :item {:userid    (uuid)
+                                       :item {:userid    (ss-users-common/uuid)
                                               :email     email
                                               :firstname first-name
                                               :lastname  last-name

@@ -1,8 +1,9 @@
 (ns simpleserver.sessiondb.session-common
   (:require [clojure.tools.logging :as log]
             [buddy.sign.jwt :as buddy-jwt]
+            [clj-time.core :as c-time]
             [simpleserver.util.prop :as ss-prop]
-            [clj-time.core :as c-time]))
+            ))
 
 
 ;; The rational we have it here is that we can change the value in
