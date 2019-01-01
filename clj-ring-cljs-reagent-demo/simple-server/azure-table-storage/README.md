@@ -1,4 +1,4 @@
-# Azure Table Storage Local Docker Version
+# Azure Table Storage Local Database
 
 # Instructions
 
@@ -70,3 +70,6 @@ I tested the scripts using local Azurite table storage (running in Docker contai
 Someone might ask: "Why did you use Python and not Clojure since this is a Clojure exercises repo?" Well, I used Clojure to manipulate the data in production code and unit tests - I just wanted to see how easy it is to import the test data using Python azure.storage.table library (it was pretty easy).
 
 
+# Warning
+
+**NOTE**. While developing the Azure Table Storage version I was puzzled that when searching all products both local Azurite and real Azure Table Storage Service returned the right result. But when searching a certain product with PartitionKey and RowKey the real Azure Table Storage Service returned the right product but Azurite returned empty list. For the exact same code calling the Table Storage Java API. My only conclusion was that unless I had made some error with my test data (highly unlikely - I used the same table-importer.py to load the test data to both tables, then used Storage Explorer to verify that the exact product I'm looking for is in both tables) the Azurite version is not working properly. From this point on I decided to ditch the Azurite and use the real service in development. A bit sad since I thought that Azurite would have been a nice tool for local table development. I googled the issue and found out that some other developers had complained same kind of issues with Azurite.
