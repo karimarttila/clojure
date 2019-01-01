@@ -12,7 +12,7 @@
               [getPrice [] String]
               [setPrice [String] void]
               [getAorD [] String]                           ; Author or Director
-              [setAorD[String] void]
+              [setAorD [String] void]
               [getYear [] String]
               [setYear [String] void]
               [getCountry [] String]

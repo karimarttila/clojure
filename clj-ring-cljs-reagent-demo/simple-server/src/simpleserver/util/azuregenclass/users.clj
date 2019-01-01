@@ -12,7 +12,7 @@
               [getFirstname [] String]
               [setFirstname [String] void]
               [getHpwd [] String]
-              [setHpwd[String] void]]
+              [setHpwd [String] void]]
     ))
 
 

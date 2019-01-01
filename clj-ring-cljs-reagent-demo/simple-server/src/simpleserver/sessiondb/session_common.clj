@@ -41,26 +41,26 @@
 
 
 (defn validate-token
-    [token get-token remove-token]
-    (log/debug (str "ENTER validate-token, token: " token))
-    (let [found-token (get-token token)]
-      ;; Part #1 of validation.
-      (if (nil? token)
-        (do
-          (log/warn (str "Token not found in my sessions - unknown token: " token))
-          nil)
-        ;; Part #2 of validation.
-        (try
-          (buddy-jwt/unsign token my-hex-secret)
-          (catch Exception e
-            (if (.contains (.getMessage e) "Token is expired")
-              (do
-                (log/debug (str "Token is expired, removing it from my sessions and returning nil: " token))
-                (remove-token token)
-                nil)
-              ; Some other issue, throw it.
-              (do
-                (log/error (str "Some unknown exception when handling expired token, exception: " (.getMessage e)) ", token: " token)
-                (throw e))))))))
+  [token get-token remove-token]
+  (log/debug (str "ENTER validate-token, token: " token))
+  (let [found-token (get-token token)]
+    ;; Part #1 of validation.
+    (if (nil? token)
+      (do
+        (log/warn (str "Token not found in my sessions - unknown token: " token))
+        nil)
+      ;; Part #2 of validation.
+      (try
+        (buddy-jwt/unsign token my-hex-secret)
+        (catch Exception e
+          (if (.contains (.getMessage e) "Token is expired")
+            (do
+              (log/debug (str "Token is expired, removing it from my sessions and returning nil: " token))
+              (remove-token token)
+              nil)
+            ; Some other issue, throw it.
+            (do
+              (log/error (str "Some unknown exception when handling expired token, exception: " (.getMessage e)) ", token: " token)
+              (throw e))))))))
 
 

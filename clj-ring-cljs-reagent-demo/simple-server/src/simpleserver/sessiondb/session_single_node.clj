@@ -31,8 +31,8 @@
 (defn remove-token
   [token]
   (if (contains? @my-sessions token)
-                  (swap! my-sessions disj token)
-                  (log/warn (str "Expired token not found when removing it from my sessions: " token))))
+    (swap! my-sessions disj token)
+    (log/warn (str "Expired token not found when removing it from my sessions: " token))))
 
 
 (defrecord Env-single-node [env]
