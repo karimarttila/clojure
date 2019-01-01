@@ -2,7 +2,8 @@
   (:require [clojure.tools.logging :as log]
             [environ.core :as environ]
             [simpleserver.sessiondb.session-single-node :as my-session-single-node]
-            [simpleserver.testutils.reset-dynamodb-sessions :as my-session-reset-sessions]))
+            [simpleserver.testutils.reset-dynamodb-sessions :as my-session-aws-reset-sessions]
+            [simpleserver.testutils.reset-azure-table-storage-sessions :as my-session-azure-reset-sessions]))
 
 
 
@@ -17,7 +18,7 @@
 (defmethod -m-initialize-sessions "local-dynamodb"
   [env]
   (log/debug "ENTERED -m-initialize-sessions - local-dynamodb")
-  (my-session-reset-sessions/reset-local-dynamodb-sessions))
+  (my-session-aws-reset-sessions/reset-dynamodb-sessions))
 
 (defmethod -m-initialize-sessions "aws-dynamodb"
   [env]
@@ -25,7 +26,16 @@
   (let [my-env (environ/env :my-env)]
     ; Sanity check: allow resetting DynamoDB only in dev env (not in prod env).
     (if (= my-env "dev")
-      (my-session-reset-sessions/reset-local-dynamodb-sessions))))
+      (my-session-aws-reset-sessions/reset-dynamodb-sessions))))
+
+
+(defmethod -m-initialize-sessions "azure-table-storage"
+  [env]
+  (log/debug "ENTERED -m-initialize-sessions - azure-table-storage")
+  (let [my-env (environ/env :my-env)]
+    ; Sanity check: allow resetting Azure only in dev env (not in prod env).
+    (if (= my-env "dev")
+      (my-session-azure-reset-sessions/reset-azure-table-storage-sessions))))
 
 (defmethod -m-initialize-sessions :default
   [env]

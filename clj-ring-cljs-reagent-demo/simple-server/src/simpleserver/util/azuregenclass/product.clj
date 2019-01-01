@@ -75,5 +75,6 @@
 (defn bean-setGorL [this ^java.lang.String gorl]
   (setfield this :gorl gorl))
 
-(compile 'simpleserver.util.azuregenclass.product)
+;(compile 'simpleserver.util.azuregenclass.product)
 
+;(comment (compile 'simpleserver.util.azuregenclass.product))

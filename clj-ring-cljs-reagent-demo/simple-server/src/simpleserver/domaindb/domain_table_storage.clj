@@ -21,36 +21,9 @@
 (compile 'simpleserver.util.azuregenclass.productgroup)
 (compile 'simpleserver.util.azuregenclass.product)
 
-(defn -get-table-client
-  []
-  (log/debug "ENTERED -get-table-client")
-  (let [table-config (ss-azure-utils/get-table-storage-config)
-        cloud-storage-account (CloudStorageAccount/parse (:endpoint table-config))
-        table-client (. cloud-storage-account createCloudTableClient)]
-    table-client
-    ))
-
-;; The multimethod is necessary so that table-client is properly called only for azure related profiles.
-(defmulti -m-get-table-client (fn [ssenv] ssenv))
-
-(defmethod -m-get-table-client "local-table"
-  [env]
-  (log/debug "ENTERED -m-get-table-client - local-table")
-  (-get-table-client))
-
-(defmethod -m-get-table-client "azure-table-storage"
-  [env]
-  (log/debug "ENTERED -m-get-table-client - azure-table-storage")
-  (-get-table-client))
-
-(defmethod -m-get-table-client :default
-  [env]
-  (log/debug "ENTERED -m-get-table-client - default")
-  (log/debug "Doing nothing in other profiles than Azure Table Storage related profiles"))
-
 
 ;; Table-client is bound once so that we call the slow multimethod gets called only once (instead of calling it every time in the defrecord functions).
-(def table-client (-m-get-table-client (environ/env :ss-env)))
+(def table-client (ss-azure-utils/get-table-client))
 
 
 (defrecord Env-table-storage [env]
@@ -60,8 +33,9 @@
   (get-product-groups
     [env]
     (log/debug "ENTER get-product-groups")
-    (let [table-query (TableQuery/from simpleserver.util.azuregenclass.productgroup)
-          productgroup-table (. table-client getTableReference "sseksdevproductgroup")
+    (let [my-env (environ/env :my-env)
+          table-query (TableQuery/from simpleserver.util.azuregenclass.productgroup)
+          productgroup-table (. table-client getTableReference (str "sseks" my-env "productgroup"))
           raw-product-groups (. productgroup-table execute table-query)]
       (reduce
         (fn
@@ -77,7 +51,8 @@
     (let [table-filter (TableQuery/generateFilterCondition "PartitionKey" TableQuery$QueryComparisons/EQUAL (str pg-id))
           table-query (TableQuery/from simpleserver.util.azuregenclass.product)
           table-query (. table-query where table-filter)
-          product-table (. table-client getTableReference "sseksdevproduct")
+          my-env (environ/env :my-env)
+          product-table (. table-client getTableReference (str "sseks" my-env "product"))
           raw-products (. product-table execute table-query)
           result-list (seq (map
                              (fn
@@ -97,7 +72,8 @@
           table-filter (TableQuery/combineFilters table-filter-rowkey TableQuery$Operators/AND table-filter-partitionkey)
           table-query (TableQuery/from simpleserver.util.azuregenclass.product)
           table-query (. table-query where table-filter)
-          product-table (. table-client getTableReference "sseksdevproduct")
+          my-env (environ/env :my-env)
+          product-table (. table-client getTableReference (str "sseks" my-env "product"))
           items (. product-table execute table-query)
           product (first items)]
       (if (nil? product)

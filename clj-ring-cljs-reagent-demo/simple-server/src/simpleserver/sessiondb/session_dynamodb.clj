@@ -7,9 +7,9 @@
     [amazonica.aws.dynamodbv2 :as dynamodb]
     [simpleserver.util.prop :as ss-prop]
     [simpleserver.sessiondb.session-service-interface :as ss-session-service-interface]
-    [simpleserver.sessiondb.session-utils :as ss-session-utils]
     [simpleserver.util.aws-utils :as ss-aws-utils]
-    [environ.core :as environ])
+    [environ.core :as environ]
+    [simpleserver.sessiondb.session-common :as ss-session-common])
   (:import (com.amazonaws.services.dynamodbv2.model AmazonDynamoDBException)))
 
 (defn get-token
@@ -41,7 +41,7 @@
     (log/debug (str "ENTER create-json-web-token, email: " email))
     (let [my-env (environ/env :my-env)
           my-table (str "sseks-" my-env "-session")
-          json-web-token (ss-session-utils/create-json-web-token email)
+          json-web-token (ss-session-common/create-json-web-token email)
           ret (try
                 (dynamodb/put-item (ss-aws-utils/get-dynamodb-config)
                                    :table-name my-table
@@ -51,36 +51,14 @@
                 (catch AmazonDynamoDBException e {:email email,
                                                   :ret   :failed
                                                   :msg   (str "Exception occured: " (.toString e))}))]
-      json-web-token)
-    )
+      json-web-token))
 
 
   (validate-token
     [env token]
     (log/debug (str "ENTER validate-token, token: " token))
-    (let [found-token (get-token token)]
-      ;; Part #1 of validation.
-      (if (nil? found-token)
-        (do
-          (log/warn (str "Token not found in my sessions - unknown token: " token))
-          nil)
-        ;; Part #2 of validation.
-        (try
-          (buddy-jwt/unsign token ss-session-utils/my-hex-secret)
-          (catch Exception e
-            (if (.contains (.getMessage e) "Token is expired")
-              (do
-                (log/debug (str "Token is expired, removing it from my sessions and returning nil: " token))
-                ; Token just expired, remove expired token and return nil.
-                (remove-token token)
-                nil)
-              ; Some other issue, throw it.
-              (do
-                (log/error (str "Some unknown exception when handling expired token, exception: " (.getMessage e)) ", token: " token)
-                (throw e)))))
-        ))
+    (ss-session-common/validate-token token get-token remove-token))
 
-    )
 
   (get-sessions
     [env]

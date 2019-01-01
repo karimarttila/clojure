@@ -1,4 +1,4 @@
-(ns simpleserver.util.azuregenclass.productgroup
+(ns simpleserver.util.azuregenclass.session
   (:import (com.microsoft.azure.storage.table TableServiceEntity))
   (:gen-class
     :extends com.microsoft.azure.storage.table.TableServiceEntity
@@ -11,6 +11,4 @@
   ([]
     ))
 
-;(compile 'simpleserver.util.azuregenclass.productgroup)
-
-;(comment (compile 'simpleserver.util.azuregenclass.productgroup))
+;(compile 'simpleserver.util.azuregenclass.session)

@@ -17,9 +17,9 @@
                              current-sessions)]
     delete-requests))
 
-(defn reset-local-dynamodb-sessions
+(defn reset-dynamodb-sessions
   []
-  (log/debug "ENTER reset-local-dynamodb-sessions")
+  (log/debug "ENTER reset-dynamodb-sessions")
   (let [my-env (environ/env :my-env)
         my-table (str "sseks-" my-env "-session")
         delete-requests (-create-delete-requests)]
