@@ -13,7 +13,8 @@
 # NOTE: For some reason Clojure 1.9 not working with Leiningen?
 # Figure out later why?
 #export JAVA_HOME=/mnt/local/jdk-9.0.1
-export JAVA_HOME=/mnt/local/jdk1.8.0_65
+#export JAVA_HOME=/mnt/local/jdk1.8.0_65
+export JAVA_HOME=/mnt/local/openjdk-11
 export M2_HOME=/mnt/local/maven-3.3
 echo "JAVA_HOME="$JAVA_HOME
 export ANT_HOME=/mnt/local/apache-ant-1.10.1
