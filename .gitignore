@@ -27,6 +27,7 @@ tmp/
 personal-info/
 
 # Leiningen
+# Always ignore .lein-env in Clojure projects since there could be secrets related to environments.
 .lein-env
 .lein-failures
 .lein-repl-history
