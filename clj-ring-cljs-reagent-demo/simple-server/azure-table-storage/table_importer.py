@@ -21,9 +21,11 @@ class MyTableImporter:
         if my_azure_profile == 'local-table':
             table_service = TableService(connection_string = 'DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;')
         elif my_azure_profile == 'ss-aks-profile':
-            azure_storage_account_name = os.environ['AZURE_STORAGE_ACCOUNT']
-            azure_storage_account_key = os.environ['AZURE_STORAGE_KEY']
-            table_service = TableService(account_name = azure_storage_account_name, account_key=azure_storage_account_key)
+            azure_storage_connection_string = os.environ['AZURE_CONNECTION_STRING']
+            #azure_storage_account_name = os.environ['AZURE_STORAGE_ACCOUNT']
+            #azure_storage_account_key = os.environ['AZURE_STORAGE_KEY']
+            #table_service = TableService(account_name = azure_storage_account_name, account_key=azure_storage_account_key)
+            table_service = TableService(connection_string = azure_storage_connection_string)
         else:
             self.debug("Unknown profile: " + my_azure_profile)
             sys.exit(-1)
