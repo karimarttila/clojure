@@ -27,6 +27,7 @@
   - [Static Code Analysis and Test Coverage](#static-code-analysis-and-test-coverage)
 - [Simple Server Goes Azure - New Development Winter 2018/2019](#simple-server-goes-azure---new-development-winter-20182019)
   - [New Development Profiles: local-table and azure-table-storage-dev](#new-development-profiles-local-table-and-azure-table-storage-dev)
+  - [Local Azurite Table Storage Is Not Working Properly](#local-azurite-table-storage-is-not-working-properly)
   - [Some Clojure/Java Interop Observations](#some-clojurejava-interop-observations)
   - [Azure Storage Explorer](#azure-storage-explorer)
 
@@ -508,7 +509,8 @@ cd azure-table-storage
 ./create-tables.sh local-table dev
 ./import-all-tables.sh local-table dev
 cd ..
-run-tests-profile-local-table-dev.sh   TODO
+source <your azure file where you have the AZURE_CONNECTION_STRING environmental variable that defines the connection string to your Azure Storage account where you have the tables that Simple Server uses to run tests against.
+run-tests-profile-azure-table-storage-service.sh
 ```
 
 **Real Azure Table Storage service**: (and finally hitting the real Azure Table Storage service)

@@ -28,9 +28,8 @@
 (defmethod -m-get-table-storage-config "azure-table-storage"
   [env]
   (log/debug "ENTERED -m-get-table-storage-config - azure-table-storage")
-  (let [my-azure-storage-account (environ/env :azure-storage-account)
-        my-azure-storage-key (environ/env :azure-storage-key)]
-    {:endpoint (str "DefaultEndpointsProtocol=https;AccountName=" my-azure-storage-account ";AccountKey=" my-azure-storage-key)}))
+  (let [my-azure-connection-string (environ/env :azure-connection-string)]
+    {:endpoint my-azure-connection-string}))
 
 
 (defmethod -m-get-table-storage-config :default
