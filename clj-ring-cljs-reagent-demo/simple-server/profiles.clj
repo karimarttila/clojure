@@ -76,7 +76,8 @@
   :env {
         :ss-env     "azure-table-storage"
         :my-env     "dev"
-        ;; Read AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_KEY
+        ;; Read AZURE_CONNECTION_STRING
+        ;; Old: AZURE_STORAGE_ACCOUNT and AZURE_STORAGE_KEY
         ;; dynamically from environmental variables.
         :endpoint   ""
         }
