@@ -1,3 +1,3 @@
 #!/bin/bash
 
-SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties lein with-profile +aws-dynamodb-dev,+log-prod test
+SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties;SS_TABLE_PREFIX=kari-sseks lein with-profile +aws-dynamodb-dev,+log-dev test

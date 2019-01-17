@@ -21,7 +21,8 @@
   []
   (log/debug "ENTER reset-dynamodb-sessions")
   (let [my-env (environ/env :my-env)
-        my-table (str "sseks-" my-env "-session")
+        my-table-prefix (environ/env :ss-table-prefix)
+        my-table (str my-table-prefix "-" my-env "-session")
         delete-requests (-create-delete-requests)]
     ; Calling with empty request list causes exception.
     (if (not (empty? delete-requests))

@@ -14,7 +14,8 @@
 (defn delete-user
   [email]
   (let [my-env (environ/env :my-env)
-        my-table (str "sseks-" my-env "-users")]
+        my-table-prefix (environ/env :ss-table-prefix)
+        my-table (str my-table-prefix "-" my-env "-users")]
     (dynamodb/delete-item (ss-aws-utils/get-dynamodb-config) :table-name my-table :key {:email {:s email}})))
 
 
@@ -48,7 +49,8 @@
   []
   (log/debug "ENTER reset-local-dynamodb-userdb")
   (let [my-env (environ/env :my-env)
-        my-table (str "sseks-" my-env "-users")]
+        my-table-prefix (environ/env :ss-table-prefix)
+        my-table (str my-table-prefix "-" my-env "-users")]
     (dynamodb/batch-write-item (ss-aws-utils/get-dynamodb-config)
                                :request-items {my-table (into [] (-create-delete-requests))})
     (dynamodb/batch-write-item (ss-aws-utils/get-dynamodb-config)

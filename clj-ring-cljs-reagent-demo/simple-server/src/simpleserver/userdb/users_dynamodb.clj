@@ -21,7 +21,8 @@
     [ssenv email]
     (log/debug (str "ENTER email-already-exists?, email: " email))
     (let [my-env (environ/env :my-env)
-          my-table (str "sseks-" my-env "-users")
+          my-table-prefix (environ/env :ss-table-prefix)
+          my-table (str my-table-prefix "-" my-env "-users")
           ret (dynamodb/query (ss-aws-utils/get-dynamodb-config)
                               :table-name my-table
                               :select "COUNT"
@@ -39,7 +40,8 @@
           (log/debug (str "Failure: email already exists: " email))
           {:email email, :ret :failed :msg "Email already exists"})
         (let [my-env (environ/env :my-env)
-              my-table (str "sseks-" my-env "-users")
+              my-table-prefix (environ/env :ss-table-prefix)
+              my-table (str my-table-prefix "-" my-env "-users")
               hashed-password (str (hash password))
               ret (try
                     (dynamodb/put-item (ss-aws-utils/get-dynamodb-config)
@@ -61,7 +63,8 @@
     [ssenv email password]
     (log/debug (str "ENTER credentials-ok?, email: " email))
     (let [my-env (environ/env :my-env)
-          my-table (str "sseks-" my-env "-users")
+          my-table-prefix (environ/env :ss-table-prefix)
+          my-table (str my-table-prefix "-" my-env "-users")
           ret (dynamodb/query (ss-aws-utils/get-dynamodb-config)
                               :table-name my-table
                               :select "ALL_ATTRIBUTES"
@@ -76,8 +79,10 @@
   (get-users
     [ssenv]
     (log/debug (str "ENTER get-users"))
-    (let [ret (dynamodb/scan (ss-aws-utils/get-dynamodb-config)
-                             :table-name "sseks-dev-users")
+    (let [my-env (environ/env :my-env)
+          my-table-prefix (environ/env :ss-table-prefix)
+          ret (dynamodb/scan (ss-aws-utils/get-dynamodb-config)
+                             :table-name (str my-table-prefix "-" my-env  "-users"))
           items (ret :items)]
       (reduce (fn [users user]
                 (assoc users (user :userid)

@@ -25,7 +25,8 @@
     [ssenv]
     (log/debug "ENTER get-product-groups")
     (let [my-env (environ/env :my-env)
-          my-table (str "sseks-" my-env "-product-group")
+          my-table-prefix (environ/env :ss-table-prefix)
+          my-table (str my-table-prefix "-" my-env "-product-group")
           ret (dynamodb/scan (ss-aws-utils/get-dynamodb-config) :table-name my-table)
           items (ret :items)]
       (reduce
@@ -39,7 +40,8 @@
     [ssenv pg-id]
     (log/debug (str "ENTER get-products, pg-id: " pg-id))
     (let [my-env (environ/env :my-env)
-          my-table (str "sseks-" my-env "-product")
+          my-table-prefix (environ/env :ss-table-prefix)
+          my-table (str my-table-prefix "-" my-env "-product")
           ret (dynamodb/query (ss-aws-utils/get-dynamodb-config)
                               :table-name my-table
                               :select "ALL_PROJECTED_ATTRIBUTES"
@@ -61,7 +63,8 @@
     [ssenv pg-id p-id]
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
     (let [my-env (environ/env :my-env)
-          my-table (str "sseks-" my-env "-product")
+          my-table-prefix (environ/env :ss-table-prefix)
+          my-table (str my-table-prefix "-" my-env "-product")
           ret (dynamodb/query (ss-aws-utils/get-dynamodb-config)
                               :table-name my-table
                               :select "ALL_ATTRIBUTES"

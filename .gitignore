@@ -41,3 +41,6 @@ venv3/
 
 # Azurite installation
 clj-ring-cljs-reagent-demo/simple-server/azure-table-storage/azurite/
+
+# VS Code
+.vscode/
