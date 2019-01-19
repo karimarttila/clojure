@@ -27,6 +27,16 @@
   (log/debug "ENTERED -m-create-users - aws-dynamodb")
   (ss-user-dynamodb/->Env-dynamodb env))
 
+(defmethod -m-create-users "aws-dynamodb-assumed-role"
+  [env]
+  (log/debug "ENTERED -m-create-users - aws-dynamodb-assumed-role")
+  (ss-user-dynamodb/->Env-dynamodb env))
+
+(defmethod -m-create-users "aws-dynamodb-eks"
+  [env]
+  (log/debug "ENTERED -m-create-users - aws-dynamodb-eks")
+  (ss-user-dynamodb/->Env-dynamodb env))
+
 
 (defmethod -m-create-users "local-table"
   [env]

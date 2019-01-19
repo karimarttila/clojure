@@ -34,8 +34,20 @@
         }
   }
 
+;; For assuming worker node role (temporary credentials).
+ ;; You must first assume the role (see instructions in kubernetes README.md)
+ ;; and then populate the values in IDEA run configuration environmental variables.
+ :aws-dynamodb-assumed-role
+ {
+  :env {
+        :ss-env      "aws-dynamodb-assumed-role"
+        :my-env      "dev"
+        :endpoint    "eu-west-1"
+        }
+  }
 
- ;; For real AWS DynamoDB - dev env.
+ ;; For accessing real AWS DynamoDB - dev env,
+ ;; but using in local development with AWS profile.
  :aws-dynamodb-dev
  {
   :env {
@@ -45,16 +57,18 @@
         }
   }
 
-
-;; For real AWS DynamoDB - prod env.
- :aws-dynamodb-prod
+;; For using in real AWS EKS environment.
+;; Not using AWS profile but the worker node EC2 Instance profile.
+ :aws-dynamodb-aws-eks
  {
   :env {
-        :ss-env      "aws-dynamodb"
-        :my-env      "prod"
-        :aws-profile "tmv-prod"
+        :ss-env      "aws-dynamodb-eks"
+        :my-env      "dev"
+        :endpoint    "eu-west-1"
         }
   }
+
+
 
 
 ;; For Azurite, i.e. for Azure Table Storage local testing.

@@ -28,6 +28,18 @@
   (ss-session-dynamodb/->Env-dynamodb env))
 
 
+(defmethod -m-create-session "aws-dynamodb-assumed-role"
+  [env]
+  (log/debug "ENTERED -m-create-session - aws-dynamodb-assumed-role")
+  (ss-session-dynamodb/->Env-dynamodb env))
+
+
+(defmethod -m-create-session "aws-dynamodb-eks"
+  [env]
+  (log/debug "ENTERED -m-create-session - aws-dynamodb-eks")
+  (ss-session-dynamodb/->Env-dynamodb env))
+
+
 (defmethod -m-create-session "local-table"
   [env]
   (log/debug "ENTERED -m-create-session - local-table")

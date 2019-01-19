@@ -28,6 +28,18 @@
   (ss-domain-dynamodb/->Env-dynamodb env))
 
 
+(defmethod -m-create-domain "aws-dynamodb-assumed-role"
+  [env]
+  (log/debug "ENTERED -m-create-domain - aws-dynamodb-assumed-role")
+  (ss-domain-dynamodb/->Env-dynamodb env))
+
+
+(defmethod -m-create-domain "aws-dynamodb-eks"
+  [env]
+  (log/debug "ENTERED -m-create-domain - aws-dynamodb-eks")
+  (ss-domain-dynamodb/->Env-dynamodb env))
+
+
 (defmethod -m-create-domain "local-table"
   [env]
   (log/debug "ENTERED -m-create-domain - local-table")

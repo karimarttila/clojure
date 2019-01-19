@@ -492,7 +492,7 @@ cd ..
 ./run-tests-profile-local-dynamodb.sh
 ```
 
-**Real AWS DynamoDB**: (and finally hitting the real AWS DynamoDB with our tests)
+**Real AWS DynamoDB**: (and finally hitting the real AWS DynamoDB with our tests). NOTE: This is mean to run locally using your own AWS profile.
 
 ```bash
 cd dynamodb
@@ -501,6 +501,19 @@ cd dynamodb
 cd ..
 run-tests-profile-aws-dynamodb-dev.sh
 ```
+
+Later on I added a couple of new profiles for AWS:
+
+**aws-dynamodb-assumed-role** 
+
+This is a profile for testing the IAM role policies so that you assume the EKS worker node Instance profile role and run the application tests using the temporary credentials for this role. See more detailed instructions in Kubernetes EKS README.md. You can use the same ":aws-dynamodb-assumed-role" script but you have to give the temporary credentials as environmental variables, e.g.:
+
+AWS_ACCESS_KEY_ID="XXXXXXXXXX";AWS_SECRET_ACCESS_KEY="XXXXXXXXXXXXX";AWS_SESSION_TOKEN="XXXXXXXXXXXXXXXXX" ./run-tests-profile-aws-dynamodb-dev.sh
+
+ 
+**aws-dynamodb-aws-eks**: This is a profile in which no credentials are provided and the application runs in AWS EKS and uses the EKS worker node instance profile.
+
+
 
 **Azurite local table storage**: (i.e. running local Azurite in Node module)
 
@@ -522,6 +535,9 @@ cd azure-table-storage
 cd ..
 run-tests-profile-azure-table-storage-dev.sh   TODO
 ```
+
+
+
 
 ## Local Azurite Table Storage Is Not Working Properly
 
