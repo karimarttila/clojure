@@ -27,6 +27,13 @@
     (if (= my-env "dev")
       (my-reset-dynamodb-users/reset-local-dynamodb-userdb))))
 
+(defmethod -m-initialize-userdb "aws-dynamodb-eks"
+  [env]
+  (log/debug "ENTERED -m-initialize-userdb - aws-dynamodb-eks")
+  (let [my-env (environ/env :my-env)]
+    ; Sanity check: allow resetting DynamoDB only in dev env (not in prod env).
+    (if (= my-env "dev")
+      (my-reset-dynamodb-users/reset-local-dynamodb-userdb))))
 
 (defmethod -m-initialize-userdb "azure-table-storage"
   [env]

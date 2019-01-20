@@ -16,39 +16,17 @@
   (ss-domain-single-node/->Env-single-node env))
 
 
-(defmethod -m-create-domain "local-dynamodb"
+;; Some form of AWS DynamoDB profile.
+(defmethod -m-create-domain "dynamodb"
   [env]
-  (log/debug "ENTERED -m-create-domain - local-dynamodb")
+  (log/debug "ENTERED -m-create-domain - dynamodb")
   (ss-domain-dynamodb/->Env-dynamodb env))
 
 
-(defmethod -m-create-domain "aws-dynamodb"
+;; Some form of Azure Table storage profile.
+(defmethod -m-create-domain "table"
   [env]
-  (log/debug "ENTERED -m-create-domain - aws-dynamodb")
-  (ss-domain-dynamodb/->Env-dynamodb env))
-
-
-(defmethod -m-create-domain "aws-dynamodb-assumed-role"
-  [env]
-  (log/debug "ENTERED -m-create-domain - aws-dynamodb-assumed-role")
-  (ss-domain-dynamodb/->Env-dynamodb env))
-
-
-(defmethod -m-create-domain "aws-dynamodb-eks"
-  [env]
-  (log/debug "ENTERED -m-create-domain - aws-dynamodb-eks")
-  (ss-domain-dynamodb/->Env-dynamodb env))
-
-
-(defmethod -m-create-domain "local-table"
-  [env]
-  (log/debug "ENTERED -m-create-domain - local-table")
-  (ss-domain-table-storage/->Env-table-storage env))
-
-
-(defmethod -m-create-domain "azure-table-storage"
-  [env]
-  (log/debug "ENTERED -m-create-domain - azure-table-storage")
+  (log/debug "ENTERED -m-create-domain - table")
   (ss-domain-table-storage/->Env-table-storage env))
 
 
@@ -61,6 +39,12 @@
 
 (defn create-domain
   []
-  (log/debug "ENTERED create-domain")
-  (let [ssenv (environ/env :ss-env)]
+  (let [ssenv (environ/env :ss-env)
+        _ (log/debug (str "ENTERED create-domain - " ssenv))
+        ssenv (if (.contains ssenv "dynamodb" )
+                "dynamodb"
+                ssenv)
+        ssenv (if (.contains ssenv "table" )
+                "table"
+                ssenv)]
     (-m-create-domain ssenv)))

@@ -28,6 +28,13 @@
     (if (= my-env "dev")
       (my-session-aws-reset-sessions/reset-dynamodb-sessions))))
 
+(defmethod -m-initialize-sessions "aws-dynamodb-eks"
+  [env]
+  (log/debug "ENTERED -m-initialize-sessions - aws-dynamodb-eks")
+  (let [my-env (environ/env :my-env)]
+    ; Sanity check: allow resetting DynamoDB only in dev env (not in prod env).
+    (if (= my-env "dev")
+      (my-session-aws-reset-sessions/reset-dynamodb-sessions))))
 
 (defmethod -m-initialize-sessions "azure-table-storage"
   [env]

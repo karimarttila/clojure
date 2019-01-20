@@ -6,7 +6,7 @@ if [[ -z "${SS_TABLE_PREFIX}" ]]; then
 fi
 
 SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties lein clean
-SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties lein with-profile +aws-dynamodb-dev,+log-dev ring uberjar
+SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties lein with-profile +aws-dynamodb-eks,+log-dev ring uberjar
 
 echo "Distributable ready."
 echo "You can start the distributable as:"

@@ -46,9 +46,9 @@
         }
   }
 
- ;; For accessing real AWS DynamoDB - dev env,
+ ;; For accessing real AWS DynamoDB
  ;; but using in local development with AWS profile.
- :aws-dynamodb-dev
+ :aws-dynamodb
  {
   :env {
         :ss-env      "aws-dynamodb"
@@ -59,7 +59,7 @@
 
 ;; For using in real AWS EKS environment.
 ;; Not using AWS profile but the worker node EC2 Instance profile.
- :aws-dynamodb-aws-eks
+ :aws-dynamodb-eks
  {
   :env {
         :ss-env      "aws-dynamodb-eks"
@@ -67,8 +67,6 @@
         :endpoint    "eu-west-1"
         }
   }
-
-
 
 
 ;; For Azurite, i.e. for Azure Table Storage local testing.

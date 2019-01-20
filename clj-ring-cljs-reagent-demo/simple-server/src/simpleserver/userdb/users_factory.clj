@@ -16,37 +16,17 @@
   (ss-user-single-node/->Env-single-node env))
 
 
-(defmethod -m-create-users "local-dynamodb"
+;; Some form of AWS DynamoDB profile.
+(defmethod -m-create-users "dynamodb"
   [env]
-  (log/debug "ENTERED -m-create-users - local-dynamodb")
+  (log/debug "ENTERED -m-create-users - dynamodb")
   (ss-user-dynamodb/->Env-dynamodb env))
 
 
-(defmethod -m-create-users "aws-dynamodb"
+;; Some form of Azure Table storage profile.
+(defmethod -m-create-users "table"
   [env]
-  (log/debug "ENTERED -m-create-users - aws-dynamodb")
-  (ss-user-dynamodb/->Env-dynamodb env))
-
-(defmethod -m-create-users "aws-dynamodb-assumed-role"
-  [env]
-  (log/debug "ENTERED -m-create-users - aws-dynamodb-assumed-role")
-  (ss-user-dynamodb/->Env-dynamodb env))
-
-(defmethod -m-create-users "aws-dynamodb-eks"
-  [env]
-  (log/debug "ENTERED -m-create-users - aws-dynamodb-eks")
-  (ss-user-dynamodb/->Env-dynamodb env))
-
-
-(defmethod -m-create-users "local-table"
-  [env]
-  (log/debug "ENTERED -m-create-users - local-table")
-  (ss-user-table-storage/->Env-table-storage env))
-
-
-(defmethod -m-create-users "azure-table-storage"
-  [env]
-  (log/debug "ENTERED -m-create-users - azure-table-storage")
+  (log/debug "ENTERED -m-create-users - table")
   (ss-user-table-storage/->Env-table-storage env))
 
 
@@ -59,6 +39,12 @@
 
 (defn create-users
   []
-  (log/debug "ENTERED create-users")
-  (let [ssenv (environ/env :ss-env)]
+  (let [ssenv (environ/env :ss-env)
+        - (log/debug (str "ENTERED create-users - " ssenv))
+        ssenv (if (.contains ssenv "dynamodb" )
+                "dynamodb"
+                ssenv)
+        ssenv (if (.contains ssenv "table" )
+                "table"
+                ssenv)]
     (-m-create-users ssenv)))

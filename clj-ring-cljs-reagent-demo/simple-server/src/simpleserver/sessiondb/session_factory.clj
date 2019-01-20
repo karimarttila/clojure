@@ -16,39 +16,17 @@
   (ss-session-single-node/->Env-single-node env))
 
 
-(defmethod -m-create-session "local-dynamodb"
+;; Some form of AWS DynamoDB profile.
+(defmethod -m-create-session "dynamodb"
   [env]
-  (log/debug "ENTERED -m-create-session - local-dynamodb")
+  (log/debug "ENTERED -m-create-session - dynamodb")
   (ss-session-dynamodb/->Env-dynamodb env))
 
 
-(defmethod -m-create-session "aws-dynamodb"
+;; Some form of Azure Table storage profile.
+(defmethod -m-create-session "table"
   [env]
-  (log/debug "ENTERED -m-create-session - aws-dynamodb")
-  (ss-session-dynamodb/->Env-dynamodb env))
-
-
-(defmethod -m-create-session "aws-dynamodb-assumed-role"
-  [env]
-  (log/debug "ENTERED -m-create-session - aws-dynamodb-assumed-role")
-  (ss-session-dynamodb/->Env-dynamodb env))
-
-
-(defmethod -m-create-session "aws-dynamodb-eks"
-  [env]
-  (log/debug "ENTERED -m-create-session - aws-dynamodb-eks")
-  (ss-session-dynamodb/->Env-dynamodb env))
-
-
-(defmethod -m-create-session "local-table"
-  [env]
-  (log/debug "ENTERED -m-create-session - local-table")
-  (ss-session-table-storage/->Env-table-storage env))
-
-
-(defmethod -m-create-session "azure-table-storage"
-  [env]
-  (log/debug "ENTERED -m-create-session - azure-table-storage")
+  (log/debug "ENTERED -m-create-session - table")
   (ss-session-table-storage/->Env-table-storage env))
 
 
@@ -61,6 +39,12 @@
 
 (defn create-session
   []
-  (log/debug "ENTERED create-session")
-  (let [ssenv (environ/env :ss-env)]
+  (let [ssenv (environ/env :ss-env)
+        _ (log/debug (str "ENTERED create-session - " ssenv))
+        ssenv (if (.contains ssenv "dynamodb" )
+                "dynamodb"
+                ssenv)
+        ssenv (if (.contains ssenv "table" )
+                "table"
+                ssenv)]
     (-m-create-session ssenv)))
