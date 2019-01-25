@@ -4,7 +4,7 @@ echo "Poor man's Robot Framework!"
 
 if [ $# -ne 0 ]
 then
-    echo "Usage: ./call-all.ss"
+    echo "Usage: ./call-all.sh"
     exit 1
 fi
 

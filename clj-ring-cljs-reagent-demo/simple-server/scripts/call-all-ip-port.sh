@@ -4,7 +4,7 @@ echo "Poor man's Robot Framework!"
 
 if [ $# -ne 2 ]
 then
-    echo "Usage: ./call-all.ss <ip> <port>"
+    echo "Usage: ./call-all-ip-port.sh <ip> <port>"
     exit 1
 fi
 
