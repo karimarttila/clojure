@@ -20,7 +20,7 @@ class MyTableImporter:
         self.debug("ENTER - " + "get_table")
         if my_azure_profile == 'local-table':
             table_service = TableService(connection_string = 'DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;')
-        elif my_azure_profile == 'ss-aks-profile':
+        elif my_azure_profile == 'azure':
             azure_storage_connection_string = os.environ['AZURE_CONNECTION_STRING']
             #azure_storage_account_name = os.environ['AZURE_STORAGE_ACCOUNT']
             #azure_storage_account_key = os.environ['AZURE_STORAGE_KEY']
@@ -32,10 +32,10 @@ class MyTableImporter:
         self.debug("EXIT - " + "get_table")
         return table_service
 
-    def import_product_groups(self, my_azure_profile, my_env, my_table, my_csv_file):
+    def import_product_groups(self, my_azure_profile, my_env, my_table, my_prefix, my_csv_file):
         self.debug("ENTER - " + "import_product_groups")
         table_service = self.get_table_service(my_azure_profile)
-        table_name = "sseks" + my_env + my_table
+        table_name = my_prefix + my_env + my_table
         with open(my_csv_file, 'r') as csvfile:
             reader = csv.reader(csvfile,delimiter='\t')
             for pg_id, pg_name in reader:
@@ -45,10 +45,10 @@ class MyTableImporter:
         self.debug("EXIT - " + "import_product_groups")
         return ret
 
-    def import_products(self, my_azure_profile, my_env, my_table, my_csv_file):
+    def import_products(self, my_azure_profile, my_env, my_table, my_prefix, my_csv_file):
         self.debug("ENTER - " + "import_products")
         table_service = self.get_table_service(my_azure_profile)
-        table_name = "sseks" + my_env + my_table
+        table_name = my_prefix + my_env + my_table
         with open(my_csv_file, 'r') as csvfile:
             reader = csv.reader(csvfile,delimiter='\t')
             for p_id, pg_id, title, price, author_or_director, year, country, genre_or_language in reader:
@@ -60,10 +60,10 @@ class MyTableImporter:
         self.debug("EXIT - " + "import_products")
         return ret
 
-    def import_users(self, my_azure_profile, my_env, my_table, my_csv_file):
+    def import_users(self, my_azure_profile, my_env, my_table, my_prefix, my_csv_file):
         self.debug("ENTER - " + "import_users")
         table_service = self.get_table_service(my_azure_profile)
-        table_name = "sseks" + my_env + my_table
+        table_name = my_prefix + my_env + my_table
         with open(my_csv_file, 'r') as csvfile:
             reader = csv.reader(csvfile,delimiter='\t')
             for user_id, email, first_name, last_name, hashed_password in reader:
@@ -74,7 +74,7 @@ class MyTableImporter:
         self.debug("EXIT - " + "import_users")
         return ret
 
-def import_csv(my_azure_profile, my_env, my_table, my_csv_file):
+def import_csv(my_azure_profile, my_env, my_table, my_prefix, my_csv_file):
     importer = MyTableImporter()
     ret = 0
     importer.debug("ENTER - " + "import_csv, params:")
@@ -83,11 +83,11 @@ def import_csv(my_azure_profile, my_env, my_table, my_csv_file):
     importer.debug("  my_table: " + my_table)
     importer.debug("  my_csv_file: " + my_csv_file)
     if my_table == 'productgroup':
-        ret = importer.import_product_groups(my_azure_profile, my_env, my_table, my_csv_file)
+        ret = importer.import_product_groups(my_azure_profile, my_env, my_table, my_prefix, my_csv_file)
     elif my_table == 'product':
-        ret = importer.import_products(my_azure_profile, my_env, my_table, my_csv_file)
+        ret = importer.import_products(my_azure_profile, my_env, my_table, my_prefix, my_csv_file)
     elif my_table == 'users':
-        ret = importer.import_users(my_azure_profile, my_env, my_table, my_csv_file)
+        ret = importer.import_users(my_azure_profile, my_env, my_table, my_prefix, my_csv_file)
     elif my_table == 'session':
         print("Not implemented - there is no need for initial sessions")
     else:
@@ -98,11 +98,12 @@ def import_csv(my_azure_profile, my_env, my_table, my_csv_file):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 5:
-        print("Usage: python3 table_importer.sh <azure-profile> <env> <table> <csv file>")
+    if len(sys.argv) !=6:
+        print("Usage: python3 table_importer.sh <azure-profile> <env> <table> <prefix> <csv file>")
         exit(-1)
     my_azure_profile = sys.argv[1]
     my_env = sys.argv[2]
     my_table = sys.argv[3]
-    my_csv_file = sys.argv[4]
-    import_csv(my_azure_profile, my_env, my_table, my_csv_file)
+    my_prefix = sys.argv[4]
+    my_csv_file = sys.argv[5]
+    import_csv(my_azure_profile, my_env, my_table, my_prefix, my_csv_file)
