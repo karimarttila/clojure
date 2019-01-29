@@ -28,10 +28,11 @@
 (defn get-raw-session
   [token]
   (let [my-env (environ/env :my-env)
+        my-prefix (environ/env :azure-table-prefix)
         table-filter (TableQuery/generateFilterCondition "PartitionKey" TableQuery$QueryComparisons/EQUAL token)
         table-query (TableQuery/from simpleserver.util.azuregenclass.session)
         table-query (. table-query where table-filter)
-        session-table (. table-client getTableReference (str "sseks" my-env "session"))
+        session-table (. table-client getTableReference (str my-prefix my-env "session"))
         raw-sessions (. session-table execute table-query)]
     (first raw-sessions)
     )
@@ -53,7 +54,8 @@
     (if (nil? delete-session)
       (log/warn (str "Token not found for removal: " token))
       (let [my-env (environ/env :my-env)
-            session-table (. table-client getTableReference (str "sseks" my-env "session"))
+            my-prefix (environ/env :azure-table-prefix)
+            session-table (. table-client getTableReference (str my-prefix my-env "session"))
             table-delete (TableOperation/delete delete-session)
             result (. session-table execute table-delete)]
         ; In real production code we should check the result value, of course.
@@ -68,8 +70,8 @@
     (log/debug (str "ENTER create-json-web-token, email: " email))
     (let [json-web-token (ss-session-common/create-json-web-token email)
           my-env (environ/env :my-env)
-          table-query (TableQuery/from simpleserver.util.azuregenclass.session)
-          session-table (. table-client getTableReference (str "sseks" my-env "session"))
+          my-prefix (environ/env :azure-table-prefix)
+          session-table (. table-client getTableReference (str my-prefix my-env "session"))
           new-session (new simpleserver.util.azuregenclass.session)
           _ (.setPartitionKey new-session json-web-token)
           _ (.setRowKey new-session "dummy-row-key")
@@ -89,8 +91,9 @@
     [env]
     (log/debug (str "ENTER get-sessions"))
     (let [my-env (environ/env :my-env)
+          my-prefix (environ/env :azure-table-prefix)
           table-query (TableQuery/from simpleserver.util.azuregenclass.session)
-          session-table (. table-client getTableReference (str "sseks" my-env "session"))
+          session-table (. table-client getTableReference (str my-prefix my-env "session"))
           items (. session-table execute table-query)]
       (reduce (fn [sessions session]
                 (conj sessions (. session getPartitionKey)))

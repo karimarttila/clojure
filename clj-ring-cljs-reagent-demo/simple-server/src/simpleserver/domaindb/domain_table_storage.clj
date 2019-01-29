@@ -34,8 +34,9 @@
     [env]
     (log/debug "ENTER get-product-groups")
     (let [my-env (environ/env :my-env)
+          my-prefix (environ/env :azure-table-prefix)
           table-query (TableQuery/from simpleserver.util.azuregenclass.productgroup)
-          productgroup-table (. table-client getTableReference (str "sseks" my-env "productgroup"))
+          productgroup-table (. table-client getTableReference (str my-prefix my-env "productgroup"))
           raw-product-groups (. productgroup-table execute table-query)]
       (reduce
         (fn
@@ -52,7 +53,8 @@
           table-query (TableQuery/from simpleserver.util.azuregenclass.product)
           table-query (. table-query where table-filter)
           my-env (environ/env :my-env)
-          product-table (. table-client getTableReference (str "sseks" my-env "product"))
+          my-prefix (environ/env :azure-table-prefix)
+          product-table (. table-client getTableReference (str my-prefix my-env "product"))
           raw-products (. product-table execute table-query)
           result-list (seq (map
                              (fn
@@ -73,7 +75,8 @@
           table-query (TableQuery/from simpleserver.util.azuregenclass.product)
           table-query (. table-query where table-filter)
           my-env (environ/env :my-env)
-          product-table (. table-client getTableReference (str "sseks" my-env "product"))
+          my-prefix (environ/env :azure-table-prefix)
+          product-table (. table-client getTableReference (str my-prefix my-env "product"))
           items (. product-table execute table-query)
           product (first items)]
       (if (nil? product)

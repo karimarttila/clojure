@@ -19,10 +19,11 @@
 (defn -get-raw-user
   [email]
   (let [my-env (environ/env :my-env)
+        my-prefix (environ/env :azure-table-prefix)
         table-filter (TableQuery/generateFilterCondition "PartitionKey" TableQuery$QueryComparisons/EQUAL email)
         table-query (TableQuery/from simpleserver.util.azuregenclass.users)
         table-query (. table-query where table-filter)
-        users-table (. table-client getTableReference (str "sseks" my-env "users"))
+        users-table (. table-client getTableReference (str my-prefix my-env "users"))
         raw-users (. users-table execute table-query)]
     (first raw-users)))
 
@@ -34,7 +35,8 @@
     (if (nil? delete-user)
       (log/warn (str "User not found for removal: " email))
       (let [my-env (environ/env :my-env)
-            users-table (. table-client getTableReference (str "sseks" my-env "users"))
+            my-prefix (environ/env :azure-table-prefix)
+            users-table (. table-client getTableReference (str my-prefix my-env "users"))
             table-delete (TableOperation/delete delete-user)
             result (. users-table execute table-delete)]
         ; In real production code we should check the result value, of course.
@@ -44,8 +46,9 @@
 (defn -add-new-user
   [user]
   (let [my-env (environ/env :my-env)
+        my-prefix (environ/env :azure-table-prefix)
         table-query (TableQuery/from simpleserver.util.azuregenclass.users)
-        users-table (. table-client getTableReference (str "sseks" my-env "users"))
+        users-table (. table-client getTableReference (str my-prefix my-env "users"))
         email (user :email)
         userid (user :userid)
         first-name (user :first-name)

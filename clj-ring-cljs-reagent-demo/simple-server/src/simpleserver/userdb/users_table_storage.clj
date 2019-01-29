@@ -25,7 +25,8 @@
           table-query (TableQuery/from simpleserver.util.azuregenclass.users)
           table-query (. table-query where table-filter)
           my-env (environ/env :my-env)
-          users-table (. table-client getTableReference (str "sseks" my-env "users"))
+          my-prefix (environ/env :azure-table-prefix)
+          users-table (. table-client getTableReference (str my-prefix my-env "users"))
           raw-users (into [] (. users-table execute table-query))
           my-count (count raw-users)]
       (not (= my-count 0))))
@@ -39,8 +40,9 @@
           (log/debug (str "Failure: email already exists: " email))
           {:email email, :ret :failed :msg "Email already exists"})
         (let [my-env (environ/env :my-env)
+              my-prefix (environ/env :azure-table-prefix)
               table-query (TableQuery/from simpleserver.util.azuregenclass.users)
-              users-table (. table-client getTableReference (str "sseks" my-env "users"))
+              users-table (. table-client getTableReference (str my-prefix my-env "users"))
               new-user (new simpleserver.util.azuregenclass.users)
               _ (.setPartitionKey new-user email)
               _ (.setRowKey new-user (ss-users-common/uuid))
@@ -60,7 +62,8 @@
           table-query (TableQuery/from simpleserver.util.azuregenclass.users)
           table-query (. table-query where table-filter)
           my-env (environ/env :my-env)
-          users-table (. table-client getTableReference (str "sseks" my-env "users"))
+          my-prefix (environ/env :azure-table-prefix)
+          users-table (. table-client getTableReference (str my-prefix my-env "users"))
           raw-users (into [] (. users-table execute table-query))
           user (first raw-users)]
       (if (nil? user)
@@ -72,8 +75,9 @@
     [ssenv]
     (log/debug (str "ENTER get-users"))
     (let [my-env (environ/env :my-env)
+          my-prefix (environ/env :azure-table-prefix)
           table-query (TableQuery/from simpleserver.util.azuregenclass.users)
-          users-table (. table-client getTableReference (str "sseks" my-env "users"))
+          users-table (. table-client getTableReference (str my-prefix my-env "users"))
           items (. users-table execute table-query)]
       (reduce (fn [users user]
                 (assoc users (. user getRowKey)
