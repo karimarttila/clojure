@@ -115,13 +115,13 @@
  :log-dev
  {
   :resource-paths
-  ["logconfig/dev"]}
+  ["resources/logconfig/dev"]}
 
 
  :log-prod
  {
   :resource-paths
-  ["logconfig/prod"]}}
+  ["resources/logconfig/prod"]}}
 
 
 
