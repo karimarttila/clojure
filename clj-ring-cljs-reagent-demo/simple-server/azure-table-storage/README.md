@@ -6,13 +6,14 @@ Use the scripts to start the local Azure Table Storage Docker version (```./run-
 
 NOTE: The scripts can create tables both for Azure Table Storage running in local Docker instance and for real Azure environment. BUT: Use these scripts in Azure environment only for testing purposes - the Terraform scripts create the actual Azure tables with the rest of the Azure infra. See: [simple-server-aks](https://github.com/karimarttila/azure/tree/master/simple-server-aks). I.e. it is a Cloud infra development best practice to keep all infra in one configuration setup (in our case: Terraform).
 
-First create an Azure Storage Account. I'm using the same storage account as in the [Simple Server Azure AKS](https://github.com/karimarttila/azure/tree/master/simple-server-aks/) project, see script: [create-azure-storage-account.sh](https://github.com/karimarttila/azure/tree/master/simple-server-aks/scripts).
+First create an Azure Storage Account: ```create-azure-storage-account.sh```. 
 
 I couldn't figure how to create profiles for azure cli as you can do in the aws side. As a simple hack I created ~/.azure/ss-aks-profile.sh file which I source when I want to call Azure Table - the storage-name and storage-key are kept safely in my ~/.azure folder which is not leaked into this Github project. So, create that file in your ~/.azure folder and add the following environmental variables there:
 
 ```bash
 export AZURE_STORAGE_ACCOUNT=<storage-name-you-created-earlier>
 export AZURE_STORAGE_KEY=<storage-key-you-got-earlier>
+export AZURE_CONNECTION_STRING=<see-connection-string-in-storage-account"
 ``` 
 
 ... and source the file like this: ```source ~/.azure/ss-aks-profile.sh ```.
