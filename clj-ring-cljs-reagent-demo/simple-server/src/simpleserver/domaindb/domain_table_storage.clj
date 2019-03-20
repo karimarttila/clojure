@@ -10,16 +10,9 @@
     [clojure.string :as str]
     [clojure.tools.logging :as log]
     [environ.core :as environ]
-    [simpleserver.util.azuregenclass.productgroup]
-    [simpleserver.util.azuregenclass.product]
     [simpleserver.util.azure-utils :as ss-azure-utils]
     [simpleserver.domaindb.domain-service-interface :as ss-domain-service-interface])
   )
-
-;; Ask to compile here or otherwise other profiles fail.
-;; In the next project I have to figure out a better solution.
-(compile 'simpleserver.util.azuregenclass.productgroup)
-(compile 'simpleserver.util.azuregenclass.product)
 
 
 ;; Table-client is bound once so that we call the slow multimethod gets called only once (instead of calling it every time in the defrecord functions).
@@ -35,7 +28,7 @@
     (log/debug "ENTER get-product-groups")
     (let [my-env (environ/env :my-env)
           my-prefix (environ/env :azure-table-prefix)
-          table-query (TableQuery/from simpleserver.util.azuregenclass.productgroup)
+          table-query (TableQuery/from simpleserver.util.azure.tableserviceentity.ProductGroup)
           productgroup-table (. table-client getTableReference (str my-prefix my-env "productgroup"))
           raw-product-groups (. productgroup-table execute table-query)]
       (reduce
@@ -50,7 +43,7 @@
     [env pg-id]
     (log/debug (str "ENTER get-products, pg-id: " pg-id))
     (let [table-filter (TableQuery/generateFilterCondition "PartitionKey" TableQuery$QueryComparisons/EQUAL (str pg-id))
-          table-query (TableQuery/from simpleserver.util.azuregenclass.product)
+          table-query (TableQuery/from simpleserver.util.azure.tableserviceentity.Product)
           table-query (. table-query where table-filter)
           my-env (environ/env :my-env)
           my-prefix (environ/env :azure-table-prefix)
@@ -72,7 +65,7 @@
     (let [table-filter-rowkey (TableQuery/generateFilterCondition "RowKey" TableQuery$QueryComparisons/EQUAL (str p-id))
           table-filter-partitionkey (TableQuery/generateFilterCondition "PartitionKey" TableQuery$QueryComparisons/EQUAL (str pg-id))
           table-filter (TableQuery/combineFilters table-filter-rowkey TableQuery$Operators/AND table-filter-partitionkey)
-          table-query (TableQuery/from simpleserver.util.azuregenclass.product)
+          table-query (TableQuery/from simpleserver.util.azure.tableserviceentity.Product)
           table-query (. table-query where table-filter)
           my-env (environ/env :my-env)
           my-prefix (environ/env :azure-table-prefix)

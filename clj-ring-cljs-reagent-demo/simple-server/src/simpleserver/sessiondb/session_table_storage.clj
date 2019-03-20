@@ -13,13 +13,7 @@
     [simpleserver.sessiondb.session-service-interface :as ss-session-service-interface]
     [simpleserver.sessiondb.session-common :as ss-session-common]
     [simpleserver.util.azure-utils :as ss-azure-utils]
-    [simpleserver.util.azuregenclass.session :as ss-genclass-session]
     ))
-
-;; Ask to compile here or otherwise other profiles fail.
-;; In the next project I have to figure out a better solution.
-(compile 'simpleserver.util.azuregenclass.session)
-
 
 ;; Table-client is bound once so that we call the slow multimethod gets called only once (instead of calling it every time in the defrecord functions).
 (def table-client (ss-azure-utils/get-table-client))
@@ -30,7 +24,7 @@
   (let [my-env (environ/env :my-env)
         my-prefix (environ/env :azure-table-prefix)
         table-filter (TableQuery/generateFilterCondition "PartitionKey" TableQuery$QueryComparisons/EQUAL token)
-        table-query (TableQuery/from simpleserver.util.azuregenclass.session)
+        table-query (TableQuery/from simpleserver.util.azure.tableserviceentity.Session)
         table-query (. table-query where table-filter)
         session-table (. table-client getTableReference (str my-prefix my-env "session"))
         raw-sessions (. session-table execute table-query)]
@@ -72,7 +66,7 @@
           my-env (environ/env :my-env)
           my-prefix (environ/env :azure-table-prefix)
           session-table (. table-client getTableReference (str my-prefix my-env "session"))
-          new-session (new simpleserver.util.azuregenclass.session)
+          new-session (new simpleserver.util.azure.tableserviceentity.Session)
           _ (.setPartitionKey new-session json-web-token)
           _ (.setRowKey new-session "dummy-row-key")
           table-insert (TableOperation/insert new-session)
@@ -92,7 +86,7 @@
     (log/debug (str "ENTER get-sessions"))
     (let [my-env (environ/env :my-env)
           my-prefix (environ/env :azure-table-prefix)
-          table-query (TableQuery/from simpleserver.util.azuregenclass.session)
+          table-query (TableQuery/from simpleserver.util.azure.tableserviceentity.Session)
           session-table (. table-client getTableReference (str my-prefix my-env "session"))
           items (. session-table execute table-query)]
       (reduce (fn [sessions session]

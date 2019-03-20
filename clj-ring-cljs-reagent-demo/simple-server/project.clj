@@ -61,7 +61,11 @@
   :profiles {:uberjar {:aot :all}}
 
   :test2junit-run-ant true
-  :test2junit-output-dir "test2junit")
+  :test2junit-output-dir "test2junit"
+
+  :source-paths ["src"]
+  :java-source-paths ["java"]
+  )
 
 
 ;; SHORT DEVELOPMENT INSTRUCTIONS

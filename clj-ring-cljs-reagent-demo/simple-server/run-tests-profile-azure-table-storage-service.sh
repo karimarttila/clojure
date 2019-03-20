@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "NOTE: First source the Azure storage account name and key:"
-echo "  source ~/.azure/kari2ssaksdevtables-connectionstring.sh"
+echo "  source ~/.azure/clj-azure-tables.sh"
 
 if [[ -z "${AZURE_CONNECTION_STRING}" ]]; then
   echo "First set AZURE_CONNECTION_STRING environment variable using source command above"
