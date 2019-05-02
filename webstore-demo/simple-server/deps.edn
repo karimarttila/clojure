@@ -1,0 +1,32 @@
+{
+ :paths   ["src"]
+
+ :deps    {
+           org.clojure/clojure         {:mvn/version "1.10.0"}
+           org.clojure/spec.alpha      {:mvn/version "0.2.176"}
+           org.clojure/tools.namespace {:mvn/version "0.2.11"}
+           org.clojure/tools.logging   {:mvn/version "0.4.1"}
+           org.clojure/data.json       {:mvn/version "0.2.6"}
+           environ/environ             {:mvn/version "1.1.0"}
+           ring-cors/ring-cors         {:mvn/version "0.1.13"}
+           ring/ring-json              {:mvn/version "0.4.0"}
+           compojure/compojure         {:mvn/version "1.6.1"}
+           clj-time                    {:mvn/version "0.14.2"}
+           }
+
+ :aliases {
+           ;; Test src
+           :test  {:extra-paths ["test"]}
+
+           ;; Development src (in .gitignore). NOTE: Do not use just "dev"
+           ;; since needs to be in .gitignore and there is e.g. "dev"
+           ;; for terraform environments which needs to be in Git.
+           :dev-src  {:extra-paths ["dev-src"]}
+
+           ;; test.check lib
+           :check {:extra-deps {org.clojure/test.check {:mvn/version "0.9.0"}}}
+
+           ;; benchmarking
+           :bench {:extra-deps {criterium {:mvn/version "0.4.4"}}}
+           }
+ }

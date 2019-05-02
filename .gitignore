@@ -23,6 +23,10 @@ target/
 # tmp directories everywhere
 tmp/
 
+# Development source which are not stored in Git.
+# E.g. repl experiments or starting / stopping server in development.
+dev-src/
+
 # Personal information
 personal-info/
 
