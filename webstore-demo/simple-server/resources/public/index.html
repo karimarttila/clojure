@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Simple Server</h1>
+
+<p>This is the Simple Server.
+
+Available commands are:
+
+<ul style="list-style-type:disc">
+  <li>/GET /info - Gives general information.</li>
+  <li>/GET /index.html - This file.</li>
+  <li>/POST /sign-in - Creates a new user.</li>
+  <li>/POST /login - Logs on to service using credentials created using sign-in. You get json web token that must be supplied in following requests.</li>  
+  <li>/GET /products-groups - Gets product groups.</li>
+  <li>/GET /products/<product-group> - Gets products in product group.</li>
+  <li>/GET /product/<product-group><product-id> - Gets specific product information.</li>
+</ul>
+
+NOTE: You can see examples how to call these endpoints in the scripts directory (using curl).
+
+</p>
+
+
+</body>
+</html>
