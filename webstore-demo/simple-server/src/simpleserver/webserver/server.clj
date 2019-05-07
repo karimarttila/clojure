@@ -6,6 +6,8 @@
             [ring.util.response :as ri-resp]
             [compojure.core :as co-core]
             [compojure.route :as co-route]
+            [mount.core :refer [defstate, start, stop]]
+            [ring.adapter.jetty :refer [run-jetty]]
             ))
 
 
@@ -56,4 +58,17 @@
 
 
 
+(defn start-web-server
+  "Starts the web server using mount."
+  [port]
+  (run-jetty web-server {:port port :join? false}))
+
+
+; To query state in repl:
+; simpleserver.webserver.server/web-server-app
+; See helper methods to start/stop server in mydev namespace.
+(defstate web-server-app
+          "Web server application state."
+          :start (start-web-server 6060)                    ; TODO: Add port to configuration.
+          :stop (.stop web-server-app))
 

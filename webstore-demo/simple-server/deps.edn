@@ -1,7 +1,10 @@
 {
- ;; Have to add "dev-src" here as well or getting the
- ;; the file "is not under a source root" warning in IntelliJ IDEA editor window.
- :paths   ["src", "dev-src"]
+ ;; NOTE: In IntelliJ IDEA you have to add the dev-src root like this:
+ ;; Open Clojure Deps (right side below Maven, Leiningen...),
+ ;; In the aliases tree check "dev-src".
+ ;; ... or you get an "is not under a source root" warning in IntelliJ IDEA editor window.
+
+ :paths   ["src"]
 
  :deps    {
            org.clojure/clojure             {:mvn/version "1.10.0"}
@@ -21,7 +24,6 @@
            compojure/compojure             {:mvn/version "1.6.1"}
            buddy/buddy-sign                {:mvn/version "3.0.0"}
            mount/mount                     {:mvn/version "0.1.6"}
-
            }
 
  :aliases {
@@ -30,8 +32,14 @@
            :test     {:extra-paths ["test"]}
 
            ;; Development src and dependencies.
+           ;; In IntelliJ IDEA / Cursive you have to create a Run configuration
+           ;; and check "Run with deps" and use aliases: dev-src,log-dev.
            :dev-src  {:extra-paths ["dev-src"]
-                      :extra-deps  {org.clojure/tools.namespace {:mvn/version "0.2.11"}}}
+                      :extra-deps  {
+                                    org.clojure/tools.namespace {:mvn/version "0.2.11"}
+                                    clj-http/clj-http {:mvn/version "3.10.0"}
+                                    }
+                      }
 
            ;; Logging configurations.
            :log-dev  {:extra-paths ["resources/logconfig/dev"]}
