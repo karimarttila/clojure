@@ -2,12 +2,14 @@
   (:require
     [clojure.tools.logging :as log]
     [clojure.java.io :as io]
-    [simpleserver.webserver.server :as ss-ws]))
+    [simpleserver.util.config :as ss-config]
+    [simpleserver.webserver.server :as ss-ws]
+    [mount.core :as mount]))
 
 
 (defn -main
-  "Main not used since a Ring application."
+  "Using main to start app using mount."
   [& args]
-  (throw (ex-info (str "Use ring to start the server, example: "
-                       "SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties lein with-profile +log-dev ring server-headless") {})))
+  (log/debug "ENTER -main")
+  (mount/start))
 

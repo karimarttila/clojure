@@ -26,6 +26,9 @@ tmp/
 # Personal information
 personal-info/
 
+# Cache directory
+.cpcache/
+
 # Leiningen
 # Always ignore .lein-env in Clojure projects since there could be secrets related to environments.
 .lein-env

@@ -24,6 +24,7 @@
            compojure/compojure             {:mvn/version "1.6.1"}
            buddy/buddy-sign                {:mvn/version "3.0.0"}
            mount/mount                     {:mvn/version "0.1.6"}
+           cprop/cprop                     {:mvn/version "0.1.13"}
            }
 
  :aliases {
@@ -37,13 +38,17 @@
            :dev-src  {:extra-paths ["dev-src"]
                       :extra-deps  {
                                     org.clojure/tools.namespace {:mvn/version "0.2.11"}
-                                    clj-http/clj-http {:mvn/version "3.10.0"}
+                                    clj-http/clj-http           {:mvn/version "3.10.0"}
                                     }
                       }
+           :depstar
+                     {:extra-deps
+                      {com.healthfinch/depstar {:git/url "https://github.com/healthfinch/depstar.git"
+                                                :sha     "4aa7b35189693feebc7d7e4a180b8af0326c9164"}}}
 
-           ;; Logging configurations.
-           :log-dev  {:extra-paths ["resources/logconfig/dev"]}
-           :log-prod {:extra-paths ["resources/logconfig/prod"]}
+           ;; Environment
+           :env-dev  {:extra-paths ["resources/config/dev"]}
+           :env-prod {:extra-paths ["resources/config/prod"]}
 
            ;; Test.check lib.
            :check    {:extra-deps {org.clojure/test.check {:mvn/version "0.9.0"}}}

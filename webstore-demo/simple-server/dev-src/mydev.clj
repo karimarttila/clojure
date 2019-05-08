@@ -4,7 +4,8 @@
     [clojure.tools.namespace.repl :as ns-repl]
     [mount.core]
     [ring.adapter.jetty :refer [run-jetty]]
-    [simpleserver.webserver.server :as ws]
+    [simpleserver.util.config :as ss-config]
+    [simpleserver.webserver.server :as ss-ws]
     [clj-http.client :as http-client]
     ))
 
@@ -41,6 +42,7 @@
   "A helper function to query the APIs in REPL (you don't have to jump to IDEA terminal and back to REPL)"
   [path]
   (log/debug "ENTER curl-get")
-  (select-keys
-    (http-client/get (str "http://localhost:6060/" path) {:as :json})
-    [:status :body]))
+  (let [my-port (:ss-port ss-config/config-app)]
+    (select-keys
+      (http-client/get (str "http://localhost:" my-port "/" path) {:as :json})
+      [:status :body])))

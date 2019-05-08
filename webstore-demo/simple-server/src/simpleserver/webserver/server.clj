@@ -8,6 +8,7 @@
             [compojure.route :as co-route]
             [mount.core :refer [defstate, start, stop]]
             [ring.adapter.jetty :refer [run-jetty]]
+            [simpleserver.util.config :as ss-config]
             ))
 
 
@@ -69,6 +70,6 @@
 ; See helper methods to start/stop server in mydev namespace.
 (defstate web-server-app
           "Web server application state."
-          :start (start-web-server 6060)                    ; TODO: Add port to configuration.
+          :start (start-web-server (:ss-port ss-config/config-app))
           :stop (.stop web-server-app))
 
