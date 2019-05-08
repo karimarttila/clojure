@@ -4,7 +4,7 @@
  ;; In the aliases tree check "dev-src".
  ;; ... or you get an "is not under a source root" warning in IntelliJ IDEA editor window.
 
- :paths   ["src"]
+ :paths   ["src" "resources"]
 
  :deps    {
            org.clojure/clojure             {:mvn/version "1.10.0"}

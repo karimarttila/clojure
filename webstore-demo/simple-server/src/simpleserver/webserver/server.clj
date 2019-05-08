@@ -12,12 +12,6 @@
             ))
 
 
-(defn -read-configuration
-  "Reads configuration for web server. Not used at the moment."
-  []
-  (log/debug "ENTER -read-configuration"))
-
-
 (defn -get-info
   "Gets the info page."
   []
@@ -42,9 +36,6 @@
              :access-control-allow-methods [:get :put :post :delete :options]))
 
 
-;; NOTE: Start web-server in development mode like:
-;; TODO: How to start server without lein?
-;; CS_CONFIG_FILE=resources/simpleserver.properties lein with-profile +log-dev ring server-headless
 (def web-server
   "Web server startup function.
   See source code how to experiment with REPL."
@@ -56,7 +47,6 @@
     ;(ri-json/wrap-json-params)
     (-cors-handler)
     (ri-json/wrap-json-response)))
-
 
 
 (defn start-web-server
