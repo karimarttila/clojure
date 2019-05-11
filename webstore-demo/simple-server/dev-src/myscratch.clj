@@ -49,7 +49,7 @@ simpleserver.util.config/config-state
 ; Check the content of config-state.
 (def my-cs simpleserver.util.config/config-state)
 my-cs
-(get-in my-cs [:server :])
-(:server)
+(get-in my-cs [:server :port])
+
 
 (mydev/curl-get "/info")
