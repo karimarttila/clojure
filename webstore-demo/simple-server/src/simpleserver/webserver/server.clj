@@ -22,7 +22,7 @@
 (co-core/defroutes app-routes
                    "Compojure routes."
                    (co-core/GET "/info" [] (-get-info))
-                   (co-route/resources "/")
+                   (co-route/resources "/" )
                    (co-route/not-found "Not Found. Use /info to get information how to use the commands."))
 
 
@@ -52,14 +52,15 @@
 (defn start-web-server
   "Starts the web server using mount."
   [port]
+  (log/debug "ENTER start-web-server")
   (run-jetty web-server {:port port :join? false}))
 
 
 ; To query state in repl:
 ; simpleserver.webserver.server/web-server-app
 ; See helper methods to start/stop server in mydev namespace.
-(defstate web-server-app
+(defstate web-server-state
           "Web server application state."
-          :start (start-web-server (:ss-port ss-config/config-app))
-          :stop (.stop web-server-app))
+          :start (start-web-server (get-in ss-config/config-state [:server :port]))
+          :stop (.stop web-server-state))
 
