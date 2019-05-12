@@ -16,6 +16,7 @@
 
  :deps    {
            org.clojure/clojure             {:mvn/version "1.10.0"}
+           org.clojure/core.async          {:mvn/version "0.4.490"}
            org.clojure/spec.alpha          {:mvn/version "0.2.176"}
            org.clojure/tools.logging       {:mvn/version "0.4.1"}
            org.clojure/data.json           {:mvn/version "0.2.6"}
@@ -23,15 +24,28 @@
            clj-time                        {:mvn/version "0.14.2"}
            commons-logging/commons-logging {:mvn/version "1.2"}
            ch.qos.logback/logback-classic  {:mvn/version "1.2.3"}
+           ; Ring web app library: https://github.com/ring-clojure
            ring/ring-core                  {:mvn/version "1.7.1"}
+           ; Conflict with com.cognitect.aws/api
+           ; Later on added jetty client with the same
+           ; version com.cognitect.aws/api server uses.
+           ; And excluded jetty client from AWS api dependency.
            ring/ring-jetty-adapter         {:mvn/version "1.7.1"}
            ring-cors/ring-cors             {:mvn/version "0.1.13"}
            ring/ring-json                  {:mvn/version "0.4.0"}
            ring/ring-defaults              {:mvn/version "0.3.2"}
            compojure/compojure             {:mvn/version "1.6.1"}
            buddy/buddy-sign                {:mvn/version "3.0.0"}
+           ; Mount state library: https://github.com/tolitius/mount
            mount/mount                     {:mvn/version "0.1.6"}
+           ; Cprop configuration library: https://github.com/tolitius/cprop
            cprop/cprop                     {:mvn/version "0.1.13"}
+           ; Cognitect AWS library. https://github.com/cognitect-labs/aws-api
+           com.cognitect.aws/api           {:mvn/version "0.8.305"
+                                            :exclusions  [org.eclipse.jetty/jetty-client]}
+           com.cognitect.aws/endpoints     {:mvn/version "1.1.11.549"}
+           com.cognitect.aws/dynamodb      {:mvn/version "697.2.391.0"}
+           org.eclipse.jetty/jetty-client  {:mvn/version "9.4.12.v20180830"}
            }
 
  :aliases {

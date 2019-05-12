@@ -9,11 +9,11 @@ fi
 
 MY_AWS_PROFILE=$1
 MY_ENV=$2
-MY_RAW_TABLE=$3
-MY_TABLE="sseks-${MY_ENV}-${MY_RAW_TABLE}"
+MY_TABLE=$3
 
 if [ "$MY_AWS_PROFILE" == "local-dynamodb" ]; then
-  MY_ENDPOINT="--endpoint-url http://localhost:8000"
+    MY_ENDPOINT="--endpoint-url http://localhost:8000"
+    #MY_ENDPOINT="--endpoint-url http://dynamodb.eu-west-1.localhost:8000"
 else
   MY_ENDPOINT=""
 fi

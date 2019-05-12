@@ -3,7 +3,7 @@
     [clojure.tools.logging :as log]
     [clojure.tools.namespace.repl :as ns-repl]
     [mount.core]
-    [ring.adapter.jetty :refer [run-jetty]]
+    ;[ring.adapter.jetty :refer [run-jetty]]
     [simpleserver.util.config :as ss-config]
     [simpleserver.webserver.server :as ss-ws]
     [clj-http.client :as http-client]

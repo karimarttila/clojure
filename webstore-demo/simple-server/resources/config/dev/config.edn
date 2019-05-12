@@ -2,16 +2,34 @@
  ; NOTE: All parameters can be overridden by environment variable.
  ; E.g. :ss-env => SS_ENV .
 
- :ss-env         "single-node"
+ :ss-env "single-node"
  ; ss-env "dynamodb-local"
 
- :server         {
-                  :port 6161
-                  }
+ :server {
+          ; Can be overridden by environment variable SERVER__PORT (two underscores).
+          :port 6161
+          }
 
- :domain         {
-                  :data-dir "resources/data"
-                  }
+ :domain {
+          :data-dir "resources/data"
+          }
+ ; NOTE: This is just for local-dynamodb testing.
+ ; The real AWS / DynamoDB role or credentials should be given by the infrastructure in which the application is deployed.
+ :aws    {
+          ; NOTE: For local testing see: ; https://cognitect-labs.github.io/aws-api/cognitect.aws.client.api-api.html
+          ;"http://dynamodb.eu-west-1.localhost:8000"
+          :endpoint          {:protocol :http
+                              ;:hostname "dynamodb.eu-west-1.localhost"
+                              :hostname "localhost"
+                              :port     8000
+                              :path ""
+                              }
+          ; Local DynamoDB: dummy but must be the same length as real keys.
+          :access-key        "XXXXXXXXXXXXXX___NOT"
+          :secret-key        "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX___NOT"
+          :dynamodb-instance :local                         ; local-dynamodb
+          ; :real                         ; real AWS DynamoDB
+          }
  }
 
 

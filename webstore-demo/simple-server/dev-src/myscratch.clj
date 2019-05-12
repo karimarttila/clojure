@@ -5,10 +5,89 @@
 ;; Store general Clojure scratch code snippets in: /mnt/edata/aw/kari/my-clj-dev/dev-src/commonscratch.clj
 ;; ... and rename that file occasionally to e.g. "old-scratch-2019-05" in that directory.
 
+; Print classpath in Clojure REPL
+(pprint (clojure.string/split (System/getProperty "java.class.path") #":"))
+
+
+; NOTE: Remember to add AWS_PROFILE=YOUR-PROFILE to Run Configuration / Enviroment
+(require '[clojure.core.async :as a]
+         '[clojure.java.io :as io]
+         '[clojure.data.json :as json]
+         '[cognitect.aws.client.api :as aws]
+         '[cognitect.aws.client.api.async :as aws.async])
+
+;; Mount:
+(require '[mount.core :as mount])
+(mount/start)
+(mount/stop)
+(mydev/reset)
+simpleserver.util.config/config-state
+
+
+(do
+  (require '[mydev])
+  (require '[mount.core :as mount])
+  (mount/start)
+  (mydev/curl-get "/info"))
+
+; For command line repl.
+(do (require '[clojure.core.async :as a] '[clojure.java.io :as io] '[clojure.data.json :as json] '[cognitect.aws.client.api :as aws] '[cognitect.aws.client.api.async :as aws.async]) (def ddb (aws/client {:api :dynamodb})) (aws/invoke ddb {:op :ListTables}) )
+
+;; 0 Create a client to talk to DynamoDB
+(def ddb (aws/client {:api :dynamodb}))
+
+(aws/invoke ddb {:op :ListTables})
+;; ask what it can do
+(aws/ops ddb)
+(aws/doc ddb :Scan)
+
+(aws/invoke ddb
+            {:op      :Scan
+             :request {:TableName                 "ss-dev-product-group"}})
+
+
+(require '[clojure.pprint])
+(use 'clojure.pprint)
+(import 'java.lang.Thread)
+(-> (Thread/currentThread) (.getContextClassLoader) (.getURLs) (seq) (pprint))
+
+(do
+  (require '[mydev])
+  (mydev/reset)
+  simpleserver.util.config/config-state
+
+  (require '[cognitect.aws.client.api :as aws])
+  (require '[cognitect.aws.credentials :as credentials])
+
+  (def endpoint (get-in simpleserver.util.config/config-state [:aws :endpoint]))
+  (def access-key (get-in simpleserver.util.config/config-state [:aws :access-key]))
+  (def secret-key (get-in simpleserver.util.config/config-state [:aws :secret-key]))
+  endpoint
+  access-key
+  secret-key
+
+  (def cred (credentials/basic-credentials-provider {:access-key-id     access-key
+                                                     :secret-access-key secret-key}))
+  cred
+
+  ; https://cognitect-labs.github.io/aws-api/cognitect.aws.client.api-api.html
+  (def ddb (aws/client {:api :dynamodb :credentials-provider cred
+                        :endpoint-override endpoint}))
+
+  (def ddb (aws/client {:api :dynamodb }))
+
+  (aws/doc ddb :ListTables)
+  (aws/ops ddb)
+  (aws/invoke ddb {:op :ListTables})
+  )
+
+(aws/validate-requests ddb true)
+
 (in-ns 'user)
 
+(require '[mydev])
 (mydev/reset)
-
+simpleserver.util.config/config-state
 
 (require '[simpleserver.domain.domain-single-node])
 
@@ -80,6 +159,8 @@ simpleserver.util.config/config-state
 my-cs
 (get-in my-cs [:server :port])
 
-
+(require '[mydev])
+(require '[mount.core :as mount])
+(mount/start)
 (mydev/curl-get "/info")
 
