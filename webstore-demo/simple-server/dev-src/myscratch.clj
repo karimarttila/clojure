@@ -5,9 +5,17 @@
 ;; Store general Clojure scratch code snippets in: /mnt/edata/aw/kari/my-clj-dev/dev-src/commonscratch.clj
 ;; ... and rename that file occasionally to e.g. "old-scratch-2019-05" in that directory.
 
+;; ****************** WARNING *******************
+;; If you do (mydev/reset) here in the scratch file
+;; the states are not resetted properly for some reason
+;; - you have to give the (mydev/reset) expression in the REPL input window!!!
+;; ****************** WARNING *******************
+
+
+
 ; Print classpath in Clojure REPL
 (pprint (clojure.string/split (System/getProperty "java.class.path") #":"))
-
+(System/getenv "AWS_PROFILE")
 
 ; NOTE: Remember to add AWS_PROFILE=YOUR-PROFILE to Run Configuration / Enviroment
 (require '[clojure.core.async :as a]
@@ -16,12 +24,31 @@
          '[cognitect.aws.client.api :as aws]
          '[cognitect.aws.client.api.async :as aws.async])
 
+(require 'mydev)
 ;; Mount:
 (require '[mount.core :as mount])
 (mount/start)
 (mount/stop)
 (mydev/reset)
+(mydev/refresh-all)
 simpleserver.util.config/config-state
+simpleserver.domain.domain-config/domain-state
+simpleserver.webserver.server/web-server-state
+
+(in-ns 'user)
+
+(simpleserver.domain.domain-config/-get-domain "single-node")
+(simpleserver.domain.domain-config/-get-domain "aws")
+(simpleserver.domain.domain-config/-get-domain "not-found")
+
+
+
+(def my-single-node-domain (simpleserver.domain.domain-config/-get-domain "single-node"))
+my-single-node-domain
+(simpleserver.domain.domain-interface/get-product-groups my-single-node-domain)
+(simpleserver.domain.domain-interface/get-products my-single-node-domain 1)
+(simpleserver.domain.domain-interface/get-product my-single-node-domain 1 2024)
+
 
 
 (do
@@ -29,6 +56,8 @@ simpleserver.util.config/config-state
   (require '[mount.core :as mount])
   (mount/start)
   (mydev/curl-get "/info"))
+
+(mydev/curl-get "/product-groups")
 
 ; For command line repl.
 (do (require '[clojure.core.async :as a] '[clojure.java.io :as io] '[clojure.data.json :as json] '[cognitect.aws.client.api :as aws] '[cognitect.aws.client.api.async :as aws.async]) (def ddb (aws/client {:api :dynamodb})) (aws/invoke ddb {:op :ListTables}) )
@@ -74,6 +103,8 @@ simpleserver.util.config/config-state
   (def ddb (aws/client {:api :dynamodb :credentials-provider cred
                         :endpoint-override endpoint}))
 
+  (def ddb (aws/client {:api :dynamodb :endpoint-override endpoint}))
+
   (def ddb (aws/client {:api :dynamodb }))
 
   (aws/doc ddb :ListTables)
@@ -89,15 +120,22 @@ simpleserver.util.config/config-state
 (mydev/reset)
 simpleserver.util.config/config-state
 
-(require '[simpleserver.domain.domain-single-node])
 
-(def s-node (simpleserver.domain.domain-single-node/->SingleNodeR simpleserver.util.config/config-state))
+(require '[mount.core :as mount])
+(mount/start)
+(mount/stop)
+(mydev/reset)
+
+(require '[simpleserver.domain.domain-single-node])
+(def s-node (simpleserver.domain.domain-single-node/->SingleNodeR))
 s-node
+simpleserver.util.config/config-state
 (simpleserver.domain.domain-interface/get-product-groups s-node)
 (simpleserver.domain.domain-interface/get-products s-node 1)
 (simpleserver.domain.domain-interface/get-product s-node 1 2024)
 
 
+(in-ns 'user)
 
 (simpleserver.domain.domain-single-node/-get-raw-products 1)
 

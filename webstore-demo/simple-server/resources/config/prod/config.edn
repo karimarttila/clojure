@@ -2,17 +2,17 @@
  ; NOTE: All parameters can be overridden by environment variable.
  ; E.g. :ss-env => SS_ENV .
 
-
- :ss-env         "single-node"
+ :my-env "prod"
+ :ss-env "single-node"
  ; ss-env "dynamodb-local"
 
- :server         {
-                  :port 6262
-                  }
+ :server {
+          :port 6262
+          }
 
- :domain         {
-                  :data-dir "resources/data"
-                  }
+ :domain {
+          :data-dir "resources/data"
+          }
  }
 
 

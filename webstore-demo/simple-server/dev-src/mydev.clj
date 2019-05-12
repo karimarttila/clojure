@@ -5,11 +5,13 @@
     [mount.core]
     ;[ring.adapter.jetty :refer [run-jetty]]
     [simpleserver.util.config :as ss-config]
+    [simpleserver.domain.domain-config :as ss-domain]
     [simpleserver.webserver.server :as ss-ws]
     [clj-http.client :as http-client]
     ))
 
-; See defstate in simpleserver.webserver.server.
+; NOTE: For Mount to be able to start/stop configurations you need to require them
+; in this namespace - see Mound documentation.
 
 (defn start
   "Starts application state."

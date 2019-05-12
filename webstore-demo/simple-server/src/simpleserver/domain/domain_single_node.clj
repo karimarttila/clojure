@@ -22,7 +22,7 @@
   (let [my-key (str "pg-" pg-id "-raw-products")]
     (if-let [raw-products (@my-domain-atom my-key)]
       raw-products
-      (let [data-dir (get-in simpleserver.util.config/config-state [:domain :data-dir])
+      (let [data-dir (get-in ss-config/config-state [:domain :data-dir])
             raw-products-from-file
             (try
               (with-open [reader (io/reader (str data-dir "/pg-" pg-id "-products.csv"))]
@@ -37,15 +37,15 @@
 
 
 
-(defrecord SingleNodeR [config]
+(defrecord SingleNodeR []
   ss-domain-i/DomainInterface
 
   (get-product-groups
-    [config]
+    [this]
     (log/debug "ENTER get-product-groups")
     (if-let [product-groups (@my-domain-atom :product-groups)]
       product-groups
-      (let [data-dir (get-in simpleserver.util.config/config-state [:domain :data-dir])
+      (let [data-dir (get-in ss-config/config-state [:domain :data-dir])
             raw (with-open [reader (io/reader (str data-dir "/product-groups.csv"))]
                   (doall
                     (csv/read-csv reader)))
@@ -58,7 +58,7 @@
         product-groups-from-file)))
 
   (get-products
-    [config pg-id]
+    [this pg-id]
     (log/debug (str "ENTER get-products, pg-id: " pg-id))
     (let [my-key (str "pg-" pg-id "-products")]
       (if-let [products (@my-domain-atom my-key)]
@@ -76,7 +76,7 @@
 
 
   (get-product
-    [config pg-id p-id]
+    [this pg-id p-id]
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
     (let [products (-get-raw-products pg-id)]
       (first (filter (fn [item]
