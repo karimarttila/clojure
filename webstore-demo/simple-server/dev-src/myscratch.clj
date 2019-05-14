@@ -1,3 +1,4 @@
+
 ;; NOTE: Do not use namespace in scratch!
 ;; That way you can send code snippets to the current namespace from this scratch file.
 ;; In Cursive send from editor to REPL. <shift>-<ctrl>-ö.
@@ -6,12 +7,49 @@
 ;; ... and rename that file occasionally to e.g. "old-scratch-2019-05" in that directory.
 
 ;; ****************** WARNING *******************
-;; If you do (mydev/reset) here in the scratch file
-;; the states are not resetted properly for some reason
-;; - you have to give the (mydev/reset) expression in the REPL input window!!!
+;; Settings | Languages & Frameworks | Clojure | Evaluate forms in REPL namespace
+;; must be turned on or (mydev/reset) here in the scratch file
+;; works differently than in the REPL editor.
 ;; ****************** WARNING *******************
 
 
+
+*ns*
+(in-ns 'user)
+(require '[simpleserver.domain.domain-dynamodb :as ss-ddb])
+(def ddb-config (ss-ddb/get-dynamodb-config))
+ddb-config
+(let [{my-ddb :my-ddb
+       my-table :my-table} ddb-config]
+  (str my-ddb my-table))
+
+(def my-ddb-domain (simpleserver.domain.domain-config/-get-domain "single-node"))
+(def my-aws-domain (simpleserver.domain.domain-config/-get-domain "aws"))
+my-single-node-domain
+my-aws-domain
+(simpleserver.domain.domain-interface/get-product-groups my-aws-domain)
+(simpleserver.domain.domain-interface/get-products my-aws-domain 1)
+(simpleserver.domain.domain-interface/get-product my-aws-domain 1 2024)
+
+(def raw (simpleserver.domain.domain-interface/get-product-groups my-aws-domain))
+raw
+(def items (:Items raw))
+items
+
+(reduce
+        (fn
+          [mymap item]
+          (assoc mymap
+            (-> item :pgid :S) (-> item :pgname :S)))
+        {}
+        items)
+
+
+(mydev/curl-get "/info")
+
+(require 'mydev)
+(mydev/reset)
+simpleserver.util.config/config-state
 
 ; Print classpath in Clojure REPL
 (pprint (clojure.string/split (System/getProperty "java.class.path") #":"))
@@ -24,6 +62,8 @@
          '[cognitect.aws.client.api :as aws]
          '[cognitect.aws.client.api.async :as aws.async])
 
+
+(do (require 'mydev) (mydev/reset))
 (require 'mydev)
 ;; Mount:
 (require '[mount.core :as mount])
@@ -44,7 +84,9 @@ simpleserver.webserver.server/web-server-state
 
 
 (def my-single-node-domain (simpleserver.domain.domain-config/-get-domain "single-node"))
+(def my-aws-domain (simpleserver.domain.domain-config/-get-domain "aws"))
 my-single-node-domain
+my-aws-domain
 (simpleserver.domain.domain-interface/get-product-groups my-single-node-domain)
 (simpleserver.domain.domain-interface/get-products my-single-node-domain 1)
 (simpleserver.domain.domain-interface/get-product my-single-node-domain 1 2024)
@@ -72,7 +114,7 @@ my-single-node-domain
 
 (aws/invoke ddb
             {:op      :Scan
-             :request {:TableName                 "ss-dev-product-group"}})
+             :request {:TableName "ss-dev-product-group"}})
 
 
 (require '[clojure.pprint])
@@ -95,24 +137,58 @@ my-single-node-domain
   access-key
   secret-key
 
-  (def cred (credentials/basic-credentials-provider {:access-key-id     access-key
-                                                     :secret-access-key secret-key}))
-  cred
+  (comment
+    (def cred (credentials/basic-credentials-provider {:access-key-id     access-key
+                                                       :secret-access-key secret-key}))
+    cred)
+
 
   ; https://cognitect-labs.github.io/aws-api/cognitect.aws.client.api-api.html
-  (def ddb (aws/client {:api :dynamodb :credentials-provider cred
-                        :endpoint-override endpoint}))
+  (comment
+    (def ddb (aws/client {:api               :dynamodb :credentials-provider cred
+                          :endpoint-override endpoint})))
 
-  (def ddb (aws/client {:api :dynamodb :endpoint-override endpoint}))
+  (in-ns 'user)
+  (do
+    ;; Profile credentials.
+    (require '[cognitect.aws.client.api :as aws])
+    (require '[cognitect.aws.credentials :as credentials])
 
-  (def ddb (aws/client {:api :dynamodb }))
+    (def endpoint (get-in simpleserver.util.config/config-state [:aws :endpoint]))
+    endpoint
+    (def my-profile (get-in simpleserver.util.config/config-state [:aws :aws-profile]))
+    my-profile
 
-  (aws/doc ddb :ListTables)
-  (aws/ops ddb)
-  (aws/invoke ddb {:op :ListTables})
-  )
+    (def profile-cred (credentials/profile-credentials-provider my-profile))
+    profile-cred
 
-(aws/validate-requests ddb true)
+    (def ddb (aws/client {:api :dynamodb :credentials-provider profile-cred
+                          :endpoint-override endpoint}))
+    (comment
+      (def ddb (aws/client {:api :dynamodb :credentials-provider profile-cred
+                            })))
+    ;(def ddb (aws/client {:api :dynamodb :endpoint-override endpoint}))
+
+    ;(def ddb (aws/client {:api :dynamodb }))
+
+    (aws/invoke ddb {:op :Scan :request {:TableName "ss-dev-product-group"}}))
+
+  (require '[cognitect.aws.config :as cog-config])
+  (def my-cred-file "/home/marttkar/.aws/credentials")
+  my-cred-file
+
+  (def my-cog-profiles (cog-config/parse my-cred-file))
+  my-cog-profiles
+    (def my-profile (get-in simpleserver.util.config/config-state [:aws :aws-profile]))
+  (str "%" my-profile "%")
+  (type my-profile)
+
+  (get my-cog-profiles "local-dynamodb")
+
+
+
+
+  (aws/validate-requests ddb true))
 
 (in-ns 'user)
 

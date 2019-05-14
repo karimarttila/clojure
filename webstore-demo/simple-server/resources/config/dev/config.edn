@@ -3,8 +3,9 @@
  ; E.g. :ss-env => SS_ENV .
 
  :my-env "dev"
- :ss-env "single-node"
- ; ss-env "aws" ; NOTE: Whether to use local dynamodb or real is configured in :aws section.
+ ;:ss-env "single-node"
+ :ss-env "aws"
+ ; NOTE: Whether to use local dynamodb or real is configured in :aws section.
 
  :server {
           ; Can be overridden by environment variable SERVER__PORT (two underscores).
@@ -17,19 +18,22 @@
  ; NOTE: This is just for local-dynamodb testing.
  ; The real AWS / DynamoDB role or credentials should be given by the infrastructure in which the application is deployed.
  ; You can put the AWS profile in Run Configuration.
+ ; NOTE: It would be nice to change the AWS_PROFILE env var value dynamically,
+ ; so we wouldn't need two REPL configurations in Cursive.
  :aws    {
-          ; NOTE: For local testing see: ; https://cognitect-labs.github.io/aws-api/cognitect.aws.client.api-api.html
-          ;"http://dynamodb.eu-west-1.localhost:8000"
-          :endpoint          {:protocol :http
-                              ;:hostname "dynamodb.eu-west-1.localhost"
-                              :hostname "localhost"
-                              :port     8000
-                              :path     ""
-                              }
-          ; DynamoDB instance: local => use local Docker container.
-          ;                    real => use real AWS DynamoDB service.
-          :dynamodb-instance :local
-          :ss-table-prefix "ss"
+          :ss-table-prefix   "ss"
+
+          ; Let's use the profile-credential provider to be able to dynamically
+          ; switch from one profile to another and not create two Run configuration
+          ; with two AWS_PROFILE values.
+          ; AWS_PROFILE: local-dynamodb: My local dynamodb running in port 8000.
+          ;              pc-demo: My real AWS profile to one test account.
+          :aws-profile "local-dynamodb"
+          ;:aws-profile "pc-demo"
+
+          ; NOTE: endpoint should be defined only if using local-dynamodb profile.
+          ; https://cognitect-labs.github.io/aws-api/cognitect.aws.client.api-api.html
+          :endpoint {:protocol :http :hostname "localhost" :port 8000}
           }
  }
 
