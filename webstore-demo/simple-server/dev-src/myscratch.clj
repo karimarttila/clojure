@@ -1,6 +1,7 @@
 ;; NOTE: Do not use namespace in scratch!
 ;; That way you can send code snippets to the current namespace from this scratch file.
-;; In Cursive send from editor to REPL. <shift>-<ctrl>-ö.
+;; In Cursive send from editor to REPL: <shift>-<ctrl>-Ö.
+;; Stop states, refresh, start states: <shift>-<ctrl>-L
 ;; NOTE: Keep in this file this project related scratch stuff that is in git.
 ;; Store general Clojure scratch code snippets in: /mnt/edata/aw/kari/my-clj-dev/dev-src/commonscratch.clj
 ;; ... and rename that file occasionally to e.g. "old-scratch-2019-05" in that directory.
@@ -10,6 +11,29 @@
 ;; must be turned on or (mydev/reset) here in the scratch file
 ;; works differently than in the REPL editor.
 ;; ****************** WARNING *******************
+
+
+(remove-ns 'simpleserver.domain.domain-test)
+
+
+(in-ns 'user)
+
+(do
+  (in-ns 'user)
+  (require '[simpleserver.domain.domain-test])
+  ; TODO: How to call one test in REPL?
+  ; Does not work.
+  (clojure.test/test-var [#'simpleserver.domain.domain-test/get-product-groups-test])
+  )
+
+; And finally let's use the domain via the domain config
+; - that way we don't actually know or care what's the actual data store
+; (single-node or localdynamodb or aws dynamodb) is.
+(require '[simpleserver.domain.domain-config :as ss-domain-config])
+(def my-domain ss-domain-config/domain-state)
+(simpleserver.domain.domain-interface/get-product-groups my-domain)
+(simpleserver.domain.domain-interface/get-products my-domain 1)
+(simpleserver.domain.domain-interface/get-product my-domain 2 3)
 
 
 
@@ -38,11 +62,7 @@
   (aws/invoke ddb {:op :Scan :request {:TableName "ss-dev-product-group"}})
   (aws/invoke ddb {:op      :Scan
                    :request {:TableName "ss-dev-product"}})
-  (aws/invoke ddb {:op      :Query
-                   :request {:TableName                 "ss-dev-product"
-                             :KeyConditionExpression    "pid = :pid"
-                             :ExpressionAttributeValues {":pid" {:S "1"}}
-                             }})
+
 
   (aws/invoke ddb {:op      :Query
                    :request {:TableName     "ss-dev-product"
@@ -51,6 +71,19 @@
                              :ExpressionAttributeValues {":pgid" {:S "2"}}
                              }})
 
+  (aws/invoke ddb {:op      :Query
+                   :request {:TableName                 "ss-dev-product"
+                             :KeyConditionExpression    "pid = :pid"
+                             :ExpressionAttributeValues {":pid" {:S "2"}}
+                             }})
+
+  (aws/invoke ddb {:op      :Query
+                   :request {:TableName                 "ss-dev-product"
+                             :KeyConditions {"pgid" {:AttributeValueList {:S "2"}
+                                                     :ComparisonOperator "EQ"}
+                                             "pid" {:AttributeValueList {:S "3"}
+                                                     :ComparisonOperator "EQ"}}
+                             }})
   (aws/ops ddb)
   (aws/doc ddb :Scan)
   (aws/doc ddb :Query)
@@ -85,9 +118,8 @@ my-single-node-domain
 my-aws-domain
 (simpleserver.domain.domain-interface/get-product-groups my-aws-domain)
 (simpleserver.domain.domain-interface/get-products my-aws-domain 1)
+(simpleserver.domain.domain-interface/get-product my-aws-domain 2 3)
 
-; TODO CONTINUE HERE: SHOULD NOT RETURN item!!!
-(simpleserver.domain.domain-interface/get-product my-aws-domain 3 2024)
 
 (def raw (simpleserver.domain.domain-interface/get-product-groups my-aws-domain))
 raw

@@ -53,6 +53,12 @@
            ;; Test src.
            :test     {:extra-paths ["test"]}
 
+           ;; Test runner in console.
+           :test-runner     {:extra-paths ["test"]
+                      :extra-deps  {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
+                                                               :sha     "209b64504cb3bd3b99ecfec7937b358a879f55c1"}}
+                      :main-opts   ["-m" "cognitect.test-runner"]}
+
            ;; Development src and dependencies.
            ;; In IntelliJ IDEA / Cursive you have to create a Run configuration
            ;; and check "Run with deps" and use aliases: dev-src,log-dev.

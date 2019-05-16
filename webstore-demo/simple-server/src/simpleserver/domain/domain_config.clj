@@ -8,7 +8,6 @@
 
 ; Keep the domain entities pre-created here, we are later just sending the reference.
 (def single-node-domain (simpleserver.domain.domain-single-node/->SingleNodeR))
-; (def dynamodb-domain...)
 (def aws-domain (simpleserver.domain.domain-dynamodb/->AwsDynamoDbR))
 
 (defn -get-domain

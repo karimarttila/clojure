@@ -67,7 +67,6 @@
                 (into [])))))
 
 
-  ; TODO: CONTINUE HERE: ADD pgid as well!
   (get-product
     [this pg-id p-id]
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
@@ -75,29 +74,12 @@
           {my-ddb   :my-ddb
            my-table :my-table} my-ddb-config
           raw-product (aws/invoke my-ddb {:op      :Query
-                                          :request {:TableName                 my-table
-                                                    :KeyConditionExpression    "pid = :pid"
-                                                    :ExpressionAttributeValues {":pid" {:S "1"}}
+                                          :request {:TableName     "ss-dev-product"
+                                                    :KeyConditions {"pgid" {:AttributeValueList {:S (str pg-id)}
+                                                                            :ComparisonOperator "EQ"}
+                                                                    "pid"  {:AttributeValueList {:S (str p-id)}
+                                                                            :ComparisonOperator "EQ"}}
                                                     }})]
-
-
-      (comment
-        (let [my-env (environ/env :my-env)
-              my-table-prefix (environ/env :ss-table-prefix)
-              my-table (str my-table-prefix "-" my-env "-product")
-              ret (dynamodb/query (ss-aws-utils/get-dynamodb-config)
-                                  :table-name my-table
-                                  :select "ALL_ATTRIBUTES"
-                                  :key-conditions {:pgid {:attribute-value-list [(str pg-id)]
-                                                          :comparison-operator  "EQ"}
-                                                   :pid  {:attribute-value-list [(str p-id)]
-                                                          :comparison-operator  "EQ"}})
-              items (ret :items)
-              product (first items)]
-
-          (if (nil? product)
-            nil
-            [(product :pid) (product :pgid) (product :title) (product :price) (product :a_or_d) (product :year) (product :country) (product :g_or_l)])))
       raw-product))
 
   )

@@ -28,12 +28,13 @@
           ; with two AWS_PROFILE values.
           ; AWS_PROFILE: local-dynamodb: My local dynamodb running in port 8000.
           ;              pc-demo: My real AWS profile to one test account.
-          :aws-profile "local-dynamodb"
-          ;:aws-profile "pc-demo"
+
+          :aws-profile "pc-demo"
+          ;:aws-profile "local-dynamodb"
 
           ; NOTE: endpoint should be defined only if using local-dynamodb profile.
           ; https://cognitect-labs.github.io/aws-api/cognitect.aws.client.api-api.html
-          :endpoint {:protocol :http :hostname "localhost" :port 8000}
+          ;:endpoint {:protocol :http :hostname "localhost" :port 8000}
           }
  }
 
