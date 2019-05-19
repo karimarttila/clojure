@@ -9,3 +9,6 @@ then
 fi
 
 clj -Atest-runner:env-dev
+
+# For more examples how to run different tests, exclude some etc:
+# https://github.com/cognitect-labs/test-runner

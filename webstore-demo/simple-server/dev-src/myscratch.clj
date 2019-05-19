@@ -12,6 +12,12 @@
 ;; works differently than in the REPL editor.
 ;; ****************** WARNING *******************
 
+;; ************************************************
+;; NOTE:
+;; In Cursive : Clojure Deps => choose aliases dev-src and test.
+;; In Cursive REPL Run configuration: Aliases: dev-src,env-dev,test
+;; ************************************************
+
 
 (remove-ns 'simpleserver.domain.domain-test)
 
@@ -23,7 +29,7 @@
   (require '[simpleserver.domain.domain-test])
   ; TODO: How to call one test in REPL?
   ; Does not work.
-  (clojure.test/test-var [#'simpleserver.domain.domain-test/get-product-groups-test])
+  (clojure.test/test-vars [#'simpleserver.domain.domain-test/get-product-groups-test])
   )
 
 ; And finally let's use the domain via the domain config

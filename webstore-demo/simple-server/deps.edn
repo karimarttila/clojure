@@ -51,40 +51,40 @@
  :aliases {
 
            ;; Test src.
-           :test     {:extra-paths ["test"]}
+           :test        {:extra-paths ["test"]}
 
            ;; Test runner in console.
-           :test-runner     {:extra-paths ["test"]
-                      :extra-deps  {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
-                                                               :sha     "209b64504cb3bd3b99ecfec7937b358a879f55c1"}}
-                      :main-opts   ["-m" "cognitect.test-runner"]}
+           :test-runner {:extra-paths ["test"]
+                         :extra-deps  {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
+                                                                  :sha     "209b64504cb3bd3b99ecfec7937b358a879f55c1"}}
+                         :main-opts   ["-m" "cognitect.test-runner"]}
 
            ;; Development src and dependencies.
            ;; In IntelliJ IDEA / Cursive you have to create a Run configuration
            ;; and check "Run with deps" and use aliases: dev-src,log-dev.
-           :dev-src  {:extra-paths ["dev-src",
-                                    "/mnt/edata/aw/kari/my-clj-dev/dev-src"]
-                      :extra-deps  {
-                                    org.clojure/tools.namespace {:mvn/version "0.2.11"}
-                                    clj-http/clj-http           {:mvn/version "3.10.0"}
-                                    }
-                      }
+           :dev-src     {:extra-paths ["dev-src",
+                                       "/mnt/edata/aw/kari/my-clj-dev/dev-src"]
+                         :extra-deps  {
+                                       org.clojure/tools.namespace {:mvn/version "0.2.11"}
+                                       clj-http/clj-http           {:mvn/version "3.10.0"}
+                                       }
+                         }
            :depstar
-                     {:extra-deps
-                      {com.healthfinch/depstar {:git/url "https://github.com/healthfinch/depstar.git"
-                                                :sha     "4aa7b35189693feebc7d7e4a180b8af0326c9164"}}}
+                        {:extra-deps
+                         {com.healthfinch/depstar {:git/url "https://github.com/healthfinch/depstar.git"
+                                                   :sha     "4aa7b35189693feebc7d7e4a180b8af0326c9164"}}}
 
            ;; Environments. Only for development. When baking jar these are not
            ;; included - provide these in classpath when starting jar
            ;; (see build-jar and run-jar.sh).
-           :env-dev  {:extra-paths ["resources/config/dev"]}
-           :env-prod {:extra-paths ["resources/config/prod"]}
+           :env-dev     {:extra-paths ["resources/config/dev"]}
+           :env-prod    {:extra-paths ["resources/config/prod"]}
 
            ;; Test.check lib.
-           :check    {:extra-deps {org.clojure/test.check {:mvn/version "0.9.0"}}}
+           :check       {:extra-deps {org.clojure/test.check {:mvn/version "0.9.0"}}}
 
            ;; Benchmarking.
-           :bench    {:extra-deps {criterium {:mvn/version "0.4.4"}}}
+           :bench       {:extra-deps {criterium {:mvn/version "0.4.4"}}}
 
            }
  }
