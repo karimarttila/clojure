@@ -2,7 +2,7 @@
   (:require
     [clojure.tools.logging :as log]
     [clojure.tools.namespace.repl :as ns-repl]
-    [mount.core]
+    [mount.core :as mount]
     ;[ring.adapter.jetty :refer [run-jetty]]
     [simpleserver.util.config :as ss-config]
     [simpleserver.domain.domain-config :as ss-domain]
@@ -17,14 +17,14 @@
   "Starts application state."
   []
   (log/debug "ENTER start")
-  (mount.core/start))
+  (mount/start))
 
 
 (defn stop
   "Stops application state."
   []
   (log/debug "ENTER stop")
-  (mount.core/stop)
+  (mount/stop)
   )
 
 
@@ -49,6 +49,12 @@
   (stop)
   (ns-repl/refresh :after 'mydev/start))
 
+
+(defn set-development-db!
+  "Switches development db dynamically"
+  [db]
+  (reset! ss-config/development-db db)
+  (reset))
 
 ; Example: (mydev/curl-get "info")
 (defn curl-get

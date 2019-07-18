@@ -3,8 +3,8 @@
  ; E.g. :ss-env => SS_ENV .
 
  :my-env "dev"
- :ss-env "single-node"
- ;:ss-env "aws"
+ ;:ss-env "single-node"
+ :ss-env "aws"
  ; NOTE: Whether to use local dynamodb or real is configured in :aws section.
 
  :server {
@@ -29,12 +29,13 @@
           ; AWS_PROFILE: local-dynamodb: My local dynamodb running in port 8000.
           ;              pc-demo: My real AWS profile to one test account.
 
+          ;; For real AWS
           ;:aws-profile "pc-demo"
+          ;; For local DynamoDB
           :aws-profile "local-dynamodb"
-
           ; NOTE: endpoint should be defined only if using local-dynamodb profile.
           ; https://cognitect-labs.github.io/aws-api/cognitect.aws.client.api-api.html
-          ;:endpoint {:protocol :http :hostname "localhost" :port 8000}
+          :endpoint {:protocol :http :hostname "localhost" :port 8000}
           }
  }
 

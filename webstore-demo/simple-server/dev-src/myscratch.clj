@@ -18,9 +18,46 @@
 ;; In Cursive REPL Run configuration: Aliases: dev-src,env-dev,test
 ;; ************************************************
 
+(require '[mount.core :as mount])
+; Start just config-state.
+(mount/start #'simpleserver.util.config/config-state)
+simpleserver.util.config/config-state
+(mount/stop #'simpleserver.util.config/config-state)
+simpleserver.util.config/config-state
+; Check the content of config-state.
+(def my-cs simpleserver.util.config/config-state)
+my-cs
+
+(in-ns 'user)
+
+(require 'mydev)
+(do (require 'mydev) (mydev/reset))
+;; Mount:
+(require '[mount.core :as mount])
+(mount/start)
+(mount/stop)
+(mydev/reset)
+(mydev/refresh-all)
+
+simpleserver.util.config/config-state
+simpleserver.domain.domain-config/domain-state
+simpleserver.webserver.server/web-server-state
+
+(mydev/set-development-db! :read-config)
+(mydev/set-development-db! :single-node)
+(mydev/set-development-db! :local-dynamodb)
+(mydev/set-development-db! :real-aws)
+
+@simpleserver.util.config/development-db
+(do
+  (in-ns 'user)
+  (require '[simpleserver.domain.domain-config :as ss-domain-config])
+  (simpleserver.domain.domain-interface/get-product ss-domain-config/domain-state 2 45)
+  )
+
+
 
 (remove-ns 'simpleserver.domain.domain-test)
-
 
 (in-ns 'user)
 
@@ -37,9 +74,10 @@
 ; (single-node or localdynamodb or aws dynamodb) is.
 (require '[simpleserver.domain.domain-config :as ss-domain-config])
 (def my-domain ss-domain-config/domain-state)
+my-domain
 (simpleserver.domain.domain-interface/get-product-groups my-domain)
 (simpleserver.domain.domain-interface/get-products my-domain 1)
-(simpleserver.domain.domain-interface/get-product my-domain 2 3)
+(simpleserver.domain.domain-interface/get-product my-domain 2 45)
 
 
 
@@ -175,6 +213,8 @@ simpleserver.util.config/config-state
 simpleserver.util.config/config-state
 simpleserver.domain.domain-config/domain-state
 simpleserver.webserver.server/web-server-state
+
+
 
 (in-ns 'user)
 
