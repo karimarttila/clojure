@@ -3,8 +3,8 @@
  ; E.g. :ss-env => SS_ENV .
 
  :my-env "dev"
- ;:ss-env "single-node"
- :ss-env "aws"
+ :ss-env "single-node"
+ ;:ss-env "aws"
  ; NOTE: Whether to use local dynamodb or real is configured in :aws section.
 
  :server {
@@ -18,8 +18,8 @@
  ; NOTE: This is just for local-dynamodb testing.
  ; The real AWS / DynamoDB role or credentials should be given by the infrastructure in which the application is deployed.
  ; You can put the AWS profile in Run Configuration.
- ; NOTE: It would be nice to change the AWS_PROFILE env var value dynamically,
- ; so we wouldn't need two REPL configurations in Cursive.
+ ; NOTE: You can also change the configuration dynamically in REPL using mydev/reset.
+ ; NOTE: See myscratch.clj how to use Mount to restart configuration.
  :aws    {
           :ss-table-prefix   "ss"
 
@@ -29,8 +29,8 @@
           ; AWS_PROFILE: local-dynamodb: My local dynamodb running in port 8000.
           ;              pc-demo: My real AWS profile to one test account.
 
-          :aws-profile "pc-demo"
-          ;:aws-profile "local-dynamodb"
+          ;:aws-profile "pc-demo"
+          :aws-profile "local-dynamodb"
 
           ; NOTE: endpoint should be defined only if using local-dynamodb profile.
           ; https://cognitect-labs.github.io/aws-api/cognitect.aws.client.api-api.html

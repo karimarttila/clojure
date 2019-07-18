@@ -30,6 +30,10 @@ NOTE: I don't iterate my Clojure development observations in this README.md that
 
 Simple Server is implemented using [Clojure](https://clojure.org/) and [Ring](https://github.com/ring-clojure).
 
+# Local DynamoDB Instance
+
+I used local DynamoDB instance while developing this new version of the Clojure Simple Server. See instructions in [Local-DynamoDB README.md](../../clj-ring-cljs-reagent-demo/simple-server/dynamodb/README.md).
+
 # Clojure Development
 
 ## IntelliJ IDEA / Cursive

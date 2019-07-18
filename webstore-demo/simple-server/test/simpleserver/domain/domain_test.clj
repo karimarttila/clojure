@@ -8,21 +8,20 @@
             ))
 
 
-(defn start-states
-  "Starts states needed in this test ns."
+(defn reset-states
+  "Reset states needed in this test ns."
   [f]
   (do
-    (log/debug "ENTER start-states")
+    (log/debug "ENTER reset-states")
+    (log/debug "Stopping config and domain states...")
+    (mount-core/stop #'simpleserver.util.config/config-state)
+    (mount-core/stop #'simpleserver.domain.domain-config/domain-state)
     (log/debug "Starting config and domain states...")
     (mount-core/start #'simpleserver.util.config/config-state)
     (mount-core/start #'simpleserver.domain.domain-config/domain-state)
-    ; TODO: TESTING
-    (log/debug "MYDEBUG: " simpleserver.domain.domain-config/domain-state)
-
+    (log/debug "config-state: " simpleserver.util.config/config-state)
+    (log/debug "domain-state: " simpleserver.domain.domain-config/domain-state)
     (f)
-    (log/debug "Stopping config and domain states...")
-    (mount-core/start #'simpleserver.util.config/config-state)
-    (mount-core/start #'simpleserver.domain.domain-config/domain-state)
     (log/debug "EXIT start-states")))
 
 
@@ -37,7 +36,7 @@
 
 
 ; Register test fixtures.
-(use-fixtures :once start-states)
+(use-fixtures :once reset-states)
 (use-fixtures :each domain-test-fixture)
 
 

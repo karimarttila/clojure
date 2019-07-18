@@ -44,11 +44,20 @@ aws_access_key_id = XXXXXXXXXXXXXX___NOT
 aws_secret_access_key = XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX___NOT
 ```
 
+
 Then import data:
 
 ```bash
-./run-local-dynamodb.sh                      # Start the DynamoDB Docker container.
-./import-all-tables.sh local-dynamodb dev    # Import all tables to that instance.
+# Start virtual env.
+source venv3/bin/activate
+# Start the DynamoDB Docker container (in one terminal)
+./run-local-dynamodb.sh
+# Create tables (in another terminal).
+./create-tables.sh local-dynamodb ss dev
+# List tables.
+./list-tables.sh local-dynamodb
+# Import all tables to that instance.
+./import-all-tables.sh local-dynamodb ss dev
 ```
 
 I tested the scripts using local DynamoDB (running in Docker container) and real AWS DynamoDB table - scripts work the same way in both environments (for real aws testing you need an AWS account and provide the profile with aws_access key and secret, of course).
