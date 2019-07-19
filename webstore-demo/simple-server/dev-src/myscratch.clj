@@ -18,6 +18,47 @@
 ;; In Cursive REPL Run configuration: Aliases: dev-src,env-dev,test
 ;; ************************************************
 
+(def ok-product
+  ["2001" "1" "Kalevala-LOCAL-aws" "3.95" "Elias Lönnrot" "1835" "Finland" "Finnish"])
+ok-product
+
+
+(def raw-product
+  {:Items        [{:country {:S "Finland"},
+                   :a_or_d  {:S "Elias Lönnrot"},
+                   :year    {:S "1835"},
+                   :pgid    {:S "1"},
+                   :price   {:S "3.95"},
+                   :pid     {:S "2001"},
+                   :g_or_l  {:S "Finnish"},
+                   :title   {:S "Kalevala-LOCAL-aws"}}],
+   :Count        1,
+   :ScannedCount 1})
+raw-product
+
+(def product-map (first (:Items raw-product)))
+product-map
+
+(:S (:pid product-map))
+((comp :S :pid) product-map)
+
+
+
+((juxt (comp :S :pid) (comp :S :pgid)) (first (:Items raw-product)))
+
+(def new-product
+  (->>
+    (:Items raw-product)
+    (first)
+    ((juxt (comp :S :pid) (comp :S :pgid) (comp :S :title) (comp :S :price) (comp :S :a_or_d) (comp :S :year) (comp :S :country) (comp :S :g_or_l)) (first (:Items raw-product)))
+    ))
+new-product
+ok-product
+(= new-product ok-product)
+
+
+
+
 (require '[mount.core :as mount])
 ; Start just config-state.
 (mount/start #'simpleserver.util.config/config-state)
@@ -39,6 +80,7 @@ my-cs
 (mydev/reset)
 (mydev/refresh-all)
 
+
 simpleserver.util.config/config-state
 simpleserver.domain.domain-config/domain-state
 simpleserver.webserver.server/web-server-state
@@ -51,9 +93,11 @@ simpleserver.webserver.server/web-server-state
 @simpleserver.util.config/development-db
 (do
   (in-ns 'user)
-  (require '[simpleserver.domain.domain-config :as ss-domain-config])
-  (simpleserver.domain.domain-interface/get-product ss-domain-config/domain-state 2 45)
+  (require '[simpleserver.domain.domain-config])
+  (simpleserver.domain.domain-interface/get-product simpleserver.domain.domain-config/domain-state 1 2001)
   )
+
+(simpleserver.domain.domain-interface/get-products simpleserver.domain.domain-config/domain-state 1)
 
 
 
@@ -75,10 +119,12 @@ simpleserver.webserver.server/web-server-state
 (require '[simpleserver.domain.domain-config :as ss-domain-config])
 (def my-domain ss-domain-config/domain-state)
 my-domain
-(simpleserver.domain.domain-interface/get-product-groups my-domain)
-(simpleserver.domain.domain-interface/get-products my-domain 1)
-(simpleserver.domain.domain-interface/get-product my-domain 2 45)
-
+(simpleserver.domain.domain-interface/get-product-groups simpleserver.domain.domain-config/domain-state)
+(simpleserver.domain.domain-interface/get-products simpleserver.domain.domain-config/domain-state 1)
+(simpleserver.domain.domain-interface/get-product simpleserver.domain.domain-config/domain-state 2 45)
+;; Not found
+(simpleserver.domain.domain-interface/get-product simpleserver.domain.domain-config/domain-state 2 100000)
+(simpleserver.domain.domain-interface/get-product simpleserver.domain.domain-config/domain-state 5 45)
 
 
 (do
@@ -126,6 +172,14 @@ my-domain
                              :KeyConditions {"pgid" {:AttributeValueList {:S "2"}
                                                      :ComparisonOperator "EQ"}
                                              "pid" {:AttributeValueList {:S "3"}
+                                                     :ComparisonOperator "EQ"}}
+                             }})
+  ;; Not found product
+  (aws/invoke ddb {:op      :Query
+                   :request {:TableName                 "ss-dev-product"
+                             :KeyConditions {"pgid" {:AttributeValueList {:S "2"}
+                                                     :ComparisonOperator "EQ"}
+                                             "pid" {:AttributeValueList {:S "10000"}
                                                      :ComparisonOperator "EQ"}}
                              }})
   (aws/ops ddb)

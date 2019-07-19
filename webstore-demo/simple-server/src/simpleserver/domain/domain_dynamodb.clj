@@ -62,6 +62,12 @@
                                                      :KeyConditionExpression    "pgid = :pgid"
                                                      :ExpressionAttributeValues {":pgid" {:S (str pg-id)}}
                                                      }})]
+      ;; See myscratch.clj in which I get the raw data from AWS query.
+      ;; First get :Items, then map: i.e. for each entity in the Items list:
+      ;; juxt: create a function juxtaposition of individual comp functions which just get first get the
+      ;; field value (e.g. :pid) and then the :S value which is the string value of the field.
+      ;; So, we just create a sequence of vectors in which we have the field values we need,
+      ;; And finally dump the sequence to a vector.
       (seq (->> (:Items raw-products)
                 (map (juxt (comp :S :pid) (comp :S :pgid) (comp :S :title) (comp :S :price)))
                 (into [])))))
@@ -80,6 +86,12 @@
                                                                     "pid"  {:AttributeValueList {:S (str p-id)}
                                                                             :ComparisonOperator "EQ"}}
                                                     }})]
-      raw-product))
-
-  )
+      (if (= (:Count raw-product) 0)
+        (do
+          (log/debug (str "MYDEBUG in if: Count is zero"))
+          nil)
+        (->>
+          (:Items raw-product)
+          (first)
+          ((juxt (comp :S :pid) (comp :S :pgid) (comp :S :title) (comp :S :price) (comp :S :a_or_d) (comp :S :year) (comp :S :country) (comp :S :g_or_l)) (first (:Items raw-product)))
+          )))))
