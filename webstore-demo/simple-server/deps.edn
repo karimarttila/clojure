@@ -83,6 +83,8 @@
            :env-dev-single-node    {:extra-paths ["resources/config/dev-single-node"]}
            :env-dev-local-dynamodb {:extra-paths ["resources/config/dev-local-dynamodb"]}
            :env-dev-real-aws       {:extra-paths ["resources/config/dev-real-aws"]}
+           ; Used in repl, less log to see repl output better.
+           :myrepl                 {:extra-paths ["resources/config/myrepl"]}
 
            ;; Test.check lib.
            :check                  {:extra-deps {org.clojure/test.check {:mvn/version "0.9.0"}}}
