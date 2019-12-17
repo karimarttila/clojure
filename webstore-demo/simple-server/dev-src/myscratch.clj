@@ -155,9 +155,9 @@ my-domain
 
 
   (aws/invoke ddb {:op      :Query
-                   :request {:TableName     "ss-dev-product"
-                             :IndexName     "PGIndex"
-                             :KeyConditionExpression "pgid = :pgid"
+                   :request {:TableName                 "ss-dev-product"
+                             :IndexName                 "PGIndex"
+                             :KeyConditionExpression    "pgid = :pgid"
                              :ExpressionAttributeValues {":pgid" {:S "2"}}
                              }})
 
@@ -168,18 +168,18 @@ my-domain
                              }})
 
   (aws/invoke ddb {:op      :Query
-                   :request {:TableName                 "ss-dev-product"
+                   :request {:TableName     "ss-dev-product"
                              :KeyConditions {"pgid" {:AttributeValueList {:S "2"}
                                                      :ComparisonOperator "EQ"}
-                                             "pid" {:AttributeValueList {:S "3"}
+                                             "pid"  {:AttributeValueList {:S "3"}
                                                      :ComparisonOperator "EQ"}}
                              }})
   ;; Not found product
   (aws/invoke ddb {:op      :Query
-                   :request {:TableName                 "ss-dev-product"
+                   :request {:TableName     "ss-dev-product"
                              :KeyConditions {"pgid" {:AttributeValueList {:S "2"}
                                                      :ComparisonOperator "EQ"}
-                                             "pid" {:AttributeValueList {:S "10000"}
+                                             "pid"  {:AttributeValueList {:S "10000"}
                                                      :ComparisonOperator "EQ"}}
                              }})
   (aws/ops ddb)
@@ -257,6 +257,14 @@ simpleserver.util.config/config-state
 
 
 (do (require 'mydev) (mydev/reset))
+(mydev/curl-get "/info")
+
+(do (require 'mydev)
+    (require '[mount.core :as mount])
+    (mount/stop)
+    (mydev/refresh-all)
+    (mount/start))
+
 (require 'mydev)
 ;; Mount:
 (require '[mount.core :as mount])
@@ -267,7 +275,6 @@ simpleserver.util.config/config-state
 simpleserver.util.config/config-state
 simpleserver.domain.domain-config/domain-state
 simpleserver.webserver.server/web-server-state
-
 
 
 (in-ns 'user)

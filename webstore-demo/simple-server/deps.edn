@@ -34,7 +34,7 @@
            ring-cors/ring-cors             {:mvn/version "0.1.13"}
            ring/ring-json                  {:mvn/version "0.4.0"}
            ring/ring-defaults              {:mvn/version "0.3.2"}
-           compojure/compojure             {:mvn/version "1.6.1"}
+           metosin/reitit                  {:mvn/version "0.3.10"}
            buddy/buddy-sign                {:mvn/version "3.0.0"}
            ; Mount state library: https://github.com/tolitius/mount
            mount/mount                     {:mvn/version "0.1.6"}

@@ -3,32 +3,18 @@
             [clojure.data.json :as json]
             [ring.middleware.cors :refer [wrap-cors]]
             [ring.middleware.json :as ri-json]
+            [ring.middleware.params :as ri-params]
             [ring.util.response :as ri-resp]
-            [compojure.core :as co-core]
-            [compojure.route :as co-route]
+            [reitit.ring.middleware.muuntaja :as re-muuntaja]
+            [reitit.ring :as re-ring]
+            [muuntaja.core :as mu-core]
+            [reitit.ring.coercion :as re-coercion]
             [mount.core :refer [defstate, start, stop]]
             [ring.adapter.jetty :refer [run-jetty]]
             [simpleserver.util.config :as ss-config]
             [simpleserver.domain.domain-config :as ss-domain-config]
             [simpleserver.domain.domain-interface :as ss-domain-i]
             ))
-
-;; As in headers check with curl that the http status is properly set.
-(defn -set-http-status
-  "Sets the http status either to 200 (ret=ok) or 400 (otherwise)."
-  [ring-response ret]
-  (if (= ret :ok)
-    ring-response
-    (ri-resp/status ring-response 400)))
-
-
-(defn -get-info
-  "Gets the info page."
-  []
-  (log/debug "ENTER -get-info")
-  (let [response {:info "index.html => Info in HTML format"}]
-    (json/write-str response)))
-
 
 
 
@@ -61,28 +47,16 @@
   )
 
 
-;; In REPL e.g.;
-;; (simpleserver.webserver.server/-product-groups (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token>"))
-(defn -product-groups
-  "Gets product groups.
-  See source code how to experiment with REPL."
-  [req]
-  (log/debug "ENTER -product-groups")
-  (log/debug (str "req: " req))
-  (let [token-ok? (-valid-token? req)
-        response-value (if (not token-ok?)
-                         {:ret :failed, :msg "Given token is not valid"}
-                         {:ret :ok, :product-groups (ss-domain-i/get-product-groups ss-domain-config/domain-state)})]
-    (-set-http-status (ri-resp/response response-value) (:ret response-value))))
-
-(co-core/defroutes app-routes
-                   "Compojure routes."
-                   (co-core/GET "/info" [] (-get-info))
-                   (co-core/GET "/product-groups" req (-product-groups req))
-                   (co-route/resources "/" )
-                   (co-route/not-found "Not Found. Use /info to get information how to use the commands."))
+;; As in headers check with curl that the http status is properly set.
+(defn -set-http-status
+  "Sets the http status either to 200 (ret=ok) or 400 (otherwise)."
+  [ring-response ret]
+  (if (= ret :ok)
+    ring-response
+    (ri-resp/status ring-response 400)))
 
 
+;; NOTE: Not yet tested with reitit.
 (defn -cors-handler
   "Adds cors handling to response."
   [routes]
@@ -92,18 +66,46 @@
              :access-control-allow-headers ["Content-Type" "Authorization"]
              :access-control-allow-methods [:get :put :post :delete :options]))
 
+(defn -info
+  "Gets the info."
+  []
+  (log/debug "ENTER -info")
+  {:status 200 :body {:info "index.html => Info in HTML format"}})
+
+
+;; In REPL e.g.;
+;; (simpleserver.webserver.server/-product-groups (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token>"))
+(defn -product-groups
+  "Gets product groups.
+  See source code how to experiment with REPL."
+  []
+  (log/debug "ENTER -product-groups")
+  (let [token-ok? true                                          ;(-valid-token? req)
+        response-value (if (not token-ok?)
+                         {:ret :failed, :msg "Given token is not valid"}
+                         {:ret :ok, :product-groups (ss-domain-i/get-product-groups ss-domain-config/domain-state)})]
+    (-set-http-status (ri-resp/response response-value) (:ret response-value))))
+
+
+(def routes
+  [
+   ["/info" {:get (fn [{}] (-info))}]
+   ["/product-groups" {:get (fn [{}] (-product-groups))}]])
 
 (def web-server
   "Web server startup function.
   See source code how to experiment with REPL."
-  (->
-    app-routes
-    ;; NOTE: Not working with wrap-cors, why?
-    ;(ri-defaults/wrap-defaults ri-defaults/api-defaults)
-    (ri-json/wrap-json-body {:keywords? true})
-    ;(ri-json/wrap-json-params)
-    (-cors-handler)
-    (ri-json/wrap-json-response)))
+  (re-ring/ring-handler
+    (re-ring/router [routes]
+                    {:data {:muuntaja   mu-core/instance
+                            :middleware [ri-params/wrap-params
+                                         re-muuntaja/format-middleware
+                                         re-coercion/coerce-exceptions-middleware
+                                         re-coercion/coerce-request-middleware
+                                         re-coercion/coerce-response-middleware]}})
+    (re-ring/routes
+      (re-ring/create-resource-handler {:path "/"})
+      (re-ring/create-default-handler))))
 
 
 (defn start-web-server
