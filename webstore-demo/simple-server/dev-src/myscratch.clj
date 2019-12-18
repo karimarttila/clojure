@@ -18,6 +18,17 @@
 ;; In Cursive REPL Run configuration: Aliases: dev-src,env-dev,test
 ;; ************************************************
 
+
+(System/getenv "CONF")
+
+(do (require 'cprop.core)
+    (cprop.core/load-config))
+
+simpleserver.util.config/config-state
+@simpleserver.util.config/development-db
+(simpleserver.util.config/create-config)
+
+
 (def ok-product
   ["2001" "1" "Kalevala-LOCAL-aws" "3.95" "Elias Lönnrot" "1835" "Finland" "Finnish"])
 ok-product
@@ -98,6 +109,16 @@ simpleserver.webserver.server/web-server-state
   )
 
 (simpleserver.domain.domain-interface/get-products simpleserver.domain.domain-config/domain-state 1)
+
+
+(mount/start #'simpleserver.util.config/config-state)
+(mydev/set-development-db! :single-node)
+(mydev/set-development-db! :local-dynamodb)
+
+simpleserver.util.config/config-state
+(mount/stop #'simpleserver.util.config/config-state)
+simpleserver.util.config/config-state
+
 
 
 
@@ -213,6 +234,7 @@ ddb-config
 
 (def my-ddb-domain (simpleserver.domain.domain-config/-get-domain "single-node"))
 (def my-aws-domain (simpleserver.domain.domain-config/-get-domain "aws"))
+my-ddb-domain
 my-single-node-domain
 my-aws-domain
 (simpleserver.domain.domain-interface/get-product-groups my-aws-domain)
