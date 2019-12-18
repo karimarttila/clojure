@@ -62,8 +62,7 @@
            ;; Development src and dependencies.
            ;; In IntelliJ IDEA / Cursive you have to create a Run configuration
            ;; and check "Run with deps" and use aliases: dev-src,log-dev.
-           :dev-src                {:extra-paths ["dev-src",
-                                                  "/mnt/edata/aw/kari/my-clj-dev/dev-src"]
+           :dev-src                {:extra-paths ["dev-src"]
                                     :extra-deps  {
                                                   org.clojure/tools.namespace {:mvn/version "0.2.11"}
                                                   clj-http/clj-http           {:mvn/version "3.10.0"}

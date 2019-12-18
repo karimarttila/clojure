@@ -20,7 +20,7 @@
   (cond
     (= ss-env "single-node") single-node-domain
     (= ss-env "aws") aws-domain
-    :else(throw (UnsupportedOperationException. (str "Unknown environment: " ss-env)))
+    :else (throw (UnsupportedOperationException. (str "Unknown environment: " ss-env)))
     )
   )
 
@@ -30,6 +30,7 @@
 (defstate domain-state
           "Domain state."
           :start (-get-domain (get-in ss-config/config-state [:ss-env]))
+          :stop :stopped
           )
 
 

@@ -67,5 +67,6 @@
           Reads configuration either from dev or prod env in config.edn
           (see resources/config).
           Environment variables override config.edn file values."
-          :start (create-config))
+          :start (create-config)
+          :stop :stopped)
 

@@ -202,6 +202,7 @@ my-domain
 
 
 *ns*
+(remove-ns 'simpleserver.webserver.server)
 (in-ns 'user)
 (require '[simpleserver.domain.domain-dynamodb :as ss-ddb])
 (def ddb-config (ss-ddb/get-dynamodb-config "product"))
@@ -255,15 +256,59 @@ simpleserver.util.config/config-state
          '[cognitect.aws.client.api :as aws]
          '[cognitect.aws.client.api.async :as aws.async])
 
+; **********************************************************************************************
+
+; Start just config-state.
+(mount/start #'simpleserver.webserver.server/web-server-state)
+(mount/stop #'simpleserver.webserver.server/web-server-state)
+simpleserver.webserver.server/web-server-state
+
+(do
+  (require 'simpleserver.webserver.server)
+  (simpleserver.webserver.server/start-web-server 6161))
+
+(use 'simpleserver.webserver.server :reload-all)
+(use 'simpleserver.webserver.server :reload)
+
+*ns*
+
+(mydev/curl-get "/info")
+
+(do
+  (require 'clojure.java.shell)
+  (->> (clojure.java.shell/sh "/bin/bash" "-c" "netstat -an | grep 6161")))
 
 (do (require 'mydev) (mydev/reset))
 (mydev/curl-get "/info")
 
-(do (require 'mydev)
-    (require '[mount.core :as mount])
-    (mount/stop)
-    (mydev/refresh-all)
-    (mount/start))
+(var-get 'simpleserver.webserver.server/-info)
+(clojure.repl/dir user)
+
+(do (in-ns 'simpleserver.webserver.server)
+    (clojure.repl/dir simpleserver.webserver.server))
+
+(ns-unmap 'simpleserver.webserver.server '-info)
+
+*ns*
+(remove-ns 'simpleserver.webserver.server)
+(in-ns 'user)
+
+(use 'simpleserver.webserver.server :reload-all)
+
+;; **************************************************************************************
+;; This is how to change one definition, e.g. -info
+; 1. Change to the namespace:
+(in-ns 'simpleserver.webserver.server)
+; 2. Go to the file and send to the repl just that defn (i.e. (defn -info...
+; 3. Test it directly:
+(do (require 'simpleserver.webserver.server) (simpleserver.webserver.server/-info))
+; 4. Test that the new defn is used also when running in jetty:
+(do
+  (in-ns 'user)
+  (require 'mydev)
+  (mydev/reset)
+  (mydev/curl-get "/info"))
+;; **************************************************************************************
 
 (require 'mydev)
 ;; Mount:
@@ -451,7 +496,7 @@ data-dir
 (require '[simpleserver.webserver.server])
 
 *ns*
-
+(remove-ns 'simpleserver.webserver.server)
 
 ; NOTE: You can refresh mount states like this:
 ; First edit config, e.g. simpleserver.util.config.

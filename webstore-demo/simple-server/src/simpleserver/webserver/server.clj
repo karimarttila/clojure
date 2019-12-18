@@ -80,7 +80,7 @@
   See source code how to experiment with REPL."
   []
   (log/debug "ENTER -product-groups")
-  (let [token-ok? true                                          ;(-valid-token? req)
+  (let [token-ok? true                                      ; TODO (-valid-token? req)
         response-value (if (not token-ok?)
                          {:ret :failed, :msg "Given token is not valid"}
                          {:ret :ok, :product-groups (ss-domain-i/get-product-groups ss-domain-config/domain-state)})]
@@ -118,8 +118,9 @@
 ; To query state in repl:
 ; simpleserver.webserver.server/web-server-state
 ; See helper methods to start/stop server in mydev namespace.
-(defstate web-server-state
+(defstate ^{:on-reload :stop} web-server-state
           "Web server application state."
           :start (start-web-server (get-in ss-config/config-state [:server :port]))
-          :stop (.stop web-server-state))
+          :stop (.stop web-server-state)
+          )
 
