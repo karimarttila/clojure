@@ -18,6 +18,123 @@
 ;; In Cursive REPL Run configuration: Aliases: dev-src,env-dev,test
 ;; ************************************************
 
+*ns*
+
+(def ^:dynamic *jwt* nil)
+*jwt*
+
+(do
+  (in-ns 'user)
+  (require 'mydev)
+  ;(mydev/refresh-all)
+  (mydev/reset)
+  (mydev/curl-get "/info"))
+
+(remove-ns 'simpleserver.session.session-single-node)
+
+(get-in simpleserver.util.config/config-state [:jwt :exp])
+
+(remove-ns 'simpleserver.session.session-common)
+(simpleserver.session.session-common/create-json-web-token "testing")
+simpleserver.session.session-common/my-hex-secret
+
+*ns*
+(simpleserver.session.session-interface/create-json-web-token simpleserver.session.session-config/session-state "testing@foo.com")
+
+
+
+@simpleserver.session.session-single-node/my-sessions
+
+(let [my-session ss-session-config/session-state
+      _ (log/debug (str "my-session: " my-session))
+      initial-len (count (ss-session-i/-get-sessions my-session))
+      _ (log/debug (str "initial-len: " initial-len))
+      test-email "kari.karttinen@foo.com"
+      jwt (ss-session-i/create-json-web-token my-session test-email)
+      _ (log/debug (str "Got jwt: " jwt))
+      new-len (count (ss-session-i/-get-sessions my-session))
+      _ (log/debug (str "Sessions: " new-len))
+      ret (ss-session-i/validate-token my-session jwt)
+      _ (log/debug (str "validation returned: " ret))
+      ret-email (ret :email)
+      ]
+  )
+
+
+(do
+  (ns-unalias *ns* 'ss-config)
+  (ns-unalias *ns* 'ss-session-config)
+  (ns-unalias *ns* 'ss-session-i))
+
+
+
+(do
+  (in-ns 'user)
+  (require 'mydev)
+  (mydev/reset)
+  (mydev/curl-get "/info"))
+
+(do
+  (in-ns 'user)
+  (require 'mydev)
+  (mydev/refresh-all))
+
+
+(require '[simpleserver.domain.domain-config])
+(require '[mount.core :as mount])
+; Start just config-state.
+(mount/start #'simpleserver.util.config/config-state)
+simpleserver.util.config/config-state
+(mount/stop #'simpleserver.util.config/config-state)
+simpleserver.util.config/config-state
+; Check the content of config-state.
+(def my-cs simpleserver.util.config/config-state)
+my-cs
+
+
+(do (require 'simpleserver.session.session-common)
+    @simpleserver.session.session-common/my-expiration-time)
+
+*ns*
+
+(mydev/curl-get "/info")
+
+(do
+  (require 'clojure.java.shell)
+  (->> (clojure.java.shell/sh "/bin/bash" "-c" "netstat -an | grep 6161")))
+
+(do (require 'mydev) (mydev/reset))
+(mydev/curl-get "/info")
+
+(var-get 'simpleserver.webserver.server/-info)
+(clojure.repl/dir user)
+
+(do (in-ns 'simpleserver.webserver.server)
+    (clojure.repl/dir simpleserver.webserver.server))
+
+(ns-unmap 'simpleserver.webserver.server '-info)
+
+*ns*
+(remove-ns 'simpleserver.webserver.server)
+(in-ns 'user)
+
+(use 'simpleserver.webserver.server :reload-all)
+
+;; **************************************************************************************
+;; This is how to change one definition, e.g. -info
+; 1. Change to the namespace:
+(in-ns 'simpleserver.webserver.server)
+; 2. Go to the file and send to the repl just that defn (i.e. (defn -info...
+; 3. Test it directly:
+(do (require 'simpleserver.webserver.server) (simpleserver.webserver.server/-info))
+; 4. Test that the new defn is used also when running in jetty:
+(do
+  (in-ns 'user)
+  (require 'mydev)
+  (mydev/reset)
+  (mydev/curl-get "/info"))
+;; **************************************************************************************
+
 
 (System/getenv "CONF")
 
@@ -291,46 +408,6 @@ simpleserver.webserver.server/web-server-state
 
 (use 'simpleserver.webserver.server :reload-all)
 (use 'simpleserver.webserver.server :reload)
-
-*ns*
-
-(mydev/curl-get "/info")
-
-(do
-  (require 'clojure.java.shell)
-  (->> (clojure.java.shell/sh "/bin/bash" "-c" "netstat -an | grep 6161")))
-
-(do (require 'mydev) (mydev/reset))
-(mydev/curl-get "/info")
-
-(var-get 'simpleserver.webserver.server/-info)
-(clojure.repl/dir user)
-
-(do (in-ns 'simpleserver.webserver.server)
-    (clojure.repl/dir simpleserver.webserver.server))
-
-(ns-unmap 'simpleserver.webserver.server '-info)
-
-*ns*
-(remove-ns 'simpleserver.webserver.server)
-(in-ns 'user)
-
-(use 'simpleserver.webserver.server :reload-all)
-
-;; **************************************************************************************
-;; This is how to change one definition, e.g. -info
-; 1. Change to the namespace:
-(in-ns 'simpleserver.webserver.server)
-; 2. Go to the file and send to the repl just that defn (i.e. (defn -info...
-; 3. Test it directly:
-(do (require 'simpleserver.webserver.server) (simpleserver.webserver.server/-info))
-; 4. Test that the new defn is used also when running in jetty:
-(do
-  (in-ns 'user)
-  (require 'mydev)
-  (mydev/reset)
-  (mydev/curl-get "/info"))
-;; **************************************************************************************
 
 (require 'mydev)
 ;; Mount:

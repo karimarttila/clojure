@@ -44,7 +44,7 @@
 
 
 (defn reset []
-  "Resets REPL and starts server."
+  "Resets application states."
   (log/debug "ENTER reset")
   (stop)
   (ns-repl/refresh :after 'mydev/start))

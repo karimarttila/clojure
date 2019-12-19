@@ -37,6 +37,11 @@
           ; https://cognitect-labs.github.io/aws-api/cognitect.aws.client.api-api.html
           ;:endpoint {:protocol :http :hostname "localhost" :port 8000}
           }
+
+  :jwt    {
+          :exp 2000
+          }
+
  }
 
 

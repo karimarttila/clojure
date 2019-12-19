@@ -22,7 +22,7 @@
     (log/debug "config-state: " simpleserver.util.config/config-state)
     (log/debug "domain-state: " simpleserver.domain.domain-config/domain-state)
     (f)
-    (log/debug "EXIT start-states")))
+    (log/debug "EXIT reset-states")))
 
 
 (defn domain-test-fixture
@@ -38,7 +38,6 @@
 ; Register test fixtures.
 (use-fixtures :once reset-states)
 (use-fixtures :each domain-test-fixture)
-
 
 
 (deftest get-product-groups-test
