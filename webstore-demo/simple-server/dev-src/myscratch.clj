@@ -1,3 +1,9 @@
+;; NOTE: This file is just a scratch file with ephemeral REPL experimentation!
+;; The idea is borrowed from Stuart Halloway's presentation about Repl Driven Development:
+;; See: https://vimeo.com/223309989 , at 33:47: "Save Everything"
+;; You don't usually save this kind of scratch file to Git but I wanted to save this file for historical purposes
+;; to see later on what kind of experimentation I did while developing this exercise.
+
 ;; NOTE: Do not use namespace in scratch!
 ;; That way you can send code snippets to the current namespace from this scratch file.
 ;; In Cursive send from editor to REPL: <shift>-<ctrl>-Ö.
@@ -18,23 +24,68 @@
 ;; In Cursive REPL Run configuration: Aliases: dev-src,env-dev,test
 ;; ************************************************
 
+(->>
+  (all-ns)
+  (filter #(clojure.string/starts-with? % "simpleserver")))
+
+(do
+  (in-ns 'simpleserver.session.session-test)
+  (run-tests))
+
+(clojure.test/test-vars [#'simpleserver.session.session-test/create-json-web-token])
+
+(do
+  (in-ns 'simpleserver.session.session-test)
+  ()
+  (create-json-web-token))
+
+simpleserver.session.session-common/my-expiration-time
+
+(remove-ns 'simpleserver.session.session-common)
+(remove-ns 'simpleserver.webserver.server)
+(def web-server-state nil)
+
+
+
+
 *ns*
 
 (def ^:dynamic *jwt* nil)
 *jwt*
 
+;; Add:
+;(validate-token
+;  [this token]
+;  (def *t token)  => THIS!
+; Run tests and then:
+(prn simpleserver.session.session-single-node/*t)
+
+(require '[mount.core :as mount])
+; Start just config-state.
+(mount/start #'simpleserver.util.config/config-state)
+simpleserver.util.config/config-state
+(mount/stop #'simpleserver.util.config/config-state)
+(mount/stop #'simpleserver.webserver.server/web-server-state)
+(mount/start #'simpleserver.webserver.server/web-server-state)
+
+
 (do
   (in-ns 'user)
   (require 'mydev)
-  ;(mydev/refresh-all)
+  (mydev/refresh-all)
   (mydev/reset)
   (mydev/curl-get "/info"))
 
 (remove-ns 'simpleserver.session.session-single-node)
 
+
+
 (get-in simpleserver.util.config/config-state [:jwt :exp])
 
+(compile (symbol "simpleserver.session.session-common"))
+(compile (symbol "simpleserver.util.config"))
 (remove-ns 'simpleserver.session.session-common)
+
 (simpleserver.session.session-common/create-json-web-token "testing")
 simpleserver.session.session-common/my-hex-secret
 
@@ -65,7 +116,6 @@ simpleserver.session.session-common/my-hex-secret
   (ns-unalias *ns* 'ss-config)
   (ns-unalias *ns* 'ss-session-config)
   (ns-unalias *ns* 'ss-session-i))
-
 
 
 (do

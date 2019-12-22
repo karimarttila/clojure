@@ -14,14 +14,14 @@
 ; in this namespace - see Mound documentation.
 
 (defn start
-  "Starts application state."
+  "Starts application states."
   []
   (log/debug "ENTER start")
   (mount/start))
 
 
 (defn stop
-  "Stops application state."
+  "Stops application states."
   []
   (log/debug "ENTER stop")
   (mount/stop)

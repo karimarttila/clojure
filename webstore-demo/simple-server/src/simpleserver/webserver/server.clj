@@ -114,7 +114,6 @@
   (log/debug "ENTER start-web-server")
   (run-jetty web-server {:port port :join? false}))
 
-
 ; To query state in repl:
 ; simpleserver.webserver.server/web-server-state
 ; See helper methods to start/stop server in mydev namespace.

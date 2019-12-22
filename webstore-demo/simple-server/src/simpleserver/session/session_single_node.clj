@@ -3,8 +3,8 @@
     [clojure.tools.logging :as log]
     [clj-time.core :as c-time]
     [buddy.sign.jwt :as buddy-jwt]
-    [simpleserver.session.session-interface :as ss-session-i]
-    [simpleserver.session.session-common :as ss-session-common]))
+    [simpleserver.session.session-interface]
+    [simpleserver.session.session-common]))
 
 
 (def my-sessions
@@ -28,19 +28,19 @@
 
 
 (defrecord SingleNodeR []
-  ss-session-i/SessionInterface
+  simpleserver.session.session-interface/SessionInterface
 
   (create-json-web-token
     [this email]
     (log/debug (str "ENTER create-json-web-token, email: " email))
-    (let [json-web-token (ss-session-common/create-json-web-token email)
+    (let [json-web-token (simpleserver.session.session-common/create-json-web-token email)
           _ (swap! my-sessions conj json-web-token)]
       json-web-token))
 
   (validate-token
     [this token]
     (log/debug (str "ENTER validate-token, token: " token))
-    (ss-session-common/validate-token token get-token remove-token))
+    (simpleserver.session.session-common/validate-token token get-token remove-token))
 
   (-get-sessions
     [this]
