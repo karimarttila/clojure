@@ -24,6 +24,84 @@
 ;; In Cursive REPL Run configuration: Aliases: dev-src,env-dev,test
 ;; ************************************************
 
+
+
+
+
+*ns*
+(in-ns 'user)
+
+@server
+
+(declare server)
+
+(defn init-server []
+  (if (nil? @server)
+    (atom {:status :stopped, :server nil})
+    (do
+      (stop-web-server))))
+
+(def server (init-server))
+@server
+(def server (atom {:status :stopped, :server nil}))
+
+(do
+  (in-ns 'user)
+  (require 'mydev)
+  (mydev/refresh)
+  (mydev/curl-get "/info"))
+
+(do
+  (in-ns 'user)
+  (require 'mydev)
+  (mydev/reset)
+  (mydev/curl-get "/info"))
+
+(do
+  (in-ns 'user)
+  (require 'mydev)
+  (mydev/curl-get "/info"))
+(remove-ns 'simpleserver.webserver.server)
+(in-ns 'simpleserver.webserver.server)
+@server
+(start-web-server (get-in ss-config/config [:server :port]))
+(do (require 'mydev) (mydev/curl-get "/info"))
+(stop-web-server)
+(@server :status)
+*e
+*ns*
+(clojure.repl/dir simpleserver.webserver.server)
+
+
+(defn start-web-server
+  "Starts the web server."
+  [port]
+  (log/debug "ENTER start-web-server")
+  (let [state (:status @server)]
+    (if (= state :stopped)
+      (let [new-server (run-jetty web-server {:port port :join? false})]
+        (do
+          (reset! server {:status :running, :server new-server})
+          (log/info (str "Started server: " new-server))))
+      (log/warn (str "Server was already running: " (@server :server))))))
+
+(defn stop-web-server
+  "Stops the web server."
+  []
+  (log/debug "ENTER stop-web-server")
+  (let [state (:status @server)]
+    (if (= state :running)
+      (let [old-server (@server :server)]
+        (do
+          (.stop old-server)
+          (reset! server {:status :stopped, :server nil})
+          (log/info (str "Stopped server: " old-server))))
+      (log/warn "Server was already stopped"))))
+
+
+
+
+
 ss-config
 
 (do

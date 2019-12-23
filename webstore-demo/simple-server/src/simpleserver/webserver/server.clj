@@ -15,8 +15,6 @@
             [simpleserver.domain.domain-interface :as ss-domain-i]
             ))
 
-
-
 ;; Use curl and simple server log to see how token is parsed.
 ;; Or use this trick: You got a JSON web token from -login. Supply JSON web token to:
 ;; (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token" )
@@ -44,7 +42,6 @@
   ; TODO: Temporary, remove later
   true
   )
-
 
 ;; As in headers check with curl that the http status is properly set.
 (defn -set-http-status
@@ -106,10 +103,31 @@
       (re-ring/create-resource-handler {:path "/"})
       (re-ring/create-default-handler))))
 
+(defonce server (atom {:status :stopped, :server nil}))
 
 (defn start-web-server
   "Starts the web server."
   [port]
   (log/debug "ENTER start-web-server")
-  (run-jetty web-server {:port port :join? false}))
+  (let [state (:status @server)]
+    (if (= state :stopped)
+      (let [new-server (run-jetty web-server {:port port :join? false})]
+        (do
+          (reset! server {:status :running, :server new-server})
+          (log/info (str "Started server: " new-server))))
+      (log/warn (str "Server was already running: " (@server :server))))))
+
+(defn stop-web-server
+  "Stops the web server."
+  []
+  (log/debug "ENTER stop-web-server")
+  (let [state (:status @server)]
+    (if (= state :running)
+      (let [old-server (@server :server)]
+        (do
+          (.stop old-server)
+          (reset! server {:status :stopped, :server nil})
+          (log/info (str "Stopped server: " old-server))))
+      (log/warn "Server was already stopped"))))
+
 

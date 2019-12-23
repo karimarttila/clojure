@@ -58,7 +58,7 @@
 
            ;; Development src and dependencies.
            ;; In IntelliJ IDEA / Cursive you have to create a Run configuration
-           ;; and check "Run with deps" and use aliases: dev-src,log-dev.
+           ;; and check "Run with deps" and use aliases: dev-src,env-dev-single-node
            :dev-src                {:extra-paths ["dev-src"]
                                     :extra-deps  {
                                                   org.clojure/tools.namespace {:mvn/version "0.2.11"}
