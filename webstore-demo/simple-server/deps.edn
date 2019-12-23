@@ -35,11 +35,8 @@
            ring/ring-json                  {:mvn/version "0.4.0"}
            ring/ring-defaults              {:mvn/version "0.3.2"}
            metosin/reitit                  {:mvn/version "0.3.10"}
+           metosin/maailma                 {:mvn/version "1.1.0"}
            buddy/buddy-sign                {:mvn/version "3.0.0"}
-           ; Mount state library: https://github.com/tolitius/mount
-           mount/mount                     {:mvn/version "0.1.6"}
-           ; Cprop configuration library: https://github.com/tolitius/cprop
-           cprop/cprop                     {:mvn/version "0.1.13"}
            ; Cognitect AWS library. https://github.com/cognitect-labs/aws-api
            com.cognitect.aws/api           {:mvn/version "0.8.305"
                                             :exclusions  [org.eclipse.jetty/jetty-client]}

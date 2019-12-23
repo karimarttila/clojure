@@ -10,7 +10,6 @@
             [reitit.ring :as re-ring]
             [reitit.ring.coercion :as re-coercion]
             [muuntaja.core :as mu-core]
-            [mount.core :refer [defstate, start, stop]]
             [simpleserver.util.config :as ss-config]
             [simpleserver.domain.domain-config :as ss-domain-config]
             [simpleserver.domain.domain-interface :as ss-domain-i]
@@ -83,7 +82,7 @@
   (let [token-ok? true                                      ; TODO (-valid-token? req)
         response-value (if (not token-ok?)
                          {:ret :failed, :msg "Given token is not valid"}
-                         {:ret :ok, :product-groups (ss-domain-i/get-product-groups ss-domain-config/domain-state)})]
+                         {:ret :ok, :product-groups (ss-domain-i/get-product-groups ss-domain-config/domain)})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 
@@ -109,17 +108,8 @@
 
 
 (defn start-web-server
-  "Starts the web server using mount."
+  "Starts the web server."
   [port]
   (log/debug "ENTER start-web-server")
   (run-jetty web-server {:port port :join? false}))
-
-; To query state in repl:
-; simpleserver.webserver.server/web-server-state
-; See helper methods to start/stop server in mydev namespace.
-(defstate ^{:on-reload :stop} web-server-state
-          "Web server application state."
-          :start (start-web-server (get-in ss-config/config-state [:server :port]))
-          :stop (.stop web-server-state)
-          )
 

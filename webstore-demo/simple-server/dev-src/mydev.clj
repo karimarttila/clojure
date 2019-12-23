@@ -2,7 +2,6 @@
   (:require
     [clojure.tools.logging :as log]
     [clojure.tools.namespace.repl :as ns-repl]
-    [mount.core :as mount]
     ;[ring.adapter.jetty :refer [run-jetty]]
     [simpleserver.util.config :as ss-config]
     [simpleserver.domain.domain-config :as ss-domain]
@@ -16,16 +15,13 @@
 (defn start
   "Starts application states."
   []
-  (log/debug "ENTER start")
-  (mount/start))
+  (log/debug "ENTER start"))
 
 
 (defn stop
   "Stops application states."
   []
-  (log/debug "ENTER stop")
-  (mount/stop)
-  )
+  (log/debug "ENTER stop"))
 
 
 (defn refresh

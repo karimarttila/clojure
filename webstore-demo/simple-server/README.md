@@ -62,6 +62,8 @@ The application has four parts whose lifecycle we keep track using the Mount lib
 3. [Session](TODO).
 4. [Server](https://github.com/karimarttila/clojure/blob/master/webstore-demo/simple-server/src/simpleserver/webserver/server.clj).
 
+Mount made application management easier but there was some development hassle penalty involved (e.g. sometimes I added dependency to some namespace that assumed component being started by mount but wasn't etc.).
+
 
 # Configuration Handling
 

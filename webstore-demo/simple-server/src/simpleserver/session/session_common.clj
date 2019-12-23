@@ -5,7 +5,6 @@
             [simpleserver.util.config :as ss-config]
             ))
 
-
 (def my-hex-secret
   "Creates dynamically a hex secret when the server boots."
   ((fn []
@@ -17,16 +16,14 @@
                            (map #(format "%02x" (int %)) s)))]
        (hexify (repeatedly 24 #(rand-nth my-set)))))))
 
-
 (defn create-json-web-token
   [email]
   (log/debug (str "ENTER create-json-web-token, email: " email))
   (let [my-secret my-hex-secret
-        exp-time (c-time/plus (c-time/now) (c-time/seconds (get-in ss-config/config-state [:jwt :exp])))
+        exp-time (c-time/plus (c-time/now) (c-time/seconds (get-in ss-config/config [:jwt :exp])))
         my-claim {:email email :exp exp-time}
         json-web-token (buddy-jwt/sign my-claim my-secret)]
     json-web-token))
-
 
 (defn validate-token
   [token get-token remove-token]
@@ -50,5 +47,3 @@
             (do
               (log/error (str "Some unknown exception when handling expired token, exception: " (.getMessage e)) ", token: " token)
               (throw e))))))))
-
-

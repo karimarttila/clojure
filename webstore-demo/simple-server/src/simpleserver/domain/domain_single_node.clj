@@ -22,7 +22,7 @@
   (let [my-key (str "pg-" pg-id "-raw-products")]
     (if-let [raw-products (@my-domain-atom my-key)]
       raw-products
-      (let [data-dir (get-in ss-config/config-state [:domain :data-dir])
+      (let [data-dir (get-in ss-config/config [:domain :data-dir])
             raw-products-from-file
             (try
               (with-open [reader (io/reader (str data-dir "/pg-" pg-id "-products.csv"))]
@@ -45,7 +45,7 @@
     (log/debug "ENTER get-product-groups")
     (if-let [product-groups (@my-domain-atom :product-groups)]
       product-groups
-      (let [data-dir (get-in ss-config/config-state [:domain :data-dir])
+      (let [data-dir (get-in ss-config/config [:domain :data-dir])
             raw (with-open [reader (io/reader (str data-dir "/product-groups.csv"))]
                   (doall
                     (csv/read-csv reader)))

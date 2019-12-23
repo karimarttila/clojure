@@ -2,9 +2,9 @@
  ; NOTE: All parameters can be overridden by environment variable.
  ; E.g. :ss-env => SS_ENV .
 
- :my-env "dev"
- ;:ss-env "single-node"
- :ss-env "aws"
+ :config-name "dev-real-aws"
+ :runtime-env "dev"
+ :db-env "aws"
  ; NOTE: Whether to use local dynamodb or real is configured in :aws section.
 
  :server {

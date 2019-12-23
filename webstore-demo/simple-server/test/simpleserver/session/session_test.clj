@@ -1,39 +1,33 @@
 (ns simpleserver.session.session-test
   (:require [clojure.test :refer :all]
             [clojure.tools.logging :as log]
-            [mount.core :as mount-core]
             [simpleserver.util.config]
             [simpleserver.session.session-config]
             [simpleserver.session.session-interface]
             ))
 
+(defn reset-sessions! []
+  (log/debug "ENTER reset-sessions!")
+  (let [my-session simpleserver.session.session-config/session]
+    (simpleserver.session.session-interface/-reset-sessions! my-session))
+  (log/debug "EXIT reset-sessions!"))
 
-(defn reset-states
+(defn reset-state
   "Reset states needed in this test ns."
   [f]
   (do
-    (log/debug "ENTER reset-states")
-    (log/debug "Stopping config and session states...")
-    (mount-core/stop #'simpleserver.util.config/config-state)
-    (mount-core/stop #'simpleserver.session.session-config/session-state)
-    (log/debug "Starting config and session states...")
-    (mount-core/start #'simpleserver.util.config/config-state)
-    (mount-core/start #'simpleserver.session.session-config/session-state)
-    (log/debug "config-state: " simpleserver.util.config/config-state)
-    (log/debug "session-state: " simpleserver.session.session-config/session-state)
+    (log/debug "ENTER reset-state")
+    (reset-sessions!)
     (f)
-    (log/debug "EXIT reset-states")))
-
+    (log/debug "EXIT reset-state")))
 
 ; Register test fixtures.
-(use-fixtures :each reset-states)
-
-
+(use-fixtures :each reset-state)
 
 (deftest create-json-web-token
   (log/debug "ENTER create-json-web-token")
   (testing "Create json web token and validate it"
-    (let [my-session simpleserver.session.session-config/session-state
+    (let [my-session simpleserver.session.session-config/session
           initial-len (count (simpleserver.session.session-interface/-get-sessions my-session))
           test-email "kari.karttinen@foo.com"
           jwt (simpleserver.session.session-interface/create-json-web-token my-session test-email)

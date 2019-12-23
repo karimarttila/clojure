@@ -31,6 +31,3 @@
     (log/debug (str "ENTER -reset-sessions!"))
     (throw (java.lang.UnsupportedOperationException. "Not implemented yet")))
   )
-
-
-

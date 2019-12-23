@@ -6,11 +6,9 @@
     [simpleserver.session.session-interface]
     [simpleserver.session.session-common]))
 
-
 (def my-sessions
   "Atom to store the sessions. NOTE: Not a map but a set."
   (atom #{}))
-
 
 (defn get-token
   [token]
@@ -18,14 +16,11 @@
     token
     nil))
 
-
 (defn remove-token
   [token]
   (if (contains? @my-sessions token)
     (swap! my-sessions disj token)
     (log/warn (str "Expired token not found when removing it from my sessions: " token))))
-
-
 
 (defrecord SingleNodeR []
   simpleserver.session.session-interface/SessionInterface
@@ -54,5 +49,3 @@
     (reset! my-sessions #{})
     (log/debug (str "my-sessions after reset: " @my-sessions)))
   )
-
-

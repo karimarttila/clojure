@@ -24,6 +24,19 @@
 ;; In Cursive REPL Run configuration: Aliases: dev-src,env-dev,test
 ;; ************************************************
 
+ss-config
+
+(do
+  (require '[maailma.core :as m])
+  (def env (m/build-config (m/resource "config.edn")))
+  env)
+
+(remove-ns 'simpleserver.domain.domain-config)
+
+;****************************************************************
+; Dropped Mount, and started to use Maailma instead of Cprop.
+;****************************************************************
+
 (->>
   (all-ns)
   (filter #(clojure.string/starts-with? % "simpleserver")))

@@ -14,11 +14,11 @@
 (defn get-dynamodb-config
   "Gets the dynamodb configuration"
   [table-name]
-  (let [my-env (get-in ss-config/config-state [:my-env])
-        my-table-prefix (get-in ss-config/config-state [:aws :ss-table-prefix])
+  (let [my-env (get-in ss-config/config [:my-env])
+        my-table-prefix (get-in ss-config/config [:aws :ss-table-prefix])
         my-table (str my-table-prefix "-" my-env "-" table-name)
-        my-endpoint (get-in simpleserver.util.config/config-state [:aws :endpoint])
-        my-profile (get-in simpleserver.util.config/config-state [:aws :aws-profile])
+        my-endpoint (get-in simpleserver.util.config/config [:aws :endpoint])
+        my-profile (get-in simpleserver.util.config/config [:aws :aws-profile])
         my-credentials (credentials/profile-credentials-provider my-profile)
         my-ddb (if (nil? my-credentials)
                  (aws/client {:api                  :dynamodb
