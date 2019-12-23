@@ -3,7 +3,6 @@
     [clojure.tools.logging :as log]
     [clojure.tools.namespace.repl :as ns-repl]
     [clj-http.client :as http-client]
-    [simpleserver.webserver.server :as ss-ws]
     [simpleserver.util.config :as ss-config]
     [simpleserver.webserver.server :as ss-ws]))
 
@@ -11,47 +10,47 @@
 ; in this namespace - see Mound documentation.
 
 (defn start
-      "Starts application states."
-      []
-      (log/debug "ENTER start")
-      (ss-ws/start-web-server (get-in ss-config/config [:server :port]))
-      (log/debug "EXIT start"))
+  "Starts application states."
+  []
+  (log/debug "ENTER start")
+  (ss-ws/start-web-server (get-in ss-config/config [:server :port]))
+  (log/debug "EXIT start"))
 
 (defn stop
-      "Stops application states."
-      []
-      (log/debug "ENTER stop")
-      (ss-ws/stop-web-server)
-      (log/debug "EXIT stop"))
+  "Stops application states."
+  []
+  (log/debug "ENTER stop")
+  (ss-ws/stop-web-server)
+  (log/debug "EXIT stop"))
 
 (defn refresh
-      "Refreshes REPL, does not start server."
-      []
-      (log/debug "ENTER refresh")
-      (stop)
-      (ns-repl/refresh)
-      (log/debug "EXIT refresh"))
+  "Refreshes REPL, does not start server."
+  []
+  (log/debug "ENTER refresh")
+  (stop)
+  (ns-repl/refresh)
+  (log/debug "EXIT refresh"))
 
 (defn refresh-all []
-      "Refreshes all, does not start server."
-      (log/debug "ENTER refresh-all")
-      (stop)
-      (ns-repl/refresh-all)
-      (log/debug "EXIT refresh-all"))
+  "Refreshes all, does not start server."
+  (log/debug "ENTER refresh-all")
+  (stop)
+  (ns-repl/refresh-all)
+  (log/debug "EXIT refresh-all"))
 
 (defn reset []
-      "Resets application states."
-      (log/debug "ENTER reset")
-      (stop)
-      (ns-repl/refresh :after 'mydev/start)
-      (log/debug "EXIT reset"))
+  "Resets application states."
+  (log/debug "ENTER reset")
+  (stop)
+  (ns-repl/refresh :after 'mydev/start)
+  (log/debug "EXIT reset"))
 
 ; Example: (mydev/curl-get "info")
 (defn curl-get
-      "A helper function to query the APIs in REPL (you don't have to jump to IDEA terminal and back to REPL)"
-      [path]
-      (log/debug "ENTER curl-get")
-      (let [my-port (get-in ss-config/config [:server :port])]
-           (select-keys
-             (http-client/get (str "http://localhost:" my-port "/" path) {:as :json})
-             [:status :body])))
+  "A helper function to query the APIs in REPL (you don't have to jump to IDEA terminal and back to REPL)"
+  [path]
+  (log/debug "ENTER curl-get")
+  (let [my-port (get-in ss-config/config [:server :port])]
+    (select-keys
+      (http-client/get (str "http://localhost:" my-port "/" path) {:as :json})
+      [:status :body])))

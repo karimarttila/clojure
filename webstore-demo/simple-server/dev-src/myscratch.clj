@@ -24,17 +24,13 @@
 ;; In Cursive REPL Run configuration: Aliases: dev-src,env-dev,test
 ;; ************************************************
 
-
-
-
+*e
 
 *ns*
 (in-ns 'user)
 
 @server
-
 (declare server)
-
 (defn init-server []
   (if (nil? @server)
     (atom {:status :stopped, :server nil})
@@ -61,6 +57,8 @@
   (in-ns 'user)
   (require 'mydev)
   (mydev/curl-get "/info"))
+(mydev/curl-get "/product-groups")
+
 (remove-ns 'simpleserver.webserver.server)
 (in-ns 'simpleserver.webserver.server)
 @server

@@ -6,7 +6,6 @@
             [simpleserver.domain.domain-interface :as ss-domain-i]
             ))
 
-
 (defn domain-test-fixture
   "NOTE: We do nothing here since (unlike the user) the domain is read-only
   (i.e. no need to reset data in the database for tests)"
@@ -16,10 +15,8 @@
     (f)
     (log/debug "EXIT domain-test-fixture")))
 
-
 ; Register test fixtures.
 (use-fixtures :each domain-test-fixture)
-
 
 (deftest get-product-groups-test
   (log/debug "ENTER get-product-groups-test")
@@ -30,7 +27,6 @@
           right-map {"1" "Books", "2" "Movies"}]
       (is (= product-groups-len 2))
       (is (= product-groups right-map)))))
-
 
 (deftest get-products-test
   (log/debug "ENTER get-products-test")
@@ -53,8 +49,7 @@
           product (ss-domain-i/get-product my-domain 2 49)
           product-len (count product)
           right-product ["49" "2" "Once Upon a Time in the West" "14.4" "Leone, Sergio" "1968" "Italy-USA" "Western"]
-          no-product (ss-domain-i/get-product my-domain 2 10000)
-          ]
+          no-product (ss-domain-i/get-product my-domain 2 10000)]
       (is (= product-len 8))
       ;; What a coincidence! The chosen movie is the best western of all times!
       (is (= product right-product))
