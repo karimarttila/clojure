@@ -103,7 +103,7 @@
       (re-ring/create-resource-handler {:path "/"})
       (re-ring/create-default-handler))))
 
-(defonce server (atom {:status :stopped, :server nil}))
+(defonce server (atom {:status :stopped, :server nil, :port nil}))
 
 (defn start-web-server
   "Starts the web server."
@@ -113,7 +113,7 @@
     (if (= state :stopped)
       (let [new-server (run-jetty web-server {:port port :join? false})]
         (do
-          (reset! server {:status :running, :server new-server})
+          (reset! server {:status :running, :server new-server, :port port})
           (log/info (str "Started server: " new-server))))
       (log/warn (str "Server was already running: " (@server :server))))))
 
@@ -126,8 +126,12 @@
       (let [old-server (@server :server)]
         (do
           (.stop old-server)
-          (reset! server {:status :stopped, :server nil})
+          (reset! server {:status :stopped, :server nil, :port nil})
           (log/info (str "Stopped server: " old-server))))
       (log/warn "Server was already stopped"))))
 
-
+(defn reset-web-server
+  "Stops and starts the web server."
+  [port]
+  (stop-web-server)
+  (start-web-server port))

@@ -24,6 +24,60 @@
 ;; In Cursive REPL Run configuration: Aliases: dev-src,env-dev,test
 ;; ************************************************
 
+(do
+  (in-ns 'user)
+  (require '[simpleserver.domain.domain-config])
+  (simpleserver.domain.domain-interface/get-product
+    simpleserver.domain.domain-config/domain 1 2001)
+  )
+
+(ns user)
+(do
+  (in-ns 'user)
+  (require 'simpleserver.user.user-config
+             'simpleserver.user.user-interface)
+  (simpleserver.user.user-interface/email-already-exists?
+      simpleserver.user.user-config/user "kari.karttinen@foo.com")
+  (simpleserver.user.user-interface/email-already-exists?
+      simpleserver.user.user-config/user "kari.karttinen@NOT.FOUND")
+  (simpleserver.user.user-interface/add-new-user
+      simpleserver.user.user-config/user "kari.karttinen@NOT.FOUND" "Kari" "Karttinen" "asdf")
+  (simpleserver.user.user-interface/email-already-exists?
+      simpleserver.user.user-config/user "kari.karttinen@NOT.FOUND")
+  (simpleserver.user.user-interface/-get-users
+      simpleserver.user.user-config/user)
+  (simpleserver.user.user-interface/credentials-ok?
+      simpleserver.user.user-config/user "kari.karttinen@NOT.FOUND" "asdf")
+
+  )
+
+;; Demonstration how indirection works in Clojure.
+(do
+  (remove-ns 'demo)
+  (ns demo)
+  ; a1 evaluates to value 1.
+  (def a1 1)
+  ; a2 evaluates to value which a1 has now (i.e. 1).
+  (def a2 a1)
+  ; a3 is a function which will evaluate to the value a1 has when calling a3 (i.e. we don't know it yet, the value of a1 might change).
+  (def a3 (fn [] a1))
+  ; Now we change a1.
+  (def a1 2)
+  ; a4 is same as a3.
+  (defn a4 [] a1)
+  ; Now we change a1 again.
+  (def a1 3)
+  ; 3, since a1 value was changed.
+  (prn (str "a1: " a1))
+  ; 1 since a2's value was evaluated when a1 was still 1.
+  (prn (str "a2: " a2))
+  ; 3 since a3 is a function and will evaluate a1's current value.
+  (prn (str "a3: " (a3)))
+  ; same as a3.
+  (prn (str "a4: " (a4)))
+  ;(clojure.repl/dir demo)
+  )
+
 *e
 
 *ns*
@@ -65,6 +119,7 @@
 (start-web-server (get-in ss-config/config [:server :port]))
 (do (require 'mydev) (mydev/curl-get "/info"))
 (stop-web-server)
+(reset-web-server (get-in ss-config/config [:server :port]))
 (@server :status)
 *e
 *ns*
@@ -95,8 +150,6 @@
           (reset! server {:status :stopped, :server nil})
           (log/info (str "Stopped server: " old-server))))
       (log/warn "Server was already stopped"))))
-
-
 
 
 

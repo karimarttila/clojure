@@ -2,9 +2,7 @@
   (:require [clojure.tools.logging :as log]
             [simpleserver.util.config :as ss-config]
             [simpleserver.session.session-single-node :as ss-single-node]
-            [simpleserver.session.session-dynamodb :as ss-dynamodb]
-            [simpleserver.session.session-interface :as ss-session-i]
-            ))
+            [simpleserver.session.session-dynamodb :as ss-dynamodb]))
 
 (defn -get-session-env
   "Gets session environment (either single-node or aws based on config.edn)."
@@ -12,8 +10,8 @@
   ; See comment in domain-config which applies also here.
   (log/debug "ENTER -get-session-env")
   (cond
-    (= db-env "single-node") (simpleserver.session.session-single-node/->SingleNodeR)
-    (= db-env "aws") (simpleserver.session.session-dynamodb/->AwsDynamoDbR)
+    (= db-env "single-node") (ss-single-node/->SingleNodeR)
+    (= db-env "aws") (ss-dynamodb/->AwsDynamoDbR)
     :else (throw (UnsupportedOperationException. (str "Unknown environment: " db-env)))
     )
   )

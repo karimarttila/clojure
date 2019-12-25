@@ -5,3 +5,6 @@
 
 (def config (m/build-config (m/resource "config.edn")))
 
+(comment
+  config
+  )

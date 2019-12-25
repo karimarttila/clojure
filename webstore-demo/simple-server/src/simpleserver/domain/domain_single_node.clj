@@ -8,8 +8,6 @@
     [simpleserver.domain.domain-interface :as ss-domain-i]
     ))
 
-
-
 (def my-domain-atom
   "Stores all domain objects into this cache once read from csv files.
   Used for development purposes only."
@@ -22,7 +20,7 @@
   (let [my-key (str "pg-" pg-id "-raw-products")]
     (if-let [raw-products (@my-domain-atom my-key)]
       raw-products
-      (let [data-dir (get-in ss-config/config [:domain :data-dir])
+      (let [data-dir (get-in ss-config/config [:single-node-data :data-dir])
             raw-products-from-file
             (try
               (with-open [reader (io/reader (str data-dir "/pg-" pg-id "-products.csv"))]
@@ -36,7 +34,6 @@
           nil)))))
 
 
-
 (defrecord SingleNodeR []
   ss-domain-i/DomainInterface
 
@@ -45,7 +42,7 @@
     (log/debug "ENTER get-product-groups")
     (if-let [product-groups (@my-domain-atom :product-groups)]
       product-groups
-      (let [data-dir (get-in ss-config/config [:domain :data-dir])
+      (let [data-dir (get-in ss-config/config [:single-node-data :data-dir])
             raw (with-open [reader (io/reader (str data-dir "/product-groups.csv"))]
                   (doall
                     (csv/read-csv reader)))
@@ -74,7 +71,6 @@
               products-from-file)
             nil)))))
 
-
   (get-product
     [this pg-id p-id]
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
@@ -83,3 +79,10 @@
                        (let [id (first item)]
                          (= id (str p-id))))
                      products)))))
+
+;; ****************************************************************
+;; Rich comment.
+
+(comment
+  (-get-raw-products 1)
+  )

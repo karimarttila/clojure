@@ -9,9 +9,10 @@
     1. Check that we actually created the token in the first place (should find it in the session db).
     2. Validate the token with buddy (can unsign it, token is not expired).")
   (-get-sessions [env]
-    "Gets all sessions. Used in testing.")
+    "Gets all sessions - used in testing.")
   (-reset-sessions! [env]
-    "Resets all sessions. Used in testing."))
+    "Resets all sessions - used in testing.")
+  )
 
 
 
