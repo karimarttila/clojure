@@ -78,7 +78,9 @@
   (-reset-users!
     [this]
     (log/debug (str "ENTER -reset-users!"))
-    (reset! my-users (-get-initial-users))))
+    (if (= (ss-config/config :runtime-env) "dev")
+      (reset! my-users (-get-initial-users))
+      (throw (java.lang.UnsupportedOperationException. "You can reset sessions only in development environment!")))))
 
 ;; ****************************************************************
 ;; Rich comment.
@@ -89,7 +91,7 @@
 
   ; Remember to compile user-interface, user-single-node and then user-config!
   (simpleserver.user.user-interface/email-already-exists?
-      simpleserver.user.user-config/user "kari.karttinen@foo.com")
+    simpleserver.user.user-config/user "kari.karttinen@foo.com")
   (simpleserver.user.user-interface/email-already-exists?
-      simpleserver.user.user-config/user "kari.karttinen@NOT.FOUND")
+    simpleserver.user.user-config/user "kari.karttinen@NOT.FOUND")
   )

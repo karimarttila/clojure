@@ -3,9 +3,7 @@
             [clojure.tools.logging :as log]
             [simpleserver.util.config]
             [simpleserver.user.user-config :as ss-user-config]
-            [simpleserver.user.user-interface :as ss-user-i]
-            )
-  )
+            [simpleserver.user.user-interface :as ss-user-i]))
 
 
 (defn reset-users! []

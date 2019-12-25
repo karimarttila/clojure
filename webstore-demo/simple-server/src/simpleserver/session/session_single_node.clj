@@ -3,6 +3,7 @@
     [clojure.tools.logging :as log]
     [clj-time.core :as c-time]
     [buddy.sign.jwt :as buddy-jwt]
+    [simpleserver.util.config :as ss-config]
     [simpleserver.session.session-interface]
     [simpleserver.session.session-common]))
 
@@ -45,7 +46,7 @@
   (-reset-sessions!
     [this]
     (log/debug (str "ENTER -reset-sessions!"))
-    (log/debug (str "my-sessions before reset: " @my-sessions))
-    (reset! my-sessions #{})
-    (log/debug (str "my-sessions after reset: " @my-sessions)))
+    (if (= (ss-config/config :runtime-env) "dev")
+      (reset! my-sessions #{})
+      (throw (java.lang.UnsupportedOperationException. "You can reset sessions only in development environment!"))))
   )
