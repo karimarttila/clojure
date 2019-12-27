@@ -12,6 +12,8 @@
   - [You Can Do It without Application State Management Libraries](#you-can-do-it-without-application-state-management-libraries)
   - [Editing Clojure Code Efficiently](#editing-clojure-code-efficiently)
   - [Rich Comments](#rich-comments)
+  - [Debugger](#debugger)
+- [Logging](#logging)
 - [Linting](#linting)
 - [Local DynamoDB Instance](#local-dynamodb-instance)
 - [Clojure Development](#clojure-development)
@@ -120,6 +122,15 @@ This is a trick I learned from one of Stuart Halloway's excellent videos. Add at
 ```
 I.e. a ```comment``` S expression defines valid Clojure code that gets parsed *but not evaluated*. This way the code doesn't have any effect in production but during development it provides a nice way to give examples how to use entities in your Clojure code and also quickly evaluate the S expressions inside the commment block (efficiently and quickly using you Clojure editor hot keys, of course).
 
+
+## Debugger
+
+You don't need debugger with Clojure. :-) There is a debugger in Cursive and I only once tried that it works. If you want to learn good debugging practices in Clojure you need to learn to use the REPL efficiently. Good resources are the above mentioned [REPL Driven Development](https://purelyfunctional.tv/courses/repl-driven-development-in-clojure/) course and [Chicago Clojure - 2017-06-21 - Stuart Halloway on Repl Driven Development](https://vimeo.com/223309989) video. E.g. in that video Stuart shows how to implement a simple breakpoint using Cursive - i.e. create your own debugger!
+
+
+# Logging
+
+I used [Logback](http://logback.qos.ch/). I tried to log all function entries and exits (in debug level) just for an exercise - e.g. nice to see in REPL the function entries/exits. If this were a real production system one could easily configure logging to be much less intrusive.
 
 
 # Linting

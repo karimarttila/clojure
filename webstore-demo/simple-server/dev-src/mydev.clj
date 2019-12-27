@@ -45,12 +45,21 @@
   (ns-repl/refresh :after 'mydev/start)
   (log/debug "EXIT reset"))
 
-; Example: (mydev/curl-get "info")
-(defn curl-get
+; Example: (mydev/do-get "info")
+(defn do-get
   "A helper function to query the APIs in REPL (you don't have to jump to IDEA terminal and back to REPL)"
   [path]
-  (log/debug "ENTER curl-get")
+  (log/debug "ENTER do-get")
   (let [my-port (get-in ss-config/config [:server :port])]
     (select-keys
-      (http-client/get (str "http://localhost:" my-port "/" path) {:as :json})
+      (http-client/get (str "http://localhost:" my-port "/" path) {:as :json :throw-exceptions false :coerce :always})
       [:status :body])))
+
+(defn do-post
+    "A helper function to query the APIs in REPL (you don't have to jump to IDEA terminal and back to REPL)"
+    [path body]
+    (log/debug "ENTER do-post")
+    (let [my-port (get-in ss-config/config [:server :port])]
+      (select-keys
+        (http-client/post (str "http://localhost:" my-port "/" path) {:form-params body :content-type :json :throw-exceptions false :coerce :always})
+        [:status :body])))

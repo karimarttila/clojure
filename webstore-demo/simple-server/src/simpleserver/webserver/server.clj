@@ -13,6 +13,8 @@
             [simpleserver.util.config :as ss-config]
             [simpleserver.domain.domain-config :as ss-domain-config]
             [simpleserver.domain.domain-interface :as ss-domain-i]
+            [simpleserver.user.user-config :as ss-user-config]
+            [simpleserver.user.user-interface :as ss-user-i]
             ))
 
 ;; Use curl and simple server log to see how token is parsed.
@@ -69,6 +71,23 @@
   {:status 200 :body {:info "index.html => Info in HTML format"}})
 
 
+(defn -validate-parameters
+  "Extremely simple validator - just request that all fields must have some value.
+  `field-values` - a list of fields to validate."
+  [field-values]
+  (every? #(not (empty? %)) field-values))
+
+(defn -signin
+  "Provides API for sign-in page. `req` provides post body.
+  See source code how to experiment with REPL."
+  [first-name last-name password email]
+  (let [validation-passed (-validate-parameters [email first-name last-name password])
+        response-value (if validation-passed
+                         (ss-user-i/add-new-user ss-user-config/user email first-name last-name password)
+                         {:ret :failed, :msg "Validation failed - some fields were empty"})]
+    (-set-http-status (ri-resp/response response-value) (:ret response-value))))
+
+
 ;; In REPL e.g.;
 ;; (simpleserver.webserver.server/-product-groups (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token>"))
 (defn -product-groups
@@ -86,19 +105,24 @@
 (def routes
   [
    ["/info" {:get (fn [{}] (-info))}]
-   ["/product-groups" {:get (fn [{}] (-product-groups))}]])
+   ;["/test" {:get (fn [{}] (-info))}]
+   ["/signin" {:post (fn [{{:keys [first-name last-name password email]} :body-params}] (-signin first-name last-name password email))}]
+   ["/product-groups" {:get (fn [{}] (-product-groups))}]
+   ])
 
 (def web-server
   "Web server startup function.
   See source code how to experiment with REPL."
   (re-ring/ring-handler
-    (re-ring/router [routes]
-                    {:data {:muuntaja   mu-core/instance
-                            :middleware [ri-params/wrap-params
-                                         re-muuntaja/format-middleware
-                                         re-coercion/coerce-exceptions-middleware
-                                         re-coercion/coerce-request-middleware
-                                         re-coercion/coerce-response-middleware]}})
+    (do
+      ;(log/debug (str "request: " req)) ; TODO: how to print the raw http request here?
+      (re-ring/router [routes]
+                      {:data {:muuntaja   mu-core/instance
+                              :middleware [ri-params/wrap-params
+                                           re-muuntaja/format-middleware
+                                           re-coercion/coerce-exceptions-middleware
+                                           re-coercion/coerce-request-middleware
+                                           re-coercion/coerce-response-middleware]}}))
     (re-ring/routes
       (re-ring/create-resource-handler {:path "/"})
       (re-ring/create-default-handler))))

@@ -24,6 +24,108 @@
 ;; In Cursive REPL Run configuration: Aliases: dev-src,env-dev,test
 ;; ************************************************
 
+;; ************************************
+;; Implementing the server apis...
+
+
+(start-web-server (get-in ss-config/config [:server :port]))
+(do (require 'mydev) (mydev/do-get "/info"))
+(do (require 'mydev) (mydev/do-get "/test"))
+(do (require 'mydev) (do-post "signin" {:first-name "mikko" :last-name "mikkonen" :password "salainen" :email "mikkoXX.mikkonen@foo.com"}))
+(stop-web-server)
+(reset-web-server (get-in ss-config/config [:server :port]))
+
+
+(defn call-api [path verb body]
+  (let [my-port (get-in ss-config/config [:server :port])
+        my-fn (cond
+                (= verb "get") http-client/get
+                (= verb "post") http-client/post)]
+    (try
+      (select-keys
+        (my-fn (str "http://localhost:" my-port "/" path) {:as :json :form-params body :content-type :json}) [:status :body])
+      (catch ExceptionInfo e
+        (do
+          (log/warn (str "Got exception:" (.getMessage e)))
+          ;(log/debug (prn (str "e: " e)))
+          ;(def *my-e e) ; For checking it in repl...
+          (let [my-e (Throwable->map e)
+                status ((my-e :data) :status)
+                body ((my-e :data) :body)
+                _ (log/debug (prn (str "status: " status)))
+                _ (log/debug (prn (str "body: " body)))]
+            {:status status :body body}))))))
+
+
+[clojure.tools.logging :as log]
+[clojure.tools.namespace.repl :as ns-repl]
+[clj-http.client :as http-client]
+
+(do
+  (in-ns 'mydev)
+  (require '[clojure.tools.logging :as log]
+           '[clj-http.client :as http-client]
+           '[simpleserver.util.config :as ss-config])
+  (defn do-post
+    "A helper function to query the APIs in REPL (you don't have to jump to IDEA terminal and back to REPL)"
+    [path body]
+    (log/debug "ENTER do-post")
+    (let [my-port (get-in ss-config/config [:server :port])]
+      (select-keys
+        (http-client/post (str "http://localhost:" my-port "/" path) {:form-params body :content-type :json :throw-exceptions false :coerce :always})
+        [:status :body])))
+  )
+
+(def jee 1)
+((fn [] jee))
+
+(reset-web-server (get-in ss-config/config [:server :port]))
+;(do (in-ns 'mydev) (http-client/post "http://localhost:6161/signin" {:body "{\"x\": \"1\", \"y\": \"1\"}"}))
+;(do (in-ns 'mydev) (http-client/post "http://localhost:6161/signin" {:body {:x 1 :y 2} }))
+;(do (in-ns 'mydev) (http-client/post "http://localhost:6161/signin" {:form-params {:x 1 :y 2}}))
+;(do (in-ns 'mydev) (http-client/post "http://localhost:6161/signin" {:body "{\"x\": \"1\", \"y\": \"1\"}"}))
+;(do (in-ns 'mydev) (http-client/post "http://localhost:6161/signin" {:form-params {:x 1 :y 88} :content-type :json}))
+
+(do (in-ns 'mydev) (do-post "signin" {:first-name "mikko" :last-name "mikkonen" :password "salainen" :email "mikkoX.mikkonen@foo.com"}))
+(do (in-ns 'mydev) (http-client/post "http://localhost:6161/signin" {:form-params {:first-name "mikko" :last-name "mikkonen" :password "salainen" :email "mikko.mikkonen@foo.com"} :content-type :json}))
+(http-client/post "http://localhost:6161/signin" {:form-params {:first-name "mikko" :last-name "mikkonen" :password "salainen" :email "mikko.mikkonen@foo.com"} :content-type :json})
+(do (in-ns 'mydev) (http-client/get "http://localhost:6161/info"))
+(do (in-ns 'mydev) (do-post "signin" {:x 1 :y 88}))
+
+
+(def routes2
+  ["/plain"
+   ["/plus" {:get (fn [{{:strs [x y]} :query-params :as req}]
+                    {:status 200
+                     :body {:total (+ (Long/parseLong x) (Long/parseLong y))}})
+             :post (fn [{{:keys [x y]} :body-params}]
+                     {:status 200
+                      :body {:total (+ x y)}})}]])
+(do (in-ns 'mydev) (http-client/get "http://localhost:6161/plain/plus" {:query-params {:x 1 :y 5}}))
+(do (in-ns 'mydev) (http-client/post "http://localhost:6161/plain/plus" {:form-params {:x 1 :y 88} :content-type :json}))
+
+
+
+(http-client/get "http://localhost:6161/test")
+(:x (:body {:body {:x 1 :y 2}}))
+*e
+
+(-signin 1 2)
+
+(remove-ns 'simpleserver.webserver.server)
+(in-ns 'simpleserver.webserver.server)
+@server
+(start-web-server (get-in ss-config/config [:server :port]))
+(do (require 'mydev) (mydev/do-get "/info"))
+(do (require 'mydev) (mydev/do-get "/test"))
+(do (require 'mydev) (mydev/do-post "/signin" {"x" 1 "y" 2}))
+(do (require 'mydev) (mydev/do-post "/signin" {}))
+(stop-web-server)
+(reset-web-server (get-in ss-config/config [:server :port]))
+(@server :status)
+*ns*
+
+
 (do
   (in-ns 'user)
   (require '[simpleserver.domain.domain-config])
@@ -35,19 +137,19 @@
 (do
   (in-ns 'user)
   (require 'simpleserver.user.user-config
-             'simpleserver.user.user-interface)
+           'simpleserver.user.user-interface)
   (simpleserver.user.user-interface/email-already-exists?
-      simpleserver.user.user-config/user "kari.karttinen@foo.com")
+    simpleserver.user.user-config/user "kari.karttinen@foo.com")
   (simpleserver.user.user-interface/email-already-exists?
-      simpleserver.user.user-config/user "kari.karttinen@NOT.FOUND")
+    simpleserver.user.user-config/user "kari.karttinen@NOT.FOUND")
   (simpleserver.user.user-interface/add-new-user
-      simpleserver.user.user-config/user "kari.karttinen@NOT.FOUND" "Kari" "Karttinen" "asdf")
+    simpleserver.user.user-config/user "kari.karttinen@NOT.FOUND" "Kari" "Karttinen" "asdf")
   (simpleserver.user.user-interface/email-already-exists?
-      simpleserver.user.user-config/user "kari.karttinen@NOT.FOUND")
+    simpleserver.user.user-config/user "kari.karttinen@NOT.FOUND")
   (simpleserver.user.user-interface/-get-users
-      simpleserver.user.user-config/user)
+    simpleserver.user.user-config/user)
   (simpleserver.user.user-interface/credentials-ok?
-      simpleserver.user.user-config/user "kari.karttinen@NOT.FOUND" "asdf")
+    simpleserver.user.user-config/user "kari.karttinen@NOT.FOUND" "asdf")
 
   )
 
