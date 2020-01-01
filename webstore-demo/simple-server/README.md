@@ -11,6 +11,7 @@
   - [Using a REPL Scratch File](#using-a-repl-scratch-file)
   - [You Can Do It without Application State Management Libraries](#you-can-do-it-without-application-state-management-libraries)
   - [Editing Clojure Code Efficiently](#editing-clojure-code-efficiently)
+  - [Using IntelliJ IDEA + Cursive and Emacs + Cider Interchangeably](#using-intellij-idea--cursive-and-emacs--cider-interchangeably)
   - [Rich Comments](#rich-comments)
   - [Debugger](#debugger)
 - [Logging](#logging)
@@ -109,6 +110,15 @@ I have configured my Ubuntu key map so that I use Caps Lock key as a special key
 One great productivity trick is to edit S expressions as entitites. You should learn how to use "slurping" and "barfing" and other way to move S expressions efectively in your code. E.g. I already mentioned that I use Emacs key binding in IntelliJ IDEA (since Emacs is my favorite editor in headless environments). Emacs uses <ctrl>-k to delete all characters from the cursor to the end of line, and actually moves the string to the "yank area" from with you can "yank" the string to a new position by <ctrl>-y. I created a shortcut key <shift><ctrl>-k to delete the S expression next to cursor and move the S expression to the yank area, from which I can yank the S expression to a new place. I use this <shift><ctlr>-k with slurping and barfing all the time when editing Clojure code - it really makes editing Clojure code in actual source files and REPL scratch editor file a breeze.
 
 You can use your imagination what kind of small optimizations to use with your keymapping configurations. I studied a few years classical guitar and the teacher always emphasized economy when moving fingers. I have tried to follow the same economical principles with my Clojure keymappings. E.g. <caps-lock>-ö moves the cursor to the end of line ("end" remapping). Therefore it is economical that "evaluate the S expression before cursor" is <ctrl><shift>-ö: the rational being that I noticed that I often want to go to the end of line and evaluate the S expression there.
+
+
+## Using IntelliJ IDEA + Cursive and Emacs + Cider Interchangeably
+
+I used IntelliJ IDEA + Cursive plugin when implementing this Clojure exercise but just for curiosity I wanted to try how it feels like to use [Emacs](TODO) and [Cider](TODO). The experience was quite pleasant. I managed to configure Emacs with the same theme I use with IntelliJ ([leuven](TODO) - mostly the same colors for the same syntactic/semantic entities) and the same favorite hotkeys to compile code regarding one S-expression or the whole namespace, run all tests in the namespace or just the test under cursor etc. It took some time and some googling regarding Emacs [elisp](TODO) but finally I was pretty satisfied: now I can quite effortlessly use either IntelliJ IDEA + Cursive or Emacs + Cider when developing Clojure code. 
+
+Emacs with various helpfull packages like [company](TODO), [projectile](TODO), [clojure-mode](TODO), [cider](TODO), [eldoc-mode](TODO) turns Emacs to quite a powerfull integrated development environment for Clojure.
+
+TODO: Explain how to start with Cider...
 
 
 ## Rich Comments
