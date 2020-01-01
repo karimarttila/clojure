@@ -15,12 +15,15 @@
             [simpleserver.domain.domain-interface :as ss-domain-i]
             [simpleserver.user.user-config :as ss-user-config]
             [simpleserver.user.user-interface :as ss-user-i]
-            ))
+            [simpleserver.session.session-config :as ss-session-config]
+            [simpleserver.session.session-interface :as ss-session-i]))
 
 ;; Use curl and simple server log to see how token is parsed.
 ;; Or use this trick: You got a JSON web token from -login. Supply JSON web token to:
 ;; (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token" )
 ;; I.e. (simpleserver.webserver.server/-valid-token? (simpleserver.webserver.server_test/-create-testing-basic-authentication-from-json-webtoken "<token>"))
+
+
 (defn -valid-token?
   "Parses the token from the http authorization header and asks session ns to validate the token.
   See source code how to experiment with REPL."
@@ -42,10 +45,11 @@
         nil
         (ss-session-svc/validate-token session-svc token))))
   ; TODO: Temporary, remove later
-  true
-  )
+  true)
 
 ;; As in headers check with curl that the http status is properly set.
+
+
 (defn -set-http-status
   "Sets the http status either to 200 (ret=ok) or 400 (otherwise)."
   [ring-response ret]
@@ -55,6 +59,8 @@
 
 
 ;; NOTE: Not yet tested with reitit.
+
+
 (defn -cors-handler
   "Adds cors handling to response."
   [routes]
@@ -70,7 +76,6 @@
   (log/debug "ENTER -info")
   {:status 200 :body {:info "index.html => Info in HTML format"}})
 
-
 (defn -validate-parameters
   "Extremely simple validator - just request that all fields must have some value.
   `field-values` - a list of fields to validate."
@@ -78,18 +83,42 @@
   (every? #(not (empty? %)) field-values))
 
 (defn -signin
-  "Provides API for sign-in page. `req` provides post body.
-  See source code how to experiment with REPL."
+  "Provides API for sign-in page."
   [first-name last-name password email]
+  (log/debug "ENTER -signin")
   (let [validation-passed (-validate-parameters [email first-name last-name password])
         response-value (if validation-passed
                          (ss-user-i/add-new-user ss-user-config/user email first-name last-name password)
                          {:ret :failed, :msg "Validation failed - some fields were empty"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
+;        (comment        credentials-ok (if (validation-passed  1)))
+
+(defn -login
+  "Provides API for login page."
+  [email password]
+  (log/debug "ENTER -login")
+  (let [validation-passed (-validate-parameters [email password])
+        credentials-ok (if validation-passed
+                         (ss-user-i/credentials-ok? ss-user-config/user email password)
+                         nil)
+        json-web-token (if credentials-ok
+                         (ss-session-i/create-json-web-token ss-session-config/session email)
+                         nil)
+        response-value (if (not validation-passed)
+                         {:ret :failed, :msg "Validation failed - some fields were empty"}
+                         (if (not credentials-ok)
+                           {:ret :failed, :msg "Credentials are not good - either email or password is not correct"}
+                           (if (not json-web-token)
+                             {:ret :failed, :msg "Internal error when creating the json web token"}
+                             {:ret :ok, :msg "Credentials ok" :json-web-token json-web-token})))]
+    (-set-http-status (ri-resp/response response-value) (:ret response-value))))
+
 
 ;; In REPL e.g.;
 ;; (simpleserver.webserver.server/-product-groups (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token>"))
+
+
 (defn -product-groups
   "Gets product groups.
   See source code how to experiment with REPL."
@@ -101,31 +130,29 @@
                          {:ret :ok, :product-groups (ss-domain-i/get-product-groups ss-domain-config/domain)})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
-
 (def routes
-  [
-   ["/info" {:get (fn [{}] (-info))}]
-   ;["/test" {:get (fn [{}] (-info))}]
+  [["/info" {:get (fn [{}] (-info))}]
+   ["/print-req" {:get (fn [req] (prn (str "req: ") req))}]      ; An example how to print the ring request
    ["/signin" {:post (fn [{{:keys [first-name last-name password email]} :body-params}] (-signin first-name last-name password email))}]
-   ["/product-groups" {:get (fn [{}] (-product-groups))}]
-   ])
+   ["/login" {:post (fn [{{:keys [email password]} :body-params}] (-login email password))}]
+   ["/product-groups" {:get (fn [{}] (-product-groups))}]])
 
 (def web-server
   "Web server startup function.
   See source code how to experiment with REPL."
   (re-ring/ring-handler
-    (do
+   (do
       ;(log/debug (str "request: " req)) ; TODO: how to print the raw http request here?
-      (re-ring/router [routes]
-                      {:data {:muuntaja   mu-core/instance
-                              :middleware [ri-params/wrap-params
-                                           re-muuntaja/format-middleware
-                                           re-coercion/coerce-exceptions-middleware
-                                           re-coercion/coerce-request-middleware
-                                           re-coercion/coerce-response-middleware]}}))
-    (re-ring/routes
-      (re-ring/create-resource-handler {:path "/"})
-      (re-ring/create-default-handler))))
+     (re-ring/router [routes]
+                     {:data {:muuntaja   mu-core/instance
+                             :middleware [ri-params/wrap-params
+                                          re-muuntaja/format-middleware
+                                          re-coercion/coerce-exceptions-middleware
+                                          re-coercion/coerce-request-middleware
+                                          re-coercion/coerce-response-middleware]}}))
+   (re-ring/routes
+    (re-ring/create-resource-handler {:path "/"})
+    (re-ring/create-default-handler))))
 
 (defonce server (atom {:status :stopped, :server nil, :port nil}))
 
@@ -159,3 +186,5 @@
   [port]
   (stop-web-server)
   (start-web-server port))
+
+

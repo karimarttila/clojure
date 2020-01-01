@@ -27,13 +27,21 @@
 ;; ************************************
 ;; Implementing the server apis...
 
+(def foo  {:status 200, :body {:ret "ok", :msg "Credentials ok" :json-web-token "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Imthcmkua2FydHRpbmVuQGZvby5jb20iLCJleHAiOjE1Nzc5MDY3NTN9.yxdq97PPKMfMRDePrdaMM9aEl2STzbfjZVMAv8q7mNE"}})
 
-(start-web-server (get-in ss-config/config [:server :port]))
-(do (require 'mydev) (mydev/do-get "/info"))
-(do (require 'mydev) (mydev/do-get "/test"))
-(do (require 'mydev) (do-post "signin" {:first-name "mikko" :last-name "mikkonen" :password "salainen" :email "mikkoXX.mikkonen@foo.com"}))
-(stop-web-server)
-(reset-web-server (get-in ss-config/config [:server :port]))
+*ns*
+(in-ns 'user)
+(in-ns 'simpleserver.webserver.server)
+{:a} {:b 1}
+
+(do (in-ns 'simpleserver.webserver.server) (start-web-server (get-in ss-config/config [:server :port])))
+(do (require 'mydev) (mydev/do-get "/info" {}))
+(do (require 'mydev) (mydev/do-get "/print-req" {:query-a 1 :query-b 2}))
+(do (require 'mydev) (mydev/do-post "signin" {:first-name "mikko" :last-name "mikkonen" :password "salainen" :email "mikko.mikkonen@foo.com"}))
+(do (require 'mydev) (mydev/do-post "login" {:email "mikko.mikkonen@foo.com" :password "salainen"}))
+(do (require 'mydev) (mydev/do-post "login" {:email "mikko.mikkonen@foo.com" :password "WRONG"}))
+(do (in-ns 'simpleserver.webserver.server) (stop-web-server))
+(do (in-ns 'simpleserver.webserver.server) (reset-web-server (get-in ss-config/config [:server :port])))
 
 
 (defn call-api [path verb body]
@@ -67,13 +75,13 @@
            '[clj-http.client :as http-client]
            '[simpleserver.util.config :as ss-config])
   (defn do-post
-    "A helper function to query the APIs in REPL (you don't have to jump to IDEA terminal and back to REPL)"
-    [path body]
-    (log/debug "ENTER do-post")
-    (let [my-port (get-in ss-config/config [:server :port])]
-      (select-keys
-        (http-client/post (str "http://localhost:" my-port "/" path) {:form-params body :content-type :json :throw-exceptions false :coerce :always})
-        [:status :body])))
+        "A helper function to query the APIs in REPL (you don't have to jump to IDEA terminal and back to REPL)"
+        [path body]
+        (log/debug "ENTER do-post")
+        (let [my-port (get-in ss-config/config [:server :port])]
+             (select-keys
+               (http-client/post (str "http://localhost:" my-port "/" path) {:form-params body :content-type :json :throw-exceptions false :coerce :always})
+               [:status :body])))
   )
 
 (def jee 1)
@@ -95,12 +103,12 @@
 
 (def routes2
   ["/plain"
-   ["/plus" {:get (fn [{{:strs [x y]} :query-params :as req}]
-                    {:status 200
-                     :body {:total (+ (Long/parseLong x) (Long/parseLong y))}})
+   ["/plus" {:get  (fn [{{:strs [x y]} :query-params :as req}]
+                       {:status 200
+                        :body   {:total (+ (Long/parseLong x) (Long/parseLong y))}})
              :post (fn [{{:keys [x y]} :body-params}]
-                     {:status 200
-                      :body {:total (+ x y)}})}]])
+                       {:status 200
+                        :body   {:total (+ x y)}})}]])
 (do (in-ns 'mydev) (http-client/get "http://localhost:6161/plain/plus" {:query-params {:x 1 :y 5}}))
 (do (in-ns 'mydev) (http-client/post "http://localhost:6161/plain/plus" {:form-params {:x 1 :y 88} :content-type :json}))
 

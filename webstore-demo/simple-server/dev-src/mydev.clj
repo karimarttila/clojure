@@ -48,11 +48,11 @@
 ; Example: (mydev/do-get "info")
 (defn do-get
   "A helper function to query the APIs in REPL (you don't have to jump to IDEA terminal and back to REPL)"
-  [path]
+  [path query-params]
   (log/debug "ENTER do-get")
   (let [my-port (get-in ss-config/config [:server :port])]
     (select-keys
-      (http-client/get (str "http://localhost:" my-port "/" path) {:as :json :throw-exceptions false :coerce :always})
+      (http-client/get (str "http://localhost:" my-port "/" path) {:query-params query-params :as :json :throw-exceptions false :coerce :always})
       [:status :body])))
 
 (defn do-post

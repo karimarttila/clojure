@@ -12,6 +12,8 @@
     (simpleserver.user.user-interface/-reset-users! my-user))
   (log/debug "EXIT reset-users!"))
 
+
+
 (defn reset-state
   "Reset states needed in this test ns."
   [f]

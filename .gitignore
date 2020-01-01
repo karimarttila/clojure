@@ -47,3 +47,6 @@ clj-ring-cljs-reagent-demo/simple-server/azure-table-storage/azurite/
 
 # VS Code
 .vscode/
+
+# CLJ errors.
+trace.edn

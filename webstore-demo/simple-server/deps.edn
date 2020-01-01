@@ -71,6 +71,11 @@
                                     {com.healthfinch/depstar {:git/url "https://github.com/healthfinch/depstar.git"
                                                               :sha     "4aa7b35189693feebc7d7e4a180b8af0326c9164"}}}
 
+           ;; Cider specific.
+           :cider-clj {:extra-deps {org.clojure/clojure {:mvn/version "1.10.1"}
+                           cider/cider-nrepl {:mvn/version "0.22.4"}}
+              :main-opts ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]}
+
            ;; Environments. Only for development. When baking jar these are not
            ;; included - provide these in classpath when starting jar
            ;; (see build-jar and run-jar.sh).
