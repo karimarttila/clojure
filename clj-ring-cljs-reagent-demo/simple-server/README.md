@@ -50,7 +50,10 @@ Simple Server is implemented using [Clojure](https://clojure.org/) and [Ring](ht
 
 If you are using IntelliJ IDEA with Cursive plugin you can configure REPL with properties:
 - Profiles: +log-dev
-- Environment: SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties
+- Environment: 
+-- SIMPLESERVER_CONFIG_FILE=resources/simpleserver.properties
+-- SS_ENV=single-node
+
 
 ## Command Line
 

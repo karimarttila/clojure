@@ -9,6 +9,7 @@
    [org.clojure/data.codec "0.1.1"]
 
    [org.clojure/tools.logging "0.4.0"]
+   [org.clojure/tools.namespace "0.3.1"]
    [commons-logging "1.2"]
    [com.fasterxml.jackson.core/jackson-databind "2.9.4"]
    [com.fasterxml.jackson.dataformat/jackson-dataformat-cbor "2.9.4"]
@@ -42,7 +43,7 @@
   [
    [lein-environ "1.1.0"]
    [lein-pprint "1.1.2"]
-   [lein-ring "0.12.3"]
+   [lein-ring "0.12.5"]
    [lein-codox "0.10.4"]
    [jonase/eastwood "0.3.3"]
    [lein-nvd "0.5.6"]
