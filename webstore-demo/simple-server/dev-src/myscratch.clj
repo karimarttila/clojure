@@ -36,7 +36,8 @@
 
 (do (in-ns 'simpleserver.webserver.server) (start-web-server (get-in ss-config/config [:server :port])))
 (do (require 'mydev) (mydev/do-get "/info" {}))
-(do (require 'mydev) (mydev/do-get "/print-req" {:query-a 1 :query-b 2}))
+(do (require 'mydev) (mydev/do-get "/print-req-get" {:query-a 1 :query-b 2}))
+(do (require 'mydev) (mydev/do-post "/print-req-post" {:query-a 1 :query-b 2}))
 (do (require 'mydev) (mydev/do-post "signin" {:first-name "mikko" :last-name "mikkonen" :password "salainen" :email "mikko.mikkonen@foo.com"}))
 (do (require 'mydev) (mydev/do-post "login" {:email "mikko.mikkonen@foo.com" :password "salainen"}))
 (do (require 'mydev) (mydev/do-post "login" {:email "mikko.mikkonen@foo.com" :password "WRONG"}))

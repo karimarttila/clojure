@@ -46,4 +46,4 @@
             ; Some other issue, throw it.
             (do
               (log/error (str "Some unknown exception when handling expired token, exception: " (.getMessage e)) ", token: " token)
-              (throw e))))))))
+              nil)))))))

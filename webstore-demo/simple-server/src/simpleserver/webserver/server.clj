@@ -1,14 +1,17 @@
 (ns simpleserver.webserver.server
   (:require [clojure.tools.logging :as log]
             [clojure.data.json :as json]
+            [clojure.string :as string]
+            [clojure.data.codec.base64 :as base64]
             [ring.middleware.cors :refer [wrap-cors]]
             [ring.middleware.json :as ri-json]
             [ring.middleware.params :as ri-params]
             [ring.util.response :as ri-resp]
             [ring.adapter.jetty :refer [run-jetty]]
-            [reitit.ring.middleware.muuntaja :as re-muuntaja]
+            [reitit.ring.middleware.muuntaja :as re-mu]
             [reitit.ring :as re-ring]
-            [reitit.ring.coercion :as re-coercion]
+            [reitit.ring.coercion :as re-co]
+            [reitit.coercion.spec :as re-co-spec]
             [muuntaja.core :as mu-core]
             [simpleserver.util.config :as ss-config]
             [simpleserver.domain.domain-config :as ss-domain-config]
@@ -25,31 +28,25 @@
 
 
 (defn -valid-token?
-  "Parses the token from the http authorization header and asks session ns to validate the token.
-  See source code how to experiment with REPL."
+  "Parses the token from the http authorization header and asks session ns to validate the token."
   [req]
   (log/debug "ENTER -valid-token?")
-  (comment
-    (let [basic ((:headers req) "authorization")
-          dummy (log/debug (str "basic: " basic))
-          basic-str (and basic
-                         (last (re-find #"^Basic (.*)$" basic)))
-          raw-token (and basic-str
-                         (apply str (map char (base64/decode (.getBytes basic-str)))))
-          dummy (log/debug (str "raw-token: " raw-token))
-          ; Finally strip the password part if testing with curl
-          token (and raw-token
-                     (string/replace raw-token #":NOT" ""))]
-      ;; Session namespace does the actual validation logic.
-      (if (not token)
-        nil
-        (ss-session-svc/validate-token session-svc token))))
-  ; TODO: Temporary, remove later
-  true)
+  (let [basic ((:headers req) "authorization")
+        dummy (log/debug (str "basic: " basic))
+        basic-str (and basic
+                       (last (re-find #"^Basic (.*)$" basic)))
+        raw-token (and basic-str
+                       (apply str (map char (base64/decode (.getBytes basic-str)))))
+        dummy (log/debug (str "raw-token: " raw-token))
+        ; Finally strip the password part if testing with curl
+        token (and raw-token
+                   (string/replace raw-token #":NOT" ""))]
+    ;; Session namespace does the actual validation logic.
+    (if (not token)
+      nil
+      (ss-session-i/validate-token ss-session-config/session token))))
 
 ;; As in headers check with curl that the http status is properly set.
-
-
 (defn -set-http-status
   "Sets the http status either to 200 (ret=ok) or 400 (otherwise)."
   [ring-response ret]
@@ -77,7 +74,7 @@
   {:status 200 :body {:info "index.html => Info in HTML format"}})
 
 (defn -validate-parameters
-  "Extremely simple validator - just request that all fields must have some value.
+  "Extremely simple validator - just checks that all fields must have some value.
   `field-values` - a list of fields to validate."
   [field-values]
   (every? #(not (empty? %)) field-values))
@@ -120,11 +117,10 @@
 
 
 (defn -product-groups
-  "Gets product groups.
-  See source code how to experiment with REPL."
-  []
+  "Gets product groups."
+  [req]
   (log/debug "ENTER -product-groups")
-  (let [token-ok? true                                      ; TODO (-valid-token? req)
+  (let [token-ok? (-valid-token? req)
         response-value (if (not token-ok?)
                          {:ret :failed, :msg "Given token is not valid"}
                          {:ret :ok, :product-groups (ss-domain-i/get-product-groups ss-domain-config/domain)})]
@@ -132,24 +128,30 @@
 
 (def routes
   [["/info" {:get (fn [{}] (-info))}]
-   ["/print-req" {:get (fn [req] (prn (str "req: ") req))}]      ; An example how to print the ring request
+   ["/print-req-get" {:get (fn [req] (prn (str "req: ") req))}]      ; An example how to print the ring request
+   ["/print-req-post" {:post (fn [req] (prn (str "req: ") req))}]      ; An example how to print the ring request
    ["/signin" {:post (fn [{{:keys [first-name last-name password email]} :body-params}] (-signin first-name last-name password email))}]
    ["/login" {:post (fn [{{:keys [email password]} :body-params}] (-login email password))}]
-   ["/product-groups" {:get (fn [{}] (-product-groups))}]])
+   ["/product-groups" {:get {:handler (fn [req] (-product-groups req))}}]])
+
+;; NOTE: If you want to check what middlware does you can uncomment rows 67-69 in:
+;; https://github.com/metosin/reitit/blob/master/examples/ring-swagger/src/example/server.clj#L67-L69
 
 (def web-server
   "Web server startup function.
   See source code how to experiment with REPL."
   (re-ring/ring-handler
    (do
-      ;(log/debug (str "request: " req)) ; TODO: how to print the raw http request here?
      (re-ring/router [routes]
-                     {:data {:muuntaja   mu-core/instance
-                             :middleware [ri-params/wrap-params
-                                          re-muuntaja/format-middleware
-                                          re-coercion/coerce-exceptions-middleware
-                                          re-coercion/coerce-request-middleware
-                                          re-coercion/coerce-response-middleware]}}))
+                     {:data {
+                             :muuntaja   mu-core/instance
+                             :coercion re-co-spec/coercion
+                                       :middleware [ri-params/wrap-params
+                                                    re-mu/format-middleware
+                                                    re-co/coerce-exceptions-middleware
+                                                    re-co/coerce-request-middleware
+                                                    re-co/coerce-response-middleware
+                                                    ]}}))
    (re-ring/routes
     (re-ring/create-resource-handler {:path "/"})
     (re-ring/create-default-handler))))
