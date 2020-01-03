@@ -27,6 +27,7 @@
 ;; ************************************
 ;; Implementing the server apis...
 
+
 (def foo  {:status 200, :body {:ret "ok", :msg "Credentials ok" :json-web-token "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Imthcmkua2FydHRpbmVuQGZvby5jb20iLCJleHAiOjE1Nzc5MDY3NTN9.yxdq97PPKMfMRDePrdaMM9aEl2STzbfjZVMAv8q7mNE"}})
 
 *ns*
@@ -36,6 +37,7 @@
 
 (do (in-ns 'simpleserver.webserver.server) (start-web-server (get-in ss-config/config [:server :port])))
 (do (require 'mydev) (mydev/do-get "/info" {}))
+(do (require 'mydev) (mydev/do-get "/print-req-get/1" nil))
 (do (require 'mydev) (mydev/do-get "/print-req-get" {:query-a 1 :query-b 2}))
 (do (require 'mydev) (mydev/do-post "/print-req-post" {:query-a 1 :query-b 2}))
 (do (require 'mydev) (mydev/do-post "signin" {:first-name "mikko" :last-name "mikkonen" :password "salainen" :email "mikko.mikkonen@foo.com"}))

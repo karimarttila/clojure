@@ -33,12 +33,12 @@
     (try
       (select-keys
         (my-fn (str "http://localhost:" my-port "/" path)
-               {:as :json
-                :form-params body
-                :headers headers
-                :content-type :json
+               {:as               :json
+                :form-params      body
+                :headers          headers
+                :content-type     :json
                 :throw-exceptions false
-                :coerce :always}
+                :coerce           :always}
                ) [:status :body]))))
 
 (deftest info-test
@@ -100,9 +100,27 @@
           get-ret (-call-api :get "/product-groups" params nil)
           status (:status get-ret)
           body (:body get-ret)
-          right-body {:ret "ok", :product-groups {:1 "Books", :2 "Movies"}}
-          ]
+          right-body {:ret "ok", :product-groups {:1 "Books", :2 "Movies"}}]
       (is (= (not (nil? json-web-token)) true))
       (is (= status 200))
       (is (= body right-body)))))
 
+(deftest products-test
+  (log/debug "ENTER products-test")
+  (testing "GET: /products"
+    (let [login-ret (-call-api :post "login" nil {:email "kari.karttinen@foo.com" :password "Kari"})
+          _ (log/debug (str "Got login-ret: " login-ret))
+          json-web-token (get-in login-ret [:body :json-web-token])
+          params (-create-basic-authentication json-web-token)
+          get-ret (-call-api :get "/products/1" params nil)
+          - (prn (str "****************** get-ret: ") get-ret)
+          status (:status get-ret)
+          body (:body get-ret)
+          pg-id (:pg-id body)
+          ret (:ret body)
+          products (:products body)]
+      (is (= (not (nil? json-web-token)) true))
+      (is (= status 200))
+      (is (= pg-id "1"))
+      (is (= ret "ok"))
+      (is (= (count products) 35)))))

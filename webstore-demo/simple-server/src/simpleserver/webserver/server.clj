@@ -126,13 +126,26 @@
                          {:ret :ok, :product-groups (ss-domain-i/get-product-groups ss-domain-config/domain)})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
+(defn -products
+  "Gets products."
+  [req]
+  (log/debug "ENTER -products")
+  (let [pg-id (get-in req [:path-params :pg-id])
+        _ (prn (str "******************************************* pg-id: " pg-id))
+        token-ok? (-valid-token? req)
+        response-value (if (not token-ok?)
+                         {:ret :failed, :msg "Given token is not valid"}
+                         {:ret :ok, :pg-id pg-id :products (ss-domain-i/get-products ss-domain-config/domain pg-id)})]
+    (-set-http-status (ri-resp/response response-value) (:ret response-value))))
+
 (def routes
   [["/info" {:get (fn [{}] (-info))}]
-   ["/print-req-get" {:get (fn [req] (prn (str "req: ") req))}]      ; An example how to print the ring request
+   ["/print-req-get/:jee" {:get (fn [req] (prn (str "req: ") req))}]      ; An example how to print the ring request
    ["/print-req-post" {:post (fn [req] (prn (str "req: ") req))}]      ; An example how to print the ring request
    ["/signin" {:post (fn [{{:keys [first-name last-name password email]} :body-params}] (-signin first-name last-name password email))}]
    ["/login" {:post (fn [{{:keys [email password]} :body-params}] (-login email password))}]
-   ["/product-groups" {:get {:handler (fn [req] (-product-groups req))}}]])
+   ["/product-groups" {:get {:handler (fn [req] (-product-groups req))}}]
+   ["/products/:pg-id" {:get {:handler (fn [req] (-products req))}}]])
 
 ;; NOTE: If you want to check what middlware does you can uncomment rows 67-69 in:
 ;; https://github.com/metosin/reitit/blob/master/examples/ring-swagger/src/example/server.clj#L67-L69
