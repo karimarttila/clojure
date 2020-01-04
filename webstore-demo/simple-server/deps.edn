@@ -67,10 +67,11 @@
                                                   clj-http/clj-http           {:mvn/version "3.10.0"}
                                                   }
                                     }
+           ;; Depstar for building fat jar.
            :depstar
-                                   {:extra-deps
-                                    {com.healthfinch/depstar {:git/url "https://github.com/healthfinch/depstar.git"
-                                                              :sha     "4aa7b35189693feebc7d7e4a180b8af0326c9164"}}}
+              {:extra-deps
+                 {seancorfield/depstar {:mvn/version "0.5.1"}}}
+
 
            ;; Cider specific.
            :cider-clj {:extra-deps {org.clojure/clojure {:mvn/version "1.10.1"}

@@ -27,6 +27,19 @@
 ;; ************************************
 ;; Implementing the server apis...
 
+(int 1)
+(int "1")
+(Integer/parseInt "1")
+(Integer/parseInt 1)
+(type "1")
+(if (string? "1")
+  "YES!"
+  "NO!")
+
+(simpleserver.domain.domain-config/domain)
+
+; Run tests in file.
+(run-tests)
 
 (def foo  {:status 200, :body {:ret "ok", :msg "Credentials ok" :json-web-token "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Imthcmkua2FydHRpbmVuQGZvby5jb20iLCJleHAiOjE1Nzc5MDY3NTN9.yxdq97PPKMfMRDePrdaMM9aEl2STzbfjZVMAv8q7mNE"}})
 

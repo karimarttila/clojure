@@ -1,13 +1,18 @@
 #!/bin/bash
 
 
-if [ $# -ne 0 ]
+if [ $# -ne 1 ]
 then
-    echo "Usage: ./build-jar.sh"
-    echo "Example: ./build-jar.sh"
+    echo "Usage: ./build-jar.sh <profile>"
+    echo "Example: ./build-jar.sh env-dev-single-node"
     exit 1
 fi
 
-MY_JAR_NAME=simple-server-standalone.jar
+rm -rf target
+#./run-tests.sh env-dev-single-node
 
-clj -A:depstar -m hf.depstar.uberjar target/$MY_JAR_NAME
+MY_JAR_NAME=simple-server-standalone.jar
+SS_PROFILE=$1
+mkdir target
+
+clojure -A:depstar:${SS_PROFILE} -m hf.depstar.uberjar target/$MY_JAR_NAME

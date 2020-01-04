@@ -1,6 +1,6 @@
 {
- ; NOTE: All parameters can be overridden by environment variable.
- ; E.g. :ss-env => SS_ENV .
+ ; NOTE: All configuration values can be overridden by configuration given in environment variable SS_CONFIG_FILE.
+ ; NOTE: Port can be overridden by environment variable SS_PORT.
 
  :config-name "dev-single-node"
  :runtime-env "dev"
@@ -9,7 +9,7 @@
  ; NOTE: Whether to use local dynamodb or real is configured in :aws section.
 
  :server {
-          ; Can be overridden by environment variable SERVER__PORT (two underscores).
+          ; Can be overridden by environment variable SS_PORT.
           :port 6161
           }
 

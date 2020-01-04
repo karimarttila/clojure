@@ -2,8 +2,7 @@
   (:require [clojure.tools.logging :as log]
             [simpleserver.util.config :as ss-config]
             [simpleserver.user.user-single-node :as ss-single-node]
-            [simpleserver.user.user-dynamodb :as ss-dynamodb]
-            ))
+            [simpleserver.user.user-dynamodb :as ss-dynamodb]))
 
 (defn -get-user-env
   "Gets user environment (either single-node or aws based on config.edn)."

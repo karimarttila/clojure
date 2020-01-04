@@ -1,14 +1,10 @@
 {
- ; NOTE: All parameters can be overridden by environment variable.
- ; E.g. :ss-env => SS_ENV .
-
- :config-name "prod-real-aws"
+  :config-name "prod-real-aws"
  :runtime-env "prod"
  :db-env "aws"
  ; NOTE: Whether to use local dynamodb or real is configured in :aws section.
 
  :server {
-          ; Can be overridden by environment variable SERVER__PORT (two underscores).
           :port 6161
           }
 

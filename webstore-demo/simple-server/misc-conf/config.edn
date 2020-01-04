@@ -1,0 +1,17 @@
+{
+ ; NOTE: This is a testing configuration that can be supplied using SS_CONFIG_FILE environment variable. It will be merged with profile specific config.edn configuration files.
+
+ ; NOTE: Port can be overridden by environment variable SS_PORT.
+
+
+ ;; Just to check that we have this configuration merged.
+ :misc-additions "true"
+
+ :server {
+          ; Can be overridden by environment variable SS_PORT.
+          :port 6262
+          }
+ }
+
+
+
