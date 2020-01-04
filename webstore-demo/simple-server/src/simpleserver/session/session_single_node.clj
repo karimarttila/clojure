@@ -1,8 +1,6 @@
 (ns simpleserver.session.session-single-node
   (:require
     [clojure.tools.logging :as log]
-    [clj-time.core :as c-time]
-    [buddy.sign.jwt :as buddy-jwt]
     [simpleserver.util.config :as ss-config]
     [simpleserver.session.session-interface]
     [simpleserver.session.session-common]))

@@ -26,7 +26,7 @@
               (with-open [reader (io/reader (str data-dir "/pg-" pg-id "-products.csv"))]
                 (doall
                   (csv/read-csv reader :separator \tab)))
-              (catch java.io.FileNotFoundException e nil))]
+              (catch java.io.FileNotFoundException _ nil))]
         (if raw-products-from-file
           (do
             (swap! my-domain-atom assoc my-key raw-products-from-file)

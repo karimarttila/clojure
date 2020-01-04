@@ -27,6 +27,10 @@
 ;; ************************************
 ;; Implementing the server apis...
 
+(if (= 1 2)
+  "Yeah!"
+  nil)
+
 (int 1)
 (int "1")
 (Integer/parseInt "1")
@@ -38,8 +42,8 @@
 
 (simpleserver.domain.domain-config/domain)
 
-; Run tests in file.
-(run-tests)
+; Run tests in file (.
+(do (in-ns 'simpleserver.webserver.server-test) (run-tests))
 
 (def foo  {:status 200, :body {:ret "ok", :msg "Credentials ok" :json-web-token "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Imthcmkua2FydHRpbmVuQGZvby5jb20iLCJleHAiOjE1Nzc5MDY3NTN9.yxdq97PPKMfMRDePrdaMM9aEl2STzbfjZVMAv8q7mNE"}})
 

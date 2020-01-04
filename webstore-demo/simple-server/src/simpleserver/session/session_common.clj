@@ -30,7 +30,7 @@
   (log/debug (str "ENTER validate-token, token: " token))
   (let [found-token (get-token token)]
     ;; Part #1 of validation.
-    (if (nil? token)
+    (if (nil? found-token)
       (do
         (log/warn (str "Token not found in my sessions - unknown token: " token))
         nil)

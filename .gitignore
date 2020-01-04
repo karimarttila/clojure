@@ -50,3 +50,7 @@ clj-ring-cljs-reagent-demo/simple-server/azure-table-storage/azurite/
 
 # CLJ errors.
 trace.edn
+
+#.clj-kondo/.cache/
+
+

@@ -1,10 +1,8 @@
 (ns simpleserver.webserver.server
   (:require [clojure.tools.logging :as log]
-            [clojure.data.json :as json]
             [clojure.string :as string]
             [clojure.data.codec.base64 :as base64]
             [ring.middleware.cors :refer [wrap-cors]]
-            [ring.middleware.json :as ri-json]
             [ring.middleware.params :as ri-params]
             [ring.util.response :as ri-resp]
             [ring.adapter.jetty :refer [run-jetty]]
@@ -13,7 +11,6 @@
             [reitit.ring.coercion :as re-co]
             [reitit.coercion.spec :as re-co-spec]
             [muuntaja.core :as mu-core]
-            [simpleserver.util.config :as ss-config]
             [simpleserver.domain.domain-config :as ss-domain-config]
             [simpleserver.domain.domain-interface :as ss-domain-i]
             [simpleserver.user.user-config :as ss-user-config]
@@ -32,12 +29,12 @@
   [req]
   (log/debug "ENTER -valid-token?")
   (let [basic ((:headers req) "authorization")
-        dummy (log/debug (str "basic: " basic))
+        ;_ (log/debug (str "basic: " basic))
         basic-str (and basic
                        (last (re-find #"^Basic (.*)$" basic)))
         raw-token (and basic-str
                        (apply str (map char (base64/decode (.getBytes basic-str)))))
-        dummy (log/debug (str "raw-token: " raw-token))
+        ;_ (log/debug (str "raw-token: " raw-token))
         ; Finally strip the password part if testing with curl
         token (and raw-token
                    (string/replace raw-token #":NOT" ""))]
@@ -77,7 +74,7 @@
   "Extremely simple validator - just checks that all fields must have some value.
   `field-values` - a list of fields to validate."
   [field-values]
-  (every? #(not (empty? %)) field-values))
+  (every? #(seq %) field-values))
 
 (defn -signin
   "Provides API for sign-in page."
@@ -110,7 +107,6 @@
                              {:ret :failed, :msg "Internal error when creating the json web token"}
                              {:ret :ok, :msg "Credentials ok" :json-web-token json-web-token})))]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
-
 
 (defn -product-groups
   "Gets product groups."
@@ -147,8 +143,8 @@
 
 (def routes
   [["/info" {:get (fn [{}] (-info))}]
-   ["/print-req-get/:jee" {:get (fn [req] (prn (str "req: ") req))}]      ; An example how to print the ring request
-   ["/print-req-post" {:post (fn [req] (prn (str "req: ") req))}]      ; An example how to print the ring request
+   ["/print-req-get/:jee" {:get (fn [req] (prn (str "req: ") req))}] ; An example how to print the ring request
+   ["/print-req-post" {:post (fn [req] (prn (str "req: ") req))}] ; An example how to print the ring request
    ["/signin" {:post (fn [{{:keys [first-name last-name password email]} :body-params}] (-signin first-name last-name password email))}]
    ["/login" {:post (fn [{{:keys [email password]} :body-params}] (-login email password))}]
    ["/product-groups" {:get {:handler (fn [req] (-product-groups req))}}]
@@ -162,17 +158,14 @@
   "Web server startup function.
   See source code how to experiment with REPL."
   (re-ring/ring-handler
-   (do
-     (re-ring/router [routes]
-                     {:data {
-                             :muuntaja   mu-core/instance
-                             :coercion re-co-spec/coercion
-                                       :middleware [ri-params/wrap-params
-                                                    re-mu/format-middleware
-                                                    re-co/coerce-exceptions-middleware
-                                                    re-co/coerce-request-middleware
-                                                    re-co/coerce-response-middleware
-                                                    ]}}))
+   (re-ring/router [routes]
+                   {:data {:muuntaja   mu-core/instance
+                           :coercion   re-co-spec/coercion
+                           :middleware [ri-params/wrap-params
+                                        re-mu/format-middleware
+                                        re-co/coerce-exceptions-middleware
+                                        re-co/coerce-request-middleware
+                                        re-co/coerce-response-middleware]}})
    (re-ring/routes
     (re-ring/create-resource-handler {:path "/"})
     (re-ring/create-default-handler))))
@@ -186,9 +179,8 @@
   (let [state (:status @server)]
     (if (= state :stopped)
       (let [new-server (run-jetty web-server {:port port :join? false})]
-        (do
-          (reset! server {:status :running, :server new-server, :port port})
-          (log/info (str "Started server: " new-server))))
+        (reset! server {:status :running, :server new-server, :port port})
+        (log/info (str "Started server: " new-server)))
       (log/warn (str "Server was already running: " (@server :server))))))
 
 (defn stop-web-server
@@ -198,10 +190,9 @@
   (let [state (:status @server)]
     (if (= state :running)
       (let [old-server (@server :server)]
-        (do
-          (.stop old-server)
-          (reset! server {:status :stopped, :server nil, :port nil})
-          (log/info (str "Stopped server: " old-server))))
+        (.stop old-server)
+        (reset! server {:status :stopped, :server nil, :port nil})
+        (log/info (str "Stopped server: " old-server)))
       (log/warn "Server was already stopped"))))
 
 (defn reset-web-server

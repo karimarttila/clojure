@@ -2,7 +2,6 @@
 
 
 # Table of Contents  <!-- omit in toc -->
-- [WORK IN PROGRESS](#work-in-progress)
 - [Introduction](#introduction)
 - [Technical Description](#technical-description)
 - [Application State Management](#application-state-management)
@@ -17,52 +16,43 @@
 - [Logging](#logging)
 - [Linting](#linting)
 - [Local DynamoDB Instance](#local-dynamodb-instance)
-- [Clojure Development](#clojure-development)
-  - [IntelliJ IDEA / Cursive](#intellij-idea--cursive)
-  - [Command Line](#command-line)
-  - [Production Deployment](#production-deployment)
-  - [Connecting REPL to Running Ring Server](#connecting-repl-to-running-ring-server)
-    - [Connect to Ring App using Remote REPL in IDEA/Cursive](#connect-to-ring-app-using-remote-repl-in-ideacursive)
-  - [Static Code Analysis](#static-code-analysis)
+- [IntelliJ IDEA / Cursive Run Configuration](#intellij-idea--cursive-run-configuration)
 - [Unit Testing](#unit-testing)
-- [Building for Production](#building-for-production)
-
-
-# WORK IN PROGRESS
-
-I delete this chapter once this exercise is done and this README file is properly documented.
+- [Building Fat Jar and Running It](#building-fat-jar-and-running-it)
+- [Next Steps](#next-steps)
 
 
 # Introduction
 
-This Simple Server is a re-implementation of my original [Simple Server](https://github.com/karimarttila/clojure/tree/master/clj-ring-cljs-reagent-demo/simple-server). 
-
-I created this new Simple Server to learn new Clojure libraries and ways of working as:
+This Clojure Simple Server is a re-implementation of my original Clojure [Simple Server](https://github.com/karimarttila/clojure/tree/master/clj-ring-cljs-reagent-demo/simple-server). I did some three years ago. I created the first version of that Clojure exercise server to learn to use Clojure. I created this new Clojure Simple Server version mainly to learn new Clojure libraries and ways of working as:
 
 - Use [deps.edn](https://clojure.org/guides/deps_and_cli) instead of [Leiningen](https://leiningen.org/).
 - Learn to use more effective REPL workflows as explained e.g. in [Chicago Clojure - 2017-06-21 - Stuart Halloway on Repl Driven Development](https://vimeo.com/223309989).
-- Use [Cognitect AWS Api](https://github.com/cognitect-labs/aws-api) instead of [Amazonica](https://github.com/mcohen01/amazonica).
+- Use [Cognitect AWS Api](https://github.com/cognitect-labs/aws-api) instead of [Amazonica](https://github.com/mcohen01/amazonica) (NOTE: to be done later)
+- Use Metosin libraries (reitit, NOTE: malli later).
 
 NOTE: 
 
-- I don't iterate my Clojure development observations in this README.md that I already found out when I did the original Clojure Simple Server - I recommend the reader to read that README.md file.
-- Most of the application code is the same as in the first Clojure implementation of Simple Server (except of those areas where I did most of the changes: application state management, DynamoDB etc.)
-- This implementation is not meant to be an example how to create a production level web server but just my personal Clojure exercise.
+- I don't iterate those Clojure development observations in this README.md that I already found out when I did the original Clojure Simple Server version - I recommend the reader to read the README.md file of that previous implementation if you are interested about it.
+- Most of the application code in this new Simple Server implementation is same as in the first Clojure implementation of the Simple Server implementation (except of those areas where I did most of the changes: application state management etc. ).
+- This implementation is not meant to be an example how to create a production level web server in Clojure - it is just my personal Clojure exercise.
+
+If you are interested to read my personal observations regarding the five languages I used to implement this same web server you might be interested to read my [Five Languages, Five Stories](https://medium.com/@kari.marttila/five-languages-five-stories-1afd7b0b583f) blog post.
 
 
 # Technical Description
 
-Simple Server is implemented using [Clojure](https://clojure.org/) and [Ring](https://github.com/ring-clojure).
+Simple Server is implemented using [Clojure](https://clojure.org/) and [Ring](https://github.com/ring-clojure). For routing I used [reitit](https://github.com/metosin/reitit).
 
 
 # Application State Management
 
-First I started to use the [mount](https://github.com/tolitius/mount) application state management library. Mount is easy to use and using Mount it was easy to reload different development configurations (e.g. local database, AWS local container based development DynamoDB database vs. real AWS DynamoDB database). But somehow I felt that using an application state management library and occasionally reloading all namespaces wasn't that productive for me. Occasionally I also got some weird errors that I couldn't resolve but restarting the REPL which I tried to avoid in this exercise. Finally I gave up, removed Mount and implemented a very simple custom state management for the web server: just store the web server in an atom (and protect it with defonce). This was actually a good solution for me. It forced me to better understand the namespace concept, top level form concepts and the idea how to compile certain pieces of the code: individual S expressions, def and defn forms and the whole namespace (and avoid the "refresh-all", i.e. reload all namespaces workflow). See more in the "REPL Driven Development" chapter.
+First I started to use the [mount](https://github.com/tolitius/mount) application state management library. Mount is easy to use and using Mount it is easy to manage the application state. I created different Mount managed state entities e.g. for domain and server. But somehow I felt that using an application state management library and occasionally reloading all namespaces wasn't that productive for me. Sometimes I also got some weird errors that I couldn't resolve but I had to restart the REPL which I tried to avoid in this exercise. Finally I gave up, removed Mount and implemented a very simple custom state management for the web server: just store the web server in an atom (and protect it with defonce). This was actually a good solution for me. It forced me to better understand the namespace concept, top level form concepts and the idea how to compile certain pieces of the code: individual S expressions, def and defn forms and the whole namespace (and avoid the "refresh-all", i.e. reload all namespaces workflow). See more in the "REPL Driven Development" chapter.
 
 
 # Configuration Handling
 
-I first started to use the [cprop](https://github.com/tolitius/cprop) configuration management library. Later on when I started to use [reitit](TODO) I switched also to use the [maailma](https://github.com/metosin/maailma) configuration management library from the same company - Metosin() (there is a specific reason for this which I tell in January 2020. I created most of the application in "env-dev-single-node" mode (simulating the databases by reading the data from files). In deps.edn I created various configuration aliases:
+I first started to use the [cprop](https://github.com/tolitius/cprop) configuration management library. Later on when I started to use [reitit](https://github.com/metosin/reitit) I switched also to use the [maailma](https://github.com/metosin/maailma) configuration management library from the same company - [Metosin](https://www.metosin.fi/en/) (there is a specific reason for this - I decided to join the company and I thought it would be wise to learn to use some of Metosin's libraries beforehand). I created most of the application in "env-dev-single-node" mode (simulating the databases by reading the data from files - NOTE: I'll create an AWS DynamoDB version later). In deps.edn I created various configuration aliases:
 
 ```clojure
 :env-dev-single-node    {:extra-paths ["resources/config/dev-single-node"]}
@@ -105,11 +95,40 @@ I realized that for simple application like this exercise you don't actually nee
 
 ## Editing Clojure Code Efficiently
 
-I have configured my Ubuntu key map so that I use Caps Lock key as a special key with other keys, e.g. Caps Lock with i,j,k,l keys are the arrow keys etc. This way I can keep my hands in the "asdf" and "ölkj" positions all the time when writing code. I use mostly Emacs key mapping with some of my own tweaking in IntelliJ IDEA + Cursive so that it is fast to navigate from one window to another, jump to the namespace I'm editing, compile S expressions and top level forms (defs and defns) and the whole namespace. I realized that with good productivity editor configurations and a good workflow + understanding how Clojure code gets compiled and loaded you can be quite productive using a very simple workflow: try code in the REPL scratch editor file, when you are content with the code, move the code to the actual Clojure namespace file, compile that section (top level form or the whole namespace), go back to scratch file, try calling that code in that namespace etc. And all this without ever leaving your hands from the standard "asdf"+"ölkj" positions (it is also beneficial to learn to type the so called "ten finger system"). 
+I have configured my Ubuntu key map so that I use Caps Lock key as a special key with other keys, e.g. Caps Lock with i,j,k,l keys are the arrow keys etc. This way I can keep my hands in the "asdf" and "ölkj" positions all the time when writing code. I use mostly Emacs key mapping with some of my own tweaking in IntelliJ IDEA + Cursive so that it is fast to navigate from one window to another, jump to the namespace I'm editing, compile S expressions and top level forms (defs and defns) and the whole namespace. I realized that with good productivity editor configurations and a good workflow + understanding how Clojure code gets compiled and loaded you can be quite productive using a very simple workflow: try code in the REPL scratch editor file, when you are content with the code, move the code to the actual Clojure namespace file, compile that section (top level form or the whole namespace), go back to scratch file, try calling that code in that namespace etc. And all this without ever leaving your hands from the standard "asdf"+"jklö" positions (it is also beneficial to learn to type the so called "ten finger system"). An example from my Linux X11 configuration:
+
+```
+    key <AC06> { [  h,  H,  Home,  ...
+    key <AC07> { [  j,  J,  Left,  ...
+    key <AC08> { [  k,  K,  Down,  ...
+    key <AC09> { [  l,  L,  Right, ...
+    key <AC10> { [  odiaeresis,  Odiaeresis,  End, ...
+```
 
 One great productivity trick is to edit S expressions as entitites. You should learn how to use "slurping" and "barfing" and other way to move S expressions efectively in your code. E.g. I already mentioned that I use Emacs key binding in IntelliJ IDEA (since Emacs is my favorite editor in headless environments). Emacs uses <ctrl>-k to delete all characters from the cursor to the end of line, and actually moves the string to the "yank area" from with you can "yank" the string to a new position by <ctrl>-y. I created a shortcut key <shift><ctrl>-k to delete the S expression next to cursor and move the S expression to the yank area, from which I can yank the S expression to a new place. I use this <shift><ctlr>-k with slurping and barfing all the time when editing Clojure code - it really makes editing Clojure code in actual source files and REPL scratch editor file a breeze.
 
-You can use your imagination what kind of small optimizations to use with your keymapping configurations. I studied a few years classical guitar and the teacher always emphasized economy when moving fingers. I have tried to follow the same economical principles with my Clojure keymappings. E.g. <caps-lock>-ö moves the cursor to the end of line ("end" remapping). Therefore it is economical that "evaluate the S expression before cursor" is <ctrl><shift>-ö: the rational being that I noticed that I often want to go to the end of line and evaluate the S expression there.
+I tried to make slurping and barfing as "natural" and "intuitive" to my keyboard practices and configuration as possible. Since I use the i,j,k,l characters for arrow keys (up, left, down, right) I found it natural to have the following configuration for slurping/barfing:
+
+```elisp
+     (define-key paredit-mode-map (kbd "C-M-j")  'paredit-backward-slurp-sexp)
+     (define-key paredit-mode-map (kbd "M-<right>") 'paredit-forward-slurp-sexp)
+     (define-key paredit-mode-map (kbd "C-M-l")  'paredit-backward-barf-sexp)
+     (define-key paredit-mode-map (kbd "M-<left>")  'paredit-forward-barf-sexp)
+```
+
+Example: Slurp forward is using little finger in Caps-lock (which is Alt-Gr in my Linux X11 configuration) + thumb in Alt key (M) and then hitting "l" key with right ring finger - I feel this is natural since Caps-lock + l is mapped to "right", so: I'm slurping to the "right" direction. 
+
+You can use your imagination what kind of small optimizations to use with your keymapping configurations. I studied a few years classical guitar and the teacher always emphasized economy when moving fingers. I have tried to follow the same economical principles with my Clojure keymappings. Example. I realized that I often set REPL to a certain namespace and then load the namespace to REPL - therefore it is economically feasible to have those key strokes near to each other: M-å and M-ä. One note regarding these scandinavian characters (my native language is Finnish). We have in the Finnish keyboards three so called umlaut characters: å, ä and ö. These characters don't have a native Emacs mappings, of course, so it is feasible to use them with Meta (Alt) and Control characters (so you don't need "double characters like C-c + C-k). Below you can see the hotkeys that I use often with my REPL interaction when programming Clojure:
+
+```elisp
+     (define-key cider-mode-map (kbd "M-l")  'cider-eval-last-sexp)
+     (define-key cider-mode-map (kbd "M-ö")  'cider-eval-defun-at-point)
+     (define-key cider-mode-map (kbd "M-å")  'cider-repl-set-ns)
+     (define-key cider-mode-map (kbd "M-ä")  'cider-load-buffer)
+     (define-key cider-mode-map (kbd "C-å")  'cider-test-run-ns-tests)
+     (define-key cider-mode-map (kbd "C-ä")  'cider-test-run-test) 
+```
+
 
 
 ## Using IntelliJ IDEA + Cursive and Emacs + Cider Interchangeably
@@ -145,56 +164,41 @@ I used [Logback](http://logback.qos.ch/). I tried to log all function entries an
 
 # Linting
 
-I tried [clj-kondo](https://github.com/borkdude/clj-kondo) as a linter. 
+I used [clj-kondo](https://github.com/borkdude/clj-kondo) as a linter. There is a nice instruction [how to use clj-kondo with IntelliJ IDEA](https://github.com/borkdude/clj-kondo/blob/master/doc/editor-integration.md). With the IntelliJ integration clj-kondo is a really good tool you should use with IntelliJ + Cursive. There are good instructions also for [Emacs integration](https://github.com/borkdude/flycheck-clj-kondo). I tried clj-kondo also with Emacs and it was pretty easy to install and use.
 
-TODO
 
 
 # Local DynamoDB Instance
 
-I used local DynamoDB instance while developing this new version of the Clojure Simple Server. See instructions in [Local-DynamoDB README.md](../../clj-ring-cljs-reagent-demo/simple-server/dynamodb/README.md).
+TO-BE-DONE: I'll implement the DynamoDB version later.
 
 
-# Clojure Development
+# IntelliJ IDEA / Cursive Run Configuration
 
-## IntelliJ IDEA / Cursive
-
-I run Clojure code in Cursive using Deps ("Run with Deps" option in Cursive Run/Debug Configurations). Mostly I use alias "dev-src" which comprises my development code ("dev-src" source tree) with production code ("src" source tree).
-
-## Command Line
-
-Start server in command line: 
-
-```bash
-TODO 
-```
-
-## Production Deployment
-
-When you want to create the production version follow [Ring Setup for Production](https://github.com/ring-clojure/ring/wiki/Setup-for-production) instructions.
-
-TODO
-
-## Connecting REPL to Running Ring Server
-
-TODO
-
-
-### Connect to Ring App using Remote REPL in IDEA/Cursive
-
-TODO
-
-## Static Code Analysis
-
-TODO
+I have a simple Clojure REPL configuration in IntelliJ IDEA / Cursive which uses deps.edn with profiles: ```dev-src,env-dev-single-node```, i.e. I use the dev-src profile which adds the directory dev-src (mydev.clj and the scratch file myscratch.clj) to the sources path. I did the development using the single-node profile. I'll create the AWS DynamoDB version later in which I'm going to need another AWS related profile, of course.
 
 
 # Unit Testing
 
-TODO
+To run the unit tests in command line use: [run-tests.sh](https://github.com/karimarttila/clojure/blob/master/webstore-demo/simple-server/run-tests.sh), example:
+
+```bash
+./run-tests.sh env-dev-single-node
+```
+
+Starting the unit tests in command line takes some time since Clojure needs to boot a new JVM instance. I ran unit tests in command line usually only once per coding session: before commiting the code to Git. You seldom need to run the unit tests in command line since you have a REPL integration in your editor and you have a running REPL in your editor at all times when you are programming new Clojure code. So, you usually create new code and experiment with the code in your scratch file sending forms for evaluation to REPL. When you are happy with the functionality you move the production part to src tree and the test part to test tree. And then run the unit tests in the test tree with your hot keys by sending the tests for evaluation to a running REPL session (i.e. no JVM boot). 
+
+# Building Fat Jar and Running It
+
+Use: ```./build-jar.sh env-dev-single-node ``` to build the fat jar with the single-node profile. 
+
+Use: ```run.jar``` to run the fat jar. You can override the profile values using two environment variables, example: ```SS_PORT=6161 SS_CONFIG_FILE=misc-conf/config.edn ./run-jar.sh```
 
 
+# Next Steps
 
-# Building for Production
+Next steps with this exercise are:
 
-TODO
+- Implement the [AWS DynamoDB](https://aws.amazon.com/dynamodb) version. I already have a configuration mechanism for this in domain, session and user namespaces.
+- Implement request/response data validation using Metosin [Malli](https://github.com/metosin/malli) library.
+
