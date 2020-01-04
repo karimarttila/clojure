@@ -19,7 +19,7 @@
           (try
             (let [port-as-int (Integer/parseInt port)]
               (assoc-in config [:server :port] port-as-int))
-            (catch Exception e
+            (catch Exception _
               (throw (ex-info (str "The port is not a string: " port)
                               {:cause #{:error :port-is-not-string}}))))
           config)))))

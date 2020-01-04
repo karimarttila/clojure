@@ -8,9 +8,6 @@
 ; NOTE: When testing in IntelliJ IDEA / Cursive: add AWS_PROFILE and AWS_DEFAULT_REGION in the
 ; Run Configuration / Environment.
 
-(comment
-  (do (require '[clojure.core.async :as a] '[clojure.java.io :as io] '[clojure.data.json :as json] '[cognitect.aws.client.api :as aws] '[cognitect.aws.client.api.async :as aws.async]) (def ddb (aws/client {:api :dynamodb})) (aws/invoke ddb {:op :ListTables})))
-
 (defn get-dynamodb-config
   "Gets the dynamodb configuration"
   [table-name]
@@ -77,8 +74,7 @@
     [this pg-id p-id]
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
     (let [my-ddb-config (get-dynamodb-config "product")
-          {my-ddb   :my-ddb
-           my-table :my-table} my-ddb-config
+          {my-ddb   :my-ddb} my-ddb-config
           raw-product (aws/invoke my-ddb {:op      :Query
                                           :request {:TableName     "ss-dev-product"
                                                     :KeyConditions {"pgid" {:AttributeValueList {:S (str pg-id)}
@@ -95,3 +91,7 @@
           (first)
           ((juxt (comp :S :pid) (comp :S :pgid) (comp :S :title) (comp :S :price) (comp :S :a_or_d) (comp :S :year) (comp :S :country) (comp :S :g_or_l)) (first (:Items raw-product)))
           )))))
+
+;; Commented for now since clj-kondo complains the alias. Check later when you configure AWS DynamoDB profile.
+;(comment
+;  (do (require '[clojure.core.async :as a] '[clojure.java.io :as io] '[clojure.data.json :as json] '[cognitect.aws.client.api :as aws] '[cognitect.aws.client.api.async :as aws.async]) (def ddb (aws/client {:api :dynamodb})) (aws/invoke ddb {:op :ListTables})))

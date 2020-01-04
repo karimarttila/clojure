@@ -69,14 +69,18 @@
                                     }
            ;; Depstar for building fat jar.
            :depstar
-              {:extra-deps
-                 {seancorfield/depstar {:mvn/version "0.5.1"}}}
+                                   {:extra-deps
+                                    {seancorfield/depstar {:mvn/version "0.5.1"}}}
+
+           :clj-kondo
+                                   {:extra-deps {clj-kondo {:mvn/version "RELEASE"}}
+                                    :main-opts  ["-m" "clj-kondo.main"]}
 
 
            ;; Cider specific.
-           :cider-clj {:extra-deps {org.clojure/clojure {:mvn/version "1.10.1"}
-                           cider/cider-nrepl {:mvn/version "0.22.4"}}
-              :main-opts ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]}
+           :cider-clj              {:extra-deps {org.clojure/clojure {:mvn/version "1.10.1"}
+                                                 cider/cider-nrepl   {:mvn/version "0.22.4"}}
+                                    :main-opts  ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]}
 
            ;; Environments. Only for development. When baking jar these are not
            ;; included - provide these in classpath when starting jar

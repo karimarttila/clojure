@@ -1,9 +1,10 @@
 (ns simpleserver.user.user-dynamodb
   (:require [simpleserver.user.user-interface :as ss-user-i]
             [clojure.tools.logging :as log]
-            [simpleserver.util.config :as ss-config]
-            [cognitect.aws.client.api :as aws]
-            [cognitect.aws.credentials :as credentials]))
+    ;       [cognitect.aws.client.api :as aws] ; TODO: Commented out until implementation start for clj-kondo not to complain.
+    ;       [cognitect.aws.credentials :as credentials]
+
+            ))
 
 (defrecord AwsDynamoDbR []
   ss-user-i/UserInterface

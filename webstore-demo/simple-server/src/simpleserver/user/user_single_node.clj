@@ -15,7 +15,7 @@
                     (with-open [reader (io/reader (str data-dir "/initial-users.csv"))]
                       (doall
                         (csv/read-csv reader :separator \tab)))
-                    (catch java.io.FileNotFoundException e []))]
+                    (catch java.io.FileNotFoundException _ []))]
     (reduce (fn [users user]
               (assoc users (first user)
                            {:userid          (nth user 0)
