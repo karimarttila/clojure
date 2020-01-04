@@ -8,8 +8,7 @@
             [simpleserver.user.user-interface :as ss-user-i]
             [simpleserver.user.user-config :as ss-user-config]
             [simpleserver.session.session-interface :as ss-session-i]
-            [simpleserver.session.session-config :as ss-session-config])
-  (:import (clojure.lang ExceptionInfo)))
+            [simpleserver.session.session-config :as ss-session-config]))
 
 (defn webserver-test-fixture
   [f]
@@ -113,7 +112,6 @@
           json-web-token (get-in login-ret [:body :json-web-token])
           params (-create-basic-authentication json-web-token)
           get-ret (-call-api :get "/products/1" params nil)
-          - (prn (str "****************** get-ret: ") get-ret)
           status (:status get-ret)
           body (:body get-ret)
           pg-id (:pg-id body)
@@ -121,6 +119,28 @@
           products (:products body)]
       (is (= (not (nil? json-web-token)) true))
       (is (= status 200))
-      (is (= pg-id "1"))
       (is (= ret "ok"))
+      (is (= pg-id "1"))
       (is (= (count products) 35)))))
+
+(deftest product-test
+  (log/debug "ENTER product-test")
+  (testing "GET: /product"
+    (let [login-ret (-call-api :post "login" nil {:email "kari.karttinen@foo.com" :password "Kari"})
+          _ (log/debug (str "Got login-ret: " login-ret))
+          json-web-token (get-in login-ret [:body :json-web-token])
+          params (-create-basic-authentication json-web-token)
+          get-ret (-call-api :get "/product/2/49" params nil)
+          status (:status get-ret)
+          body (:body get-ret)
+          pg-id (:pg-id body)
+          p-id (:p-id body)
+          ret (:ret body)
+          product (:product body)
+          right-product ["49" "2" "Once Upon a Time in the West" "14.4" "Leone, Sergio" "1968" "Italy-USA" "Western"]]
+      (is (= (not (nil? json-web-token)) true))
+      (is (= status 200))
+      (is (= ret "ok"))
+      (is (= pg-id "2"))
+      (is (= p-id "49"))
+      (is (= product right-product)))))
