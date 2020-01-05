@@ -108,7 +108,6 @@
                              {:ret :ok, :msg "Credentials ok" :json-web-token json-web-token})))]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
-
 (defn -product-groups
   "Gets product groups."
   [req]
@@ -159,19 +158,17 @@
   "Web server startup function.
   See source code how to experiment with REPL."
   (re-ring/ring-handler
-    (re-ring/router [routes]
-                    {:data {
-                            :muuntaja   mu-core/instance
-                            :coercion   re-co-spec/coercion
-                            :middleware [ri-params/wrap-params
-                                         re-mu/format-middleware
-                                         re-co/coerce-exceptions-middleware
-                                         re-co/coerce-request-middleware
-                                         re-co/coerce-response-middleware
-                                         ]}})
-    (re-ring/routes
-      (re-ring/create-resource-handler {:path "/"})
-      (re-ring/create-default-handler))))
+   (re-ring/router [routes]
+                   {:data {:muuntaja   mu-core/instance
+                           :coercion   re-co-spec/coercion
+                           :middleware [ri-params/wrap-params
+                                        re-mu/format-middleware
+                                        re-co/coerce-exceptions-middleware
+                                        re-co/coerce-request-middleware
+                                        re-co/coerce-response-middleware]}})
+   (re-ring/routes
+    (re-ring/create-resource-handler {:path "/"})
+    (re-ring/create-default-handler))))
 
 (defonce server (atom {:status :stopped, :server nil, :port nil}))
 
