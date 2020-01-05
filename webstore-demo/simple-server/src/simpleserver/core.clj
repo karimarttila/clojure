@@ -7,7 +7,6 @@
 ; NOTE: For Mount to be able to start/stop configurations you need to require them
 ; in this namespace - see Mount documentation.
 
-
 (defn -main
   "Using main to start app."
   [& args]

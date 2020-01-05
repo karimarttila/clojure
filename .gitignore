@@ -54,5 +54,6 @@ trace.edn
 # clj-kondo cache
 .cache/
 
+out/
 
 
