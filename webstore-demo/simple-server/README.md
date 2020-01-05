@@ -24,6 +24,8 @@
 
 # Introduction
 
+![alt text](doc/Clojure-reflections3.png)
+
 This Clojure Simple Server is a re-implementation of my original Clojure [Simple Server](https://github.com/karimarttila/clojure/tree/master/clj-ring-cljs-reagent-demo/simple-server). I did some three years ago. I created the first version of that Clojure exercise server to learn to use Clojure. I created this new Clojure Simple Server version mainly to learn new Clojure libraries and ways of working as:
 
 - Use [deps.edn](https://clojure.org/guides/deps_and_cli) instead of [Leiningen](https://leiningen.org/).
