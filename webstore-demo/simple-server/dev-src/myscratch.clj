@@ -40,19 +40,32 @@
   "YES!"
   "NO!")
 
+(do (require 'simpleserver.webserver.server)
+    (clojure.repl/dir simpleserver.webserver.server))
+
 (simpleserver.domain.domain-config/domain)
 
 ; Run tests in file (.
 (do (in-ns 'simpleserver.webserver.server-test) (run-tests))
 
-(def foo  {:status 200, :body {:ret "ok", :msg "Credentials ok" :json-web-token "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Imthcmkua2FydHRpbmVuQGZvby5jb20iLCJleHAiOjE1Nzc5MDY3NTN9.yxdq97PPKMfMRDePrdaMM9aEl2STzbfjZVMAv8q7mNE"}})
+(def foo {:status 200, :body {:ret "ok", :msg "Credentials ok" :json-web-token "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Imthcmkua2FydHRpbmVuQGZvby5jb20iLCJleHAiOjE1Nzc5MDY3NTN9.yxdq97PPKMfMRDePrdaMM9aEl2STzbfjZVMAv8q7mNE"}})
+
+(do
+  (in-ns 'simpleserver.webserver.server)
+  (start-web-server (get-in simpleserver.util.config/config [:server :port]))
+  (let [
+        _ (require 'mydev)
+        ret (mydev/do-get "/info" {})]
+    (prn (str "/info returned: " ret)))
+  (stop-web-server)
+  (in-ns 'user))
 
 *ns*
 (in-ns 'user)
 (in-ns 'simpleserver.webserver.server)
 {:a} {:b 1}
 
-(do (in-ns 'simpleserver.webserver.server) (start-web-server (get-in ss-config/config [:server :port])))
+(do (in-ns 'simpleserver.webserver.server) (start-web-server (get-in simpleserver.util.config/config [:server :port])))
 (do (require 'mydev) (mydev/do-get "/info" {}))
 (do (require 'mydev) (mydev/do-get "/print-req-get/1" nil))
 (do (require 'mydev) (mydev/do-get "/print-req-get" {:query-a 1 :query-b 2}))
