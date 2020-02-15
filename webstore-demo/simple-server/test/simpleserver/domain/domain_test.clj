@@ -54,3 +54,12 @@
       ;; What a coincidence! The chosen movie is the best western of all times!
       (is (= product right-product))
       (is (= no-product nil)))))
+
+(comment
+  (def my-domain ss-domain-config/domain)
+  my-domain
+  (def product-groups (ss-domain-i/get-product-groups my-domain))
+  product-groups
+  (def product-groups-len (count product-groups))
+  product-groups-len
+  )

@@ -6,8 +6,7 @@
 
 ;; NOTE: Do not use namespace in scratch!
 ;; That way you can send code snippets to the current namespace from this scratch file.
-;; In Cursive send from editor to REPL: <shift>-<ctrl>-Ö.
-;; Stop states, refresh, start states: <shift>-<ctrl>-L
+;; In Cursive send from editor to REPL: <alt>-l
 ;; NOTE: Keep in this file this project related scratch stuff that is in git.
 ;; Store general Clojure scratch code snippets in: /mnt/edata/aw/kari/my-clj-dev/dev-src/commonscratch.clj
 ;; ... and rename that file occasionally to e.g. "old-scratch-2019-05" in that directory.
@@ -23,6 +22,126 @@
 ;; In Cursive : Clojure Deps => choose aliases dev-src and test.
 ;; In Cursive REPL Run configuration: Aliases: dev-src,env-dev,test
 ;; ************************************************
+
+
+;; Continuing the local dynamodb development...
+
+
+
+(def table-name "product-group")
+(def my-env (get-in ss-config/config [:runtime-env]))
+my-env
+(def my-table-prefix (get-in ss-config/config [:aws :ss-table-prefix]))
+my-table-prefix
+(def my-table (str my-table-prefix "-" my-env "-" table-name))
+my-table
+(def my-endpoint  (get-in simpleserver.util.config/config [:aws :endpoint]))
+my-endpoint
+(def my-profile (get-in simpleserver.util.config/config [:aws :aws-profile]))
+my-profile
+(def my-credentials (credentials/profile-credentials-provider my-profile))
+my-profile
+(def my-ddb
+  (if (nil? my-credentials)
+    (aws/client {:api                  :dynamodb
+                 :credentials-provider my-credentials})
+    (aws/client {:api                  :dynamodb
+                 :credentials-provider my-credentials
+                 :endpoint-override    my-endpoint})))
+my-ddb
+{:my-ddb my-ddb :my-table my-table}
+(aws/invoke my-ddb {:op :ListTables})))
+
+(def my-ddb-config  (get-dynamodb-config "product-group"))
+my-ddb-config
+(let [{my-ddb   :my-ddb
+       my-table :my-table} my-ddb-config]
+  my-table)
+(def raw-map
+  (aws/invoke my-ddb {:op      :Scan
+                      :request {:TableName my-table}}))
+(reduce
+  (fn
+    [mymap item]
+    (assoc mymap
+      (-> item :pgid :S) (-> item :pgname :S)))
+  {}
+  (:Items raw-map))
+
+
+(do
+  ;; Profile credentials.
+  (require '[cognitect.aws.client.api :as aws])
+  (require '[cognitect.aws.credentials :as credentials])
+
+  (def endpoint (get-in simpleserver.util.config/config [:aws :endpoint]))
+  endpoint
+  (def my-profile (get-in simpleserver.util.config/config [:aws :aws-profile]))
+  my-profile
+
+  (def profile-cred (credentials/profile-credentials-provider my-profile))
+  profile-cred
+
+  (def ddb (aws/client {:api               :dynamodb :credentials-provider profile-cred
+                        :endpoint-override endpoint}))
+  (comment
+    (def ddb (aws/client {:api :dynamodb :credentials-provider profile-cred
+                          })))
+  ;(def ddb (aws/client {:api :dynamodb :endpoint-override endpoint}))
+
+  ;(def ddb (aws/client {:api :dynamodb }))
+
+  (aws/invoke ddb {:op :Scan :request {:TableName "ss-dev-product-group"}})
+  (aws/invoke ddb {:op      :Scan
+                   :request {:TableName "ss-dev-product"}})
+
+
+  (aws/invoke ddb {:op      :Query
+                   :request {:TableName                 "ss-dev-product"
+                             :IndexName                 "PGIndex"
+                             :KeyConditionExpression    "pgid = :pgid"
+                             :ExpressionAttributeValues {":pgid" {:S "2"}}
+                             }})
+
+  (aws/invoke ddb {:op      :Query
+                   :request {:TableName                 "ss-dev-product"
+                             :KeyConditionExpression    "pid = :pid"
+                             :ExpressionAttributeValues {":pid" {:S "2"}}
+                             }})
+
+  (aws/invoke ddb {:op      :Query
+                   :request {:TableName     "ss-dev-product"
+                             :KeyConditions {"pgid" {:AttributeValueList {:S "2"}
+                                                     :ComparisonOperator "EQ"}
+                                             "pid"  {:AttributeValueList {:S "3"}
+                                                     :ComparisonOperator "EQ"}}
+                             }})
+  ;; Not found product
+  (aws/invoke ddb {:op      :Query
+                   :request {:TableName     "ss-dev-product"
+                             :KeyConditions {"pgid" {:AttributeValueList {:S "2"}
+                                                     :ComparisonOperator "EQ"}
+                                             "pid"  {:AttributeValueList {:S "10000"}
+                                                     :ComparisonOperator "EQ"}}
+                             }})
+  (aws/ops ddb)
+  (aws/doc ddb :Scan)
+  (aws/doc ddb :Query)
+
+  ; TODO HERE
+  ;
+
+  (def raw-products (simpleserver.domain.domain-interface/get-products my-aws-domain 1))
+  raw-products
+
+  (:Items raw-products)
+
+  (seq (->> (:Items raw-products)
+            (map (juxt (comp :S :pid) (comp :S :pgid) (comp :S :title) (comp :S :price)))
+            (into [])))
+
+  )
+
 
 ;; ************************************
 ;; Implementing the server apis...

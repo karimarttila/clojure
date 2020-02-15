@@ -11,7 +11,7 @@
 (defn get-dynamodb-config
   "Gets the dynamodb configuration"
   [table-name]
-  (let [my-env (get-in ss-config/config [:my-env])
+  (let [my-env (get-in ss-config/config [:runtime-env])
         my-table-prefix (get-in ss-config/config [:aws :ss-table-prefix])
         my-table (str my-table-prefix "-" my-env "-" table-name)
         my-endpoint (get-in simpleserver.util.config/config [:aws :endpoint])
@@ -43,6 +43,8 @@
             (-> item :pgid :S) (-> item :pgname :S)))
         {}
         (:Items raw-map))))
+
+
 
   ; TODO: Previous implementation returned seq of seqs.
   ; This implementation returns seq of vecs.
@@ -92,6 +94,5 @@
           ((juxt (comp :S :pid) (comp :S :pgid) (comp :S :title) (comp :S :price) (comp :S :a_or_d) (comp :S :year) (comp :S :country) (comp :S :g_or_l)) (first (:Items raw-product)))
           )))))
 
-;; Commented for now since clj-kondo complains the alias. Check later when you configure AWS DynamoDB profile.
-;(comment
-;  (do (require '[clojure.core.async :as a] '[clojure.java.io :as io] '[clojure.data.json :as json] '[cognitect.aws.client.api :as aws] '[cognitect.aws.client.api.async :as aws.async]) (def ddb (aws/client {:api :dynamodb})) (aws/invoke ddb {:op :ListTables})))
+
+
