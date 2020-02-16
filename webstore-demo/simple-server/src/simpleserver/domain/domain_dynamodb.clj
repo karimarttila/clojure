@@ -8,22 +8,6 @@
 ; NOTE: When testing in IntelliJ IDEA / Cursive: add AWS_PROFILE and AWS_DEFAULT_REGION in the
 ; Run Configuration / Environment.
 
-(defn get-dynamodb-config
-  "Gets the dynamodb configuration"
-  [table-name]
-  (let [my-env (get-in ss-config/config [:runtime-env])
-        my-table-prefix (get-in ss-config/config [:aws :ss-table-prefix])
-        my-table (str my-table-prefix "-" my-env "-" table-name)
-        my-endpoint (get-in simpleserver.util.config/config [:aws :endpoint])
-        my-profile (get-in simpleserver.util.config/config [:aws :aws-profile])
-        my-credentials (credentials/profile-credentials-provider my-profile)
-        my-ddb (if (nil? my-credentials)
-                 (aws/client {:api                  :dynamodb
-                              :credentials-provider my-credentials})
-                 (aws/client {:api                  :dynamodb
-                              :credentials-provider my-credentials
-                              :endpoint-override    my-endpoint}))]
-    {:my-ddb my-ddb :my-table my-table}))
 
 (defrecord AwsDynamoDbR []
   ss-domain-i/DomainInterface
@@ -31,9 +15,8 @@
   (get-product-groups
     [this]
     (log/debug "ENTER get-product-groups")
-    (let [my-ddb-config (get-dynamodb-config "product-group")
-          {my-ddb   :my-ddb
-           my-table :my-table} my-ddb-config
+    (let [{my-ddb   :my-ddb
+           my-table :my-table} (ss-config/get-dynamodb-config "product-group")
           raw-map (aws/invoke my-ddb {:op      :Scan
                                       :request {:TableName my-table}})]
       (reduce
@@ -45,16 +28,11 @@
         (:Items raw-map))))
 
 
-
-  ; TODO: Previous implementation returned seq of seqs.
-  ; This implementation returns seq of vecs.
-  ; => Check in testing that this is not an issue!
   (get-products
     [this pg-id]
     (log/debug (str "ENTER get-products, pg-id: " pg-id))
-    (let [my-ddb-config (get-dynamodb-config "product")
-          {my-ddb   :my-ddb
-           my-table :my-table} my-ddb-config
+    (let [{my-ddb   :my-ddb
+           my-table :my-table} (ss-config/get-dynamodb-config "product")
           raw-products (aws/invoke my-ddb {:op      :Query
                                            :request {:TableName                 my-table
                                                      :IndexName                 "PGIndex"
@@ -75,8 +53,8 @@
   (get-product
     [this pg-id p-id]
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
-    (let [my-ddb-config (get-dynamodb-config "product")
-          {my-ddb   :my-ddb} my-ddb-config
+    (let [{my-ddb   :my-ddb
+           my-table :my-table} (ss-config/get-dynamodb-config "product")
           raw-product (aws/invoke my-ddb {:op      :Query
                                           :request {:TableName     "ss-dev-product"
                                                     :KeyConditions {"pgid" {:AttributeValueList {:S (str pg-id)}

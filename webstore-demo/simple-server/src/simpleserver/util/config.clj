@@ -1,7 +1,8 @@
 (ns simpleserver.util.config
   (:require
     [maailma.core :as m]
-    ))
+    [cognitect.aws.credentials :as credentials]
+    [cognitect.aws.client.api :as aws]))
 
 (defn -create-config
   []
@@ -26,6 +27,24 @@
 
 (def config (-create-config))
 
+(defn get-dynamodb-config
+  "Gets the dynamodb configuration"
+  [table-name]
+  (let [my-env (get-in config [:runtime-env])
+        my-table-prefix (get-in config [:aws :ss-table-prefix])
+        my-table (str my-table-prefix "-" my-env "-" table-name)
+        my-endpoint (get-in config [:aws :endpoint])
+        my-profile (get-in config [:aws :aws-profile])
+        my-credentials (credentials/profile-credentials-provider my-profile)
+        my-ddb (if (nil? my-credentials)
+                 (aws/client {:api                  :dynamodb
+                              :credentials-provider my-credentials})
+                 (aws/client {:api                  :dynamodb
+                              :credentials-provider my-credentials
+                              :endpoint-override    my-endpoint}))]
+    {:my-ddb my-ddb :my-table my-table}))
+
 (comment
   config
+  (get-dynamodb-config "session")
   )

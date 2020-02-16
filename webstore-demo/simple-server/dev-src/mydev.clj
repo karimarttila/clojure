@@ -4,7 +4,8 @@
     [clojure.tools.namespace.repl :as ns-repl]
     [clj-http.client :as http-client]
     [simpleserver.util.config :as ss-config]
-    [simpleserver.webserver.server :as ss-ws]))
+    [simpleserver.webserver.server :as ss-ws]
+    ))
 
 ; NOTE: For Mount to be able to start/stop configurations you need to require them
 ; in this namespace - see Mound documentation.
@@ -31,19 +32,26 @@
   (ns-repl/refresh)
   (log/debug "EXIT refresh"))
 
-(defn refresh-all []
-  "Refreshes all, does not start server."
-  (log/debug "ENTER refresh-all")
-  (stop)
-  (ns-repl/refresh-all)
-  (log/debug "EXIT refresh-all"))
+; Breaks REPL.
+;(defn refresh-all []
+;  "Refreshes all, does not start server."
+;  (log/debug "ENTER refresh-all")
+;  (stop)
+;  (ns-repl/refresh-all)
+;  (log/debug "EXIT refresh-all"))
 
 (defn reset []
   "Resets application states."
   (log/debug "ENTER reset")
   (stop)
-  (ns-repl/refresh :after 'mydev/start)
+  (ns-repl/refresh :after 'user/start)
   (log/debug "EXIT reset"))
+
+(comment
+  (reset)
+  (refresh-all)
+
+  )
 
 ; Example: (mydev/do-get "info")
 (defn do-get

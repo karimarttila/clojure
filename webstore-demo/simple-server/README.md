@@ -86,8 +86,8 @@ In my scratch file I have experimental code or various short Clojure code snippe
   (in-ns 'simpleserver.webserver.server)
   (start-web-server (get-in simpleserver.util.config/config [:server :port]))
   (let [
-        _ (require 'mydev)
-        ret (mydev/do-get "/info" {})]
+        _ (require 'user)
+        ret (user/do-get "/info" {})]
     (prn (str "/info returned: " ret)))
   (stop-web-server)
   (in-ns 'user))
