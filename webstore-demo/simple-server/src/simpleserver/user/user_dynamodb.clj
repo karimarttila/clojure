@@ -4,7 +4,24 @@
     ;       [cognitect.aws.client.api :as aws] ; TODO: Commented out until implementation start for clj-kondo not to complain.
     ;       [cognitect.aws.credentials :as credentials]
 
-            ))
+            [simpleserver.util.config :as ss-config]
+            [cognitect.aws.client.api :as aws]))
+
+(defn -get-converted-users
+  [raw-users]
+  (map (fn [item]
+         item
+         (let [user-id (get-in item [:userid :S])
+               email (get-in item [:email :S])
+               first-name (get-in item [:firstname :S])
+               last-name (get-in item [:lastname :S])
+               hashed-password (get-in item [:hpwd :S])]
+           {:userid          user-id
+            :email           email
+            :first-name      first-name
+            :last-name       last-name
+            :hashed-password hashed-password}))
+       (:Items raw-users)))
 
 (defrecord AwsDynamoDbR []
   ss-user-i/UserInterface
@@ -27,10 +44,25 @@
   (-get-users
     [this]
     (log/debug (str "ENTER -get-users"))
-    (throw (java.lang.UnsupportedOperationException. "Not implemented yet")))
+    (let [{my-ddb   :my-ddb
+           my-table :my-table} (ss-config/get-dynamodb-config "users")
+          raw-users (aws/invoke my-ddb {:op      :Scan
+                                        :request {:TableName my-table}})
+          converted-users (-get-converted-users raw-users)]
+      (reduce (fn [users user]
+                (assoc users (:userid user) user))
+              {}
+              converted-users)))
 
   (-reset-users!
     [this]
     (log/debug (str "ENTER -reset-users!"))
     (throw (java.lang.UnsupportedOperationException. "Not implemented yet")))
+  )
+
+(comment
+  (require '[mydev])
+  (mydev/refresh)
+  (simpleserver.user.user-interface/-get-users
+    simpleserver.user.user-config/user)
   )

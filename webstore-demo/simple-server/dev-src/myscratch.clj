@@ -8,6 +8,7 @@
 
 ;; NOTE: Do use use namespace in scratch, or in refresh you accidentally
 ;; populate some production namespace while developing.
+;; Well, later on I actually started using namespace and added all stuff in here in comments and used user namespace for adding experimental stuff so that it doesn't accidentally go to production namespaces while doing development.
 
 ;; In Cursive send from editor to REPL: <alt>-l
 ;; NOTE: Keep in this file this project related scratch stuff that is in git.
@@ -33,8 +34,75 @@
 ;; Continuing the local dynamodb development...
 
 (comment
+  (require '[mydev])
   (mydev/refresh)
 
+  (do
+    (in-ns 'user)
+    (def table-name "users")
+    (require '[simpleserver.util.config :as ss-config])
+    (require '[cognitect.aws.credentials :as credentials])
+    (require '[cognitect.aws.client.api :as aws])
+    (def my-env (get-in ss-config/config [:runtime-env]))
+    (def my-table-prefix (get-in ss-config/config [:aws :ss-table-prefix]))
+    (def my-table (str my-table-prefix "-" my-env "-" table-name))
+    user/my-table
+    (def my-endpoint (get-in simpleserver.util.config/config [:aws :endpoint]))
+    (def my-profile (get-in simpleserver.util.config/config [:aws :aws-profile]))
+    (def my-credentials (credentials/profile-credentials-provider my-profile))
+    (def my-ddb
+      (if (nil? my-credentials)
+        (aws/client {:api                  :dynamodb
+                     :credentials-provider my-credentials})
+        (aws/client {:api                  :dynamodb
+                     :credentials-provider my-credentials
+                     :endpoint-override    my-endpoint})))
+    user/my-ddb
+    (def raw-users (aws/invoke my-ddb {:op      :Scan
+                                       :request {:TableName my-table}}))
+    (:Items raw-users)
+    (def converted-users
+      (map (fn [item]
+             item
+             (let [user-id (get-in item [:userid :S])
+                   email (get-in item [:email :S])
+                   first-name (get-in item [:firstname :S])
+                   last-name (get-in item [:lastname :S])
+                   hashed-password (get-in item [:hpwd :S])]
+               {:userid          user-id
+                :email           email
+                :first-name      first-name
+                :last-name       last-name
+                :hashed-password hashed-password}))
+           (:Items raw-users)))
+    user/converted-users
+
+    (reduce (fn [users user]
+              (assoc users (:userid user) user))
+            {}
+            user/converted-users)
+
+    (def one-converted-user
+      {:userid          "1",
+       :email           "kari.karttinen@foo.com",
+       :first-name      "Kari",
+       :last-name       "Karttinen",
+       :hashed-password "1340477763"}
+      )
+    one-converted-user
+    (assoc {} (:userid one-converted-user) one-converted-user)
+
+    (def one-item {:firstname {:S "Timo"},
+                   :userid    {:S "2"},
+                   :hpwd      {:S "-36072128"},
+                   :email     {:S "timo.tillinen@foo.com"},
+                   :lastname  {:S "Tillinen"}})
+    one-item
+    (get-in one-item [:userid :S])
+    (:S (:userid one-item))
+    ))
+
+(comment
   (do
     (in-ns 'user)
     (def table-name "session")
@@ -86,8 +154,8 @@
               (conj sessions (get-in session [:token :S])))
             #{}
             (items :Items))
-
     ))
+
 
 (comment
   (def table-name "product-group")
