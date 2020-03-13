@@ -100,7 +100,25 @@
     one-item
     (get-in one-item [:userid :S])
     (:S (:userid one-item))
-    ))
+
+    (aws/doc my-ddb :Query)
+    (def email-exists-ret (aws/invoke my-ddb {:op      :Query
+                                              :request {:TableName                 my-table
+                                                        :KeyConditionExpression    "email = :email"
+                                                        :ExpressionAttributeValues {":email" {:S (str "timo.tillinen@foo.com")}}}}))
+    user/email-exists-ret
+    (get-in (first (:Items user/email-exists-ret)) [:email :S])
+
+    )
+  )
+
+(comment
+  ; in user-dynamodb
+
+  (simpleserver.user.user-interface/email-already-exists?
+    simpleserver.user.user-config/user "kari.karttinen@foo.com")
+
+  )
 
 (comment
   (do
@@ -127,6 +145,7 @@
     (aws/ops my-ddb)
     (sort (keys (aws/ops my-ddb)))
     (aws/doc my-ddb :Scan)
+    (aws/doc my-ddb :Query)
     (aws/doc my-ddb :GetItem)
     (aws/doc my-ddb :PutItem)
     (aws/doc my-ddb :DeleteItem)

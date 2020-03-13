@@ -29,7 +29,15 @@
   (email-already-exists?
     [this email]
     (log/debug (str "ENTER email-already-exists?, email: " email))
-    (throw (java.lang.UnsupportedOperationException. "Not implemented yet")))
+    (let [{my-ddb   :my-ddb
+           my-table :my-table} (ss-config/get-dynamodb-config "users")
+          raw-user (aws/invoke my-ddb {:op      :Query
+                        :request {:TableName                 my-table
+                                  :KeyConditionExpression    "email = :email"
+                                  :ExpressionAttributeValues {":email" {:S email}}}})
+          ret-email (get-in (first (:Items raw-user)) [:email :S])]
+      (clojure.pprint/pprint (str "email: " email))
+      (= ret-email email)))
 
   (add-new-user
     [this email first-name last-name password]
@@ -61,8 +69,11 @@
   )
 
 (comment
+  ; NOTE: Remember to compile the interface first, then the user-config, then this ns.
   (require '[mydev])
   (mydev/refresh)
   (simpleserver.user.user-interface/-get-users
     simpleserver.user.user-config/user)
+  (simpleserver.user.user-interface/email-already-exists?
+    simpleserver.user.user-config/user "kari.karttinenX@foo.com")
   )
