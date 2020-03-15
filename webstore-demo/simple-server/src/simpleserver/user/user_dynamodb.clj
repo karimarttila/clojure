@@ -1,11 +1,10 @@
 (ns simpleserver.user.user-dynamodb
   (:require [simpleserver.user.user-interface :as ss-user-i]
             [clojure.tools.logging :as log]
-    ;       [cognitect.aws.client.api :as aws] ; TODO: Commented out until implementation start for clj-kondo not to complain.
-    ;       [cognitect.aws.credentials :as credentials]
-
+            [cognitect.aws.client.api :as aws]
             [simpleserver.util.config :as ss-config]
-            [cognitect.aws.client.api :as aws]))
+            [simpleserver.user.user-interface :as ss-user-i]
+            [simpleserver.user.user-common :as ss-user-common]))
 
 (defn -get-converted-users
   [raw-users]
@@ -32,22 +31,47 @@
     (let [{my-ddb   :my-ddb
            my-table :my-table} (ss-config/get-dynamodb-config "users")
           raw-user (aws/invoke my-ddb {:op      :Query
-                        :request {:TableName                 my-table
-                                  :KeyConditionExpression    "email = :email"
-                                  :ExpressionAttributeValues {":email" {:S email}}}})
+                                       :request {:TableName                 my-table
+                                                 :KeyConditionExpression    "email = :email"
+                                                 :ExpressionAttributeValues {":email" {:S email}}}})
           ret-email (get-in (first (:Items raw-user)) [:email :S])]
-      (clojure.pprint/pprint (str "email: " email))
       (= ret-email email)))
 
   (add-new-user
     [this email first-name last-name password]
     (log/debug (str "ENTER add-new-user"))
-    (throw (java.lang.UnsupportedOperationException. "Not implemented yet")))
+    (let [already-exists (ss-user-i/email-already-exists? this email)]
+      (if already-exists
+        (do
+          (log/debug (str "Failure: email already exists: " email))
+          {:email email, :ret :failed :msg "Email already exists"})
+        (let [{my-ddb   :my-ddb
+               my-table :my-table} (ss-config/get-dynamodb-config "users")
+              new-id (ss-user-common/uuid)
+              request {
+                       :TableName my-table
+                       :Item      {"userid"    {:S new-id}
+                                   "email"     {:S email}
+                                   "firstname" {:S first-name}
+                                   "lastname"  {:S last-name}
+                                   "hpwd"      {:S (str (hash password))}}
+                       }
+              _ (aws/invoke my-ddb {:op      :PutItem
+                                    :request request})]
+          {:email email, :ret :ok}))))
 
   (credentials-ok?
     [this email password]
     (log/debug (str "ENTER credentials-ok?"))
-    (throw (java.lang.UnsupportedOperationException. "Not implemented yet")))
+    (let [{my-ddb   :my-ddb
+           my-table :my-table} (ss-config/get-dynamodb-config "users")
+          request {:TableName                 my-table
+                   :KeyConditionExpression    "email = :email"
+                   :ExpressionAttributeValues {":email" {:S email}}}
+          raw-user (aws/invoke my-ddb {:op      :Query
+                                       :request request})
+          ret-password (get-in (first (:Items raw-user)) [:hpwd :S])]
+      (= ret-password (str (hash password)))))
 
   (-get-users
     [this]
@@ -65,15 +89,53 @@
   (-reset-users!
     [this]
     (log/debug (str "ENTER -reset-users!"))
-    (throw (java.lang.UnsupportedOperationException. "Not implemented yet")))
+    (if (= (ss-config/config :runtime-env) "dev")
+      (let [{my-ddb   :my-ddb
+             my-table :my-table} (ss-config/get-dynamodb-config "users")
+            users-to-delete (ss-user-i/-get-users this)
+            emails-to-delete (map (fn [item]
+                          (:email (second item)))
+                        users-to-delete)
+            initial-users (ss-user-common/get-initial-users)]
+        (dorun (map (fn [email]
+                      (aws/invoke my-ddb {:op      :DeleteItem
+                                          :request {
+                                                    :TableName my-table
+                                                    :Key       {"email" {:S email}}}}))
+                    emails-to-delete))
+        (dorun (map (fn [user]
+                      (let [user-map (second user)]
+                        (ss-user-i/add-new-user this
+                                                (:email user-map)
+                                                (:first-name user-map)
+                                                (:last-name user-map)
+                                                ; NOTE: Actually we hash it twice, but
+                                                ; this is just an exercise.
+                                                (:hashed-password user-map))))
+                    initial-users))
+
+        )
+      (throw (java.lang.UnsupportedOperationException. "You can reset sessions only in development environment!"))))
+
   )
 
 (comment
-  ; NOTE: Remember to compile the interface first, then the user-config, then this ns.
+  ;; NOTE: Remember to refresh everything if you make changes, since protocol and config needs to be loaded before this class.
+  (do
+    (require '[mydev])
+    (mydev/refresh)
+    )
+
   (require '[mydev])
   (mydev/refresh)
   (simpleserver.user.user-interface/-get-users
     simpleserver.user.user-config/user)
   (simpleserver.user.user-interface/email-already-exists?
-    simpleserver.user.user-config/user "kari.karttinenX@foo.com")
+    simpleserver.user.user-config/user "kari.karttinen@foo.com")
+  (simpleserver.user.user-interface/add-new-user
+    simpleserver.user.user-config/user "olavi.virta2@foo.com" "Ola" "Virta" "passw0rd")
+  (simpleserver.user.user-interface/email-already-exists?
+    simpleserver.user.user-config/user "olavi.virta@foo.com")
+  (simpleserver.user.user-interface/credentials-ok?
+    simpleserver.user.user-config/user "olavi.virta2@foo.com" "passw0rd")
   )

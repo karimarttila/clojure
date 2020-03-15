@@ -1,31 +1,15 @@
 (ns simpleserver.user.user-single-node
   (:require
     [clojure.tools.logging :as log]
-    [clojure.data.csv :as csv]
-    [clojure.java.io :as io]
     [simpleserver.user.user-interface :as ss-user-i]
     [simpleserver.user.user-common :as ss-user-common]
     [simpleserver.util.config :as ss-config]
     ))
 
-(defn -get-initial-users
-  []
-  (let [data-dir (get-in ss-config/config [:single-node-data :data-dir])
-        raw-users (try
-                    (with-open [reader (io/reader (str data-dir "/initial-users.csv"))]
-                      (doall
-                        (csv/read-csv reader :separator \tab)))
-                    (catch java.io.FileNotFoundException _ []))]
-    (reduce (fn [users user]
-              (assoc users (first user)
-                           {:userid          (nth user 0)
-                            :email           (nth user 1)
-                            :first-name      (nth user 2)
-                            :last-name       (nth user 3)
-                            :hashed-password (nth user 4)})) {} raw-users)))
+
 
 ; Atom for testing purposes.
-(def my-users (atom (-get-initial-users)))
+(def my-users (atom (ss-user-common/get-initial-users)))
 
 
 (defrecord SingleNodeR []
@@ -79,7 +63,7 @@
     [this]
     (log/debug (str "ENTER -reset-users!"))
     (if (= (ss-config/config :runtime-env) "dev")
-      (reset! my-users (-get-initial-users))
+      (reset! my-users (ss-user-common/get-initial-users))
       (throw (java.lang.UnsupportedOperationException. "You can reset sessions only in development environment!")))))
 
 ;; ****************************************************************

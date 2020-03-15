@@ -33,9 +33,11 @@
 
 ;; Continuing the local dynamodb development...
 
+
 (comment
-  (require '[mydev])
-  (mydev/refresh)
+  (do
+    (require '[mydev])
+    (mydev/refresh))
 
   (do
     (in-ns 'user)
@@ -109,6 +111,43 @@
     user/email-exists-ret
     (get-in (first (:Items user/email-exists-ret)) [:email :S])
 
+    (aws/invoke my-ddb {:op      :PutItem
+                        :request {
+                                  :TableName my-table
+                                  :Item      {"userid"    {:S "12"}
+                                              "email"     {:S "etu2.suku@foo.com"}
+                                              "firstname" {:S "etu"}
+                                              "lastname"  {:S "suku"}
+                                              "hpwd"      {:S "XXX"}}
+                                  }})
+
+    (aws/invoke my-ddb {:op      :DeleteItem
+                        :request {
+                                  :TableName my-table
+                                  :Key       {"email" {:S "olavi.virta@foo.com"}}}})
+
+    (def users {"2" {:userid          "2",
+                     :email           "timo.tillinen@foo.com",
+                     :first-name      "Timo",
+                     :last-name       "Tillinen",
+                     :hashed-password "-36072128"},
+                "1" {:userid          "1",
+                     :email           "kari.karttinen@foo.com",
+                     :first-name      "Kari",
+                     :last-name       "Karttinen",
+                     :hashed-password "1340477763"},
+
+                "3" {:userid          "3",
+                     :email           "erkka.erkkila@foo.com",
+                     :first-name      "Erkka",
+                     :last-name       "Erkkilä",
+                     :hashed-password "1655387230"},
+                })
+    users
+    (map (fn [item]
+           (:email (second item)))
+         users)
+
     )
   )
 
@@ -144,6 +183,8 @@
     ;; ask what it can do
     (aws/ops my-ddb)
     (sort (keys (aws/ops my-ddb)))
+    (aws/doc my-ddb :PutItem)
+    (aws/doc my-ddb :DeleteItem)
     (aws/doc my-ddb :Scan)
     (aws/doc my-ddb :Query)
     (aws/doc my-ddb :GetItem)
@@ -173,7 +214,8 @@
               (conj sessions (get-in session [:token :S])))
             #{}
             (items :Items))
-    ))
+    )
+  )
 
 
 (comment

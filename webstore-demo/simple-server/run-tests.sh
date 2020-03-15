@@ -3,7 +3,7 @@
 
 if [ $# -ne 1 ]
 then
-    echo "Usage: ./run-tests-dev-env.sh <configuration>"
+    echo "Usage: ./run-tests.sh <configuration>"
     echo "Configurations: env-dev, env-dev-single-node, env-dev-local-dynamodb, env-dev-real-aws"
     echo "Example: ./run-tests.sh env-dev-single-node"
     exit 1
