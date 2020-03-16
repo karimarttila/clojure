@@ -62,6 +62,7 @@
     user/my-ddb
     (def raw-users (aws/invoke my-ddb {:op      :Scan
                                        :request {:TableName my-table}}))
+    raw-users
     (:Items raw-users)
     (def converted-users
       (map (fn [item]

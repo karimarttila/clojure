@@ -22,6 +22,29 @@
             :hashed-password hashed-password}))
        (:Items raw-users)))
 
+(defn -add-new-user-without-hashing-password
+  [this email first-name last-name password]
+  (log/debug (str "ENTER add-new-user"))
+  (let [already-exists (ss-user-i/email-already-exists? this email)]
+    (if already-exists
+      (do
+        (log/debug (str "Failure: email already exists: " email))
+        {:email email, :ret :failed :msg "Email already exists"})
+      (let [{my-ddb   :my-ddb
+             my-table :my-table} (ss-config/get-dynamodb-config "users")
+            new-id (ss-user-common/uuid)
+            request {
+                     :TableName my-table
+                     :Item      {"userid"    {:S new-id}
+                                 "email"     {:S email}
+                                 "firstname" {:S first-name}
+                                 "lastname"  {:S last-name}
+                                 "hpwd"      {:S password}}
+                     }
+            _ (aws/invoke my-ddb {:op      :PutItem
+                                  :request request})]
+        {:email email, :ret :ok}))))
+
 (defrecord AwsDynamoDbR []
   ss-user-i/UserInterface
 
@@ -94,8 +117,8 @@
              my-table :my-table} (ss-config/get-dynamodb-config "users")
             users-to-delete (ss-user-i/-get-users this)
             emails-to-delete (map (fn [item]
-                          (:email (second item)))
-                        users-to-delete)
+                                    (:email (second item)))
+                                  users-to-delete)
             initial-users (ss-user-common/get-initial-users)]
         (dorun (map (fn [email]
                       (aws/invoke my-ddb {:op      :DeleteItem
@@ -105,13 +128,14 @@
                     emails-to-delete))
         (dorun (map (fn [user]
                       (let [user-map (second user)]
-                        (ss-user-i/add-new-user this
-                                                (:email user-map)
-                                                (:first-name user-map)
-                                                (:last-name user-map)
-                                                ; NOTE: Actually we hash it twice, but
-                                                ; this is just an exercise.
-                                                (:hashed-password user-map))))
+                        (-add-new-user-without-hashing-password
+                          this
+                          (:email user-map)
+                          (:first-name user-map)
+                          (:last-name user-map)
+                          ; NOTE: Actually we hash it twice, but
+                          ; this is just an exercise.
+                          (:hashed-password user-map))))
                     initial-users))
 
         )
@@ -138,4 +162,6 @@
     simpleserver.user.user-config/user "olavi.virta@foo.com")
   (simpleserver.user.user-interface/credentials-ok?
     simpleserver.user.user-config/user "olavi.virta2@foo.com" "passw0rd")
+  (simpleserver.user.user-interface/-reset-users!
+    simpleserver.user.user-config/user)
   )
