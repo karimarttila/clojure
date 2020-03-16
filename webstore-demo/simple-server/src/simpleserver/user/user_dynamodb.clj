@@ -133,8 +133,6 @@
                           (:email user-map)
                           (:first-name user-map)
                           (:last-name user-map)
-                          ; NOTE: Actually we hash it twice, but
-                          ; this is just an exercise.
                           (:hashed-password user-map))))
                     initial-users))
 
