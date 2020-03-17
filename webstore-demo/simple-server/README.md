@@ -55,7 +55,7 @@ I started to use the [mount](https://github.com/tolitius/mount) application stat
 
 # Configuration Handling
 
-I first started to use the [cprop](https://github.com/tolitius/cprop) configuration management library. Later on when I started to use [reitit](https://github.com/metosin/reitit) I switched also to use [maailma](https://github.com/metosin/maailma) configuration management library from the same company - [Metosin](https://www.metosin.fi/en/) (there is a specific reason for this - I decided to join the company and I thought it would be wise to learn to use some of Metosin's libraries beforehand). I created most of the application in "env-dev-single-node" mode (simulating the databases by reading the data from files - NOTE: I'll create an AWS DynamoDB version later). In deps.edn I created various configuration aliases:
+I first started to use the [cprop](https://github.com/tolitius/cprop) configuration management library. Later on when I started to use [reitit](https://github.com/metosin/reitit) I switched also to use [maailma](https://github.com/metosin/maailma) configuration management library from the same company - [Metosin](https://www.metosin.fi/en/) (there is a specific reason for this - I decided to join the company and I thought it would be wise to learn to use some of Metosin's libraries beforehand). I created most of the application in "env-dev-single-node" mode (simulating the databases by reading the data from files). Later on (spring 2020) I created a DynamoDB version. In deps.edn I created various configuration aliases:
 
 ```clojure
 :env-dev-single-node    {:extra-paths ["resources/config/dev-single-node"]}
@@ -210,8 +210,10 @@ Use: ```run.jar``` to run the fat jar. You can override the profile values using
 
 Next steps with this exercise are:
 
-- Implement the [AWS DynamoDB](https://aws.amazon.com/dynamodb) version. I already have a configuration mechanism for this in domain, session and user namespaces.
-- Implement request/response data validation using Metosin [Malli](https://github.com/metosin/malli) library.
+- DONE: Implement the [AWS DynamoDB](https://aws.amazon.com/dynamodb) version. I already have a configuration mechanism for this in domain, session and user namespaces.
+- Implement a new version of the Simple Server. In this new version try:
+    - Use [Integrant](https://github.com/weavejester/integrant) as a state management library. Even though I had some bad experiences using Mount in this current exercise Integrant is a popular state management library among Metosinians and I want to give it a try and know why it is so popular.
+    - Implement request/response data validation using Metosin [Malli](https://github.com/metosin/malli) library.
 
 # For a Clojure Learner
 
