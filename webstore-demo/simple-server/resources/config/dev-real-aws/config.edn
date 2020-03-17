@@ -26,7 +26,7 @@
           ;              pc-demo: My real AWS profile to one test account.
 
           ;; For real AWS
-          :aws-profile "pc-demo"
+          :aws-profile "m-sand"
           ;; For local DynamoDB
           ;:aws-profile "local-dynamodb"
           ; NOTE: endpoint should be defined only if using local-dynamodb profile.

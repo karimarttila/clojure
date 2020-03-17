@@ -33,6 +33,18 @@
 
 ;; Continuing the local dynamodb development...
 
+(comment
+  (do
+    (in-ns 'user)
+    (require '[mydev])
+    (require '[simpleserver.webserver.server])
+    (simpleserver.webserver.server/start-web-server (get-in simpleserver.util.config/config [:server :port]))
+    (let [
+          ret (mydev/do-get "/info" {})]
+      (prn (str "/info returned: " ret)))
+    (simpleserver.webserver.server/stop-web-server)
+    )
+  )
 
 (comment
   (do
