@@ -15,7 +15,9 @@
   - [Debugger](#debugger)
 - [Logging](#logging)
 - [Linting](#linting)
-- [Local DynamoDB Instance](#local-dynamodb-instance)
+- [DynamoDB Functionality](#dynamodb-functionality)
+  - [Local DynamoDB Docker Emulator](#local-dynamodb-docker-emulator)
+  - [Using Cognitect AWS Clojure Library](#using-cognitect-aws-clojure-library)
 - [IntelliJ IDEA / Cursive Run Configuration](#intellij-idea--cursive-run-configuration)
 - [Unit Testing](#unit-testing)
 - [Building Fat Jar and Running It](#building-fat-jar-and-running-it)
@@ -176,9 +178,67 @@ I used [Logback](http://logback.qos.ch/) for logging purposes. I tried to log al
 I used [clj-kondo](https://github.com/borkdude/clj-kondo) as a linter. There are good instructions [how to use clj-kondo with IntelliJ IDEA](https://github.com/borkdude/clj-kondo/blob/master/doc/editor-integration.md). With the IntelliJ integration clj-kondo is a really good tool you should use with IntelliJ + Cursive. There are good instructions also for [Emacs integration](https://github.com/borkdude/flycheck-clj-kondo). I tried clj-kondo also with Emacs and it was pretty easy to install and use.
 
 
-# Local DynamoDB Instance
+# DynamoDB Functionality
 
-TO-BE-DONE: I'll implement the DynamoDB version later.
+## Local DynamoDB Docker Emulator
+
+I used [local DynamoDB Docker emulator](https://hub.docker.com/r/amazon/dynamodb-local/) while developing the DynamoDB implementation for the interfaces. I used the DynamoDB scripts I already implemented in the first version of this Clojure Simple-Server exercise, see the [dynamodb](https://github.com/karimarttila/clojure/tree/master/clj-ring-cljs-reagent-demo/simple-server/dynamodb) directory for more information.
+
+When I had implemented all functions in all interfaces I deployed the tables to real AWS DynamoDB and ran the tests hitting real AWS DynamoDB. You can create the tables, import data etc. using those scripts for local DynamoDB Docker emulator or for the real AWS DynamoDB.
+
+Why should you use the DynamoDB Docker emulator? Well, for two reasons. Firstly, you don't generate any costs while doing the development using the local DynamoDB Docker emulator (though, I must say that developing this application required so little resources that in my AWS account everything could be done just using the free tier). Secondly, using DynamoDB locally is faster than sending and fetching data over the wire to your nearest AWS region. E.g. I am in Finland and I used Ireland region, comparisons:
+
+```bash
+time ./run-tests.sh env-dev-local-dynamodb
+...
+Ran 14 tests containing 45 assertions.
+0 failures, 0 errors.
+
+real 0m11.744s
+...
+```
+
+... and from Finland hitting the real AWS DynamoDB located in Ireland: 0m42.796s => takes about 4 times longer to run all tests.
+
+## Using Cognitect AWS Clojure Library
+
+Using the [Cognitect AWS Clojure Library](https://github.com/cognitect-labs/aws-api) was really a joy. The library is very intuitive and provides excellent tools for exploring the API itself. Example listing the functions available for interacting with DynamoDB and querying more specific API description of one API function (PutItem):
+
+```Clojure
+(require '[cognitect.aws.credentials :as credentials])
+(require '[cognitect.aws.client.api :as aws])
+(def my-ddb
+  (if (nil? my-credentials)
+    (aws/client {:api                  :dynamodb
+                 :credentials-provider my-credentials})
+    (aws/client {:api                  :dynamodb
+                 :credentials-provider my-credentials
+                 :endpoint-override    my-endpoint})))
+(sort (keys (aws/ops my-ddb)))
+; =>
+; (:BatchGetItem
+;  :BatchWriteItems
+; ...
+(aws/doc my-ddb :PutItem)
+; => A long API specification what is required with PutItem and what the response is.
+```
+
+Since you can use Clojure REPL and interact with the DynamoDB with REPL it is pretty developer-friendly to program with the Cognitect AWS Clojure library. I used my Clojure scratch namespace for experimenting with DynamoDB and when everything worked fine I moved the Clojure S-expression to the production source tree. Example of fetching products from a certain product group:
+
+```Clojure
+...  
+(aws/invoke
+  my-ddb
+  {:op      :Query
+   :request {:TableName                 my-table
+             :IndexName                 "PGIndex"
+             :KeyConditionExpression    "pgid = :pgid"
+             :ExpressionAttributeValues {":pgid" {:S (str pg-id)}}
+             }})
+...
+```
+So, first you use the above mentioned ```aws/doc``` function to find out what Query operation requires as parameters (e.g. DynamoDB table name (```:TableName```)...) and then you can experiment with the API in the REPL and check what the operation returns - and further experiment with Clojure REPL how to convert the result set into a format you need in your solution.
+
 
 
 # IntelliJ IDEA / Cursive Run Configuration

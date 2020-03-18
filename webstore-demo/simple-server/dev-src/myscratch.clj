@@ -46,10 +46,45 @@
     )
   )
 
+(comment)
+(aws/invoke
+  my-ddb
+  {:op      :Query
+   :request {:TableName                 my-table
+             :IndexName                 "PGIndex"
+             :KeyConditionExpression    "pgid = :pgid"
+             :ExpressionAttributeValues {":pgid" {:S (str pg-id)}}
+             }})
+
+
+
 (comment
   (do
     (require '[mydev])
     (mydev/refresh))
+
+  (do
+    (require '[cognitect.aws.credentials :as credentials])
+    (require '[cognitect.aws.client.api :as aws])
+    (def my-ddb
+      (if (nil? my-credentials)
+        (aws/client {:api                  :dynamodb
+                     :credentials-provider my-credentials})
+        (aws/client {:api                  :dynamodb
+                     :credentials-provider my-credentials
+                     :endpoint-override    my-endpoint})))
+    (sort (keys (aws/ops my-ddb)))
+    ; =>
+    ; (:BatchGetItem
+    ;  :BatchWriteItem
+    ; ...
+    (aws/doc my-ddb :PutItem)
+    ; => A long API specification what is required with PutItem and what the response is.
+    )
+
+
+
+
 
   (do
     (in-ns 'user)
@@ -197,12 +232,6 @@
     (aws/ops my-ddb)
     (sort (keys (aws/ops my-ddb)))
     (aws/doc my-ddb :PutItem)
-    (aws/doc my-ddb :DeleteItem)
-    (aws/doc my-ddb :Scan)
-    (aws/doc my-ddb :Query)
-    (aws/doc my-ddb :GetItem)
-    (aws/doc my-ddb :PutItem)
-    (aws/doc my-ddb :DeleteItem)
 
     (aws/doc my-ddb :PutItem)
     (aws/invoke my-ddb {:op      :PutItem
