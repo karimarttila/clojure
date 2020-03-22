@@ -28,7 +28,7 @@
   "Parses the token from the http authorization header and asks session ns to validate the token."
   [req]
   (log/debug "ENTER -valid-token?")
-  (let [basic ((:headers req) "authorization")
+  (let [basic (get-in req [:headers "authorization"])
         ;_ (log/debug (str "basic: " basic))
         basic-str (and basic
                        (last (re-find #"^Basic (.*)$" basic)))
@@ -39,9 +39,10 @@
         token (and raw-token
                    (string/replace raw-token #":NOT" ""))]
     ;; Session namespace does the actual validation logic.
-    (if (not token)
-      nil
-      (ss-session-i/validate-token ss-session-config/session token))))
+    ;; Note: clj-kondo complains if else branch is missing.
+    (if token
+      (ss-session-i/validate-token ss-session-config/session token)
+      nil)))
 
 ;; As in headers check with curl that the http status is properly set.
 (defn -set-http-status
@@ -112,10 +113,10 @@
   "Gets product groups."
   [req]
   (log/debug "ENTER -product-groups")
-  (let [token-ok? (-valid-token? req)
-        response-value (if (not token-ok?)
-                         {:ret :failed, :msg "Given token is not valid"}
-                         {:ret :ok, :product-groups (ss-domain-i/get-product-groups ss-domain-config/domain)})]
+  (let [token-ok (-valid-token? req)
+        response-value (if token-ok
+                         {:ret :ok, :product-groups (ss-domain-i/get-product-groups ss-domain-config/domain)}
+                         {:ret :failed, :msg "Given token is not valid"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 (defn -products
@@ -123,10 +124,10 @@
   [req]
   (log/debug "ENTER -products")
   (let [pg-id (get-in req [:path-params :pg-id])
-        token-ok? (-valid-token? req)
-        response-value (if (not token-ok?)
-                         {:ret :failed, :msg "Given token is not valid"}
-                         {:ret :ok, :pg-id pg-id :products (ss-domain-i/get-products ss-domain-config/domain pg-id)})]
+        token-ok (-valid-token? req)
+        response-value (if token-ok
+                         {:ret :ok, :pg-id pg-id :products (ss-domain-i/get-products ss-domain-config/domain pg-id)}
+                         {:ret :failed, :msg "Given token is not valid"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 (defn -product
@@ -135,10 +136,13 @@
   (log/debug "ENTER -product")
   (let [pg-id (get-in req [:path-params :pg-id])
         p-id (get-in req [:path-params :p-id])
-        token-ok? (-valid-token? req)
-        response-value (if (not token-ok?)
-                         {:ret :failed, :msg "Given token is not valid"}
-                         {:ret :ok, :pg-id pg-id :p-id p-id :product (ss-domain-i/get-product ss-domain-config/domain pg-id p-id)})]
+        token-ok (-valid-token? req)
+        response-value (if token-ok
+                         {:ret     :ok,
+                          :pg-id   pg-id
+                          :p-id    p-id
+                          :product (ss-domain-i/get-product ss-domain-config/domain pg-id p-id)}
+                         {:ret :failed, :msg "Given token is not valid"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 (def routes
@@ -158,17 +162,17 @@
   "Web server startup function.
   See source code how to experiment with REPL."
   (re-ring/ring-handler
-   (re-ring/router [routes]
-                   {:data {:muuntaja   mu-core/instance
-                           :coercion   re-co-spec/coercion
-                           :middleware [ri-params/wrap-params
-                                        re-mu/format-middleware
-                                        re-co/coerce-exceptions-middleware
-                                        re-co/coerce-request-middleware
-                                        re-co/coerce-response-middleware]}})
-   (re-ring/routes
-    (re-ring/create-resource-handler {:path "/"})
-    (re-ring/create-default-handler))))
+    (re-ring/router [routes]
+                    {:data {:muuntaja   mu-core/instance
+                            :coercion   re-co-spec/coercion
+                            :middleware [ri-params/wrap-params
+                                         re-mu/format-middleware
+                                         re-co/coerce-exceptions-middleware
+                                         re-co/coerce-request-middleware
+                                         re-co/coerce-response-middleware]}})
+    (re-ring/routes
+      (re-ring/create-resource-handler {:path "/"})
+      (re-ring/create-default-handler))))
 
 (defonce server (atom {:status :stopped, :server nil, :port nil}))
 

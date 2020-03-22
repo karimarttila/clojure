@@ -1,5 +1,5 @@
 (ns simpleserver.user.user-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest use-fixtures is testing]]
             [clojure.tools.logging :as log]
             [simpleserver.util.config]
             [simpleserver.user.user-config :as ss-user-config]
@@ -13,15 +13,13 @@
   (log/debug "EXIT reset-users!"))
 
 
-
 (defn reset-state
   "Reset states needed in this test ns."
   [f]
-  (do
-    (log/debug "ENTER reset-state")
-    (reset-users!)
-    (f)
-    (log/debug "EXIT reset-state")))
+  (log/debug "ENTER reset-state")
+  (reset-users!)
+  (f)
+  (log/debug "EXIT reset-state"))
 
 ; Register test fixtures.
 (use-fixtures :each reset-state)
@@ -57,7 +55,7 @@
   (testing "Testing good credentials"
     (let [email "jamppa.tuominen@foo.com"
           password "passw0rd"
-          newUser (ss-user-i/add-new-user ss-user-config/user email "Jamppa" "Tuominen" password)
+          _ (ss-user-i/add-new-user ss-user-config/user email "Jamppa" "Tuominen" password)
           ret (ss-user-i/credentials-ok? ss-user-config/user email password)]
       (is (= ret true))))
   (testing "Testing bad credentials"

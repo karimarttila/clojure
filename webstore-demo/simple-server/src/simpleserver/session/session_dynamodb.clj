@@ -45,7 +45,7 @@
     (let [json-web-token (ss-session-common/create-json-web-token email)
           {my-ddb   :my-ddb
            my-table :my-table} (ss-config/get-dynamodb-config "session")
-          result (aws/invoke my-ddb {:op      :PutItem
+          _ (aws/invoke my-ddb {:op      :PutItem
                                      :request {
                                                :TableName my-table
                                                :Item      {"token" {:S json-web-token}}}})]

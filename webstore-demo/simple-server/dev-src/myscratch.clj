@@ -33,6 +33,12 @@
 
 ;; Continuing the local dynamodb development...
 
+(if true "true" nil)
+(if false "true" nil)
+(if true "true")
+(if false "true")
+
+
 (comment
   (do
     (in-ns 'user)

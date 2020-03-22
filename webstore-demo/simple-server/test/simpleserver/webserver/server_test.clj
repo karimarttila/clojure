@@ -1,5 +1,5 @@
 (ns simpleserver.webserver.server-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest use-fixtures is testing]]
             [clojure.tools.logging :as log]
             [clojure.data.codec.base64 :as base64]
             [clj-http.client :as http-client]
@@ -12,14 +12,13 @@
 
 (defn webserver-test-fixture
   [f]
-  (do
-    (log/debug "ENTER webserver-test-fixture")
-    (ss-user-i/-reset-users! ss-user-config/user)
-    (ss-session-i/-reset-sessions! ss-session-config/session)
-    (ss-ws/start-web-server (get-in ss-config/config [:server :port]))
-    (f)
-    (ss-ws/stop-web-server)
-    (log/debug "EXIT webserver-test-fixture")))
+  (log/debug "ENTER webserver-test-fixture")
+  (ss-user-i/-reset-users! ss-user-config/user)
+  (ss-session-i/-reset-sessions! ss-session-config/session)
+  (ss-ws/start-web-server (get-in ss-config/config [:server :port]))
+  (f)
+  (ss-ws/stop-web-server)
+  (log/debug "EXIT webserver-test-fixture"))
 
 ; Register test fixtures.
 (use-fixtures :each webserver-test-fixture)

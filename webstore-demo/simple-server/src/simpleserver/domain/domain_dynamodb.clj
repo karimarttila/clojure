@@ -2,8 +2,7 @@
   (:require [simpleserver.domain.domain-interface :as ss-domain-i]
             [clojure.tools.logging :as log]
             [simpleserver.util.config :as ss-config]
-            [cognitect.aws.client.api :as aws]
-            [cognitect.aws.credentials :as credentials]))
+            [cognitect.aws.client.api :as aws]))
 
 ; NOTE: When testing in IntelliJ IDEA / Cursive: add AWS_PROFILE and AWS_DEFAULT_REGION in the
 ; Run Configuration / Environment.
@@ -15,8 +14,7 @@
   (get-product-groups
     [this]
     (log/debug "ENTER get-product-groups")
-    (let [{my-ddb   :my-ddb
-           my-table :my-table} (ss-config/get-dynamodb-config "product-group")
+    (let [{:keys [my-ddb my-table]} (ss-config/get-dynamodb-config "product-group")
           raw-map (aws/invoke my-ddb {:op      :Scan
                                       :request {:TableName my-table}})]
       (reduce
@@ -31,8 +29,7 @@
   (get-products
     [this pg-id]
     (log/debug (str "ENTER get-products, pg-id: " pg-id))
-    (let [{my-ddb   :my-ddb
-           my-table :my-table} (ss-config/get-dynamodb-config "product")
+    (let [{:keys [my-ddb my-table]} (ss-config/get-dynamodb-config "product")
           raw-products (aws/invoke my-ddb {:op      :Query
                                            :request {:TableName                 my-table
                                                      :IndexName                 "PGIndex"
@@ -53,10 +50,9 @@
   (get-product
     [this pg-id p-id]
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
-    (let [{my-ddb   :my-ddb
-           my-table :my-table} (ss-config/get-dynamodb-config "product")
+    (let [{:keys [my-ddb my-table]} (ss-config/get-dynamodb-config "product")
           raw-product (aws/invoke my-ddb {:op      :Query
-                                          :request {:TableName     "ss-dev-product"
+                                          :request {:TableName     my-table
                                                     :KeyConditions {"pgid" {:AttributeValueList {:S (str pg-id)}
                                                                             :ComparisonOperator "EQ"}
                                                                     "pid"  {:AttributeValueList {:S (str p-id)}

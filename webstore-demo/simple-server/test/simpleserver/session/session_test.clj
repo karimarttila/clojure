@@ -1,5 +1,5 @@
 (ns simpleserver.session.session-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest use-fixtures is testing]]
             [clojure.tools.logging :as log]
             [simpleserver.util.config]
             [simpleserver.session.session-config]
@@ -15,11 +15,10 @@
 (defn reset-state
   "Reset states needed in this test ns."
   [f]
-  (do
-    (log/debug "ENTER reset-state")
-    (reset-sessions!)
-    (f)
-    (log/debug "EXIT reset-state")))
+  (log/debug "ENTER reset-state")
+  (reset-sessions!)
+  (f)
+  (log/debug "EXIT reset-state"))
 
 ; Register test fixtures.
 (use-fixtures :each reset-state)

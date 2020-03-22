@@ -3,7 +3,6 @@
             [clojure.tools.logging :as log]
             [cognitect.aws.client.api :as aws]
             [simpleserver.util.config :as ss-config]
-            [simpleserver.user.user-interface :as ss-user-i]
             [simpleserver.user.user-common :as ss-user-common]))
 
 (defn -get-converted-users

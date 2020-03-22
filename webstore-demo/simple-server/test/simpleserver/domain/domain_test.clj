@@ -1,7 +1,6 @@
 (ns simpleserver.domain.domain-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest use-fixtures is testing]]
             [clojure.tools.logging :as log]
-            [simpleserver.util.config :as ss-config]
             [simpleserver.domain.domain-config :as ss-domain-config]
             [simpleserver.domain.domain-interface :as ss-domain-i]
             ))
@@ -10,10 +9,9 @@
   "NOTE: We do nothing here since (unlike the user) the domain is read-only
   (i.e. no need to reset data in the database for tests)"
   [f]
-  (do
-    (log/debug "ENTER domain-test-fixture")
-    (f)
-    (log/debug "EXIT domain-test-fixture")))
+  (log/debug "ENTER domain-test-fixture")
+  (f)
+  (log/debug "EXIT domain-test-fixture"))
 
 ; Register test fixtures.
 (use-fixtures :each domain-test-fixture)

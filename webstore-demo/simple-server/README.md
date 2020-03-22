@@ -184,7 +184,7 @@ I used [clj-kondo](https://github.com/borkdude/clj-kondo) as a linter. There are
 
 I used [local DynamoDB Docker emulator](https://hub.docker.com/r/amazon/dynamodb-local/) while developing the DynamoDB implementation for the interfaces. I used the DynamoDB scripts I already implemented in the first version of this Clojure Simple-Server exercise, see the [dynamodb](https://github.com/karimarttila/clojure/tree/master/clj-ring-cljs-reagent-demo/simple-server/dynamodb) directory for more information.
 
-When I had implemented all functions in all interfaces I deployed the tables to real AWS DynamoDB and ran the tests hitting real AWS DynamoDB. You can create the tables, import data etc. using those scripts for local DynamoDB Docker emulator or for the real AWS DynamoDB.
+When I had implemented all functions in all interfaces I deployed the tables to the real AWS DynamoDB and ran the tests hitting real the AWS DynamoDB. You can create the tables, import data etc. using those scripts both for local DynamoDB Docker emulator and for the real AWS DynamoDB.
 
 Why should you use the DynamoDB Docker emulator? Well, for two reasons. Firstly, you don't generate any costs while doing the development using the local DynamoDB Docker emulator (though, I must say that developing this application required so little resources that in my AWS account everything could be done just using the free tier). Secondly, using DynamoDB locally is faster than sending and fetching data over the wire to your nearest AWS region. E.g. I am in Finland and I used Ireland region, comparisons:
 
