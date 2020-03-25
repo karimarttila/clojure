@@ -1,0 +1,99 @@
+{
+ :paths   ["resources"]
+
+ :aliases {
+           :dev                    {:extra-paths ["dev-resources"]
+                                    :extra-deps  {org.clojure/clojure {:mvn/version "1.10.1"}}}
+
+           :test                   {:extra-paths ["test/clj"]}
+
+           ;; Let's learn to use a common part already now since in the next exercise we create frontend with re-frame.
+           :common                 {:extra-paths ["src/cljc"]
+                                    :extra-deps  {metosin/reitit {:mvn/version "0.4.2"}
+                                                  integrant/repl {:mvn/version "0.3.1"}}}
+
+           :backend                {:extra-paths ["src/clj"]
+                                    :extra-deps  {
+                                                  integrant                       {:mvn/version "0.8.0"}
+                                                  org.clojure/data.json           {:mvn/version "1.0.0"}
+                                                  org.clojure/data.csv            {:mvn/version "1.0.0"}
+                                                  metosin/maailma                 {:mvn/version "1.1.0"}
+                                                  org.clojure/tools.logging       {:mvn/version "1.0.0"}
+                                                  commons-logging/commons-logging {:mvn/version "1.2"}
+                                                  ch.qos.logback/logback-classic  {:mvn/version "1.2.3"}
+                                                  ring/ring-core                  {:mvn/version "1.8.0"}
+                                                  buddy/buddy-sign                {:mvn/version "3.1.0"}
+                                                  com.cognitect.aws/api           {:mvn/version "0.8.437"}
+                                                  com.cognitect.aws/endpoints     {:mvn/version "1.1.11.726"}
+                                                  com.cognitect.aws/dynamodb      {:mvn/version "792.2.620.0"}
+                                                  org.eclipse.jetty/jetty-client  {:mvn/version "9.4.26.v20200117"}
+                                                  clj-http                        {:mvn/version "3.10.0"}
+                                                  }}
+
+           ;; Environments. Only for development. When baking jar these are not
+           ;; included - provide these in classpath when starting jar
+           ;; (see build-jar and run-jar.sh).
+           :env-dev                {:extra-paths ["resources/config/dev"]}
+           :env-prod               {:extra-paths ["resources/config/prod"]}
+           ;; For running tests with different configurations
+           :env-dev-single-node    {:extra-paths ["resources/config/dev-single-node"]}
+           :env-dev-local-dynamodb {:extra-paths ["resources/config/dev-local-dynamodb"]}
+           :env-dev-real-aws       {:extra-paths ["resources/config/dev-real-aws"]}
+
+           ;; Test runner in console.
+           :test-runner            {:extra-paths ["test"]
+                                    :extra-deps  {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
+                                                                             :sha     "209b64504cb3bd3b99ecfec7937b358a879f55c1"}}
+                                    :main-opts   ["-m" "cognitect.test-runner"]}
+
+           ;; Depstar for building fat jar.
+           :depstar
+                                   {:extra-deps
+                                    {seancorfield/depstar {:mvn/version "0.5.1"}}}
+
+           :clj-kondo
+                                   {:extra-deps {clj-kondo {:mvn/version "RELEASE"}}
+                                    :main-opts  ["-m" "clj-kondo.main"]}
+
+
+           ;; Cider specific.
+           :cider-clj              {:extra-deps {org.clojure/clojure {:mvn/version "1.10.1"}
+                                                 cider/cider-nrepl   {:mvn/version "0.22.4"}}
+                                    :main-opts  ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]}
+
+           }
+
+ :deps    {
+           org.clojure/clojure             {:mvn/version "1.10.0"}
+           org.clojure/core.async          {:mvn/version "0.4.490"}
+           org.clojure/spec.alpha          {:mvn/version "0.2.176"}
+           org.clojure/tools.logging       {:mvn/version "0.4.1"}
+           org.clojure/data.json           {:mvn/version "0.2.6"}
+           org.clojure/data.csv            {:mvn/version "0.1.4"}
+           org.clojure/data.codec          {:mvn/version "0.1.1"}
+           clj-time                        {:mvn/version "0.14.2"}
+           commons-logging/commons-logging {:mvn/version "1.2"}
+           ch.qos.logback/logback-classic  {:mvn/version "1.2.3"}
+           ; Ring web app library: https://github.com/ring-clojure
+           ring/ring-core                  {:mvn/version "1.7.1"}
+           ; Conflict with com.cognitect.aws/api
+           ; Later on added jetty client with the same
+           ; version com.cognitect.aws/api server uses.
+           ; And excluded jetty client from AWS api dependency.
+           ring/ring-jetty-adapter         {:mvn/version "1.7.1"}
+           ring-cors/ring-cors             {:mvn/version "0.1.13"}
+           ring/ring-json                  {:mvn/version "0.4.0"}
+           ring/ring-defaults              {:mvn/version "0.3.2"}
+           metosin/reitit                  {:mvn/version "0.3.10"}
+           metosin/maailma                 {:mvn/version "1.1.0"}
+           buddy/buddy-sign                {:mvn/version "3.0.0"}
+           ; Cognitect AWS library. https://github.com/cognitect-labs/aws-api
+           com.cognitect.aws/api           {:mvn/version "0.8.305"
+                                            :exclusions  [org.eclipse.jetty/jetty-client]}
+           com.cognitect.aws/endpoints     {:mvn/version "1.1.11.549"}
+           com.cognitect.aws/dynamodb      {:mvn/version "697.2.391.0"}
+           org.eclipse.jetty/jetty-client  {:mvn/version "9.4.12.v20180830"}
+           clj-http                        {:mvn/version "3.10.0"}
+           }
+
+ }

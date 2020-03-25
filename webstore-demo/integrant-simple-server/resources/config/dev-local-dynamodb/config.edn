@@ -1,0 +1,44 @@
+{
+ :config-name      "dev-local-dynamodb"
+ :runtime-env      "dev"
+ :db-env           "aws"
+ ; NOTE: Whether to use local dynamodb or real is configured in :aws section.
+
+ :server           {
+                    :port 6161
+                    }
+
+ :single-node-data {
+                    :data-dir "resources/data"
+                    }
+ ; NOTE: This is just for local-dynamodb testing.
+ ; The real AWS / DynamoDB role or credentials should be given by the infrastructure in which the application is deployed.
+ ; You can put the AWS profile in Run Configuration.
+ ; NOTE: You can also change the configuration dynamically in REPL using mydev/reset.
+ ; NOTE: See myscratch.clj how to use Mount to restart configuration.
+ :aws              {
+                    :ss-table-prefix "ss"
+
+                    ; Let's use the profile-credential provider to be able to dynamically
+                    ; switch from one profile to another and not create two Run configuration
+                    ; with two AWS_PROFILE values.
+                    ; AWS_PROFILE: local-dynamodb: My local dynamodb running in port 8000.
+                    ;              pc-demo: My real AWS profile to one test account.
+
+                    ;; For real AWS
+                    ;:aws-profile "pc-demo"
+                    ;; For local DynamoDB
+                    :aws-profile     "local-dynamodb"
+                    ; NOTE: endpoint should be defined only if using local-dynamodb profile.
+                    ; https://cognitect-labs.github.io/aws-api/cognitect.aws.client.api-api.html
+                    :endpoint        {:protocol :http :hostname "localhost" :port 8000}
+                    }
+
+ :jwt              {
+                    :exp 2000
+                    }
+
+ }
+
+
+
