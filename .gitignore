@@ -58,3 +58,5 @@ out/
 
 lsp/
 
+# Personal Clojure scratch files in various projects.
+clj-scratch/

@@ -4,7 +4,7 @@
     [cognitect.aws.credentials :as credentials]
     [cognitect.aws.client.api :as aws]))
 
-(defn -create-config
+(defn create-config
   []
   ;; Provides merging order: profile overridden by SS_CONFIG_FILE overridden by SS_PORT env var.
   (let [config (m/build-config
@@ -25,12 +25,11 @@
                               {:cause #{:error :port-is-not-string}}))))
           config)))))
 
-(def config (-create-config))
-
 (defn get-dynamodb-config
   "Gets the dynamodb configuration"
   [table-name]
-  (let [my-env (get-in config [:runtime-env])
+  (let [config (create-config)
+        my-env (get-in config [:runtime-env])
         my-table-prefix (get-in config [:aws :ss-table-prefix])
         my-table (str my-table-prefix "-" my-env "-" table-name)
         my-endpoint (get-in config [:aws :endpoint])
@@ -45,6 +44,6 @@
     {:my-ddb my-ddb :my-table my-table}))
 
 (comment
-  config
+  (create-config)
   (get-dynamodb-config "session")
   )

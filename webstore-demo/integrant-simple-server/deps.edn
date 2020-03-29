@@ -7,6 +7,8 @@
 
            :test                   {:extra-paths ["test/clj"]}
 
+           :scratch                   {:extra-paths ["clj-scratch"]}
+
            ;; Let's learn to use a common part already now since in the next exercise we create frontend with re-frame.
            :common                 {:extra-paths ["src/cljc"]
                                     :extra-deps  {metosin/reitit {:mvn/version "0.4.2"}
