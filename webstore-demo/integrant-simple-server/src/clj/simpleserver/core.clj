@@ -23,11 +23,10 @@
 
 (defn -main []
   (log/info "System starting...")
-  ;; TODO: For debugging kube deployment, remove later
   (log/info "Config: " (clojure.pprint/pprint (system-config)))
   (ig/init (system-config)))
 
+;; Rich comment.
 (comment
   (system-config)
-
   )

@@ -5,24 +5,10 @@
 - [Introduction](#introduction)
 - [Technical Description](#technical-description)
 - [Application State Management](#application-state-management)
-- [Configuration Handling](#configuration-handling)
-- [(REPL Driven) Clojure Development](#repl-driven-clojure-development)
-  - [Using a REPL Scratch File](#using-a-repl-scratch-file)
-  - [You Can Do It Without Application State Management Libraries](#you-can-do-it-without-application-state-management-libraries)
-  - [Editing Clojure Code Efficiently](#editing-clojure-code-efficiently)
-  - [Using IntelliJ IDEA + Cursive and Emacs + Cider Interchangeably](#using-intellij-idea--cursive-and-emacs--cider-interchangeably)
-  - [Rich Comments](#rich-comments)
-  - [Debugger](#debugger)
-- [Logging](#logging)
-- [Linting](#linting)
-- [DynamoDB Functionality](#dynamodb-functionality)
-  - [Local DynamoDB Docker Emulator](#local-dynamodb-docker-emulator)
-  - [Using Cognitect AWS Clojure Library](#using-cognitect-aws-clojure-library)
-- [IntelliJ IDEA / Cursive Run Configuration](#intellij-idea--cursive-run-configuration)
-- [Unit Testing](#unit-testing)
-- [Building Fat Jar and Running It](#building-fat-jar-and-running-it)
-- [Next Steps for Myself](#next-steps-for-myself)
-- [For a Clojure Learner](#for-a-clojure-learner)
+  - [Manual State Management](#manual-state-management)
+  - [State Management Using Integrant](#state-management-using-integrant)
+  - [Comparison](#comparison)
+- [Personal Experiences](#personal-experiences)
 
 
 # Introduction
@@ -47,8 +33,44 @@ Simple Server is implemented using [Clojure](https://clojure.org/) and [Ring](ht
 
 # Application State Management
 
-So, in this third Simple Server version I wanted to compare the workflow using no particular state management library (see: [simple-server](../simple-server)) and this new Simple Server version with the [Integrant library](https://github.com/weavejester/integrant). You can read my experiences without using any state management library in that previous exercise, see [README.md](../simple-server/README.md) in chapter "You Can Do It Without Application State Management Libraries". In this new README file in this chapter I focus on my experiences using Integrant.
+So, in this third Simple Server version I wanted to compare the workflow using no particular state management library (see: [simple-server](../simple-server)) and this new Simple Server version with the [Integrant library](https://github.com/weavejester/integrant). You can read my experiences without using any state management library in that previous exercise, see [README.md](../simple-server/README.md) in chapter "You Can Do It Without Application State Management Libraries". In this new README file in this chapter I focus on my experiences using Integrant and comparing these two strategies.
 
-TODO: Experiences.
+## Manual State Management
+
+In the code below you can see how I did state management manually in the previous exercise:
+
+![alt text](doc/manual_state.png)
+
+So, the core of the state management in this manual solution is the server atom which is just a map with three keys (in defonce since if we reload the namespace in REPL we don't want to lose the atom and the web server instance). The ```:server ``` key holds the actual server instance, as you can see in ```start-web-server``` function. The ```stop-web-server``` function stops the server instance and resets the atom value. The ```reset-web-server``` function just call these two functions. And we have a custom state management implemented without any state management libraries. You can easily reset the web server in REPL using the reset-web server function.
+
+The above mentioned manual state management solution is just fine at least with smaller implementations that have just 1-2 states (e.g. just the web server - whether it is listening connections or not). But if you need a more complex state management, possibly with dependencies between different parts of the state, then you might benefit using a dedicated state management library.
+
+## State Management Using Integrant
+
+Let's see how the same thing could be implemented using Integrant. The first part of the solution is pretty much the same, we need to have methods for starting and stopping the web server:
+
+![alt text](doc/integrant_state.png)
+
+But this time we don't need any atom to store the web server instance since we let Integrant to take care of state managent - therefore our ```start-web-server``` function starts the web server and just returns the created (and started) web server instance.
+
+Then the Integrant specific part.
+
+![alt text](doc/integrant_config.png)
+
+We first create a system configuration (function ```system-config```). Basically the only thing here that we really need is the ```::web-server``` part which has the initialization values for our web server. Then we have integrant hooks ```ig/init-key``` and ```ig/halt-key!```. These methods are called by Integrant when we reset the Integrant managed state of our application. As you can see, we just call the previous functions ```start-web-server``` and ```stop-web-server```.
+
+In REPL driven development you can then use three ```integrant.repl``` namespace functions: 
+
+- go: start the system (in our case start the web server)
+- halt: halt the system (in our case stop the web server)
+- reset: reset the system
+
+## Comparison
+
+So, which one is better? I'm not sure. For smaller applications it might be feasible just to implement your custom state management - and one less dependency in your ```deps.edn``` file. But if you have a bigger application with a lot of states and dependencies between different parts of the states then you might benefit using a dedicated state management library. I actually ran a very informal gallup in Metosin Slack regarding whether Metosin programmers favor custom state management or use some state management library. Two developers favored custom state management, others some 8 guys (which clicked either emoji in Slack) favored state management, all of them Integrant. Considering that these guys are pretty seasoned Clojure programmers I would say that you won't miss your target if you choose Integrant.
+
+# Personal Experiences
+
+TODO: TODO: Personal Experiences.
 
 
