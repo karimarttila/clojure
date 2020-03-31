@@ -28,5 +28,9 @@
 
 ;; Rich comment.
 (comment
+  *ns*
   (system-config)
+
+
   )
+

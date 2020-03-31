@@ -8,14 +8,29 @@
 ;; Taken from one Metosin example.
 (defn system [] (or state/system (throw (ex-info "System not running" {}))))
 
+;(defn web-server-state [] (::main/web-server (system)))
+
+(defn my-reset
+  []
+  (reset))
+
+(defn my-go
+  []
+  (go))
 
 (comment
+  state/system
   (system)
+  (keys (ns-publics 'user))
+  *ns*
+  (my-reset)
+  (system)
+  (clear)
   (prep)
   (init)
   (go)
   (halt)
   (reset)
   (reset-all)
-
+  (core/jee)
 )

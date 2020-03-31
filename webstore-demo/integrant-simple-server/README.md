@@ -9,6 +9,8 @@
   - [State Management Using Integrant](#state-management-using-integrant)
   - [Comparison](#comparison)
 - [Personal Experiences](#personal-experiences)
+- [The Rest of the Application](#the-rest-of-the-application)
+- [Simulating Integrant Workflow](#simulating-integrant-workflow)
 
 
 # Introduction
@@ -71,6 +73,18 @@ So, which one is better? I'm not sure. For smaller applications it might be feas
 
 # Personal Experiences
 
+Using Integrant and IntelliJ IDEA + Cursive plugin works together quite nicely. You can create REPL commands in Cursive (IDEA: Tools -> REPL -> Add new REPL command). You can e.g. create a REPL command which calls Integrant ```reset``` function in user namespace, and assign a hot-key (e.g. M-h) with this REPL command. So, when ever you want to reset your REPL session (reload namespaces + reset Integrant managed state) you can just hit Alt-h and you are good to go. No wonder that one Metosin Clojurist broke a certain key in his Mac's keyboard - he said that he used the specific key for resetting his Integrant state - obviosly hundreds of times per day. Let's see how my "h" key is going to stand the future clojure sessions. (Actually just changed the key from "h" to "j" so that I don't have to move my righ index finger when resetting my Integrant state.)
+
+
+
 TODO: TODO: Personal Experiences.
 
+
+# The Rest of the Application
+
+... is exactly same as the previous version of Simple Server. I thought that I could have provided this integrant version as Git branch, but then I thought it might be interesting to have the two versions explicitely side by side. And my next exercise will be to re-implement the Simple Frontend using [re-frame](https://github.com/day8/re-frame) - and I will take the latest version of Simple Server as a baseline for this work and make it a full-stack application, and at the same time study the workflow making full-stack app using Clojure and Clojurescript.
+
+# Simulating Integrant Workflow
+
+I must say that I cheated a bit. Since the rest of the application (except state management) is exactly the same as the previous version of the Simple Server application I didn't have the full experience of using Integrant workflow. But I simulated the workflow a bit so that I copy-pasted parts of Clojure namespaces from the previous version to this new version and tried to go/halt/reset application in REPL every now and then to have a feeling what it would have been fully to implement the app from scratch. Maybe I'll do my next green field Clojure exercise using Integrant and I can have a real experience how Integrant helps in the development phase.
 

@@ -25,6 +25,8 @@
                               {:cause #{:error :port-is-not-string}}))))
           config)))))
 
+(def config (create-config))
+
 (defn get-dynamodb-config
   "Gets the dynamodb configuration"
   [table-name]
