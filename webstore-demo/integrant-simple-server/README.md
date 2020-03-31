@@ -73,7 +73,9 @@ So, which one is better? I'm not sure. For smaller applications it might be feas
 
 # Personal Experiences
 
-Using Integrant and IntelliJ IDEA + Cursive plugin works together quite nicely. You can create REPL commands in Cursive (IDEA: Tools -> REPL -> Add new REPL command). You can e.g. create a REPL command which calls Integrant ```reset``` function in user namespace, and assign a hot-key (e.g. M-h) with this REPL command. So, when ever you want to reset your REPL session (reload namespaces + reset Integrant managed state) you can just hit Alt-h and you are good to go. No wonder that one Metosin Clojurist broke a certain key in his Mac's keyboard - he said that he used the specific key for resetting his Integrant state - obviosly hundreds of times per day. Let's see how my "h" key is going to stand the future clojure sessions. (Actually just changed the key from "h" to "j" so that I don't have to move my righ index finger when resetting my Integrant state.)
+![alt text](doc/cursive_keymap.png)
+
+Using Integrant and IntelliJ IDEA + Cursive plugin works together quite nicely. You can create REPL commands in Cursive (IDEA: Tools -> REPL -> Add new REPL command). You can e.g. create a REPL command which calls Integrant ```reset``` function in user namespace, and assign a hot-key (e.g. M-j) with this REPL command. So, when ever you want to reset your REPL session (reload namespaces + reset Integrant managed state) you can just hit Alt-j and you are good to go. No wonder that one Metosin Clojurist broke a certain key in his Mac's keyboard - he said that he used that specific key for resetting his Integrant state - obviosly hundreds of times per day. Let's see how my "j" key is going to stand the future clojure sessions.
 
 
 
