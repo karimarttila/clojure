@@ -7,6 +7,7 @@
 - [Application State Management](#application-state-management)
   - [Manual State Management](#manual-state-management)
   - [State Management Using Integrant](#state-management-using-integrant)
+  - [State Management in Tests](#state-management-in-tests)
   - [Comparison](#comparison)
 - [Personal Experiences](#personal-experiences)
 - [The Rest of the Application](#the-rest-of-the-application)
@@ -66,6 +67,21 @@ In REPL driven development you can then use three ```integrant.repl``` namespace
 - go: start the system (in our case start the web server)
 - halt: halt the system (in our case stop the web server)
 - reset: reset the system
+
+## State Management in Tests
+
+One more comparison. Let's first show how to handle state in the tests in which we want to start/stop webserver. First in manual state management:
+
+![alt text](doc/manual_test.png)
+
+So, we just use the ```start-web-server``` and ```stop-web-server``` functions.
+
+Then the same using Integrant:
+
+![alt text](doc/integrant_test.png)
+
+This time we can use Integrant state management. First call the Integrant ```init``` function with the system configuration and store the returned system map so that after the test we can halt the system using Integrant ```halt!``` function (stop web server in our case).
+
 
 ## Comparison
 

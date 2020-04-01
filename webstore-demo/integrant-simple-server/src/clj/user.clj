@@ -18,6 +18,10 @@
   []
   (go))
 
+(defn my-halt
+  []
+  (halt))
+
 (comment
   state/system
   (system)

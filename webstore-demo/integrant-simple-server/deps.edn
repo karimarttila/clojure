@@ -3,7 +3,8 @@
 
  :aliases {
            :dev                    {:extra-paths ["dev-resources"]
-                                    :extra-deps  {org.clojure/clojure {:mvn/version "1.10.1"}}}
+                                    :extra-deps  {org.clojure/clojure {:mvn/version "1.10.1"}
+                                                  }}
 
            :test                   {:extra-paths ["test/clj"]}
 
@@ -12,7 +13,8 @@
            ;; Let's learn to use a common part already now since in the next exercise we create frontend with re-frame.
            :common                 {:extra-paths ["src/cljc"]
                                     :extra-deps  {metosin/reitit {:mvn/version "0.4.2"}
-                                                  integrant/repl {:mvn/version "0.3.1"}}}
+                                                  integrant/repl {:mvn/version "0.3.1"}
+                                                  }}
 
            :backend                {:extra-paths ["src/clj"]
                                     :extra-deps  {
