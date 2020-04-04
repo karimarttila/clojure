@@ -1,17 +1,17 @@
-(ns simpleserver.core
+(ns simpleserver.test-utils.test-system
   (:require
     [clojure.tools.logging :as log]
     [integrant.core :as ig]
     [simpleserver.util.config :as ss-config]
-    [simpleserver.webserver.server :as ss-webserver]
-    ))
+    [simpleserver.webserver.server :as ss-webserver]))
 
-(defn system-config []
+
+(defn test-system-config []
   (let [config (ss-config/create-config)]
     {
      ::config     config
-     ::web-server {:port  (get-in config [:server :port])
-                   :join? false}}))
+     ::web-server {:port (get-in config [:test-server :port])
+                         :join? false}}))
 
 (defmethod ig/init-key ::config [_ config] config)
 
@@ -21,14 +21,8 @@
 (defmethod ig/halt-key! ::web-server [_ server]
   (ss-webserver/stop-web-server server))
 
-(defn -main []
-  (log/info "System starting...")
-  (log/info "Config: " (clojure.pprint/pprint (system-config)))
-  (ig/init (system-config)))
 
-;; Rich comment.
 (comment
   *ns*
-  (system-config)
+  (test-system-config)
   )
-

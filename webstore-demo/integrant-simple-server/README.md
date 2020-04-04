@@ -8,10 +8,13 @@
   - [Manual State Management](#manual-state-management)
   - [State Management Using Integrant](#state-management-using-integrant)
   - [State Management in Tests](#state-management-in-tests)
+  - [State Management in Tests - Part 1](#state-management-in-tests---part-1)
+  - [State Management in Tests - Part 2](#state-management-in-tests---part-2)
   - [Comparison](#comparison)
 - [Personal Experiences](#personal-experiences)
 - [The Rest of the Application](#the-rest-of-the-application)
 - [Simulating Integrant Workflow](#simulating-integrant-workflow)
+- [Thanks](#thanks)
 
 
 # Introduction
@@ -70,6 +73,8 @@ In REPL driven development you can then use three ```integrant.repl``` namespace
 
 ## State Management in Tests
 
+## State Management in Tests - Part 1
+
 One more comparison. Let's first show how to handle state in the tests in which we want to start/stop webserver. First in manual state management:
 
 ![alt text](doc/manual_test.png)
@@ -81,6 +86,23 @@ Then the same using Integrant:
 ![alt text](doc/integrant_test.png)
 
 This time we can use Integrant state management. First call the Integrant ```init``` function with the system configuration and store the returned system map so that after the test we can halt the system using Integrant ```halt!``` function (stop web server in our case).
+
+NOTE: This solution uses the same Integrant system that you use in your devevelopment REPL. So, when you run your unit tests this will shut down your Integrant development system in your REPL, of course. So, a better solution would be to have a dedicated Integrant test system (with different port...). This way you could init/halt the Integrant test system in your test fixture, and you can at the same time keep your Integrant development system running and running the tests won't affect Integrant development system. I saw a pretty awesome demonstration regarding this in one Metosin workshop but I didn't implement it to this exercise. But just wanted to mention this if someone wonders if this is really the way to use Integrant in tests.
+
+## State Management in Tests - Part 2
+
+Well, let's make one more change and let's create a dedicated test system. I got this idea in one Metosin presentation - a wise decision to move to one of the best Clojure shops on the planet - you get a chance to work with and learn from some of the best clojurists you can find (read more about my experiences working at [Metosin](https://www.metosin.fi) in my blog [My First Weeks at Metosin!](https://www.metosin.fi/blog/my-first-weeks-at-metosin/)). I simplified the solution a bit - the actual solution was more sophisticated but I just needed a simple solution in this exercise.
+
+First we need a separate test system. The only actual state we need in the system is the web server, so let's define a separate ```:test-server``` key and store a separate port for the test system web server configuration:
+
+![alt text](doc/integrant_test_system.png)
+
+Then in the server-test we are using this test-system-config in the test fixture instead of the actual production system config (as in the previous version). In the ```-call-api``` utility function we also need to remember to use the test server port.
+
+![alt text](doc/integrant_server_test2.png)
+
+Now we are able to keep the development web server up and running in the repl and at the same time in the same repl run our unit tests (since development web server uses different port than the unit test web server).
+
 
 
 ## Comparison
@@ -94,10 +116,6 @@ So, which one is better? I'm not sure. For smaller applications it might be feas
 Using Integrant and IntelliJ IDEA + Cursive plugin works together quite nicely. You can create REPL commands in Cursive (IDEA: Tools -> REPL -> Add new REPL command). You can e.g. create a REPL command which calls Integrant ```reset``` function in user namespace, and assign a hot-key (e.g. M-j) with this REPL command. So, when ever you want to reset your REPL session (reload namespaces + reset Integrant managed state) you can just hit Alt-j and you are good to go. No wonder that one Metosin Clojurist broke a certain key in his Mac's keyboard - he said that he used that specific key for resetting his Integrant state - obviosly hundreds of times per day. Let's see how my "j" key is going to stand the future clojure sessions.
 
 
-
-TODO: TODO: Personal Experiences.
-
-
 # The Rest of the Application
 
 ... is exactly same as the previous version of Simple Server. I thought that I could have provided this integrant version as Git branch, but then I thought it might be interesting to have the two versions explicitely side by side. And my next exercise will be to re-implement the Simple Frontend using [re-frame](https://github.com/day8/re-frame) - and I will take the latest version of Simple Server as a baseline for this work and make it a full-stack application, and at the same time study the workflow making full-stack app using Clojure and Clojurescript.
@@ -106,3 +124,7 @@ TODO: TODO: Personal Experiences.
 
 I must say that I cheated a bit. Since the rest of the application (except state management) is exactly the same as the previous version of the Simple Server application I didn't have the full experience of using Integrant workflow. But I simulated the workflow a bit so that I copy-pasted parts of Clojure namespaces from the previous version to this new version and tried to go/halt/reset application in REPL every now and then to have a feeling what it would have been fully to implement the app from scratch. Maybe I'll do my next green field Clojure exercise using Integrant and I can have a real experience how Integrant helps in the development phase.
 
+
+# Thanks
+
+I'd like to thank all Metosians who shared their favorite Spotify song lists in Metosin Slack "musa" channel. The music inspired me quite a lot while doing this exercise. Even though I still consider that some of you guys have an unhealthy music taste (just joking).

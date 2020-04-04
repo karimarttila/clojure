@@ -10,7 +10,8 @@
             [simpleserver.user.user-interface :as ss-user-i]
             [simpleserver.user.user-config :as ss-user-config]
             [simpleserver.session.session-interface :as ss-session-i]
-            [simpleserver.session.session-config :as ss-session-config]))
+            [simpleserver.session.session-config :as ss-session-config]
+            [simpleserver.test-utils.test-system :as ss-test-system]))
 
 
 (defn webserver-test-fixture
@@ -18,7 +19,7 @@
   (log/debug "ENTER webserver-test-fixture")
   (ss-user-i/-reset-users! ss-user-config/user)
   (ss-session-i/-reset-sessions! ss-session-config/session)
-  (let [system-map (ig/init (ss-core/system-config))]
+  (let [system-map (ig/init (ss-test-system/test-system-config))]
     (f)
     (ig/halt! system-map))
   (log/debug "EXIT webserver-test-fixture"))
@@ -27,7 +28,7 @@
 (use-fixtures :each webserver-test-fixture)
 
 (defn -call-api [verb path headers body]
-  (let [my-port (get-in ss-config/config [:server :port])
+  (let [my-port (get-in ss-config/config [:test-server :port])
         my-fn (cond
                 (= verb :get) http-client/get
                 (= verb :post) http-client/post)]

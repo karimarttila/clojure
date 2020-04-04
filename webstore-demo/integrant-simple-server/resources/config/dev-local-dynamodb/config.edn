@@ -8,8 +8,12 @@
                     :port 6161
                     }
 
+ :test-server      {
+                    :port 6171
+                    }
+
  :single-node-data {
-                    :data-dir "resources/data"
+                    :not-used "not used in this aws configuration"
                     }
  ; NOTE: This is just for local-dynamodb testing.
  ; The real AWS / DynamoDB role or credentials should be given by the infrastructure in which the application is deployed.

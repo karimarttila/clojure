@@ -23,6 +23,10 @@
   (halt))
 
 (comment
+  (user/my-reset)
+  (user/my-go)
+  (user/my-halt)
+
   state/system
   (system)
   (keys (ns-publics 'user))
