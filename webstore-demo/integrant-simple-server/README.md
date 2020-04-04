@@ -8,8 +8,8 @@
   - [Manual State Management](#manual-state-management)
   - [State Management Using Integrant](#state-management-using-integrant)
   - [State Management in Tests](#state-management-in-tests)
-  - [State Management in Tests - Part 1](#state-management-in-tests---part-1)
-  - [State Management in Tests - Part 2](#state-management-in-tests---part-2)
+    - [State Management in Tests - Part 1](#state-management-in-tests---part-1)
+    - [State Management in Tests - Part 2](#state-management-in-tests---part-2)
   - [Comparison](#comparison)
 - [Personal Experiences](#personal-experiences)
 - [The Rest of the Application](#the-rest-of-the-application)
@@ -73,7 +73,7 @@ In REPL driven development you can then use three ```integrant.repl``` namespace
 
 ## State Management in Tests
 
-## State Management in Tests - Part 1
+### State Management in Tests - Part 1
 
 One more comparison. Let's first show how to handle state in the tests in which we want to start/stop webserver. First in manual state management:
 
@@ -89,7 +89,7 @@ This time we can use Integrant state management. First call the Integrant ```ini
 
 NOTE: This solution uses the same Integrant system that you use in your devevelopment REPL. So, when you run your unit tests this will shut down your Integrant development system in your REPL, of course. So, a better solution would be to have a dedicated Integrant test system (with different port...). This way you could init/halt the Integrant test system in your test fixture, and you can at the same time keep your Integrant development system running and running the tests won't affect Integrant development system. I saw a pretty awesome demonstration regarding this in one Metosin workshop but I didn't implement it to this exercise. But just wanted to mention this if someone wonders if this is really the way to use Integrant in tests.
 
-## State Management in Tests - Part 2
+### State Management in Tests - Part 2
 
 Well, let's make one more change and let's create a dedicated test system. I got this idea in one Metosin presentation - a wise decision to move to one of the best Clojure shops on the planet - you get a chance to work with and learn from some of the best clojurists you can find (read more about my experiences working at [Metosin](https://www.metosin.fi) in my blog [My First Weeks at Metosin!](https://www.metosin.fi/blog/my-first-weeks-at-metosin/)). I simplified the solution a bit - the actual solution was more sophisticated but I just needed a simple solution in this exercise.
 
