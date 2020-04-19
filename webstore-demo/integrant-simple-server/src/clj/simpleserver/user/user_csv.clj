@@ -70,9 +70,9 @@
 ;; Rich comment.
 
 (comment
-  users
   (-get-initial-users)
 
+  (simpleserver.user.user-interface/-get-users simpleserver.user.user-config/user)
   ; Remember to compile user-interface, user-single-node and then user-config!
   (simpleserver.user.user-interface/email-already-exists?
     simpleserver.user.user-config/user "kari.karttinen@foo.com")
