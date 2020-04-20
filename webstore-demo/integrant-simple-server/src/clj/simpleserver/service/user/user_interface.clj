@@ -1,4 +1,4 @@
-(ns simpleserver.user.user-interface)
+(ns simpleserver.service.user.user-interface)
 
 (defprotocol UserInterface
   (email-already-exists? [env email]

@@ -1,5 +1,5 @@
-(ns simpleserver.domain.domain-dynamodb
-  (:require [simpleserver.domain.domain-interface :as ss-domain-i]
+(ns simpleserver.service.domain.domain-dynamodb
+  (:require [simpleserver.service.domain.domain-interface :as ss-domain-i]
             [clojure.tools.logging :as log]
             [simpleserver.util.config :as ss-config]
             [cognitect.aws.client.api :as aws]))
@@ -8,15 +8,14 @@
 ; Run Configuration / Environment.
 
 
-(defrecord AwsDynamoDbR []
+(defrecord AwsDynamoDbR [my-ddb product-group-table product-table]
   ss-domain-i/DomainInterface
 
   (get-product-groups
     [this]
     (log/debug "ENTER get-product-groups")
-    (let [{:keys [my-ddb my-table]} (ss-config/get-dynamodb-config "product-group")
-          raw-map (aws/invoke my-ddb {:op      :Scan
-                                      :request {:TableName my-table}})]
+    (let [raw-map (aws/invoke my-ddb {:op      :Scan
+                                      :request {:TableName product-group-table}})]
       (reduce
         (fn
           [mymap item]
@@ -29,9 +28,8 @@
   (get-products
     [this pg-id]
     (log/debug (str "ENTER get-products, pg-id: " pg-id))
-    (let [{:keys [my-ddb my-table]} (ss-config/get-dynamodb-config "product")
-          raw-products (aws/invoke my-ddb {:op      :Query
-                                           :request {:TableName                 my-table
+    (let [raw-products (aws/invoke my-ddb {:op      :Query
+                                           :request {:TableName                 product-table
                                                      :IndexName                 "PGIndex"
                                                      :KeyConditionExpression    "pgid = :pgid"
                                                      :ExpressionAttributeValues {":pgid" {:S (str pg-id)}}
@@ -50,9 +48,8 @@
   (get-product
     [this pg-id p-id]
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
-    (let [{:keys [my-ddb my-table]} (ss-config/get-dynamodb-config "product")
-          raw-product (aws/invoke my-ddb {:op      :Query
-                                          :request {:TableName     my-table
+    (let [raw-product (aws/invoke my-ddb {:op      :Query
+                                          :request {:TableName     product-table
                                                     :KeyConditions {"pgid" {:AttributeValueList {:S (str pg-id)}
                                                                             :ComparisonOperator "EQ"}
                                                                     "pid"  {:AttributeValueList {:S (str p-id)}

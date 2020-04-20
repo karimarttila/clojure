@@ -1,4 +1,4 @@
-(ns simpleserver.domain.domain-interface)
+(ns simpleserver.service.domain.domain-interface)
 
 
 (defprotocol DomainInterface

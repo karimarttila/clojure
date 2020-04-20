@@ -5,40 +5,18 @@
 
 (integrant.repl/set-prep! core/system-config)
 
-;; Taken from one Metosin example.
 (defn system [] (or state/system (throw (ex-info "System not running" {}))))
 
-;(defn web-server-state [] (::main/web-server (system)))
+;; NOTE: In Cursive, Integrant hot keys are:
+;; M-h: go
+;; M-j: reset
+;; M-k: halt
 
-(defn my-reset
-  []
-  (reset))
-
-(defn my-go
-  []
-  (go))
-
-(defn my-halt
-  []
-  (halt))
 
 (comment
   (user/my-reset)
   (user/my-go)
   (user/my-halt)
-
   state/system
   (system)
-  (keys (ns-publics 'user))
-  *ns*
-  (my-reset)
-  (system)
-  (clear)
-  (prep)
-  (init)
-  (go)
-  (halt)
-  (reset)
-  (reset-all)
-  (core/jee)
-)
+  )

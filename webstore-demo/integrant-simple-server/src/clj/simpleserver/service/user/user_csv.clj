@@ -1,8 +1,8 @@
-(ns simpleserver.user.user-single-node
+(ns simpleserver.service.user.user-csv
   (:require
     [clojure.tools.logging :as log]
-    [simpleserver.user.user-interface :as ss-user-i]
-    [simpleserver.user.user-common :as ss-user-common]
+    [simpleserver.service.user.user-interface :as ss-user-i]
+    [simpleserver.service.user.user-common :as ss-user-common]
     [simpleserver.util.config :as ss-config]
     ))
 
@@ -12,7 +12,7 @@
 (def my-users (atom (ss-user-common/get-initial-users)))
 
 
-(defrecord SingleNodeR []
+(defrecord CsvR []
   ss-user-i/UserInterface
 
   (email-already-exists?
@@ -70,8 +70,6 @@
 ;; Rich comment.
 
 (comment
-  (-get-initial-users)
-
   (simpleserver.user.user-interface/-get-users simpleserver.user.user-config/user)
   ; Remember to compile user-interface, user-single-node and then user-config!
   (simpleserver.user.user-interface/email-already-exists?

@@ -1,4 +1,4 @@
-(ns simpleserver.session.session-common
+(ns simpleserver.service.session.session-common
   (:require [clojure.tools.logging :as log]
             [buddy.sign.jwt :as buddy-jwt]
             [clj-time.core :as c-time]
@@ -20,15 +20,15 @@
   [email]
   (log/debug (str "ENTER create-json-web-token, email: " email))
   (let [my-secret my-hex-secret
-        exp-time (c-time/plus (c-time/now) (c-time/seconds (get-in ss-config/config [:jwt :exp])))
+        exp-time (c-time/plus (c-time/now) (c-time/seconds (get-in (ss-config/get-config) [:jwt :exp])))
         my-claim {:email email :exp exp-time}
         json-web-token (buddy-jwt/sign my-claim my-secret)]
     json-web-token))
 
 (defn validate-token
-  [token get-token remove-token]
+  [token options fn-get-token fn-remove-token]
   (log/debug (str "ENTER validate-token, token: " token))
-  (let [found-token (get-token token)]
+  (let [found-token (fn-get-token token options)]
     ;; Part #1 of validation.
     (if (nil? found-token)
       (do
@@ -41,7 +41,7 @@
           (if (.contains (.getMessage e) "Token is expired")
             (do
               (log/debug (str "Token is expired, removing it from my sessions and returning nil: " token))
-              (remove-token token)
+              (fn-remove-token token)
               nil)
             ; Some other issue, throw it.
             (do

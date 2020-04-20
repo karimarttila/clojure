@@ -1,0 +1,26 @@
+{
+ :runtime-env :dev
+ :web-server  {:server-port      6161
+               :test-server-port 6171
+               }
+
+ :jwt         {:exp 2000}
+
+ :db          {;; CSV
+               :csv       {:data-dir "dev-resources/data"}
+               ;; Local DynamoDB
+               :local-ddb {:ss-table-prefix "ss"
+                           :config          {:aws-profile "local-dynamodb"
+                                             ; NOTE: endpoint should be defined only if using local-dynamodb profile.
+                                             ; https://cognitect-labs.github.io/aws-api/cognitect.aws.client.api-api.html
+                                             :endpoint    {:protocol :http :hostname "localhost" :port 8000}}}
+               ;; Real DynamoDB
+               :aws-ddb   {:ss-table-prefix "ss"
+                           :config          {:aws-profile "m-sand"}}
+               ;; Postgres
+               :postgres  {}
+               }
+ }
+
+
+

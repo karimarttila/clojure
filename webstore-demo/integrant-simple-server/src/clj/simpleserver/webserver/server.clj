@@ -11,18 +11,16 @@
             [reitit.ring.coercion :as re-co]
             [reitit.coercion.spec :as re-co-spec]
             [muuntaja.core :as mu-core]
-            [simpleserver.domain.domain-config :as ss-domain-config]
-            [simpleserver.domain.domain-interface :as ss-domain-i]
-            [simpleserver.user.user-config :as ss-user-config]
-            [simpleserver.user.user-interface :as ss-user-i]
-            [simpleserver.session.session-config :as ss-session-config]
-            [simpleserver.session.session-interface :as ss-session-i]))
+            [simpleserver.service.domain.domain-interface :as ss-domain-i]
+            [simpleserver.service.user.user-interface :as ss-user-i]
+            [simpleserver.service.session.session-interface :as ss-session-i]))
 
 ;; Use curl and simple server log to see how token is parsed.
 ;; Or use this trick: You got a JSON web token from -login. Supply JSON web token to:
 ;; (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token" )
 ;; I.e. (simpleserver.webserver.server/-valid-token? (simpleserver.webserver.server_test/-create-testing-basic-authentication-from-json-webtoken "<token>"))
 
+(defonce my-service (atom {}))
 
 (defn -valid-token?
   "Parses the token from the http authorization header and asks session ns to validate the token."
@@ -41,7 +39,7 @@
     ;; Session namespace does the actual validation logic.
     ;; Note: clj-kondo complains if else branch is missing.
     (if token
-      (ss-session-i/validate-token ss-session-config/session token)
+      (ss-session-i/validate-token (:session @my-service) token)
       nil)))
 
 ;; As in headers check with curl that the http status is properly set.
@@ -83,7 +81,7 @@
   (log/debug "ENTER -signin")
   (let [validation-passed (-validate-parameters [email first-name last-name password])
         response-value (if validation-passed
-                         (ss-user-i/add-new-user ss-user-config/user email first-name last-name password)
+                         (ss-user-i/add-new-user (:user @my-service) email first-name last-name password)
                          {:ret :failed, :msg "Validation failed - some fields were empty"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
@@ -95,10 +93,10 @@
   (log/debug "ENTER -login")
   (let [validation-passed (-validate-parameters [email password])
         credentials-ok (if validation-passed
-                         (ss-user-i/credentials-ok? ss-user-config/user email password)
+                         (ss-user-i/credentials-ok? (:user @my-service) email password)
                          nil)
         json-web-token (if credentials-ok
-                         (ss-session-i/create-json-web-token ss-session-config/session email)
+                         (ss-session-i/create-json-web-token (:session @my-service) email)
                          nil)
         response-value (if (not validation-passed)
                          {:ret :failed, :msg "Validation failed - some fields were empty"}
@@ -115,7 +113,7 @@
   (log/debug "ENTER -product-groups")
   (let [token-ok (-valid-token? req)
         response-value (if token-ok
-                         {:ret :ok, :product-groups (ss-domain-i/get-product-groups ss-domain-config/domain)}
+                         {:ret :ok, :product-groups (ss-domain-i/get-product-groups (:domain @my-service))}
                          {:ret :failed, :msg "Given token is not valid"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
@@ -126,7 +124,7 @@
   (let [pg-id (get-in req [:path-params :pg-id])
         token-ok (-valid-token? req)
         response-value (if token-ok
-                         {:ret :ok, :pg-id pg-id :products (ss-domain-i/get-products ss-domain-config/domain pg-id)}
+                         {:ret :ok, :pg-id pg-id :products (ss-domain-i/get-products (:domain @my-service) pg-id)}
                          {:ret :failed, :msg "Given token is not valid"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
@@ -141,7 +139,7 @@
                          {:ret     :ok,
                           :pg-id   pg-id
                           :p-id    p-id
-                          :product (ss-domain-i/get-product ss-domain-config/domain pg-id p-id)}
+                          :product (ss-domain-i/get-product (:domain @my-service) pg-id p-id)}
                          {:ret :failed, :msg "Given token is not valid"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
@@ -175,12 +173,11 @@
       (re-ring/create-default-handler))))
 
 
-;; Integrant specific changes compared to previous version.
-
 (defn start-web-server
   "Starts the web server."
-  [port join?]
+  [port join? service]
   (log/debug "ENTER start-web-server")
+  (reset! my-service service)
   (run-jetty web-server {:port port :join? join?}))
 
 (defn stop-web-server

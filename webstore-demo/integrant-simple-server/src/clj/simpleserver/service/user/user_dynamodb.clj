@@ -1,9 +1,10 @@
-(ns simpleserver.user.user-dynamodb
-  (:require [simpleserver.user.user-interface :as ss-user-i]
-            [clojure.tools.logging :as log]
+(ns simpleserver.service.user.user-dynamodb
+  (:require [clojure.tools.logging :as log]
             [cognitect.aws.client.api :as aws]
-            [simpleserver.util.config :as ss-config]
-            [simpleserver.user.user-common :as ss-user-common]))
+            [simpleserver.service.dynamodb-config :as ss-ddb-config]
+            [simpleserver.service.user.user-interface :as ss-user-i]
+            [simpleserver.service.user.user-common :as ss-user-common]
+            [simpleserver.util.config :as ss-config]))
 
 (defn -get-converted-users
   [raw-users]
@@ -30,7 +31,7 @@
         (log/debug (str "Failure: email already exists: " email))
         {:email email, :ret :failed :msg "Email already exists"})
       (let [{my-ddb   :my-ddb
-             my-table :my-table} (ss-config/get-dynamodb-config "users")
+             my-table :my-table} (ss-ddb-config/get-dynamodb-config "users")
             new-id (ss-user-common/uuid)
             request {
                      :TableName my-table
@@ -44,15 +45,13 @@
                                   :request request})]
         {:email email, :ret :ok}))))
 
-(defrecord AwsDynamoDbR []
+(defrecord AwsDynamoDbR [my-ddb my-table]
   ss-user-i/UserInterface
 
   (email-already-exists?
     [this email]
     (log/debug (str "ENTER email-already-exists?, email: " email))
-    (let [{my-ddb   :my-ddb
-           my-table :my-table} (ss-config/get-dynamodb-config "users")
-          raw-user (aws/invoke my-ddb {:op      :Query
+    (let [raw-user (aws/invoke my-ddb {:op      :Query
                                        :request {:TableName                 my-table
                                                  :KeyConditionExpression    "email = :email"
                                                  :ExpressionAttributeValues {":email" {:S email}}}})
@@ -67,9 +66,7 @@
         (do
           (log/debug (str "Failure: email already exists: " email))
           {:email email, :ret :failed :msg "Email already exists"})
-        (let [{my-ddb   :my-ddb
-               my-table :my-table} (ss-config/get-dynamodb-config "users")
-              new-id (ss-user-common/uuid)
+        (let [new-id (ss-user-common/uuid)
               request {
                        :TableName my-table
                        :Item      {"userid"    {:S new-id}
@@ -85,9 +82,7 @@
   (credentials-ok?
     [this email password]
     (log/debug (str "ENTER credentials-ok?"))
-    (let [{my-ddb   :my-ddb
-           my-table :my-table} (ss-config/get-dynamodb-config "users")
-          request {:TableName                 my-table
+    (let [request {:TableName                 my-table
                    :KeyConditionExpression    "email = :email"
                    :ExpressionAttributeValues {":email" {:S email}}}
           raw-user (aws/invoke my-ddb {:op      :Query
@@ -98,9 +93,7 @@
   (-get-users
     [this]
     (log/debug (str "ENTER -get-users"))
-    (let [{my-ddb   :my-ddb
-           my-table :my-table} (ss-config/get-dynamodb-config "users")
-          raw-users (aws/invoke my-ddb {:op      :Scan
+    (let [raw-users (aws/invoke my-ddb {:op      :Scan
                                         :request {:TableName my-table}})
           converted-users (-get-converted-users raw-users)]
       (reduce (fn [users user]
@@ -111,10 +104,8 @@
   (-reset-users!
     [this]
     (log/debug (str "ENTER -reset-users!"))
-    (if (= (ss-config/config :runtime-env) "dev")
-      (let [{my-ddb   :my-ddb
-             my-table :my-table} (ss-config/get-dynamodb-config "users")
-            users-to-delete (ss-user-i/-get-users this)
+    (if (= (:runtime-env (ss-config/get-config)) "dev")
+      (let [users-to-delete (ss-user-i/-get-users this)
             emails-to-delete (map (fn [item]
                                     (:email (second item)))
                                   users-to-delete)

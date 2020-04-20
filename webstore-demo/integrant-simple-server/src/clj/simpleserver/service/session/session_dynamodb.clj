@@ -1,15 +1,13 @@
-(ns simpleserver.session.session-dynamodb
-  (:require [simpleserver.session.session-interface :as ss-session-i]
-            [simpleserver.session.session-common :as ss-session-common]
+(ns simpleserver.service.session.session-dynamodb
+  (:require [simpleserver.service.session.session-interface :as ss-session-i]
+            [simpleserver.service.session.session-common :as ss-session-common]
             [clojure.tools.logging :as log]
             [cognitect.aws.client.api :as aws]
             [simpleserver.util.config :as ss-config]))
 
 (defn get-all-sessions-from-dynamodb
-  []
-  (let [{my-ddb   :my-ddb
-           my-table :my-table} (ss-config/get-dynamodb-config "session")
-          items (aws/invoke my-ddb {:op      :Scan
+  [my-ddb my-table]
+  (let [items (aws/invoke my-ddb {:op      :Scan
                                     :request {
                                               :TableName my-table}})]
       (reduce (fn [sessions session]
@@ -18,33 +16,29 @@
               (items :Items))))
 
 (defn get-token
-  [token]
-  (let [{my-ddb   :my-ddb
-         my-table :my-table} (ss-config/get-dynamodb-config "session")
+  [token options]
+  (let [{:keys [my-ddb my-table]} options
         result (aws/invoke my-ddb {:op      :GetItem
                                    :request {:TableName my-table
                                              :Key       {"token" {:S token}}}})]
     (get-in result [:Item :token :S])))
 
 (defn remove-token
-  [token]
-  (let [{my-ddb   :my-ddb
-         my-table :my-table} (ss-config/get-dynamodb-config "session")
+  [token options]
+  (let [{:keys [my-ddb my-table]} options
         result (aws/invoke my-ddb {:op      :DeleteItem
                                    :request {
                                              :TableName my-table
                                              :Key       {"token" {:S token}}}})]
     result))
 
-(defrecord AwsDynamoDbR []
+(defrecord AwsDynamoDbR [my-ddb my-table]
   ss-session-i/SessionInterface
 
   (create-json-web-token
     [this email]
     (log/debug (str "ENTER create-json-web-token, email: " email))
     (let [json-web-token (ss-session-common/create-json-web-token email)
-          {my-ddb   :my-ddb
-           my-table :my-table} (ss-config/get-dynamodb-config "session")
           _ (aws/invoke my-ddb {:op      :PutItem
                                      :request {
                                                :TableName my-table
@@ -56,26 +50,23 @@
   (validate-token
     [this token]
     (log/debug (str "ENTER validate-token, token: " token))
-    (ss-session-common/validate-token token get-token remove-token)
+    (ss-session-common/validate-token token {:my-ddb my-ddb :my-table my-table} get-token remove-token)
     )
 
   (-get-sessions
     [this]
     (log/debug (str "ENTER -get-sessions"))
-    (get-all-sessions-from-dynamodb))
+    (get-all-sessions-from-dynamodb my-ddb my-table))
 
   (-reset-sessions!
     [this]
     (log/debug (str "ENTER -reset-sessions!"))
-    (let [sessions (get-all-sessions-from-dynamodb)
-          ]
+    (let [sessions (get-all-sessions-from-dynamodb my-ddb my-table)]
       (dorun (map remove-token sessions)))))
 
 (comment
   ; Refresh interface after changes in implementation.
   (mydev/refresh)
-
-  (get-all-sessions-from-dynamodb)
 
   (def my-token (let [my-aws-session simpleserver.session.session-config/session
                       result (ss-session-i/create-json-web-token my-aws-session "kari.karttinen@foo.com")]
@@ -96,6 +87,6 @@
                              result (ss-session-i/-reset-sessions! my-aws-session)]
                          result)
     )
-  (get-all-sessions-from-dynamodb)
+  #_(get-all-sessions-from-dynamodb)
   )
 

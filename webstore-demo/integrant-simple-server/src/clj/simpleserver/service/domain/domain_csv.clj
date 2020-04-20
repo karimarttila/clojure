@@ -1,17 +1,14 @@
-(ns simpleserver.domain.domain-single-node
+(ns simpleserver.service.domain.domain-csv
   (:require
     [clojure.data.csv :as csv]
     [clojure.java.io :as io]
     [clojure.string :as str]
     [clojure.tools.logging :as log]
     [simpleserver.util.config :as ss-config]
-    [simpleserver.domain.domain-interface :as ss-domain-i]
+    [simpleserver.service.domain.domain-interface :as ss-domain-i]
     ))
 
-(def my-domain-atom
-  "Stores all domain objects into this cache once read from csv files.
-  Used for development purposes only."
-  (atom {}))
+(defonce my-domain-atom (atom {}))
 
 (defn -get-raw-products
   "Gets raw products for a product group, returns the whole product information for each product."
@@ -34,7 +31,7 @@
           nil)))))
 
 
-(defrecord SingleNodeR []
+(defrecord CsvR [data-dir]
   ss-domain-i/DomainInterface
 
   (get-product-groups
@@ -42,8 +39,7 @@
     (log/debug "ENTER get-product-groups")
     (if-let [product-groups (@my-domain-atom :product-groups)]
       product-groups
-      (let [data-dir (get-in ss-config/config [:single-node-data :data-dir])
-            raw (with-open [reader (io/reader (str data-dir "/product-groups.csv"))]
+      (let [raw (with-open [reader (io/reader (str data-dir "/product-groups.csv"))]
                   (doall
                     (csv/read-csv reader)))
             product-groups-from-file (into {}

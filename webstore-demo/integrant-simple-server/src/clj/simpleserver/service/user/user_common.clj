@@ -1,4 +1,4 @@
-(ns simpleserver.user.user-common
+(ns simpleserver.service.user.user-common
   (:require [simpleserver.util.config :as ss-config]
             [clojure.data.csv :as csv]
             [clojure.java.io :as io]))
@@ -11,7 +11,7 @@
 
 (defn get-initial-users
   []
-  (let [data-dir (get-in ss-config/config [:single-node-data :data-dir])
+  (let [data-dir (get-in (ss-config/create-config) [:db :csv :data-dir])
         raw-users (try
                     (with-open [reader (io/reader (str data-dir "/initial-users.csv"))]
                       (doall
