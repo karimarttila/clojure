@@ -49,7 +49,7 @@
   ss-user-i/UserInterface
 
   (email-already-exists?
-    [this email]
+    [_ email]
     (log/debug (str "ENTER email-already-exists?, email: " email))
     (let [raw-user (aws/invoke my-ddb {:op      :Query
                                        :request {:TableName                 my-table
@@ -80,7 +80,7 @@
           {:email email, :ret :ok}))))
 
   (credentials-ok?
-    [this email password]
+    [_ email password]
     (log/debug (str "ENTER credentials-ok?"))
     (let [request {:TableName                 my-table
                    :KeyConditionExpression    "email = :email"
@@ -91,7 +91,7 @@
       (= ret-password (str (hash password)))))
 
   (-get-users
-    [this]
+    [_]
     (log/debug (str "ENTER -get-users"))
     (let [raw-users (aws/invoke my-ddb {:op      :Scan
                                         :request {:TableName my-table}})
@@ -127,11 +127,12 @@
                     initial-users))
 
         )
-      (throw (java.lang.UnsupportedOperationException. "You can reset sessions only in development environment!"))))
+      (throw (UnsupportedOperationException. "You can reset sessions only in development environment!"))))
 
   )
 
-(comment
+;; Commented out for clj-kondo
+#_(comment
   ;; NOTE: Remember to refresh everything if you make changes, since protocol and config needs to be loaded before this class.
   (do
     (require '[mydev])

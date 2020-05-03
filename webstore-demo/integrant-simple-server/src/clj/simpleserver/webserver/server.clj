@@ -2,7 +2,6 @@
   (:require [clojure.tools.logging :as log]
             [clojure.string :as string]
             [clojure.data.codec.base64 :as base64]
-            [ring.middleware.cors :refer [wrap-cors]]
             [ring.middleware.params :as ri-params]
             [ring.util.response :as ri-resp]
             [ring.adapter.jetty :refer [run-jetty]]
@@ -50,18 +49,6 @@
     ring-response
     (ri-resp/status ring-response 400)))
 
-
-;; NOTE: Not yet tested with reitit.
-
-
-(defn -cors-handler
-  "Adds cors handling to response."
-  [routes]
-  ; TODO: Why cannot we see this log entry?
-  (log/debug "ENTER -cors-handler")
-  (wrap-cors routes :access-control-allow-origin [#".*"]
-             :access-control-allow-headers ["Content-Type" "Authorization"]
-             :access-control-allow-methods [:get :put :post :delete :options]))
 
 (defn -info
   "Gets the info."
@@ -186,10 +173,4 @@
   (log/debug "ENTER stop-web-server")
   (.stop server))
 
-
-(comment
-  (def my-server (start-web-server 6062 false))
-  my-server
-  (stop-web-server my-server)
-  )
 

@@ -28,7 +28,7 @@
 
 (defn- get-session
   "Gets session environment."
-  [db  csv-datadir ddb-config]
+  [db ddb-config]
   (log/debug (str "ENTER get-session, db: " db))
   (let [{:keys [ddb] {:keys [session]} :tables} ddb-config]
     (cond
@@ -40,7 +40,7 @@
 
 (defn- get-user
   "Gets user environment."
-  [db csv-datadir ddb-config]
+  [db ddb-config]
   (log/debug (str "ENTER get-user, db: " db))
   (let [{:keys [ddb] {:keys [users]} :tables} ddb-config]
     (cond
@@ -58,12 +58,10 @@
         csv-datadir (get-in config [:db :csv :data-dir])
         ddb-config (ddb-config/get-dynamodb-config config)]
     {:domain  (get-domain db csv-datadir ddb-config)
-     :session (get-session db csv-datadir ddb-config)
-     :user    (get-user db csv-datadir ddb-config)}))
+     :session (get-session db ddb-config)
+     :user    (get-user db ddb-config)}))
 
 (comment
-  (get-service
+  #_(get-service
     (simpleserver.util.config/get-config))
-  #_(get-domain :local-ddb (simpleserver.util.config/create-config))
-
   )

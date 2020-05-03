@@ -1,10 +1,9 @@
 (ns simpleserver.core
   (:require
     [clojure.tools.logging :as log]
+    [clojure.pprint]
     [integrant.core :as ig]
     [simpleserver.util.config :as ss-config]
-    [cognitect.aws.credentials :as credentials]
-    [cognitect.aws.client.api :as aws]
     [simpleserver.service.service :as ss-service]
     [simpleserver.webserver.server :as ss-webserver]))
 
@@ -78,6 +77,6 @@
   @active-db
   (simpleserver.core/reset-active-db! :local-ddb)
   (simpleserver.core/reset-active-db! :csv)
-  (user/system)
+  #_(user/system)
   )
 

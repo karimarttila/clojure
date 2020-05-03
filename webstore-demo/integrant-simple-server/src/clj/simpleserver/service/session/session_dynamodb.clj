@@ -2,8 +2,7 @@
   (:require [simpleserver.service.session.session-interface :as ss-session-i]
             [simpleserver.service.session.session-common :as ss-session-common]
             [clojure.tools.logging :as log]
-            [cognitect.aws.client.api :as aws]
-            [simpleserver.util.config :as ss-config]))
+            [cognitect.aws.client.api :as aws]))
 
 (defn get-all-sessions-from-dynamodb
   [my-ddb my-table]
@@ -36,7 +35,7 @@
   ss-session-i/SessionInterface
 
   (create-json-web-token
-    [this email]
+    [_ email]
     (log/debug (str "ENTER create-json-web-token, email: " email))
     (let [json-web-token (ss-session-common/create-json-web-token email)
           _ (aws/invoke my-ddb {:op      :PutItem
@@ -48,23 +47,24 @@
       json-web-token))
 
   (validate-token
-    [this token]
+    [_ token]
     (log/debug (str "ENTER validate-token, token: " token))
     (ss-session-common/validate-token token {:my-ddb my-ddb :my-table my-table} get-token remove-token)
     )
 
   (-get-sessions
-    [this]
+    [_]
     (log/debug (str "ENTER -get-sessions"))
     (get-all-sessions-from-dynamodb my-ddb my-table))
 
   (-reset-sessions!
-    [this]
+    [_]
     (log/debug (str "ENTER -reset-sessions!"))
     (let [sessions (get-all-sessions-from-dynamodb my-ddb my-table)]
       (dorun (map remove-token sessions)))))
 
-(comment
+;; Commented for clj-kondo
+#_(comment
   ; Refresh interface after changes in implementation.
   (mydev/refresh)
 
@@ -87,6 +87,6 @@
                              result (ss-session-i/-reset-sessions! my-aws-session)]
                          result)
     )
-  #_(get-all-sessions-from-dynamodb)
+  (get-all-sessions-from-dynamodb)
   )
 

@@ -1,7 +1,6 @@
 (ns simpleserver.service.domain.domain-dynamodb
   (:require [simpleserver.service.domain.domain-interface :as ss-domain-i]
             [clojure.tools.logging :as log]
-            [simpleserver.util.config :as ss-config]
             [cognitect.aws.client.api :as aws]))
 
 ; NOTE: When testing in IntelliJ IDEA / Cursive: add AWS_PROFILE and AWS_DEFAULT_REGION in the
@@ -12,7 +11,7 @@
   ss-domain-i/DomainInterface
 
   (get-product-groups
-    [this]
+    [_]
     (log/debug "ENTER get-product-groups")
     (let [raw-map (aws/invoke my-ddb {:op      :Scan
                                       :request {:TableName product-group-table}})]
@@ -26,7 +25,7 @@
 
 
   (get-products
-    [this pg-id]
+    [_ pg-id]
     (log/debug (str "ENTER get-products, pg-id: " pg-id))
     (let [raw-products (aws/invoke my-ddb {:op      :Query
                                            :request {:TableName                 product-table
@@ -46,7 +45,7 @@
 
 
   (get-product
-    [this pg-id p-id]
+    [_ pg-id p-id]
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
     (let [raw-product (aws/invoke my-ddb {:op      :Query
                                           :request {:TableName     product-table

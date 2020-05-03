@@ -1,17 +1,12 @@
 (ns simpleserver.util.config
   (:require
-    [maailma.core :as m]
-    [aero.core :as a]
-    [cognitect.aws.credentials :as credentials]
-    [cognitect.aws.client.api :as aws]
-    [clojure.tools.logging :as log]))
-
-
-
+    [aero.core :as aero]
+    [clojure.tools.logging :as log]
+    [clojure.java.io]))                                     ;; clj-kondo requires this?
 
 (defn create-config
   []
-  (a/read-config (clojure.java.io/resource "config.edn")))
+  (aero/read-config (clojure.java.io/resource "config.edn")))
 
 (defonce config (atom nil))
 
@@ -25,12 +20,13 @@
   []
   @config)
 
+;; Commented out for clj-kondo
 ;; Testing locally.
-(comment
-  (def config (create-config))
-  (def table-name "session")
-  (def my-env :dev)
-  (def my-table-prefix "ss"))
+#_(comment
+    (def config (create-config))
+    (def table-name "session")
+    (def my-env :dev)
+    (def my-table-prefix "ss"))
 
 
 (comment

@@ -16,7 +16,7 @@
   ss-user-i/UserInterface
 
   (email-already-exists?
-    [this email]
+    [_ email]
     (log/debug (str "ENTER email-already-exists?, email: " email))
     (let [ret (some
                 (fn [user]
@@ -44,7 +44,7 @@
           {:email email, :ret :ok}))))
 
   (credentials-ok?
-    [this email password]
+    [_ email password]
     (log/debug (str "ENTER credentials-ok?"))
     (let [ret (some
                 (fn [user]
@@ -55,21 +55,22 @@
       (not (nil? ret))))
 
   (-get-users
-    [this]
+    [_]
     (log/debug (str "ENTER -get-users"))
     @my-users)
 
   (-reset-users!
-    [this]
+    [_]
     (log/debug (str "ENTER -reset-users!"))
     (if (= (ss-config/config :runtime-env) "dev")
       (reset! my-users (ss-user-common/get-initial-users))
-      (throw (java.lang.UnsupportedOperationException. "You can reset sessions only in development environment!")))))
+      (throw (UnsupportedOperationException. "You can reset sessions only in development environment!")))))
 
 ;; ****************************************************************
 ;; Rich comment.
 
-(comment
+;; Commented out for clj-kondo
+#_(comment
   (simpleserver.user.user-interface/-get-users simpleserver.user.user-config/user)
   ; Remember to compile user-interface, user-single-node and then user-config!
   (simpleserver.user.user-interface/email-already-exists?

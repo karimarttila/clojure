@@ -2,57 +2,60 @@
  :paths   ["resources"]
 
  :aliases {
-           :dev               {:extra-paths ["dev-resources"]
-                               :extra-deps  {org.clojure/clojure {:mvn/version "1.10.1"}}}
-           :test              {:extra-paths ["test/clj"]}
-           :scratch           {:extra-paths ["clj-scratch"]}
+           :dev         {:extra-paths ["dev-resources" "classes"]
+                         :extra-deps  {org.clojure/clojure {:mvn/version "1.10.1"}
+                                       clj-kondo           {:mvn/version "RELEASE"}}}
+           :test        {:extra-paths ["test/clj"]
+                         :extra-deps  {lambdaisland/kaocha      {:mvn/version "1.0-612"}
+                                       lambdaisland/kaocha-cljs {:mvn/version "0.0-71"}}}
+           :scratch     {:extra-paths ["clj-scratch"]}
 
            ;; Let's learn to use a common part already now since in the next exercise we create frontend with re-frame.
-           :common            {:extra-paths ["src/cljc"]
-                               :extra-deps  {metosin/reitit {:mvn/version "0.4.2"}
-                                             aero {:mvn/version "1.1.6"}
-                                             integrant/repl {:mvn/version "0.3.1"}
-                                             }}
-           :backend           {:extra-paths ["src/clj"]
-                               :extra-deps  {
-                                             integrant                       {:mvn/version "0.8.0"}
-                                             org.clojure/data.json           {:mvn/version "1.0.0"}
-                                             org.clojure/data.csv            {:mvn/version "1.0.0"}
-                                             metosin/maailma                 {:mvn/version "1.1.0"}
-                                             org.clojure/tools.logging       {:mvn/version "1.0.0"}
-                                             commons-logging/commons-logging {:mvn/version "1.2"}
-                                             ch.qos.logback/logback-classic  {:mvn/version "1.2.3"}
-                                             ring/ring-core                  {:mvn/version "1.8.0"}
-                                             ring/ring-jetty-adapter         {:mvn/version "1.7.1"}
-                                             ring-cors/ring-cors             {:mvn/version "0.1.13"}
-                                             ring/ring-json                  {:mvn/version "0.4.0"}
-                                             ring/ring-defaults              {:mvn/version "0.3.2"}
-                                             buddy/buddy-sign                {:mvn/version "3.1.0"}
-                                             com.cognitect.aws/api           {:mvn/version "0.8.437"}
-                                             com.cognitect.aws/endpoints     {:mvn/version "1.1.11.726"}
-                                             com.cognitect.aws/dynamodb      {:mvn/version "792.2.620.0"}
-                                             org.eclipse.jetty/jetty-client  {:mvn/version "9.4.26.v20200117"}
-                                             clj-http                        {:mvn/version "3.10.0"}
-                                             }}
+           :common      {:extra-paths ["src/cljc"]
+                         :extra-deps  {metosin/reitit {:mvn/version "0.4.2"}
+                                       aero           {:mvn/version "1.1.6"}
+                                       integrant/repl {:mvn/version "0.3.1"}
+                                       }}
+           :backend     {:extra-paths ["src/clj"]
+                         :extra-deps  {
+                                       integrant                       {:mvn/version "0.8.0"}
+                                       org.clojure/data.json           {:mvn/version "1.0.0"}
+                                       org.clojure/data.csv            {:mvn/version "1.0.0"}
+                                       metosin/maailma                 {:mvn/version "1.1.0"}
+                                       org.clojure/tools.logging       {:mvn/version "1.0.0"}
+                                       commons-logging/commons-logging {:mvn/version "1.2"}
+                                       ch.qos.logback/logback-classic  {:mvn/version "1.2.3"}
+                                       ring/ring-core                  {:mvn/version "1.8.0"}
+                                       ring/ring-jetty-adapter         {:mvn/version "1.7.1"}
+                                       ring-cors/ring-cors             {:mvn/version "0.1.13"}
+                                       ring/ring-json                  {:mvn/version "0.4.0"}
+                                       ring/ring-defaults              {:mvn/version "0.3.2"}
+                                       buddy/buddy-sign                {:mvn/version "3.1.0"}
+                                       com.cognitect.aws/api           {:mvn/version "0.8.437"}
+                                       com.cognitect.aws/endpoints     {:mvn/version "1.1.11.726"}
+                                       com.cognitect.aws/dynamodb      {:mvn/version "792.2.620.0"}
+                                       org.eclipse.jetty/jetty-client  {:mvn/version "9.4.26.v20200117"}
+                                       clj-http                        {:mvn/version "3.10.0"}
+                                       }}
 
            ;; Test runner in console.
-           :test-runner       {:extra-paths ["test"]
-                               :extra-deps  {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
-                                                                        :sha     "209b64504cb3bd3b99ecfec7937b358a879f55c1"}}
-                               :main-opts   ["-m" "cognitect.test-runner"]}
+           :test-runner {:extra-paths ["test"]
+                         :extra-deps  {com.cognitect/test-runner {:git/url "https://github.com/cognitect-labs/test-runner.git"
+                                                                  :sha     "209b64504cb3bd3b99ecfec7937b358a879f55c1"}}
+                         :main-opts   ["-m" "cognitect.test-runner"]}
 
            ;; Depstar for building fat jar.
            :uberjar
-                              {:extra-deps {seancorfield/depstar {:mvn/version "0.5.1"}}
-                               :extra-paths ["prod-resources"]
-                               :main-opts ["-m" "hf.depstar.uberjar" "target/ss.jar"]}
-           :outdated {:extra-deps {olical/depot {:mvn/version "RELEASE"}}
-                      :main-opts ["-m" "depot.outdated.main" "-a" "outdated"]}
+                        {:extra-deps  {seancorfield/depstar {:mvn/version "0.5.1"}}
+                         :extra-paths ["prod-resources"]
+                         :main-opts   ["-m" "hf.depstar.uberjar" "target/ss.jar"]}
+           :outdated    {:extra-deps {olical/depot {:mvn/version "RELEASE"}}
+                         :main-opts  ["-m" "depot.outdated.main" "-a" "outdated"]}
            :clj-kondo
-                              {:extra-deps {clj-kondo {:mvn/version "RELEASE"}}
-                               :main-opts  ["-m" "clj-kondo.main"]}
+                        {:extra-deps {clj-kondo {:mvn/version "RELEASE"}}
+                         :main-opts  ["-m" "clj-kondo.main"]}
            ;; Cider specific.
-           :cider-clj         {:extra-deps {org.clojure/clojure {:mvn/version "1.10.1"}
-                                            cider/cider-nrepl   {:mvn/version "0.22.4"}}
-                               :main-opts  ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]}}
+           :cider-clj   {:extra-deps {org.clojure/clojure {:mvn/version "1.10.1"}
+                                      cider/cider-nrepl   {:mvn/version "0.22.4"}}
+                         :main-opts  ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]}}
  }
