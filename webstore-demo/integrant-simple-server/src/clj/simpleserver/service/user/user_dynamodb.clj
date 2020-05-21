@@ -23,9 +23,9 @@
        (:Items raw-users)))
 
 (defn -add-new-user-without-hashing-password
-  [this email first-name last-name password]
+  [this env email first-name last-name password]
   (log/debug (str "ENTER add-new-user"))
-  (let [already-exists (ss-user-i/email-already-exists? this email)]
+  (let [already-exists (ss-user-i/email-already-exists? this env email)]
     (if already-exists
       (do
         (log/debug (str "Failure: email already exists: " email))
@@ -49,7 +49,7 @@
   ss-user-i/UserInterface
 
   (email-already-exists?
-    [_ email]
+    [_ env email]
     (log/debug (str "ENTER email-already-exists?, email: " email))
     (let [raw-user (aws/invoke my-ddb {:op      :Query
                                        :request {:TableName                 my-table
@@ -59,9 +59,9 @@
       (= ret-email email)))
 
   (add-new-user
-    [this email first-name last-name password]
+    [this env email first-name last-name password]
     (log/debug (str "ENTER add-new-user"))
-    (let [already-exists (ss-user-i/email-already-exists? this email)]
+    (let [already-exists (ss-user-i/email-already-exists? this env email)]
       (if already-exists
         (do
           (log/debug (str "Failure: email already exists: " email))
@@ -80,7 +80,7 @@
           {:email email, :ret :ok}))))
 
   (credentials-ok?
-    [_ email password]
+    [_ env email password]
     (log/debug (str "ENTER credentials-ok?"))
     (let [request {:TableName                 my-table
                    :KeyConditionExpression    "email = :email"
@@ -91,7 +91,7 @@
       (= ret-password (str (hash password)))))
 
   (-get-users
-    [_]
+    [_ env]
     (log/debug (str "ENTER -get-users"))
     (let [raw-users (aws/invoke my-ddb {:op      :Scan
                                         :request {:TableName my-table}})
@@ -102,10 +102,10 @@
               converted-users)))
 
   (-reset-users!
-    [this]
+    [this env]
     (log/debug (str "ENTER -reset-users!"))
-    (if (= (:runtime-env (ss-config/get-config)) "dev")
-      (let [users-to-delete (ss-user-i/-get-users this)
+    (if (= (:runtime-env env) "dev")
+      (let [users-to-delete (ss-user-i/-get-users this env)
             emails-to-delete (map (fn [item]
                                     (:email (second item)))
                                   users-to-delete)
@@ -120,6 +120,7 @@
                       (let [user-map (second user)]
                         (-add-new-user-without-hashing-password
                           this
+                          env
                           (:email user-map)
                           (:first-name user-map)
                           (:last-name user-map)

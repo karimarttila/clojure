@@ -50,7 +50,7 @@
       ))
   )
 
-(defn get-service
+(defn get-service-config
   "Gets service entities for given db request (:csv, :local-ddb...).
   Integrant calls this function to get service for server."
   [config]
@@ -60,6 +60,12 @@
     {:domain  (get-domain db csv-datadir ddb-config)
      :session (get-session db ddb-config)
      :user    (get-user db ddb-config)}))
+
+(defn get-service
+  "Gets requested service given by service-key from environment."
+  [env service-key]
+  (let [service-entity (:service env)]
+    (service-key service-entity)))
 
 (comment
   #_(get-service

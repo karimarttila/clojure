@@ -16,7 +16,7 @@
   ss-user-i/UserInterface
 
   (email-already-exists?
-    [_ email]
+    [_ env email]
     (log/debug (str "ENTER email-already-exists?, email: " email))
     (let [ret (some
                 (fn [user]
@@ -25,9 +25,9 @@
       (not (nil? ret))))
 
   (add-new-user
-    [this email first-name last-name password]
+    [this env email first-name last-name password]
     (log/debug (str "ENTER add-new-user"))
-    (let [already-exists (ss-user-i/email-already-exists? this email)]
+    (let [already-exists (ss-user-i/email-already-exists? this env email)]
       (if already-exists
         (do
           (log/debug (str "Failure: email already exists: " email))
@@ -44,7 +44,7 @@
           {:email email, :ret :ok}))))
 
   (credentials-ok?
-    [_ email password]
+    [_ env email password]
     (log/debug (str "ENTER credentials-ok?"))
     (let [ret (some
                 (fn [user]
@@ -55,14 +55,14 @@
       (not (nil? ret))))
 
   (-get-users
-    [_]
+    [_ env]
     (log/debug (str "ENTER -get-users"))
     @my-users)
 
   (-reset-users!
-    [_]
+    [_ env]
     (log/debug (str "ENTER -reset-users!"))
-    (if (= (ss-config/config :runtime-env) "dev")
+    (if (= (:runtime-env (:config env)) "dev")
       (reset! my-users (ss-user-common/get-initial-users))
       (throw (UnsupportedOperationException. "You can reset sessions only in development environment!")))))
 

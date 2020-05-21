@@ -26,26 +26,26 @@
   ss-session-i/SessionInterface
 
   (create-json-web-token
-    [this email]
+    [this env email]
     (log/debug (str "ENTER create-json-web-token, email: " email))
-    (let [json-web-token (ss-session-common/create-json-web-token email)
+    (let [json-web-token (ss-session-common/create-json-web-token env email)
           _ (swap! my-sessions conj json-web-token)]
       json-web-token))
 
   (validate-token
-    [this token]
+    [this env token]
     (log/debug (str "ENTER validate-token, token: " token))
     (ss-session-common/validate-token token nil get-token remove-token))
 
   (-get-sessions
-    [this]
+    [this env]
     (log/debug (str "ENTER -get-sessions"))
     @my-sessions)
 
   (-reset-sessions!
-    [this]
+    [this env]
     (log/debug (str "ENTER -reset-sessions!"))
-    (if (= (ss-config/config :runtime-env) "dev")
+    (if (= (env :runtime-env) "dev")
       (reset! my-sessions #{})
       (throw (java.lang.UnsupportedOperationException. "You can reset sessions only in development environment!"))))
   )

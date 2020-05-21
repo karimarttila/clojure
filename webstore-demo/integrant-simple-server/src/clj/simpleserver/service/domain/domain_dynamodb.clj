@@ -11,7 +11,7 @@
   ss-domain-i/DomainInterface
 
   (get-product-groups
-    [_]
+    [_ env]
     (log/debug "ENTER get-product-groups")
     (let [raw-map (aws/invoke my-ddb {:op      :Scan
                                       :request {:TableName product-group-table}})]
@@ -25,7 +25,7 @@
 
 
   (get-products
-    [_ pg-id]
+    [_ env pg-id]
     (log/debug (str "ENTER get-products, pg-id: " pg-id))
     (let [raw-products (aws/invoke my-ddb {:op      :Query
                                            :request {:TableName                 product-table
@@ -45,7 +45,7 @@
 
 
   (get-product
-    [_ pg-id p-id]
+    [_ env pg-id p-id]
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
     (let [raw-product (aws/invoke my-ddb {:op      :Query
                                           :request {:TableName     product-table
@@ -63,6 +63,3 @@
           (first)
           ((juxt (comp :S :pid) (comp :S :pgid) (comp :S :title) (comp :S :price) (comp :S :a_or_d) (comp :S :year) (comp :S :country) (comp :S :g_or_l)) (first (:Items raw-product)))
           )))))
-
-
-

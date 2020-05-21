@@ -35,9 +35,9 @@
   ss-session-i/SessionInterface
 
   (create-json-web-token
-    [_ email]
+    [_ env email]
     (log/debug (str "ENTER create-json-web-token, email: " email))
-    (let [json-web-token (ss-session-common/create-json-web-token email)
+    (let [json-web-token (ss-session-common/create-json-web-token env email)
           _ (aws/invoke my-ddb {:op      :PutItem
                                      :request {
                                                :TableName my-table
@@ -47,18 +47,18 @@
       json-web-token))
 
   (validate-token
-    [_ token]
+    [_ env token]
     (log/debug (str "ENTER validate-token, token: " token))
     (ss-session-common/validate-token token {:my-ddb my-ddb :my-table my-table} get-token remove-token)
     )
 
   (-get-sessions
-    [_]
+    [_ env]
     (log/debug (str "ENTER -get-sessions"))
     (get-all-sessions-from-dynamodb my-ddb my-table))
 
   (-reset-sessions!
-    [_]
+    [_ env]
     (log/debug (str "ENTER -reset-sessions!"))
     (let [sessions (get-all-sessions-from-dynamodb my-ddb my-table)]
       (dorun (map remove-token sessions)))))

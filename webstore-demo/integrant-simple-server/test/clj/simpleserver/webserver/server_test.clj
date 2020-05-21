@@ -4,43 +4,40 @@
             [clojure.data.codec.base64 :as base64]
             [integrant.core :as ig]
             [clj-http.client :as http-client]
-            [simpleserver.core :as ss-core]
             [simpleserver.util.config :as ss-config]
-            [simpleserver.webserver.server :as ss-ws]
-            [simpleserver.user.user-interface :as ss-user-i]
-            [simpleserver.user.user-config :as ss-user-config]
-            [simpleserver.session.session-interface :as ss-session-i]
-            [simpleserver.session.session-config :as ss-session-config]
-            [simpleserver.test-utils.test-system :as ss-test-system]))
+            [simpleserver.service.service :as ss-service]
+            [simpleserver.test-config :as ss-tc]
+            [simpleserver.service.user.user-interface :as ss-user-i]
+            [simpleserver.service.session.session-interface :as ss-session-i]
+            ))
 
+(defn init-fixture
+  []
+  (ss-user-i/-reset-users! (ss-service/get-service (ss-tc/test-service) :user) (ss-tc/test-env))
+  (ss-session-i/-reset-sessions! (ss-service/get-service (ss-tc/test-service) :session) (ss-tc/test-env)))
 
 (defn webserver-test-fixture
   [f]
   (log/debug "ENTER webserver-test-fixture")
-  (ss-user-i/-reset-users! ss-user-config/user)
-  (ss-session-i/-reset-sessions! ss-session-config/session)
-  (let [system-map (ig/init (ss-test-system/test-system-config))]
-    (f)
-    (ig/halt! system-map))
+  (ss-tc/test-system-fixture-runner init-fixture f)
   (log/debug "EXIT webserver-test-fixture"))
 
-; Register test fixtures.
 (use-fixtures :each webserver-test-fixture)
 
 (defn -call-api [verb path headers body]
-  (let [my-port (get-in ss-config/config [:test-server :port])
+  (let [my-port (get-in ss-tc/test-env [:config :web-server :test-server-port])
         my-fn (cond
                 (= verb :get) http-client/get
                 (= verb :post) http-client/post)]
     (try
       (select-keys
         (my-fn (str "http://localhost:" my-port "/" path)
-               {:as               :json
-                :form-params      body
-                :headers          headers
-                :content-type     :json
+               {:as :json
+                :form-params body
+                :headers headers
+                :content-type :json
                 :throw-exceptions false
-                :coerce           :always}
+                :coerce :always}
                ) [:status :body]))))
 
 (deftest info-test

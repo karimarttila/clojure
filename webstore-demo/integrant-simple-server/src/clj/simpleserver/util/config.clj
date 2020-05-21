@@ -8,17 +8,7 @@
   []
   (aero/read-config (clojure.java.io/resource "config.edn")))
 
-(defonce config (atom nil))
 
-(defn reset-config!
-  "Integrant resets the configuration"
-  [new-config]
-  (log/debug "reset-config!")
-  (reset! config new-config))
-
-(defn get-config
-  []
-  @config)
 
 ;; Commented out for clj-kondo
 ;; Testing locally.

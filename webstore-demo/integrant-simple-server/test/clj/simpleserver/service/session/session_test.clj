@@ -1,15 +1,14 @@
-(ns simpleserver.session.session-test
+(ns simpleserver.service.session.session-test
   (:require [clojure.test :refer [deftest use-fixtures is testing]]
             [clojure.tools.logging :as log]
-            [simpleserver.util.config]
-            [simpleserver.session.session-config]
-            [simpleserver.session.session-interface]
+            [simpleserver.test-config :as ss-tc]
+            [simpleserver.service.service :as ss-service]
+            [simpleserver.service.session.session-interface :as ss-session-i]
             ))
 
 (defn reset-sessions! []
   (log/debug "ENTER reset-sessions!")
-  (let [my-session simpleserver.session.session-config/session]
-    (simpleserver.session.session-interface/-reset-sessions! my-session))
+  (ss-session-i/-reset-sessions! (ss-service/get-service (ss-tc/test-service) :session) (ss-tc/test-env))
   (log/debug "EXIT reset-sessions!"))
 
 (defn reset-state
@@ -26,14 +25,13 @@
 (deftest create-json-web-token
   (log/debug "ENTER create-json-web-token")
   (testing "Create json web token and validate it"
-    (let [my-session simpleserver.session.session-config/session
-          initial-len (count (simpleserver.session.session-interface/-get-sessions my-session))
+    (let [initial-len (count (ss-session-i/-get-sessions (ss-service/get-service (ss-tc/test-service) :session) (ss-tc/test-env)))
           test-email "kari.karttinen@foo.com"
-          jwt (simpleserver.session.session-interface/create-json-web-token my-session test-email)
+          jwt (ss-session-i/create-json-web-token (ss-service/get-service (ss-tc/test-service) :session) (ss-tc/test-env) test-email)
           _ (log/debug (str "Got jwt: " jwt))
-          new-len (count (simpleserver.session.session-interface/-get-sessions my-session))
+          new-len (count (ss-session-i/-get-sessions (ss-service/get-service (ss-tc/test-service) :session) (ss-tc/test-env)))
           _ (log/debug (str "Sessions: " new-len))
-          ret (simpleserver.session.session-interface/validate-token my-session jwt)
+          ret (ss-session-i/validate-token (ss-service/get-service (ss-tc/test-service) :session) jwt (ss-tc/test-env))
           _ (log/debug (str "validation returned: " ret))
           ret-email (ret :email)
           ]

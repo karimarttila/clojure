@@ -1,11 +1,14 @@
 @list:
    just --list
 
+# Start dynamodb emulator
+@dynamodb:
+    cd dynamodb && ./run-docker-compose.sh
+
 # Start backend repl.
 @backend:
-    clj -A:dev:test:common:backend -m nrepl.cmdline -i -C
+    clj -A:dev:scratch:test:common:backend -m nrepl.cmdline -i -C
 
-
-# lint
+# Lint
 @lint:
    clj -A:dev -m clj-kondo.main --lint src

@@ -1,16 +1,16 @@
 (ns simpleserver.service.session.session-interface)
 
 (defprotocol SessionInterface
-  (create-json-web-token [this email]
+  (create-json-web-token [this env email]
     "Creates the JSON web token and adds it to the sessions database.")
-  (validate-token [this token]
+  (validate-token [this env token]
     "Validates the token. Returns {:email :exp} from token if session ok,
     nil otherwise. Token validation has two parts:
     1. Check that we actually created the token in the first place (should find it in the session db).
     2. Validate the token with buddy (can unsign it, token is not expired).")
-  (-get-sessions [this]
+  (-get-sessions [this env]
     "Gets all sessions - used in testing.")
-  (-reset-sessions! [this]
+  (-reset-sessions! [this env]
     "Resets all sessions - used in testing.")
   )
 

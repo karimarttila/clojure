@@ -10,6 +10,7 @@
             [reitit.ring.coercion :as re-co]
             [reitit.coercion.spec :as re-co-spec]
             [muuntaja.core :as mu-core]
+            [simpleserver.service.service :as ss-service]
             [simpleserver.service.domain.domain-interface :as ss-domain-i]
             [simpleserver.service.user.user-interface :as ss-user-i]
             [simpleserver.service.session.session-interface :as ss-session-i]))
@@ -19,11 +20,10 @@
 ;; (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token" )
 ;; I.e. (simpleserver.webserver.server/-valid-token? (simpleserver.webserver.server_test/-create-testing-basic-authentication-from-json-webtoken "<token>"))
 
-(defonce my-service (atom {}))
 
 (defn -valid-token?
   "Parses the token from the http authorization header and asks session ns to validate the token."
-  [req]
+  [env req]
   (log/debug "ENTER -valid-token?")
   (let [basic (get-in req [:headers "authorization"])
         ;_ (log/debug (str "basic: " basic))
@@ -38,7 +38,7 @@
     ;; Session namespace does the actual validation logic.
     ;; Note: clj-kondo complains if else branch is missing.
     (if token
-      (ss-session-i/validate-token (:session @my-service) token)
+      (ss-session-i/validate-token (ss-service/get-service env :session) env token)
       nil)))
 
 ;; As in headers check with curl that the http status is properly set.
@@ -52,7 +52,7 @@
 
 (defn -info
   "Gets the info."
-  []
+  [_]
   (log/debug "ENTER -info")
   {:status 200 :body {:info "index.html => Info in HTML format"}})
 
@@ -64,11 +64,11 @@
 
 (defn -signin
   "Provides API for sign-in page."
-  [first-name last-name password email]
+  [env first-name last-name password email]
   (log/debug "ENTER -signin")
   (let [validation-passed (-validate-parameters [email first-name last-name password])
         response-value (if validation-passed
-                         (ss-user-i/add-new-user (:user @my-service) email first-name last-name password)
+                         (ss-user-i/add-new-user (ss-service/get-service env :user) env email first-name last-name password)
                          {:ret :failed, :msg "Validation failed - some fields were empty"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
@@ -76,14 +76,14 @@
 
 (defn -login
   "Provides API for login page."
-  [email password]
+  [env email password]
   (log/debug "ENTER -login")
   (let [validation-passed (-validate-parameters [email password])
         credentials-ok (if validation-passed
-                         (ss-user-i/credentials-ok? (:user @my-service) email password)
+                         (ss-user-i/credentials-ok? (ss-service/get-service env :user) env email password)
                          nil)
         json-web-token (if credentials-ok
-                         (ss-session-i/create-json-web-token (:session @my-service) email)
+                         (ss-session-i/create-json-web-token (ss-service/get-service env :session) env email)
                          nil)
         response-value (if (not validation-passed)
                          {:ret :failed, :msg "Validation failed - some fields were empty"}
@@ -96,58 +96,60 @@
 
 (defn -product-groups
   "Gets product groups."
-  [req]
+  [env req]
   (log/debug "ENTER -product-groups")
-  (let [token-ok (-valid-token? req)
+  (let [token-ok (-valid-token? env req)
         response-value (if token-ok
-                         {:ret :ok, :product-groups (ss-domain-i/get-product-groups (:domain @my-service))}
+                         {:ret :ok, :product-groups (ss-domain-i/get-product-groups (ss-service/get-service env :domain) env)}
                          {:ret :failed, :msg "Given token is not valid"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 (defn -products
   "Gets products."
-  [req]
+  [env req]
   (log/debug "ENTER -products")
   (let [pg-id (get-in req [:path-params :pg-id])
-        token-ok (-valid-token? req)
+        token-ok (-valid-token? env req)
         response-value (if token-ok
-                         {:ret :ok, :pg-id pg-id :products (ss-domain-i/get-products (:domain @my-service) pg-id)}
+                         {:ret :ok, :pg-id pg-id :products (ss-domain-i/get-products (ss-service/get-service env :domain) env pg-id)}
                          {:ret :failed, :msg "Given token is not valid"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
 (defn -product
   "Gets product."
-  [req]
+  [env req]
   (log/debug "ENTER -product")
   (let [pg-id (get-in req [:path-params :pg-id])
         p-id (get-in req [:path-params :p-id])
-        token-ok (-valid-token? req)
+        token-ok (-valid-token? env req)
         response-value (if token-ok
                          {:ret     :ok,
                           :pg-id   pg-id
                           :p-id    p-id
-                          :product (ss-domain-i/get-product (:domain @my-service) pg-id p-id)}
+                          :product (ss-domain-i/get-product (ss-service/get-service env :domain) env pg-id p-id)}
                          {:ret :failed, :msg "Given token is not valid"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
-(def routes
-  [["/info" {:get (fn [{}] (-info))}]
+(defn routes
+  "Routes."
+  [env]
+  [["/info" {:get (fn [{}] (-info env))}]
    ["/print-req-get/:jee" {:get (fn [req] (prn (str "req: ") req))}] ; An example how to print the ring request
    ["/print-req-post" {:post (fn [req] (prn (str "req: ") req))}] ; An example how to print the ring request
-   ["/signin" {:post (fn [{{:keys [first-name last-name password email]} :body-params}] (-signin first-name last-name password email))}]
-   ["/login" {:post (fn [{{:keys [email password]} :body-params}] (-login email password))}]
-   ["/product-groups" {:get {:handler (fn [req] (-product-groups req))}}]
-   ["/products/:pg-id" {:get {:handler (fn [req] (-products req))}}]
-   ["/product/:pg-id/:p-id" {:get {:handler (fn [req] (-product req))}}]])
+   ["/signin" {:post (fn [{{:keys [first-name last-name password email]} :body-params}] (-signin env first-name last-name password email))}]
+   ["/login" {:post (fn [{{:keys [email password]} :body-params}] (-login env email password))}]
+   ["/product-groups" {:get {:handler (fn [req] (-product-groups env req))}}]
+   ["/products/:pg-id" {:get {:handler (fn [req] (-products env req))}}]
+   ["/product/:pg-id/:p-id" {:get {:handler (fn [req] (-product env req))}}]])
 
 ;; NOTE: If you want to check what middlware does you can uncomment rows 67-69 in:
 ;; https://github.com/metosin/reitit/blob/master/examples/ring-swagger/src/example/server.clj#L67-L69
 
-(def web-server
-  "Web server startup function.
-  See source code how to experiment with REPL."
+(defn handler
+  "Handler."
+  [routes]
   (re-ring/ring-handler
-    (re-ring/router [routes]
+    (re-ring/router routes
                     {:data {:muuntaja   mu-core/instance
                             :coercion   re-co-spec/coercion
                             :middleware [ri-params/wrap-params
@@ -158,19 +160,5 @@
     (re-ring/routes
       (re-ring/create-resource-handler {:path "/"})
       (re-ring/create-default-handler))))
-
-
-(defn start-web-server
-  "Starts the web server."
-  [port join? service]
-  (log/debug "ENTER start-web-server")
-  (reset! my-service service)
-  (run-jetty web-server {:port port :join? join?}))
-
-(defn stop-web-server
-  "Stops the web server."
-  [server]
-  (log/debug "ENTER stop-web-server")
-  (.stop server))
 
 

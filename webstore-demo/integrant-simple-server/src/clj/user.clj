@@ -1,5 +1,5 @@
 (ns user
-  (:require [integrant.repl]                               ;; :refer [clear go halt prep init reset reset-all]
+  (:require [integrant.repl :refer [clear go halt prep init reset reset-all]]
             [integrant.repl.state :as state]
             [simpleserver.core :as core]))
 
@@ -12,6 +12,14 @@
 ;; M-j: reset
 ;; M-k: halt
 
+(comment
+  (clear)
+  (go)
+  (halt)
+  (prep)
+  (init)
+  (reset)
+  (reset-all))
 
 #_(comment
     (user/my-reset)

@@ -1,14 +1,14 @@
 (ns simpleserver.service.user.user-interface)
 
 (defprotocol UserInterface
-  (email-already-exists? [env email]
+  (email-already-exists? [this env email]
     "True if email already exists in the user db, false otherwise")
-  (add-new-user [env email first-name last-name password]
+  (add-new-user [this env email first-name last-name password]
     "Adds a new user to the user db")
-  (credentials-ok? [env email password]
+  (credentials-ok? [this env email password]
     "True if credentials are ok, false otherwise")
-  (-get-users [env]
+  (-get-users [this env]
     "Returns all users from the user db - used in testing")
-  (-reset-users! [env]
+  (-reset-users! [this env]
     "Resets all users to initial state - used in testing.")
   )

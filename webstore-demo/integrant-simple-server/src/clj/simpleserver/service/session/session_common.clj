@@ -17,10 +17,10 @@
        (hexify (repeatedly 24 #(rand-nth my-set)))))))
 
 (defn create-json-web-token
-  [email]
+  [env email]
   (log/debug (str "ENTER create-json-web-token, email: " email))
   (let [my-secret my-hex-secret
-        exp-time (c-time/plus (c-time/now) (c-time/seconds (get-in (ss-config/get-config) [:jwt :exp])))
+        exp-time (c-time/plus (c-time/now) (c-time/seconds (get-in (:config env) [:jwt :exp])))
         my-claim {:email email :exp exp-time}
         json-web-token (buddy-jwt/sign my-claim my-secret)]
     json-web-token))
