@@ -17,8 +17,10 @@
                ;; Real DynamoDB
                :aws-ddb   {:ss-table-prefix "ss"
                            :config          {:aws-profile "m-sand"}}
-               ;; Postgres
-               :postgres  {}
+               ;; Local Postgres
+               :local-postgres  {}
+               ;; Real Postgres.
+               :aws-postgres {}
                }
  }
 

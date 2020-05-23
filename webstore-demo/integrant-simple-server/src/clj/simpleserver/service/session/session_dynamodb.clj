@@ -23,7 +23,7 @@
     (get-in result [:Item :token :S])))
 
 (defn remove-token
-  [token options]
+  [options token]
   (let [{:keys [my-ddb my-table]} options
         result (aws/invoke my-ddb {:op      :DeleteItem
                                    :request {
@@ -61,7 +61,7 @@
     [_ env]
     (log/debug (str "ENTER -reset-sessions!"))
     (let [sessions (get-all-sessions-from-dynamodb my-ddb my-table)]
-      (dorun (map remove-token sessions)))))
+      (dorun (map (partial remove-token {:my-ddb my-ddb :my-table my-table}) sessions)))))
 
 ;; Commented for clj-kondo
 #_(comment
