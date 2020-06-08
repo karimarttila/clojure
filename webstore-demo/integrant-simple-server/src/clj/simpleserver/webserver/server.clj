@@ -133,21 +133,24 @@
 (defn routes
   "Routes."
   [env]
-  [["/info" {:get (fn [{}] (-info env))}]
+  [
+   ["/info" {:get {:handler (fn [{}] (-info env))
+                   :responses {200 {:description ""}}}}]
    ["/print-req-get/:jee" {:get (fn [req] (prn (str "req: ") req))}] ; An example how to print the ring request
    ["/print-req-post" {:post (fn [req] (prn (str "req: ") req))}] ; An example how to print the ring request
    ["/signin" {:post (fn [{{:keys [first-name last-name password email]} :body-params}] (-signin env first-name last-name password email))}]
    ["/login" {:post (fn [{{:keys [email password]} :body-params}] (-login env email password))}]
    ["/product-groups" {:get {:handler (fn [req] (-product-groups env req))}}]
    ["/products/:pg-id" {:get {:handler (fn [req] (-products env req))}}]
-   ["/product/:pg-id/:p-id" {:get {:handler (fn [req] (-product env req))}}]])
+   ["/product/:pg-id/:p-id" {:get {:handler (fn [req] (-product env req))}}]
+   ])
 
-;; NOTE: If you want to check what middlware does you can uncomment rows 67-69 in:
+;; NOTE: If you want to check what middleware does you can uncomment rows 67-69 in:
 ;; https://github.com/metosin/reitit/blob/master/examples/ring-swagger/src/example/server.clj#L67-L69
 
 (defn handler
   "Handler."
-  [routes]
+  [{:keys [routes]}]
   (re-ring/ring-handler
     (re-ring/router routes
                     {:data {:muuntaja   mu-core/instance
@@ -162,3 +165,8 @@
       (re-ring/create-default-handler))))
 
 
+(comment
+  (user/system)
+  (handler {:routes (routes (user/env))})
+
+  )

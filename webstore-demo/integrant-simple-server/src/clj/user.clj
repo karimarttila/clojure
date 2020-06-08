@@ -7,12 +7,21 @@
 
 (defn system [] (or state/system (throw (ex-info "System not running" {}))))
 
+
+(defn env [] (::core/env (system)))
+(defn service [] (:service (env)))
+
+
+
 ;; NOTE: In Cursive, Integrant hot keys are:
 ;; M-h: go
 ;; M-j: reset
 ;; M-k: halt
 
 (comment
+  (system)
+  (service)
+  (env)
   (clear)
   (go)
   (halt)
@@ -20,6 +29,8 @@
   (init)
   (reset)
   (reset-all))
+
+
 
 #_(comment
     (user/my-reset)

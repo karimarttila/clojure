@@ -3,7 +3,6 @@
             [clojure.tools.logging :as log]
             [clojure.data.codec.base64 :as base64]
             [integrant.core :as ig]
-            [clj-http.client :as http-client]
             [simpleserver.util.config :as ss-config]
             [simpleserver.service.service :as ss-service]
             [simpleserver.test-config :as ss-tc]
@@ -13,8 +12,8 @@
 
 (defn init-fixture
   []
-  (ss-user-i/-reset-users! (ss-service/get-service (ss-tc/test-service) :user) (ss-tc/test-env))
-  (ss-session-i/-reset-sessions! (ss-service/get-service (ss-tc/test-service) :session) (ss-tc/test-env)))
+  (ss-user-i/-reset-users! (:user (ss-tc/test-service)) (ss-tc/test-env))
+  (ss-session-i/-reset-sessions! (:session (ss-tc/test-service)) (ss-tc/test-env)))
 
 (defn webserver-test-fixture
   [f]
@@ -24,26 +23,10 @@
 
 (use-fixtures :each webserver-test-fixture)
 
-(defn -call-api [verb path headers body]
-  (let [my-port (get-in ss-tc/test-env [:config :web-server :test-server-port])
-        my-fn (cond
-                (= verb :get) http-client/get
-                (= verb :post) http-client/post)]
-    (try
-      (select-keys
-        (my-fn (str "http://localhost:" my-port "/" path)
-               {:as :json
-                :form-params body
-                :headers headers
-                :content-type :json
-                :throw-exceptions false
-                :coerce :always}
-               ) [:status :body]))))
-
 (deftest info-test
   (log/debug "ENTER info-test")
   (testing "GET: /info"
-    (let [ret (-call-api :get "info" nil nil)]
+    (let [ret (ss-tc/-call-api :get "info" nil nil)]
       (is (= (ret :status) 200))
       (is (= (ret :body) {:info "index.html => Info in HTML format"})))))
 
@@ -52,11 +35,11 @@
   (testing "POST: /signin"
     ; First time should create the user since the email does not yet exist.
     (let [test-body {:first-name "mikko" :last-name "mikkonen" :password "salainen" :email "mikko.mikkonen@foo.com"}]
-      (let [ret (-call-api :post "signin" nil test-body)]
+      (let [ret (ss-tc/-call-api :post "signin" nil test-body)]
         (is (= (ret :status) 200))
         (is (= (ret :body) {:email "mikko.mikkonen@foo.com" :ret "ok"})))
       ; Second time should fail since the email already exists.
-      (let [ret (-call-api :post "signin" nil test-body)]
+      (let [ret (ss-tc/-call-api :post "signin" nil test-body)]
         (is (= (ret :status) 400))
         (is (= (ret :body) {:email "mikko.mikkonen@foo.com" :ret "failed" :msg "Email already exists"}))))))
 
@@ -66,13 +49,13 @@
     ; First with good credentials.
     (let [good-test-body {:email "kari.karttinen@foo.com" :password "Kari"}
           bad-test-body {:email "kari.karttinen@foo.com" :password "WRONG-PASSWORD"}]
-      (let [ret (-call-api :post "login" nil good-test-body)]
+      (let [ret (ss-tc/-call-api :post "login" nil good-test-body)]
         (is (= (ret :status) 200))
         (is (= (get-in ret [:body :ret]) "ok"))
         (is (= (get-in ret [:body :msg]) "Credentials ok"))
         (is (> (count (get-in ret [:body :json-web-token])) 30)))
       ; Next with bad credentials.
-      (let [ret (-call-api :post "login" nil bad-test-body)]
+      (let [ret (ss-tc/-call-api :post "login" nil bad-test-body)]
         (is (= (ret :status) 400))
         (is (= (get-in ret [:body :ret]) "failed"))
         (is (= (get-in ret [:body :msg]) "Credentials are not good - either email or password is not correct"))))))
@@ -92,11 +75,11 @@
 (deftest product-groups-test
   (log/debug "ENTER product-groups-test")
   (testing "GET: /product-groups"
-    (let [login-ret (-call-api :post "login" nil {:email "kari.karttinen@foo.com" :password "Kari"})
+    (let [login-ret (ss-tc/-call-api :post "login" nil {:email "kari.karttinen@foo.com" :password "Kari"})
           _ (log/debug (str "Got login-ret: " login-ret))
           json-web-token (get-in login-ret [:body :json-web-token])
           params (-create-basic-authentication json-web-token)
-          get-ret (-call-api :get "/product-groups" params nil)
+          get-ret (ss-tc/-call-api :get "/product-groups" params nil)
           status (:status get-ret)
           body (:body get-ret)
           right-body {:ret "ok", :product-groups {:1 "Books", :2 "Movies"}}]
@@ -107,11 +90,11 @@
 (deftest products-test
   (log/debug "ENTER products-test")
   (testing "GET: /products"
-    (let [login-ret (-call-api :post "login" nil {:email "kari.karttinen@foo.com" :password "Kari"})
+    (let [login-ret (ss-tc/-call-api :post "login" nil {:email "kari.karttinen@foo.com" :password "Kari"})
           _ (log/debug (str "Got login-ret: " login-ret))
           json-web-token (get-in login-ret [:body :json-web-token])
           params (-create-basic-authentication json-web-token)
-          get-ret (-call-api :get "/products/1" params nil)
+          get-ret (ss-tc/-call-api :get "/products/1" params nil)
           status (:status get-ret)
           body (:body get-ret)
           pg-id (:pg-id body)
@@ -126,11 +109,11 @@
 (deftest product-test
   (log/debug "ENTER product-test")
   (testing "GET: /product"
-    (let [login-ret (-call-api :post "login" nil {:email "kari.karttinen@foo.com" :password "Kari"})
+    (let [login-ret (ss-tc/-call-api :post "login" nil {:email "kari.karttinen@foo.com" :password "Kari"})
           _ (log/debug (str "Got login-ret: " login-ret))
           json-web-token (get-in login-ret [:body :json-web-token])
           params (-create-basic-authentication json-web-token)
-          get-ret (-call-api :get "/product/2/49" params nil)
+          get-ret (ss-tc/-call-api :get "/product/2/49" params nil)
           status (:status get-ret)
           body (:body get-ret)
           pg-id (:pg-id body)
@@ -144,3 +127,11 @@
       (is (= pg-id "2"))
       (is (= p-id "49"))
       (is (= product right-product)))))
+
+(comment
+  (ss-tc/go)
+  (ss-tc/halt)
+  @ss-tc/test-system
+  (user/system)
+
+  )

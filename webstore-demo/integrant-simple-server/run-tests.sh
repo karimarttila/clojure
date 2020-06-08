@@ -3,16 +3,21 @@
 
 if [ $# -ne 1 ]
 then
-    echo "Usage: ./run-tests.sh <configuration>"
-    echo "Configurations: env-dev, env-dev-single-node, env-dev-local-dynamodb, env-dev-real-aws"
-    echo "Example: ./run-tests.sh env-dev-single-node"
+    echo "Usage: ./run-tests.sh <DB>"
+    echo "DBs: csv, local-ddb"
+    echo "Example: ./run-tests.sh local-ddb"
     exit 1
 fi
 
-MYENV=$1
+MYDB=$1
 
-clj -Atest-runner:backend:common:test:${MYENV}
+if [[ "$MYDB" =~ ^(csv|local-ddb)$ ]]; then
+    echo "Starting tests with $MYDB configuration..."
+else
+    echo "Unknown DB configuration: $MYDB, exiting..."
+    exit 2
+fi
 
-# For more examples how to run different tests, exclude some etc:
-# https://github.com/cognitect-labs/test-runner
+SS_DB=$MYDB clojure -A:dev:test:common:backend -m kaocha.runner
+
 

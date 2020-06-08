@@ -11,10 +11,15 @@
 @backend:
     clj -A:dev:scratch:test:common:backend -m nrepl.cmdline -i -C
 
+# Start backend repl with my toolbox.
+@backend-kari:
+    clj -A:dev:scratch:test:common:backend:kari -m nrepl.cmdline -i -C
+
 # Lint
 @lint:
     clj -A:dev -m clj-kondo.main --lint src
 
 # Test
-@test:
-    clojure -A:dev:test:common:backend -m kaocha.runner
+@test db:
+    ./run-tests.sh {{db}}
+

@@ -15,33 +15,31 @@
                first-name (get-in item [:firstname :S])
                last-name (get-in item [:lastname :S])
                hashed-password (get-in item [:hpwd :S])]
-           {:userid          user-id
-            :email           email
-            :first-name      first-name
-            :last-name       last-name
+           {:userid user-id
+            :email email
+            :first-name first-name
+            :last-name last-name
             :hashed-password hashed-password}))
        (:Items raw-users)))
 
 (defn -add-new-user-without-hashing-password
-  [this env email first-name last-name password]
+  [this env my-ddb my-table email first-name last-name password]
   (log/debug (str "ENTER add-new-user"))
   (let [already-exists (ss-user-i/email-already-exists? this env email)]
     (if already-exists
       (do
         (log/debug (str "Failure: email already exists: " email))
         {:email email, :ret :failed :msg "Email already exists"})
-      (let [{my-ddb   :my-ddb
-             my-table :my-table} (ss-ddb-config/get-dynamodb-config "users")
-            new-id (ss-user-common/uuid)
+      (let [new-id (ss-user-common/uuid)
             request {
                      :TableName my-table
-                     :Item      {"userid"    {:S new-id}
-                                 "email"     {:S email}
-                                 "firstname" {:S first-name}
-                                 "lastname"  {:S last-name}
-                                 "hpwd"      {:S password}}
+                     :Item {"userid" {:S new-id}
+                            "email" {:S email}
+                            "firstname" {:S first-name}
+                            "lastname" {:S last-name}
+                            "hpwd" {:S password}}
                      }
-            _ (aws/invoke my-ddb {:op      :PutItem
+            _ (aws/invoke my-ddb {:op :PutItem
                                   :request request})]
         {:email email, :ret :ok}))))
 
@@ -51,9 +49,9 @@
   (email-already-exists?
     [_ env email]
     (log/debug (str "ENTER email-already-exists?, email: " email))
-    (let [raw-user (aws/invoke my-ddb {:op      :Query
-                                       :request {:TableName                 my-table
-                                                 :KeyConditionExpression    "email = :email"
+    (let [raw-user (aws/invoke my-ddb {:op :Query
+                                       :request {:TableName my-table
+                                                 :KeyConditionExpression "email = :email"
                                                  :ExpressionAttributeValues {":email" {:S email}}}})
           ret-email (get-in (first (:Items raw-user)) [:email :S])]
       (= ret-email email)))
@@ -69,23 +67,23 @@
         (let [new-id (ss-user-common/uuid)
               request {
                        :TableName my-table
-                       :Item      {"userid"    {:S new-id}
-                                   "email"     {:S email}
-                                   "firstname" {:S first-name}
-                                   "lastname"  {:S last-name}
-                                   "hpwd"      {:S (str (hash password))}}
+                       :Item {"userid" {:S new-id}
+                              "email" {:S email}
+                              "firstname" {:S first-name}
+                              "lastname" {:S last-name}
+                              "hpwd" {:S (str (hash password))}}
                        }
-              _ (aws/invoke my-ddb {:op      :PutItem
+              _ (aws/invoke my-ddb {:op :PutItem
                                     :request request})]
           {:email email, :ret :ok}))))
 
   (credentials-ok?
     [_ env email password]
     (log/debug (str "ENTER credentials-ok?"))
-    (let [request {:TableName                 my-table
-                   :KeyConditionExpression    "email = :email"
+    (let [request {:TableName my-table
+                   :KeyConditionExpression "email = :email"
                    :ExpressionAttributeValues {":email" {:S email}}}
-          raw-user (aws/invoke my-ddb {:op      :Query
+          raw-user (aws/invoke my-ddb {:op :Query
                                        :request request})
           ret-password (get-in (first (:Items raw-user)) [:hpwd :S])]
       (= ret-password (str (hash password)))))
@@ -93,7 +91,7 @@
   (-get-users
     [_ env]
     (log/debug (str "ENTER -get-users"))
-    (let [raw-users (aws/invoke my-ddb {:op      :Scan
+    (let [raw-users (aws/invoke my-ddb {:op :Scan
                                         :request {:TableName my-table}})
           converted-users (-get-converted-users raw-users)]
       (reduce (fn [users user]
@@ -104,23 +102,25 @@
   (-reset-users!
     [this env]
     (log/debug (str "ENTER -reset-users!"))
-    (if (= (:runtime-env env) "dev")
+    (if (= (get-in env [:config :runtime-env]) :dev)
       (let [users-to-delete (ss-user-i/-get-users this env)
             emails-to-delete (map (fn [item]
                                     (:email (second item)))
                                   users-to-delete)
             initial-users (ss-user-common/get-initial-users)]
         (dorun (map (fn [email]
-                      (aws/invoke my-ddb {:op      :DeleteItem
+                      (aws/invoke my-ddb {:op :DeleteItem
                                           :request {
                                                     :TableName my-table
-                                                    :Key       {"email" {:S email}}}}))
+                                                    :Key {"email" {:S email}}}}))
                     emails-to-delete))
         (dorun (map (fn [user]
                       (let [user-map (second user)]
                         (-add-new-user-without-hashing-password
                           this
                           env
+                          my-ddb
+                          my-table
                           (:email user-map)
                           (:first-name user-map)
                           (:last-name user-map)
@@ -132,26 +132,40 @@
 
   )
 
-;; Commented out for clj-kondo
-#_(comment
-  ;; NOTE: Remember to refresh everything if you make changes, since protocol and config needs to be loaded before this class.
+
+(comment
+
   (do
-    (require '[mydev])
-    (mydev/refresh)
+    (simpleserver.test-config/go)
+    (simpleserver.service.user.user-interface/-reset-users!
+    (:user (simpleserver.test-config/test-service))
+    (simpleserver.test-config/test-env))
     )
 
-  (require '[mydev])
-  (mydev/refresh)
-  (simpleserver.user.user-interface/-get-users
-    simpleserver.user.user-config/user)
-  (simpleserver.user.user-interface/email-already-exists?
-    simpleserver.user.user-config/user "kari.karttinen@foo.com")
-  (simpleserver.user.user-interface/add-new-user
-    simpleserver.user.user-config/user "olavi.virta2@foo.com" "Ola" "Virta" "passw0rd")
-  (simpleserver.user.user-interface/email-already-exists?
-    simpleserver.user.user-config/user "olavi.virta@foo.com")
+  (simpleserver.test-config/go)
+  simpleserver.test-config/test-system
+  (simpleserver.test-config/halt)
+
+  (simpleserver.service.user.user-interface/-reset-users!
+    (:user (simpleserver.test-config/test-service))
+    (simpleserver.test-config/test-env))
+  (simpleserver.service.user.user-interface/-get-users
+    (:user (simpleserver.test-config/test-service))
+    (simpleserver.test-config/test-env))
+  (simpleserver.service.user.user-interface/email-already-exists?
+    (:user (simpleserver.test-config/test-service))
+    (simpleserver.test-config/test-env)
+    "kari.karttinen@foo.com")
+  (simpleserver.service.user.user-interface/add-new-user
+    (:user (simpleserver.test-config/test-service))
+    (simpleserver.test-config/test-env)
+    "olavi.virta@foo.com" "Ola" "Virta" "passw0rd")
+    (simpleserver.service.user.user-interface/email-already-exists?
+    (:user (simpleserver.test-config/test-service))
+    (simpleserver.test-config/test-env)
+    "olavi.virta@foo.com")
   (simpleserver.user.user-interface/credentials-ok?
     simpleserver.user.user-config/user "olavi.virta2@foo.com" "passw0rd")
-  (simpleserver.user.user-interface/-reset-users!
-    simpleserver.user.user-config/user)
+  (get-in (simpleserver.test-config/test-env) [:config :runtime-env])
+
   )

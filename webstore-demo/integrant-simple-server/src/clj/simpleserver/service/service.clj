@@ -20,7 +20,7 @@
   (log/debug (str "ENTER get-domain, db: " db))
   (let [{:keys [ddb] {:keys [product-group product]} :tables} ddb-config]
     (cond
-      (= db :csv) (domain-csv/->CsvR  csv-datadir )
+      (= db :csv) (domain-csv/->CsvR  csv-datadir)
       (db #{:local-ddb :aws-ddb}) (domain-ddb/->AwsDynamoDbR ddb product-group product)
       :else (throw (UnsupportedOperationException. (str "Unknown environment: " db)))
       ))

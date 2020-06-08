@@ -1,7 +1,8 @@
 {
  :runtime-env :dev
  :web-server  {:server-port      6161
-               :test-server-port 6171
+               ; TODO: Overriding the port with random port since some issues with Integrant configuration.
+               ;:test-server-port 6171
                }
 
  :jwt         {:exp 2000}

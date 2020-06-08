@@ -8,18 +8,18 @@
     [simpleserver.service.service :as ss-service]
     [simpleserver.webserver.server :as ss-webserver]))
 
-
 (defn env-value [key default]
   (some-> (or (System/getenv (name key)) default)))
 
 ;; Let's keep active db flag in an atom so that we can easily change it during development.
 ;; :csv, :local-ddb, :aws-ddb, :postgres
-(defonce active-db (atom (keyword (env-value "SS_DB" "local-ddb")))) ;; local-ddb, csv
+;(def ss-db "csv")
+(def ss-db "local-ddb")
+(defonce active-db (atom (keyword (env-value "SS_DB" ss-db))))
 
 (defn get-active-db
   []
   @active-db)
-
 
 (defn reset-active-db!
   "Utility method to dynamically change active db in REPL."
@@ -76,6 +76,7 @@
 
 ;; Rich comment.
 (comment
+  (ss-webserver/routes (user/env))
   *ns*
   (simpleserver.core/system-config)
   active-db

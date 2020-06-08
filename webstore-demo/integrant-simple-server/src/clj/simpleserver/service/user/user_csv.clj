@@ -62,7 +62,7 @@
   (-reset-users!
     [_ env]
     (log/debug (str "ENTER -reset-users!"))
-    (if (= (:runtime-env (:config env)) "dev")
+    (if (= (get-in env [:config :runtime-env]) :dev)
       (reset! my-users (ss-user-common/get-initial-users))
       (throw (UnsupportedOperationException. "You can reset sessions only in development environment!")))))
 
@@ -70,11 +70,20 @@
 ;; Rich comment.
 
 ;; Commented out for clj-kondo
-#_(comment
-  (simpleserver.user.user-interface/-get-users simpleserver.user.user-config/user)
+(comment
+
+  (:simpleserver.core/config (user/system))
+  (get-in (user/system) [:simpleserver.core/env])
+  (get-in (user/system) [:simpleserver.core/service :user])
+  (ss-user-common/get-initial-users)
+  (ss-user-i/-get-users
+    (get-in (user/system) [:simpleserver.core/service :user])
+    (get-in (user/system) [:simpleserver.core/env]))
   ; Remember to compile user-interface, user-single-node and then user-config!
-  (simpleserver.user.user-interface/email-already-exists?
-    simpleserver.user.user-config/user "kari.karttinen@foo.com")
+  (ss-user-i/email-already-exists?
+    (get-in (user/system) [:simpleserver.core/service :user])
+    (get-in (user/system) [:simpleserver.core/env])
+    "kari.karttinen@foo.com")
   (simpleserver.user.user-interface/email-already-exists?
     simpleserver.user.user-config/user "kari.karttinen@NOT.FOUND")
   )

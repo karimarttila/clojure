@@ -55,7 +55,10 @@
 (comment
   (ss-tc/go)
   (->> (:out (clojure.java.shell/sh "netstat" "-an")) (clojure.string/split-lines) (filter #(re-find #".*:::61.*LISTEN.*" %)))
+  (->> (:out (clojure.java.shell/sh "netstat" "-an")) (clojure.string/split-lines) (filter #(re-find #".*:::71.*LISTEN.*" %)))
   (ss-tc/halt)
+  @ss-tc/test-system
+  (user/system)
   (:simpleserver.core/web-server @ss-tc/test-system)
   (.stop (:simpleserver.core/web-server simpleserver.test-config/OLD-STATE))
   (first simpleserver.test-config/OLD-STATE)

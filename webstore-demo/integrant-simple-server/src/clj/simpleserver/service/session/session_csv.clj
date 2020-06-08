@@ -45,7 +45,12 @@
   (-reset-sessions!
     [this env]
     (log/debug (str "ENTER -reset-sessions!"))
-    (if (= (env :runtime-env) "dev")
+    (if (= (get-in env [:config :runtime-env]) :dev)
       (reset! my-sessions #{})
       (throw (java.lang.UnsupportedOperationException. "You can reset sessions only in development environment!"))))
+  )
+
+(comment
+  (user/system)
+
   )

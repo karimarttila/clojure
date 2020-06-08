@@ -8,7 +8,6 @@
            :test        {:extra-paths ["test/clj"]
                          :extra-deps  {lambdaisland/kaocha      {:mvn/version "1.0-612"}
                                        lambdaisland/kaocha-cljs {:mvn/version "0.0-71"}}}
-           :scratch     {:extra-paths ["scratch"]}
 
            ;; Let's learn to use a common part already now since in the next exercise we create frontend with re-frame.
            :common      {:extra-paths ["src/cljc"]

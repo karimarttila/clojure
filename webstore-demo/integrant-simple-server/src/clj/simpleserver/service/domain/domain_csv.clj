@@ -12,13 +12,12 @@
 
 (defn -get-raw-products
   "Gets raw products for a product group, returns the whole product information for each product."
-  [env pg-id]
+  [data-dir pg-id]
   (log/debug (str "ENTER get-raw-products, pg-id: " pg-id))
   (let [my-key (str "pg-" pg-id "-raw-products")]
     (if-let [raw-products (@my-domain-atom my-key)]
       raw-products
-      (let [data-dir (get-in env [:single-node-data :data-dir])
-            raw-products-from-file
+      (let [raw-products-from-file
             (try
               (with-open [reader (io/reader (str data-dir "/pg-" pg-id "-products.csv"))]
                 (doall
@@ -56,7 +55,7 @@
     (let [my-key (str "pg-" pg-id "-products")]
       (if-let [products (@my-domain-atom my-key)]
         products
-        (let [raw (-get-raw-products env pg-id)
+        (let [raw (-get-raw-products data-dir pg-id)
               products-from-file (and raw
                                       (map
                                         (fn [item]
@@ -70,7 +69,7 @@
   (get-product
     [_ env pg-id p-id]
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
-    (let [products (-get-raw-products env pg-id)]
+    (let [products (-get-raw-products data-dir pg-id)]
       (first (filter (fn [item]
                        (let [id (first item)]
                          (= id (str p-id))))
@@ -80,6 +79,9 @@
 ;; Rich comment.
 
 (comment
-  #_(-get-raw-products 1)
-  (= 1 1)
+  (:simpleserver.core/config (user/system))
+  (get-in (user/system) [:simpleserver.core/config :db :csv :data-dir])
+  (-get-raw-products (get-in (user/system) [:simpleserver.core/config :db :csv :data-dir]) 2)
+
+  (def jee (str "asdf"))
   )
