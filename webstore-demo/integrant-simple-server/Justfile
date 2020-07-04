@@ -3,17 +3,21 @@
 
 # TODO: just db which runs a docker-compose which starts both local-dynamodb and local-postgres
 
-# Start dynamodb emulator
+# Start local dynamodb emulator
 @dynamodb:
     cd dynamodb && ./run-docker-compose.sh
 
+# Start local postgres
+@postgres:
+    cd postgres && ./run-docker-compose.sh
+
 # Start backend repl.
 @backend:
-    clj -A:dev:scratch:test:common:backend -m nrepl.cmdline -i -C
+    clj -A:dev:test:common:backend -m nrepl.cmdline -i -C
 
 # Start backend repl with my toolbox.
 @backend-kari:
-    clj -A:dev:scratch:test:common:backend:kari -m nrepl.cmdline -i -C
+    clj -A:dev:test:common:backend:kari -m nrepl.cmdline -i -C
 
 # Lint
 @lint:

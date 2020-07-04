@@ -6,8 +6,7 @@
             [simpleserver.service.session.session-dynamodb :as session-ddb]
             [simpleserver.service.user.user-csv :as user-csv]
             [simpleserver.service.user.user-dynamodb :as user-ddb]
-            [simpleserver.service.dynamodb-config :as ddb-config]
-            ))
+            [simpleserver.service.dynamodb-config :as ddb-config]))
 
 
 (defn- get-domain
@@ -22,9 +21,7 @@
     (cond
       (= db :csv) (domain-csv/->CsvR  csv-datadir)
       (db #{:local-ddb :aws-ddb}) (domain-ddb/->AwsDynamoDbR ddb product-group product)
-      :else (throw (UnsupportedOperationException. (str "Unknown environment: " db)))
-      ))
-  )
+      :else (throw (UnsupportedOperationException. (str "Unknown environment: " db))))))
 
 (defn- get-session
   "Gets session environment."
@@ -34,9 +31,7 @@
     (cond
       (= db :csv) (session-csv/->CsvR)
       (db #{:local-ddb :aws-ddb}) (session-ddb/->AwsDynamoDbR ddb session)
-      :else (throw (UnsupportedOperationException. (str "Unknown environment: " db)))
-      ))
-  )
+      :else (throw (UnsupportedOperationException. (str "Unknown environment: " db))))))
 
 (defn- get-user
   "Gets user environment."
@@ -46,9 +41,7 @@
     (cond
       (= db :csv) (user-csv/->CsvR)
       (db #{:local-ddb :aws-ddb}) (user-ddb/->AwsDynamoDbR ddb users)
-      :else (throw (UnsupportedOperationException. (str "Unknown environment: " db)))
-      ))
-  )
+      :else (throw (UnsupportedOperationException. (str "Unknown environment: " db))))))
 
 (defn get-service-config
   "Gets service entities for given db request (:csv, :local-ddb...).
@@ -67,7 +60,7 @@
   (let [service-entity (:service env)]
     (service-key service-entity)))
 
-(comment
-  #_(get-service
+#_(comment
+  (get-service
     (simpleserver.util.config/get-config))
   )

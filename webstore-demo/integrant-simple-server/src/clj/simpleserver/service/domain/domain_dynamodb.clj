@@ -11,7 +11,7 @@
   ss-domain-i/DomainInterface
 
   (get-product-groups
-    [_ env]
+    [_ _]
     (log/debug "ENTER get-product-groups")
     (let [raw-map (aws/invoke my-ddb {:op      :Scan
                                       :request {:TableName product-group-table}})]
@@ -23,9 +23,8 @@
         {}
         (:Items raw-map))))
 
-
   (get-products
-    [_ env pg-id]
+    [_ _ pg-id]
     (log/debug (str "ENTER get-products, pg-id: " pg-id))
     (let [raw-products (aws/invoke my-ddb {:op      :Query
                                            :request {:TableName                 product-table
@@ -43,17 +42,15 @@
                 (map (juxt (comp :S :pid) (comp :S :pgid) (comp :S :title) (comp :S :price)))
                 (into [])))))
 
-
   (get-product
-    [_ env pg-id p-id]
+    [_ _ pg-id p-id]
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
     (let [raw-product (aws/invoke my-ddb {:op      :Query
                                           :request {:TableName     product-table
                                                     :KeyConditions {"pgid" {:AttributeValueList {:S (str pg-id)}
                                                                             :ComparisonOperator "EQ"}
                                                                     "pid"  {:AttributeValueList {:S (str p-id)}
-                                                                            :ComparisonOperator "EQ"}}
-                                                    }})]
+                                                                            :ComparisonOperator "EQ"}}}})]
       (if (= (:Count raw-product) 0)
         (do
           (log/debug (str "MYDEBUG in if: Count is zero"))
@@ -61,5 +58,4 @@
         (->>
           (:Items raw-product)
           (first)
-          ((juxt (comp :S :pid) (comp :S :pgid) (comp :S :title) (comp :S :price) (comp :S :a_or_d) (comp :S :year) (comp :S :country) (comp :S :g_or_l)) (first (:Items raw-product)))
-          )))))
+          ((juxt (comp :S :pid) (comp :S :pgid) (comp :S :title) (comp :S :price) (comp :S :a_or_d) (comp :S :year) (comp :S :country) (comp :S :g_or_l)) (first (:Items raw-product))))))))

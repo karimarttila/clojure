@@ -1,13 +1,15 @@
 (ns simpleserver.service.user.user-common
   (:require [simpleserver.util.config :as ss-config]
             [clojure.data.csv :as csv]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io])
+  (:import (java.util UUID)
+           (java.io FileNotFoundException)))
 
 ;; NOTE: We don't use incremental user ids since it is a bit anti-pattern in DynamoDB (since email is the hash key). So, we create uuid for userid.
 ;; I guess the same applies to Azure Table Storage as well so using uuid here as RowKey.
 (defn uuid
   []
-  (.toString (java.util.UUID/randomUUID)))
+  (.toString (UUID/randomUUID)))
 
 (defn get-initial-users
   []
@@ -16,7 +18,7 @@
                     (with-open [reader (io/reader (str data-dir "/initial-users.csv"))]
                       (doall
                         (csv/read-csv reader :separator \tab)))
-                    (catch java.io.FileNotFoundException _ []))]
+                    (catch FileNotFoundException _ []))]
     (reduce (fn [users user]
               (assoc users (first user)
                            {:userid          (nth user 0)

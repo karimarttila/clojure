@@ -1,5 +1,5 @@
-(ns simpleserver.service.domain.domain-interface)
-
+(ns simpleserver.service.domain.domain-interface
+  "Domain interface. Use only through domain service.")
 
 (defprotocol DomainInterface
   (get-product-groups [this env]

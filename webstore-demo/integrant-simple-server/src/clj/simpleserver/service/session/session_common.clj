@@ -1,9 +1,7 @@
 (ns simpleserver.service.session.session-common
   (:require [clojure.tools.logging :as log]
             [buddy.sign.jwt :as buddy-jwt]
-            [clj-time.core :as c-time]
-            [simpleserver.util.config :as ss-config]
-            ))
+            [clj-time.core :as c-time]))
 
 (def my-hex-secret
   "Creates dynamically a hex secret when the server boots."

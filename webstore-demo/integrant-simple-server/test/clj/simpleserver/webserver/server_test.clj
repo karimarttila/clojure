@@ -2,18 +2,14 @@
   (:require [clojure.test :refer [deftest use-fixtures is testing]]
             [clojure.tools.logging :as log]
             [clojure.data.codec.base64 :as base64]
-            [integrant.core :as ig]
-            [simpleserver.util.config :as ss-config]
-            [simpleserver.service.service :as ss-service]
             [simpleserver.test-config :as ss-tc]
-            [simpleserver.service.user.user-interface :as ss-user-i]
-            [simpleserver.service.session.session-interface :as ss-session-i]
-            ))
+            [simpleserver.service.user.user-service :as ss-user-s]
+            [simpleserver.service.session.session-service :as ss-session-s]))
 
 (defn init-fixture
   []
-  (ss-user-i/-reset-users! (:user (ss-tc/test-service)) (ss-tc/test-env))
-  (ss-session-i/-reset-sessions! (:session (ss-tc/test-service)) (ss-tc/test-env)))
+  (ss-user-s/-reset-users! (ss-tc/test-env))
+  (ss-session-s/-reset-sessions! (ss-tc/test-env)))
 
 (defn webserver-test-fixture
   [f]
@@ -60,7 +56,6 @@
         (is (= (get-in ret [:body :ret]) "failed"))
         (is (= (get-in ret [:body :msg]) "Credentials are not good - either email or password is not correct"))))))
 
-
 (defn -create-basic-authentication
   "A helper method to create basic authentication for ceNrtain get methods which
   require the json-web-token in header."
@@ -70,7 +65,6 @@
         encoded-token (apply str (map char (base64/encode (.getBytes added-token))))
         basic-str (str "Basic " encoded-token)]
     {"authorization" basic-str}))
-
 
 (deftest product-groups-test
   (log/debug "ENTER product-groups-test")
@@ -128,10 +122,10 @@
       (is (= p-id "49"))
       (is (= product right-product)))))
 
-(comment
+; Rich comment.
+#_(comment
   (ss-tc/go)
   (ss-tc/halt)
   @ss-tc/test-system
   (user/system)
-
   )

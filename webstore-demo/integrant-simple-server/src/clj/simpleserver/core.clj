@@ -3,6 +3,7 @@
     [clojure.tools.logging :as log]
     [clojure.pprint]
     [ring.adapter.jetty :as jetty]
+    [nrepl.server :as nrepl]
     [integrant.core :as ig]
     [simpleserver.util.config :as ss-config]
     [simpleserver.service.service :as ss-service]
@@ -30,14 +31,16 @@
   []
   (let [config (ss-config/create-config)]
     {
-     ::active-db  @active-db
-     ::config     {:active-db (ig/ref ::active-db)}
-     ::service    {:config (ig/ref ::config)}
-     ::env        {:config  (ig/ref ::config)
-                   :service (ig/ref ::service)}
-     ::web-server {:port  (get-in config [:web-server :server-port])
+     ::active-db @active-db
+     ::config {:active-db (ig/ref ::active-db)}
+     ::service {:config (ig/ref ::config)}
+     ::env {:config (ig/ref ::config)
+            :service (ig/ref ::service)}
+     ::web-server {:port (get-in config [:web-server :server-port])
                    :join? false
-                   :env   (ig/ref ::env)}}))
+                   :env (ig/ref ::env)}
+     ::nrepl {:bind (get-in config [:nrepl :bind])
+              :port (get-in config [:nrepl :port])}}))
 
 (defmethod ig/init-key ::active-db [_ active-db]
   (log/debug "ENTER ig/init-key ::active-db")
@@ -62,12 +65,28 @@
 
 (defmethod ig/init-key ::web-server [_ {:keys [port join? env]}]
   (log/debug "ENTER ig/init-key ::web-server")
-  (-> (ss-webserver/handler {:routes (ss-webserver/routes env)})
+  (-> (ss-webserver/handler (ss-webserver/routes env))
       (jetty/run-jetty {:port port :join? join?})))
 
 (defmethod ig/halt-key! ::web-server [_ server]
   (log/debug "ENTER ig/halt-key! ::web-server")
   (.stop server))
+
+(defmethod ig/init-key ::nrepl [_ {:keys [bind port]}]
+  (if (and bind port)
+    (nrepl/start-server :bind bind :port port)
+    nil))
+
+(defmethod ig/halt-key! ::nrepl [_ this]
+  (if this
+    (nrepl/stop-server this)
+    nil))
+
+(defmethod ig/suspend-key! ::nrepl [_ this]
+  this)
+
+(defmethod ig/resume-key ::nrepl [_ _ _ old-impl]
+  old-impl)
 
 (defn -main []
   (log/info "System starting...")
@@ -75,7 +94,7 @@
   (ig/init (system-config)))
 
 ;; Rich comment.
-(comment
+#_(comment
   (ss-webserver/routes (user/env))
   *ns*
   (simpleserver.core/system-config)

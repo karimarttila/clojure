@@ -2,21 +2,16 @@
   (:require
     [clojure.tools.logging :as log]
     [simpleserver.service.user.user-interface :as ss-user-i]
-    [simpleserver.service.user.user-common :as ss-user-common]
-    [simpleserver.util.config :as ss-config]
-    ))
-
-
+    [simpleserver.service.user.user-common :as ss-user-common]))
 
 ; Atom for testing purposes.
 (def my-users (atom (ss-user-common/get-initial-users)))
-
 
 (defrecord CsvR []
   ss-user-i/UserInterface
 
   (email-already-exists?
-    [_ env email]
+    [_ _ email]
     (log/debug (str "ENTER email-already-exists?, email: " email))
     (let [ret (some
                 (fn [user]
@@ -44,7 +39,7 @@
           {:email email, :ret :ok}))))
 
   (credentials-ok?
-    [_ env email password]
+    [_ _ email password]
     (log/debug (str "ENTER credentials-ok?"))
     (let [ret (some
                 (fn [user]
@@ -55,7 +50,7 @@
       (not (nil? ret))))
 
   (-get-users
-    [_ env]
+    [_ _]
     (log/debug (str "ENTER -get-users"))
     @my-users)
 
@@ -66,12 +61,10 @@
       (reset! my-users (ss-user-common/get-initial-users))
       (throw (UnsupportedOperationException. "You can reset sessions only in development environment!")))))
 
-;; ****************************************************************
+
 ;; Rich comment.
-
 ;; Commented out for clj-kondo
-(comment
-
+#_(comment
   (:simpleserver.core/config (user/system))
   (get-in (user/system) [:simpleserver.core/env])
   (get-in (user/system) [:simpleserver.core/service :user])

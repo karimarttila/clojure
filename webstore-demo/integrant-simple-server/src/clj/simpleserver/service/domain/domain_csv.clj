@@ -4,9 +4,8 @@
     [clojure.java.io :as io]
     [clojure.string :as str]
     [clojure.tools.logging :as log]
-    [simpleserver.util.config :as ss-config]
-    [simpleserver.service.domain.domain-interface :as ss-domain-i]
-    ))
+    [simpleserver.service.domain.domain-interface :as ss-domain-i])
+  (:import (java.io FileNotFoundException)))
 
 (defonce my-domain-atom (atom {}))
 
@@ -22,7 +21,7 @@
               (with-open [reader (io/reader (str data-dir "/pg-" pg-id "-products.csv"))]
                 (doall
                   (csv/read-csv reader :separator \tab)))
-              (catch java.io.FileNotFoundException _ nil))]
+              (catch FileNotFoundException _ nil))]
         (if raw-products-from-file
           (do
             (swap! my-domain-atom assoc my-key raw-products-from-file)
@@ -50,7 +49,7 @@
         product-groups-from-file)))
 
   (get-products
-    [_ env pg-id]
+    [_ _ pg-id]
     (log/debug (str "ENTER get-products, pg-id: " pg-id))
     (let [my-key (str "pg-" pg-id "-products")]
       (if-let [products (@my-domain-atom my-key)]
@@ -67,7 +66,7 @@
             nil)))))
 
   (get-product
-    [_ env pg-id p-id]
+    [_ _ pg-id p-id]
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
     (let [products (-get-raw-products data-dir pg-id)]
       (first (filter (fn [item]
@@ -75,10 +74,9 @@
                          (= id (str p-id))))
                      products)))))
 
-;; ****************************************************************
-;; Rich comment.
 
-(comment
+;; Rich comment.
+#_(comment
   (:simpleserver.core/config (user/system))
   (get-in (user/system) [:simpleserver.core/config :db :csv :data-dir])
   (-get-raw-products (get-in (user/system) [:simpleserver.core/config :db :csv :data-dir]) 2)

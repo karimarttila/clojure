@@ -4,22 +4,19 @@
             [clojure.data.codec.base64 :as base64]
             [ring.middleware.params :as ri-params]
             [ring.util.response :as ri-resp]
-            [ring.adapter.jetty :refer [run-jetty]]
             [reitit.ring.middleware.muuntaja :as re-mu]
             [reitit.ring :as re-ring]
             [reitit.ring.coercion :as re-co]
             [reitit.coercion.spec :as re-co-spec]
             [muuntaja.core :as mu-core]
-            [simpleserver.service.service :as ss-service]
-            [simpleserver.service.domain.domain-interface :as ss-domain-i]
-            [simpleserver.service.user.user-interface :as ss-user-i]
-            [simpleserver.service.session.session-interface :as ss-session-i]))
+            [simpleserver.service.domain.domain-service :as ss-domain-s]
+            [simpleserver.service.user.user-service :as ss-user-s]
+            [simpleserver.service.session.session-service :as ss-session-s]))
 
 ;; Use curl and simple server log to see how token is parsed.
 ;; Or use this trick: You got a JSON web token from -login. Supply JSON web token to:
 ;; (simpleserver.webserver.server/-create-testing-basic-authentication-from-json-webtoken "<token" )
 ;; I.e. (simpleserver.webserver.server/-valid-token? (simpleserver.webserver.server_test/-create-testing-basic-authentication-from-json-webtoken "<token>"))
-
 
 (defn -valid-token?
   "Parses the token from the http authorization header and asks session ns to validate the token."
@@ -38,7 +35,7 @@
     ;; Session namespace does the actual validation logic.
     ;; Note: clj-kondo complains if else branch is missing.
     (if token
-      (ss-session-i/validate-token (ss-service/get-service env :session) env token)
+      (ss-session-s/validate-token env token)
       nil)))
 
 ;; As in headers check with curl that the http status is properly set.
@@ -48,7 +45,6 @@
   (if (= ret :ok)
     ring-response
     (ri-resp/status ring-response 400)))
-
 
 (defn -info
   "Gets the info."
@@ -68,11 +64,9 @@
   (log/debug "ENTER -signin")
   (let [validation-passed (-validate-parameters [email first-name last-name password])
         response-value (if validation-passed
-                         (ss-user-i/add-new-user (ss-service/get-service env :user) env email first-name last-name password)
+                         (ss-user-s/add-new-user env email first-name last-name password)
                          {:ret :failed, :msg "Validation failed - some fields were empty"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
-
-;        (comment        credentials-ok (if (validation-passed  1)))
 
 (defn -login
   "Provides API for login page."
@@ -80,10 +74,10 @@
   (log/debug "ENTER -login")
   (let [validation-passed (-validate-parameters [email password])
         credentials-ok (if validation-passed
-                         (ss-user-i/credentials-ok? (ss-service/get-service env :user) env email password)
+                         (ss-user-s/credentials-ok? env email password)
                          nil)
         json-web-token (if credentials-ok
-                         (ss-session-i/create-json-web-token (ss-service/get-service env :session) env email)
+                         (ss-session-s/create-json-web-token env email)
                          nil)
         response-value (if (not validation-passed)
                          {:ret :failed, :msg "Validation failed - some fields were empty"}
@@ -100,7 +94,7 @@
   (log/debug "ENTER -product-groups")
   (let [token-ok (-valid-token? env req)
         response-value (if token-ok
-                         {:ret :ok, :product-groups (ss-domain-i/get-product-groups (ss-service/get-service env :domain) env)}
+                         {:ret :ok, :product-groups (ss-domain-s/get-product-groups env)}
                          {:ret :failed, :msg "Given token is not valid"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
@@ -111,7 +105,7 @@
   (let [pg-id (get-in req [:path-params :pg-id])
         token-ok (-valid-token? env req)
         response-value (if token-ok
-                         {:ret :ok, :pg-id pg-id :products (ss-domain-i/get-products (ss-service/get-service env :domain) env pg-id)}
+                         {:ret :ok, :pg-id pg-id :products (ss-domain-s/get-products env pg-id)}
                          {:ret :failed, :msg "Given token is not valid"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
 
@@ -126,9 +120,11 @@
                          {:ret     :ok,
                           :pg-id   pg-id
                           :p-id    p-id
-                          :product (ss-domain-i/get-product (ss-service/get-service env :domain) env pg-id p-id)}
+                          :product (ss-domain-s/get-product env pg-id p-id)}
                          {:ret :failed, :msg "Given token is not valid"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
+
+;; TODO: Add swagger to reitit routes!
 
 (defn routes
   "Routes."
@@ -150,7 +146,7 @@
 
 (defn handler
   "Handler."
-  [{:keys [routes]}]
+  [routes]
   (re-ring/ring-handler
     (re-ring/router routes
                     {:data {:muuntaja   mu-core/instance
@@ -165,8 +161,8 @@
       (re-ring/create-default-handler))))
 
 
-(comment
+; Rich comment.
+#_(comment
   (user/system)
   (handler {:routes (routes (user/env))})
-
   )

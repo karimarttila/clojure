@@ -1,4 +1,5 @@
-(ns simpleserver.service.session.session-interface)
+(ns simpleserver.service.session.session-interface
+  "Session interface. Use only through session service.")
 
 (defprotocol SessionInterface
   (create-json-web-token [this env email]
@@ -11,8 +12,7 @@
   (-get-sessions [this env]
     "Gets all sessions - used in testing.")
   (-reset-sessions! [this env]
-    "Resets all sessions - used in testing.")
-  )
+    "Resets all sessions - used in testing."))
 
 
 

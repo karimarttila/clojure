@@ -20,11 +20,14 @@
         ; Overriding the port with random port, see TODO below.
         _ (log/debug (str "test-config, using web-server test port: " test-port))]
     (-> (core/system-config)
-        (assoc-in [::core/web-server :port] test-port))))
+        (assoc-in [::core/web-server :port] test-port)
+        ;; No nrepl needed in tests. If used, use other port than the main system.
+        (assoc-in [::core/nrepl :bind] nil)
+        (assoc-in [::core/nrepl :port] nil))))
 
 ;; TODO: For some reason Integrant does not always run halt-key for webserver, really weird.
 ;; And you lose the reference to the web server and web server keeps the port binded => you have to restart REPL.
-(defn test-config-orig []
+#_(defn test-config-orig []
   (let [test-port (get-in (ss-config/create-config) [:web-server :test-server-port])]
     (-> (core/system-config)
         ; Overriding the port with test-port.

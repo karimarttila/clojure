@@ -9,16 +9,16 @@ services:
     ports:
       - "8000:8000"
     networks:
-      [ddb-network]
+      [ss-network]
 # Setup dynamodb tables and import data
   uploader-app:
     image: ss-uploader:0.1
     links:
       - local-dynamodb
     networks:
-      [ddb-network]
+      [ss-network]
     depends_on:
       - local-dynamodb
 networks:
-  ddb-network:
+  ss-network:
     driver: bridge

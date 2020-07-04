@@ -47,18 +47,18 @@
       json-web-token))
 
   (validate-token
-    [_ env token]
+    [_ _ token]
     (log/debug (str "ENTER validate-token, token: " token))
     (ss-session-common/validate-token token {:my-ddb my-ddb :my-table my-table} get-token remove-token)
     )
 
   (-get-sessions
-    [_ env]
+    [_ _]
     (log/debug (str "ENTER -get-sessions"))
     (get-all-sessions-from-dynamodb my-ddb my-table))
 
   (-reset-sessions!
-    [_ env]
+    [_ _]
     (log/debug (str "ENTER -reset-sessions!"))
     (let [sessions (get-all-sessions-from-dynamodb my-ddb my-table)]
       (dorun (map (partial remove-token {:my-ddb my-ddb :my-table my-table}) sessions)))))

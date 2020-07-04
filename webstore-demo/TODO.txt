@@ -1,0 +1,20 @@
+
+Tee Simple Server Integrant -harjoituksesta blogi-postaus: nimenomaan Integrantin esittelyä.
+
+Tee Simple Server Integrant-harjoitukseen lisäosia:
+
+- Tee backendiin:
+-- reitit: swagger
+-- malli
+
+- Tee backendiin uudet tietovarastovaihtoehdot:
+-- PostgreSQL
+-- Datomic => + oma blogi
+
+- Tee frontti:
+-- re-frame => + oma blogi
+-- helix => + oma blogi
+-- rum => + oma blogi
+
+
+Sitten syksyllä voisi keksiä jonkin uuden projektin. Välillä voisi katsoa, josko minusta jo voisi olla apua Metosin-kirjastoissa joissain helpommissa tehtävissä...

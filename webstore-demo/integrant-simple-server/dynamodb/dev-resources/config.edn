@@ -1,5 +1,6 @@
 {
  :runtime-env :dev
+ :nrepl {:bind "0.0.0.0" :port 6262}
  :web-server  {:server-port      6161
                ; TODO: Overriding the port with random port since some issues with Integrant configuration.
                ;:test-server-port 6171

@@ -1,10 +1,8 @@
 (ns simpleserver.service.user.user-dynamodb
   (:require [clojure.tools.logging :as log]
             [cognitect.aws.client.api :as aws]
-            [simpleserver.service.dynamodb-config :as ss-ddb-config]
             [simpleserver.service.user.user-interface :as ss-user-i]
-            [simpleserver.service.user.user-common :as ss-user-common]
-            [simpleserver.util.config :as ss-config]))
+            [simpleserver.service.user.user-common :as ss-user-common]))
 
 (defn -get-converted-users
   [raw-users]
@@ -47,7 +45,7 @@
   ss-user-i/UserInterface
 
   (email-already-exists?
-    [_ env email]
+    [_ _ email]
     (log/debug (str "ENTER email-already-exists?, email: " email))
     (let [raw-user (aws/invoke my-ddb {:op :Query
                                        :request {:TableName my-table
@@ -78,7 +76,7 @@
           {:email email, :ret :ok}))))
 
   (credentials-ok?
-    [_ env email password]
+    [_ _ email password]
     (log/debug (str "ENTER credentials-ok?"))
     (let [request {:TableName my-table
                    :KeyConditionExpression "email = :email"
@@ -89,7 +87,7 @@
       (= ret-password (str (hash password)))))
 
   (-get-users
-    [_ env]
+    [_ _]
     (log/debug (str "ENTER -get-users"))
     (let [raw-users (aws/invoke my-ddb {:op :Scan
                                         :request {:TableName my-table}})
@@ -125,16 +123,11 @@
                           (:first-name user-map)
                           (:last-name user-map)
                           (:hashed-password user-map))))
-                    initial-users))
+                    initial-users)))
+      (throw (UnsupportedOperationException. "You can reset sessions only in development environment!")))))
 
-        )
-      (throw (UnsupportedOperationException. "You can reset sessions only in development environment!"))))
-
-  )
-
-
-(comment
-
+; Rich comment.
+#_(comment
   (do
     (simpleserver.test-config/go)
     (simpleserver.service.user.user-interface/-reset-users!
