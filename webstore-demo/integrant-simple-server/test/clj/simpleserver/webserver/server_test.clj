@@ -3,13 +3,15 @@
             [clojure.tools.logging :as log]
             [clojure.data.codec.base64 :as base64]
             [simpleserver.test-config :as ss-tc]
+            [simpleserver.test-utils.test-service :as ss-test-service]
             [simpleserver.service.user.user-service :as ss-user-s]
             [simpleserver.service.session.session-service :as ss-session-s]))
 
 (defn init-fixture
   []
-  (ss-user-s/-reset-users! (ss-tc/test-env))
-  (ss-session-s/-reset-sessions! (ss-tc/test-env)))
+  (ss-test-service/init-domain-test-data (ss-tc/test-env))
+  (ss-test-service/reset-users! (ss-tc/test-env))
+  (ss-test-service/reset-sessions! (ss-tc/test-env)))
 
 (defn webserver-test-fixture
   [f]
@@ -43,8 +45,8 @@
   (log/debug "ENTER login-test")
   (testing "POST: /login"
     ; First with good credentials.
-    (let [good-test-body {:email "kari.karttinen@foo.com" :password "Kari"}
-          bad-test-body {:email "kari.karttinen@foo.com" :password "WRONG-PASSWORD"}]
+    (let [good-test-body {:email "test-kari.karttinen@foo.com" :password "Kari"}
+          bad-test-body {:email "test-kari.karttinen@foo.com" :password "WRONG-PASSWORD"}]
       (let [ret (ss-tc/-call-api :post "login" nil good-test-body)]
         (is (= (ret :status) 200))
         (is (= (get-in ret [:body :ret]) "ok"))
@@ -69,14 +71,14 @@
 (deftest product-groups-test
   (log/debug "ENTER product-groups-test")
   (testing "GET: /product-groups"
-    (let [login-ret (ss-tc/-call-api :post "login" nil {:email "kari.karttinen@foo.com" :password "Kari"})
+    (let [login-ret (ss-tc/-call-api :post "login" nil {:email "test-kari.karttinen@foo.com" :password "Kari"})
           _ (log/debug (str "Got login-ret: " login-ret))
           json-web-token (get-in login-ret [:body :json-web-token])
           params (-create-basic-authentication json-web-token)
           get-ret (ss-tc/-call-api :get "/product-groups" params nil)
           status (:status get-ret)
           body (:body get-ret)
-          right-body {:ret "ok", :product-groups {:1 "Books", :2 "Movies"}}]
+          right-body {:ret "ok", :product-groups {:1 "Test-Books", :2 "Test-Movies"}}]
       (is (= (not (nil? json-web-token)) true))
       (is (= status 200))
       (is (= body right-body)))))
@@ -84,7 +86,7 @@
 (deftest products-test
   (log/debug "ENTER products-test")
   (testing "GET: /products"
-    (let [login-ret (ss-tc/-call-api :post "login" nil {:email "kari.karttinen@foo.com" :password "Kari"})
+    (let [login-ret (ss-tc/-call-api :post "login" nil {:email "test-kari.karttinen@foo.com" :password "Kari"})
           _ (log/debug (str "Got login-ret: " login-ret))
           json-web-token (get-in login-ret [:body :json-web-token])
           params (-create-basic-authentication json-web-token)
@@ -98,28 +100,28 @@
       (is (= status 200))
       (is (= ret "ok"))
       (is (= pg-id "1"))
-      (is (= (count products) 35)))))
+      (is (= (count products) 2)))))
 
 (deftest product-test
   (log/debug "ENTER product-test")
   (testing "GET: /product"
-    (let [login-ret (ss-tc/-call-api :post "login" nil {:email "kari.karttinen@foo.com" :password "Kari"})
+    (let [login-ret (ss-tc/-call-api :post "login" nil {:email "test-kari.karttinen@foo.com" :password "Kari"})
           _ (log/debug (str "Got login-ret: " login-ret))
           json-web-token (get-in login-ret [:body :json-web-token])
           params (-create-basic-authentication json-web-token)
-          get-ret (ss-tc/-call-api :get "/product/2/49" params nil)
+          get-ret (ss-tc/-call-api :get "/product/2/4" params nil)
           status (:status get-ret)
           body (:body get-ret)
           pg-id (:pg-id body)
           p-id (:p-id body)
           ret (:ret body)
           product (:product body)
-          right-product ["49" "2" "Once Upon a Time in the West" "14.4" "Leone, Sergio" "1968" "Italy-USA" "Western"]]
+          right-product ["4" "2" "Test Once Upon a Time in the West" "14.4" "Leone" "1968" "Italy-USA" "Western"]]
       (is (= (not (nil? json-web-token)) true))
       (is (= status 200))
       (is (= ret "ok"))
       (is (= pg-id "2"))
-      (is (= p-id "49"))
+      (is (= p-id "4"))
       (is (= product right-product)))))
 
 ; Rich comment.

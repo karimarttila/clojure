@@ -8,11 +8,7 @@
     "Validates the token. Returns {:email :exp} from token if session ok,
     nil otherwise. Token validation has two parts:
     1. Check that we actually created the token in the first place (should find it in the session db).
-    2. Validate the token with buddy (can unsign it, token is not expired).")
-  (-get-sessions [this env]
-    "Gets all sessions - used in testing.")
-  (-reset-sessions! [this env]
-    "Resets all sessions - used in testing."))
+    2. Validate the token with buddy (can unsign it, token is not expired)."))
 
 
 

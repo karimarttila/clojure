@@ -1,30 +1,49 @@
 {
- :runtime-env :dev
- :nrepl {:bind "0.0.0.0" :port 6262}
- :web-server  {:server-port      6161
-               ; TODO: Overriding the port with random port since some issues with Integrant configuration.
-               ;:test-server-port 6171
-               }
 
- :jwt         {:exp 2000}
+ :backend/profile #profile {:prod :prod
+                            :dev :dev
+                            :test :test}
 
- :db          {;; CSV
-               :csv       {:data-dir "dev-resources/data"}
-               ;; Local DynamoDB
-               :local-ddb {:ss-table-prefix "ss"
-                           :config          {:aws-profile "local-dynamodb"
-                                             ; NOTE: endpoint should be defined only if using local-dynamodb profile.
-                                             ; https://cognitect-labs.github.io/aws-api/cognitect.aws.client.api-api.html
-                                             :endpoint    {:protocol :http :hostname "localhost" :port 8000}}}
-               ;; Real DynamoDB
-               :aws-ddb   {:ss-table-prefix "ss"
-                           :config          {:aws-profile "m-sand"}}
-               ;; Local Postgres
-               :local-postgres  {}
-               ;; Real Postgres.
-               :aws-postgres {}
-               }
+ ; csv, local-ddb, aws-ddb, postgres
+ :backend/active-db #or [#env SS_DB :csv]
+
+ :backend/csv {:profile #ig/ref :backend/profile
+               :active-db #ig/ref :backend/active-db
+               :data-dir "dev-resources/data"}
+
+ :backend/local-ddb {:active-db #ig/ref :backend/active-db
+                     :ss-table-prefix "ss"
+                     :ss-env #profile {:prod "prod"
+                                       :dev "dev"
+                                       :test "test"}
+                     :endpoint {:protocol :http :hostname "localhost" :port 8000}
+                     :aws-profile "local-dynamodb"}
+
+ ; Gather different data store services here.
+ :backend/service {:profile #ig/ref :backend/profile
+                   :active-db #ig/ref :backend/active-db
+                   :csv #ig/ref :backend/csv
+                   :local-ddb #ig/ref :backend/local-ddb
+                   }
+
+ ; Miscellaneous options.
+ :backend/options {:jwt {:exp #profile {:prod 1000
+                                        :dev 2000
+                                        :test 5000}}}
+
+ :backend/env {; Using profile just for debugging purposes.
+               :profile #ig/ref :backend/profile
+               :active-db #ig/ref :backend/active-db
+               :service #ig/ref :backend/service
+               :options #ig/ref :backend/options}
+
+ :backend/jetty {:port 6161
+                 :join? false
+                 :env #ig/ref :backend/env}
+
+ :backend/nrepl {:bind #profile {:prod "0.0.0.0"
+                                 :dev "localhost"}
+                 :port 3131}
  }
-
 
 

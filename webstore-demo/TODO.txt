@@ -1,5 +1,11 @@
 
 Tee Simple Server Integrant -harjoituksesta blogi-postaus: nimenomaan Integrantin esittelyä.
+- Tee vielä PostgreSQL tietovarasto-vaihtoehto.
+-- Tee Babashkalla alkudatan (domain + users) syöttö.
+- Sitten tästä versiosta blogi: Integrant vs oma tilanhallinta.
+
+Babashkasta voisi kirjoittaa myös oman blogin.
+
 
 Tee Simple Server Integrant-harjoitukseen lisäosia:
 

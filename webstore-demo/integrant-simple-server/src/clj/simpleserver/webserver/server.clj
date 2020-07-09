@@ -164,5 +164,9 @@
 ; Rich comment.
 #_(comment
   (user/system)
+  (ss-domain-s/get-product-groups (user/env))
+  (simpleserver.test-config/go)
+  (ss-domain-s/get-product-groups (simpleserver.test-config/test-env))
+  (ss-domain-s/get-product-groups (user/env))
   (handler {:routes (routes (user/env))})
   )

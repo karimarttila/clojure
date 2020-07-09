@@ -12,8 +12,3 @@
 (defn validate-token [env token]
   (ss-session-i/validate-token (get-service env) env token))
 
-(defn -get-sessions [env]
-  (ss-session-i/-get-sessions (get-service env) env))
-
-(defn -reset-sessions! [env]
-  (ss-session-i/-reset-sessions! (get-service env) env))

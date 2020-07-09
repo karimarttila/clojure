@@ -1,14 +1,14 @@
 (ns user
-  (:require [integrant.repl :refer [clear go halt prep init reset reset-all]]
+  (:require [integrant.repl]
+            ;[integrant.repl :refer [clear go halt prep init reset reset-all]]
             [integrant.repl.state :as state]
             [simpleserver.core :as core]))
 
-(integrant.repl/set-prep! core/system-config)
+(integrant.repl/set-prep! core/system-config-start)
 
 (defn system [] (or state/system (throw (ex-info "System not running" {}))))
 
-
-(defn env [] (::core/env (system)))
+(defn env [] (:backend/env (system)))
 (defn service [] (:service (env)))
 
 
@@ -19,23 +19,6 @@
 ;; M-k: halt
 
 (comment
-  (system)
-  (service)
-  (env)
-  (clear)
-  (go)
-  (halt)
-  (prep)
-  (init)
-  (reset)
-  (reset-all))
-
-
-
-#_(comment
-    (user/my-reset)
-    (user/my-go)
-    (user/my-halt)
-    state/system
-    (system)
-    )
+  (user/system)
+  (user/env)
+  )

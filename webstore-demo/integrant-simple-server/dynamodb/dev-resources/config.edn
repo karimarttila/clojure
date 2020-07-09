@@ -1,30 +1,58 @@
 {
- :runtime-env :dev
- :nrepl {:bind "0.0.0.0" :port 6262}
- :web-server  {:server-port      6161
-               ; TODO: Overriding the port with random port since some issues with Integrant configuration.
-               ;:test-server-port 6171
+ ; csv, local-ddb, aws-ddb, postgres
+ :backend/active-db #or [#env SS_DB "csv"]
+
+ :backend/testdata-dir "dev-resources/data"
+
+ :backend/env {:active-db #ig/ref :backend/active-db
+               :testdata-dir #ig/ref :backend/testdata-dir
                }
 
- :jwt         {:exp 2000}
+ :backend/jetty {:port 6161
+                 :join? false
+                 :env #ig/ref :backend/env}
 
- :db          {;; CSV
-               :csv       {:data-dir "dev-resources/data"}
-               ;; Local DynamoDB
-               :local-ddb {:ss-table-prefix "ss"
-                           :config          {:aws-profile "local-dynamodb"
-                                             ; NOTE: endpoint should be defined only if using local-dynamodb profile.
-                                             ; https://cognitect-labs.github.io/aws-api/cognitect.aws.client.api-api.html
-                                             :endpoint    {:protocol :http :hostname "localhost" :port 8000}}}
-               ;; Real DynamoDB
-               :aws-ddb   {:ss-table-prefix "ss"
-                           :config          {:aws-profile "m-sand"}}
-               ;; Local Postgres
-               :local-postgres  {}
-               ;; Real Postgres.
-               :aws-postgres {}
-               }
+
+ ; Miscellaneous options.
+ :backend/options {:jwt {:exp #profile {:prod 1000
+                                        :dev 2000}}}
+
+ :backend/nrepl {:bind #profile {:prod "0.0.0.0"
+                                 :dev "localhost"}
+                 :port 3131}
  }
+
+
+
+
+
+#_{
+   :runtime-env :dev
+   :nrepl {:bind "0.0.0.0" :port 6262}
+   :web-server {:server-port 6161
+                ; TODO: Overriding the port with random port since some issues with Integrant configuration.
+                ;:test-server-port 6171
+                }
+
+   :jwt {:exp 2000}
+
+   :db {;; CSV
+        :csv {:data-dir "dev-resources/data"}
+        ;; Local DynamoDB
+        :local-ddb {:ss-table-prefix "ss"
+                    :config {:aws-profile "local-dynamodb"
+                             ; NOTE: endpoint should be defined only if using local-dynamodb profile.
+                             ; https://cognitect-labs.github.io/aws-api/cognitect.aws.client.api-api.html
+                             :endpoint {:protocol :http :hostname "localhost" :port 8000}}}
+        ;; Real DynamoDB
+        :aws-ddb {:ss-table-prefix "ss"
+                  :config {:aws-profile "m-sand"}}
+        ;; Local Postgres
+        :local-postgres {}
+        ;; Real Postgres.
+        :aws-postgres {}
+        }
+   }
 
 
 

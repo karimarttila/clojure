@@ -4,50 +4,36 @@
     [simpleserver.service.session.session-interface :as ss-session-i]
     [simpleserver.service.session.session-common :as ss-session-common]))
 
-(def my-sessions
-  "Atom to store the sessions. NOTE: Not a map but a set."
-  (atom #{}))
-
 (defn get-token
-  [token _]
-  (if (contains? @my-sessions token)
+  [token db]
+  (if (contains? (:session @db) token)
     token
     nil))
 
 (defn remove-token
-  [token _]
-  (if (contains? @my-sessions token)
-    (swap! my-sessions disj token)
-    (log/warn (str "Expired token not found when removing it from my sessions: " token))))
+  [token db]
+  (if (contains? (:session @db) token)
+    (swap! db update-in [:session] disj token)
+    (log/warn (str "Expired token not found when removing it from db: " token))))
 
-(defrecord CsvR []
+(defrecord CsvR [db]
   ss-session-i/SessionInterface
 
   (create-json-web-token
     [_ env email]
     (log/debug (str "ENTER create-json-web-token, email: " email))
     (let [json-web-token (ss-session-common/create-json-web-token env email)
-          _ (swap! my-sessions conj json-web-token)]
+          _ (swap! db update-in [:session] conj json-web-token)]
       json-web-token))
 
   (validate-token
     [_ _ token]
     (log/debug (str "ENTER validate-token, token: " token))
-    (ss-session-common/validate-token token nil get-token remove-token))
-
-  (-get-sessions
-    [_ _]
-    (log/debug (str "ENTER -get-sessions"))
-    @my-sessions)
-
-  (-reset-sessions!
-    [_ env]
-    (log/debug (str "ENTER -reset-sessions!"))
-    (if (= (get-in env [:config :runtime-env]) :dev)
-      (reset! my-sessions #{})
-      (throw (java.lang.UnsupportedOperationException. "You can reset sessions only in development environment!"))))
+    (ss-session-common/validate-token token db get-token remove-token))
   )
 
 #_(comment
   (user/system)
+  (user/env)
+  (ss-session-common/create-json-web-token (user/env) "testing@com")
   )
