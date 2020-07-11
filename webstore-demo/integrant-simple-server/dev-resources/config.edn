@@ -4,14 +4,15 @@
                             :dev :dev
                             :test :test}
 
- ; csv, local-ddb, aws-ddb, postgres
- :backend/active-db #or [#env SS_DB :csv]
+ ; csv, ddb, postgres
+ ;:backend/active-db #or [#env SS_DB :csv]
+ :backend/active-db #or [#env SS_DB :ddb]
 
  :backend/csv {:profile #ig/ref :backend/profile
                :active-db #ig/ref :backend/active-db
                :data-dir "dev-resources/data"}
 
- :backend/local-ddb {:active-db #ig/ref :backend/active-db
+ :backend/ddb {:active-db #ig/ref :backend/active-db
                      :ss-table-prefix "ss"
                      :ss-env #profile {:prod "prod"
                                        :dev "dev"
@@ -23,7 +24,7 @@
  :backend/service {:profile #ig/ref :backend/profile
                    :active-db #ig/ref :backend/active-db
                    :csv #ig/ref :backend/csv
-                   :local-ddb #ig/ref :backend/local-ddb
+                   :ddb #ig/ref :backend/ddb
                    }
 
  ; Miscellaneous options.

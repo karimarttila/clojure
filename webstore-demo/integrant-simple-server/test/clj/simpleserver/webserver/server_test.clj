@@ -9,7 +9,7 @@
 
 (defn init-fixture
   []
-  (ss-test-service/init-domain-test-data (ss-tc/test-env))
+  (ss-test-service/init-domain (ss-tc/test-env))
   (ss-test-service/reset-users! (ss-tc/test-env))
   (ss-test-service/reset-sessions! (ss-tc/test-env)))
 

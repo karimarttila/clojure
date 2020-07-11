@@ -4,14 +4,14 @@
 if [ $# -ne 1 ]
 then
     echo "Usage: ./run-tests.sh <DB>"
-    echo "DBs: csv, local-ddb"
+    echo "DBs: csv, ddb"
     echo "Example: ./run-tests.sh local-ddb"
     exit 1
 fi
 
 MYDB=$1
 
-if [[ "$MYDB" =~ ^(csv|local-ddb)$ ]]; then
+if [[ "$MYDB" =~ ^(csv|ddb)$ ]]; then
     echo "Starting tests with $MYDB configuration..."
 else
     echo "Unknown DB configuration: $MYDB, exiting..."

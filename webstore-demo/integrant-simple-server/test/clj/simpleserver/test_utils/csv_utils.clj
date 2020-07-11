@@ -6,24 +6,26 @@
 ;; Domain
 
 ;; Before tests we just inject the test data to the "csv database" (atom in Integrant test system).
-(defn init-domain-test-data [env]
+(defn init-domain [env]
+  (log/debug "ENTER init-domain")
   (let [db (get-in env [:service :domain :db])]
     (swap! db update-in [:domain :product-groups] (constantly (test-data/product-groups)))
-    (swap! db update-in [:domain "pg-1-raw-products"] (constantly (test-data/raw-products "1")))
-    (swap! db update-in [:domain "pg-2-raw-products"] (constantly (test-data/raw-products "2")))))
+    (doseq [pg-id (keys (test-data/product-groups))]
+      (let [mykey (str "pg-" pg-id "-raw-products")]
+        (swap! db update-in [:domain mykey] (constantly (test-data/raw-products pg-id)))))))
 
 ;; ******************************************************
 ;; Session
 
 (defn reset-sessions! [env]
-  (log/debug "ENTER reset-csv-sessions!")
+  (log/debug "ENTER reset-sessions!")
   (let [db (get-in env [:service :domain :db])]
     (if (= (:profile env) :test)
       (swap! db update-in [:session] (constantly #{}))
       (throw (java.lang.UnsupportedOperationException. "You can reset sessions only in test environment!")))))
 
 (defn get-sessions [env]
-  (log/debug "ENTER get-csv-sessions")
+  (log/debug "ENTER get-sessions")
   (let [db (get-in env [:service :domain :db])]
     (:session @db)))
 

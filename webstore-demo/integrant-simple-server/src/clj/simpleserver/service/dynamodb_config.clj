@@ -11,10 +11,10 @@
                          (map #(vector % (str table-prefix (name %)))
                               [:product-group :product :users :session]))
         my-credentials (cognitect.aws.credentials/profile-credentials-provider aws-profile)
-        my-ddb (if (nil? my-credentials)
+        my-client (if (nil? my-credentials)
                  (cognitect.aws.client.api/client {:api                  :dynamodb
                                                    :credentials-provider my-credentials})
                  (cognitect.aws.client.api/client {:api                  :dynamodb
                                                    :credentials-provider my-credentials
                                                    :endpoint-override    endpoint}))]
-    {:ddb my-ddb :tables ddb-tables}))
+    {:client my-client :tables ddb-tables}))

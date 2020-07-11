@@ -41,23 +41,14 @@
       (csv-db-loader/load-csv-db csv-data))
     (:db csv-data)))
 
-(defmethod ig/init-key :backend/local-ddb [_ {:keys [active-db ss-table-prefix ss-env endpoint aws-profile]}]
-  (log/debug "ENTER ig/init-key :backend/local-ddb")
-  (if (= active-db :local-ddb)
+(defmethod ig/init-key :backend/ddb [_ {:keys [active-db ss-table-prefix ss-env endpoint aws-profile]}]
+  (log/debug "ENTER ig/init-key :backend/ddb")
+  (if (= active-db :ddb)
     (ddb-config/get-dynamodb-config ss-table-prefix ss-env endpoint aws-profile)))
 
-(defmethod ig/init-key :backend/service [_ {:keys [active-db csv local-ddb]}]
+(defmethod ig/init-key :backend/service [_ {:keys [active-db csv ddb]}]
   (log/debug "ENTER ig/init-key :backend/service")
-  (ss-service/get-service-config active-db csv local-ddb))
-
-#_(comment
-  ;TODO poista
-  (user/system)
-  (user/env)
-  (simpleserver.core/system-config nil)
-  (:backend/active-db (simpleserver.core/system-config nil))
-  (simpleserver.service.service/get-service-config nil)
-  )
+  (ss-service/get-service-config active-db csv ddb))
 
 (defmethod ig/init-key :backend/env [_ env]
   env)

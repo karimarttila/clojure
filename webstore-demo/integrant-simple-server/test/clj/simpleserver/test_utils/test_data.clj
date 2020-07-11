@@ -9,7 +9,7 @@
 
 (defn raw-products [pg-id]
   (cond
-    (= pg-id "1") [["21" "1" "Test Kalevala" "3.95" "Lönnrot" "1835" "Finland" "" "Finnish"]
+    (= pg-id "1") [["21" "1" "Test Kalevala" "3.95" "Lönnrot" "1835" "Finland" "Finnish"]
                    ["22" "1" "Test Seitsemän veljestä" "7.22" "Kivi" "1870" "Finland" "Finnish"]]
     (= pg-id "2") [["1" "2" "Test Seven Samurai" "84.97" "Kurosawa" "1954" "Japan" "Drama"]
                    ["2" "2" "Test The Seventh Seal" "83.08" "Bergman" "1957" "Sweden" "Fantasy"]
@@ -32,3 +32,9 @@
         :last-name "Tillikainen"
         :hashed-password "-36072128"}})
 
+
+(comment
+  (product-groups)
+  (doseq [pg (product-groups)]
+    (clojure.pprint/pprint pg))
+  )

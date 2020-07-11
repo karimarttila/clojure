@@ -39,7 +39,7 @@
           (if (.contains (.getMessage e) "Token is expired")
             (do
               (log/debug (str "Token is expired, removing it from my sessions and returning nil: " token))
-              (fn-remove-token token)
+              (fn-remove-token token options)
               nil)
             ; Some other issue, throw it.
             (do

@@ -1,17 +1,18 @@
 (ns simpleserver.test-utils.test-service
   "Test data manipulations. Just using conds here instead of protocols."
   (:require [simpleserver.test-utils.csv-utils :as test-csv]
+            [simpleserver.test-utils.dynamodb-utils :as test-ddb]
             [clojure.tools.logging :as log]))
 
 ;; ******************************************************
 ;; Domain
 
-(defn init-domain-test-data [env]
+(defn init-domain [env]
   (log/debug "ENTER init-domain-test-data")
   (let [active-db (:active-db env)]
     (cond
-      (= active-db :csv) (test-csv/init-domain-test-data env)
-      (active-db #{:local-ddb :aws-ddb}) (throw (UnsupportedOperationException. (str "Data store not yet implemented: " active-db)))
+      (= active-db :csv) (test-csv/init-domain env)
+      (= active-db :ddb) (test-ddb/init-domain env)
       :else (throw (UnsupportedOperationException. (str "Unknown data store: " active-db))))))
 
 ;; ******************************************************
@@ -22,7 +23,7 @@
   (let [active-db (:active-db env)]
     (cond
       (= active-db :csv) (test-csv/reset-sessions! env)
-      (active-db #{:local-ddb :aws-ddb}) (throw (UnsupportedOperationException. (str "Data store not yet implemented: " active-db)))
+      (= active-db :ddb) (test-ddb/reset-sessions! env)
       :else (throw (UnsupportedOperationException. (str "Unknown data store: " active-db))))))
 
 (defn get-sessions [env]
@@ -30,7 +31,7 @@
   (let [active-db (:active-db env)]
     (cond
       (= active-db :csv) (test-csv/get-sessions env)
-      (active-db #{:local-ddb :aws-ddb}) (throw (UnsupportedOperationException. (str "Data store not yet implemented: " active-db)))
+      (= active-db :ddb) (test-ddb/get-sessions env)
       :else (throw (UnsupportedOperationException. (str "Unknown data store: " active-db))))))
 
 ;; ******************************************************
@@ -41,7 +42,7 @@
   (let [active-db (:active-db env)]
     (cond
       (= active-db :csv) (test-csv/get-users env)
-      (active-db #{:local-ddb :aws-ddb}) (throw (UnsupportedOperationException. (str "Data store not yet implemented: " active-db)))
+      (= active-db :ddb) (test-ddb/get-users env)
       :else (throw (UnsupportedOperationException. (str "Unknown data store: " active-db))))))
 
 (defn reset-users! [env]
@@ -49,6 +50,6 @@
   (let [active-db (:active-db env)]
     (cond
       (= active-db :csv) (test-csv/reset-users! env)
-      (active-db #{:local-ddb :aws-ddb}) (throw (UnsupportedOperationException. (str "Data store not yet implemented: " active-db)))
+      (= active-db :ddb) (test-ddb/reset-users! env)
       :else (throw (UnsupportedOperationException. (str "Unknown data store: " active-db))))))
 

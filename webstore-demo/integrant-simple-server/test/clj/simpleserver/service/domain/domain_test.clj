@@ -7,7 +7,7 @@
 
 
 (defn init-fixture []
-  (ss-test-service/init-domain-test-data (ss-tc/test-env)))
+  (ss-test-service/init-domain (ss-tc/test-env)))
 
 (defn domain-test-fixture
   [f]
@@ -55,9 +55,4 @@
 #_(comment
   (ss-tc/go)
   (ss-tc/test-env)
-  (->> (:out (clojure.java.shell/sh "netstat" "-an")) (clojure.string/split-lines) (filter #(re-find #".*:::61.*LISTEN.*" %)))
-  (ss-tc/halt)
-  @ss-tc/test-system
-  (user/system)
-  (:simpleserver.core/web-server @ss-tc/test-system)
   )

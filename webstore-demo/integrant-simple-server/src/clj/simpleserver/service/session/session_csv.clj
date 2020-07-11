@@ -10,7 +10,7 @@
     token
     nil))
 
-(defn remove-token
+(defn remove-token!
   [token db]
   (if (contains? (:session @db) token)
     (swap! db update-in [:session] disj token)
@@ -29,7 +29,7 @@
   (validate-token
     [_ _ token]
     (log/debug (str "ENTER validate-token, token: " token))
-    (ss-session-common/validate-token token db get-token remove-token))
+    (ss-session-common/validate-token token db get-token remove-token!))
   )
 
 #_(comment

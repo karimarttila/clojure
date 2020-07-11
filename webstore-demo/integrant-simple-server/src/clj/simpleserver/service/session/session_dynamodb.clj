@@ -14,39 +14,43 @@
             (items :Items))))
 
 (defn get-token
-  [token options]
-  (let [{:keys [my-ddb my-table]} options
-        result (aws/invoke my-ddb {:op :GetItem
-                                   :request {:TableName my-table
+  [token db]
+  (let [result (aws/invoke (:client db) {:op :GetItem
+                                   :request {:TableName (get-in db [:tables :session])
                                              :Key {"token" {:S token}}}})]
-    (get-in result [:Item :token :S])))
+    (if (:__type result)
+      (throw (ex-info "Failed to get token" result))
+      (get-in result [:Item :token :S]))))
 
-(defn remove-token
-  [options token]
-  (let [{:keys [my-ddb my-table]} options
-        result (aws/invoke my-ddb {:op :DeleteItem
-                                   :request {:TableName my-table
+(defn remove-token!
+  [token db]
+  (let [result (aws/invoke (:client db) {:op :DeleteItem
+                                   :request {:TableName (get-in db [:tables :session])
                                              :Key {"token" {:S token}}}})]
-    result))
+    (if (:__type result)
+      (throw (ex-info "Failed to get token" result))
+      result)))
 
-(defrecord AwsDynamoDbR [my-ddb my-table]
+(defrecord AwsDynamoDbR [db]
   ss-session-i/SessionInterface
 
   (create-json-web-token
     [_ env email]
     (log/debug (str "ENTER create-json-web-token, email: " email))
     (let [json-web-token (ss-session-common/create-json-web-token env email)
-          _ (aws/invoke my-ddb {:op :PutItem
-                                :request {:TableName my-table
+          ret (aws/invoke (:client db) {:op :PutItem
+                                :request {:TableName (get-in db [:tables :session])
                                           :Item {"token" {:S json-web-token}}}})]
       ; https://docs.aws.amazon.com/cli/latest/reference/dynamodb/put-item.html
       ; The ReturnValues parameter is used by several DynamoDB operations; however, PutItem does not recognize any values other than NONE or ALL_OLD .
-      json-web-token))
+      (if (empty? ret)
+        json-web-token
+        (throw (ex-info "Failed to put session" ret)))))
 
   (validate-token
     [_ _ token]
     (log/debug (str "ENTER validate-token, token: " token))
-    (ss-session-common/validate-token token {:my-ddb my-ddb :my-table my-table} get-token remove-token)
+    (ss-session-common/validate-token token db get-token remove-token!)
     )
 
   )

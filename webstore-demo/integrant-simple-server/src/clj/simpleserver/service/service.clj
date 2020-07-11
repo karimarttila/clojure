@@ -11,7 +11,7 @@
 
 (defn- get-domain
   "Gets domain environment."
-  [active-db csv local-ddb]
+  [active-db csv ddb]
   ; We could use some fancy multimethod dispatch or even create a fancy macro
   ; which creates the domain entity based on some record name we get from the configuration.
   ; But let's make a simple cond and not make things look too complex
@@ -19,35 +19,35 @@
   (log/debug (str "ENTER get-domain, active-db: " active-db))
   (cond
     (= active-db :csv) (domain-csv/->CsvR csv)
-    (active-db #{:local-ddb :aws-ddb}) (domain-ddb/->AwsDynamoDbR local-ddb "TODO-KORJAA" "TODO-KORJAA")
+    (= active-db :ddb) (domain-ddb/->AwsDynamoDbR ddb)
     :else (throw (UnsupportedOperationException. (str "Unknown data store: " active-db)))))
 
 (defn- get-session
   "Gets session environment."
-  [active-db csv local-ddb]
+  [active-db csv ddb]
   (log/debug (str "ENTER get-session, active-db: " active-db))
   (cond
     (= active-db :csv) (session-csv/->CsvR csv)
-    (active-db #{:local-ddb :aws-ddb}) (session-ddb/->AwsDynamoDbR "TODO-KORJAA" "TODO-KORJAA")
+    (= active-db :ddb) (session-ddb/->AwsDynamoDbR ddb)
     :else (throw (UnsupportedOperationException. (str "Unknown data store: " active-db)))))
 
 (defn- get-user
   "Gets user environment."
-  [active-db csv local-ddb]
+  [active-db csv ddb]
   (log/debug (str "ENTER get-user, active-db: " active-db))
   (cond
     (= active-db :csv) (user-csv/->CsvR csv)
-    (active-db #{:local-ddb :aws-ddb}) (user-ddb/->AwsDynamoDbR "TODO-KORJAA" "TODO-KORJAA")
+    (= active-db :ddb) (user-ddb/->AwsDynamoDbR ddb)
     :else (throw (UnsupportedOperationException. (str "Unknown data store: " active-db)))))
 
 (defn get-service-config
   "Gets service entities for given db request (:csv, :local-ddb...).
   Integrant calls this function to get service for server."
-  [active-db csv local-ddb]
+  [active-db csv ddb]
   (log/debug (str "ENTER get-service-config, active-db: " active-db))
-  {:domain (get-domain active-db csv local-ddb)
-   :session (get-session active-db csv local-ddb)
-   :user (get-user active-db csv local-ddb)
+  {:domain (get-domain active-db csv ddb)
+   :session (get-session active-db csv ddb)
+   :user (get-user active-db csv ddb)
    })
 
 (defn get-service
