@@ -1,5 +1,5 @@
 (ns user
-  (:require [integrant.repl]
+  (:require [integrant.repl :refer [reset]]
             ;[integrant.repl :refer [clear go halt prep init reset reset-all]]
             [integrant.repl.state :as state]
             [simpleserver.core :as core]))

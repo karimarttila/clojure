@@ -1,12 +1,13 @@
 (ns simpleserver.test-utils.csv-utils
   (:require [simpleserver.test-utils.test-data :as test-data]
+            [simpleserver.test-utils.test-service :as test-service]
             [clojure.tools.logging :as log]))
 
 ;; ******************************************************
 ;; Domain
 
 ;; Before tests we just inject the test data to the "csv database" (atom in Integrant test system).
-(defn init-domain [env]
+(defmethod test-service/init-domain :csv [env]
   (log/debug "ENTER init-domain")
   (let [db (get-in env [:service :domain :db])]
     (swap! db update-in [:domain :product-groups] (constantly (test-data/product-groups)))
@@ -17,27 +18,27 @@
 ;; ******************************************************
 ;; Session
 
-(defn reset-sessions! [env]
+(defmethod test-service/get-sessions :csv [env]
+  (log/debug "ENTER get-sessions")
+  (let [db (get-in env [:service :domain :db])]
+    (:session @db)))
+
+(defmethod test-service/reset-sessions! :csv [env]
   (log/debug "ENTER reset-sessions!")
   (let [db (get-in env [:service :domain :db])]
     (if (= (:profile env) :test)
       (swap! db update-in [:session] (constantly #{}))
       (throw (java.lang.UnsupportedOperationException. "You can reset sessions only in test environment!")))))
 
-(defn get-sessions [env]
-  (log/debug "ENTER get-sessions")
-  (let [db (get-in env [:service :domain :db])]
-    (:session @db)))
-
 ;; ******************************************************
 ;; User
 
-(defn get-users [env]
+(defmethod test-service/get-users :csv [env]
   (log/debug (str "ENTER -get-users"))
   (let [db (get-in env [:service :domain :db])]
     (:user @db)))
 
-(defn reset-users! [env]
+(defmethod test-service/reset-users! :csv [env]
   (log/debug (str "ENTER -reset-users!"))
   (let [db (get-in env [:service :user :db])]
     (if (= (:profile env) :test)

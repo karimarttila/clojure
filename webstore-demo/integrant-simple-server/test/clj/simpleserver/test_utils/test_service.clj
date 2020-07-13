@@ -1,55 +1,33 @@
 (ns simpleserver.test-utils.test-service
   "Test data manipulations. Just using conds here instead of protocols."
-  (:require [simpleserver.test-utils.csv-utils :as test-csv]
-            [simpleserver.test-utils.dynamodb-utils :as test-ddb]
-            [clojure.tools.logging :as log]))
+  )
 
-;; ******************************************************
-;; Domain
+(defmulti init-domain :active-db)
 
-(defn init-domain [env]
-  (log/debug "ENTER init-domain-test-data")
-  (let [active-db (:active-db env)]
-    (cond
-      (= active-db :csv) (test-csv/init-domain env)
-      (= active-db :ddb) (test-ddb/init-domain env)
-      :else (throw (UnsupportedOperationException. (str "Unknown data store: " active-db))))))
+(defmethod init-domain :default [env]
+  (throw (UnsupportedOperationException. (str "Unknown data store: " (:active-db env)))))
 
-;; ******************************************************
-;; Session
+(defmulti get-sessions :active-db)
 
-(defn reset-sessions! [env]
-  (log/debug "ENTER reset-sessions!")
-  (let [active-db (:active-db env)]
-    (cond
-      (= active-db :csv) (test-csv/reset-sessions! env)
-      (= active-db :ddb) (test-ddb/reset-sessions! env)
-      :else (throw (UnsupportedOperationException. (str "Unknown data store: " active-db))))))
+(defmethod get-sessions :default [env]
+  (throw (UnsupportedOperationException. (str "Unknown data store: " (:active-db env)))))
 
-(defn get-sessions [env]
-  (log/debug "ENTER get-sessions")
-  (let [active-db (:active-db env)]
-    (cond
-      (= active-db :csv) (test-csv/get-sessions env)
-      (= active-db :ddb) (test-ddb/get-sessions env)
-      :else (throw (UnsupportedOperationException. (str "Unknown data store: " active-db))))))
+(defmulti reset-sessions! :active-db)
 
-;; ******************************************************
-;; User
+(defmethod reset-sessions! :default [env]
+  (throw (UnsupportedOperationException. (str "Unknown data store: " (:active-db env)))))
 
-(defn get-users [env]
-  (log/debug "ENTER get-users")
-  (let [active-db (:active-db env)]
-    (cond
-      (= active-db :csv) (test-csv/get-users env)
-      (= active-db :ddb) (test-ddb/get-users env)
-      :else (throw (UnsupportedOperationException. (str "Unknown data store: " active-db))))))
+(defmulti get-users :active-db)
 
-(defn reset-users! [env]
-  (log/debug "ENTER reset-users!")
-  (let [active-db (:active-db env)]
-    (cond
-      (= active-db :csv) (test-csv/reset-users! env)
-      (= active-db :ddb) (test-ddb/reset-users! env)
-      :else (throw (UnsupportedOperationException. (str "Unknown data store: " active-db))))))
+(defmethod get-users :default [env]
+  (throw (UnsupportedOperationException. (str "Unknown data store: " (:active-db env)))))
 
+(defmulti reset-users! :active-db)
+
+(defmethod reset-users! :default [env]
+  (throw (UnsupportedOperationException. (str "Unknown data store: " (:active-db env)))))
+
+(comment
+  (simpleserver.test-config/go)
+  (simpleserver.test-config/test-env)
+  )

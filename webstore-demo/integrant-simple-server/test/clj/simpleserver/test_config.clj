@@ -4,7 +4,11 @@
     [clojure.pprint]
     [integrant.core :as ig]
     [clj-http.client :as http-client]
-    [simpleserver.core :as core])
+    [simpleserver.core :as core]
+    ;; Now force load the multimethods.
+    [simpleserver.test-utils.csv-utils]
+    [simpleserver.test-utils.dynamodb-utils]
+    )
   (:import (java.net ServerSocket)))
 
 (defonce test-system (atom nil))

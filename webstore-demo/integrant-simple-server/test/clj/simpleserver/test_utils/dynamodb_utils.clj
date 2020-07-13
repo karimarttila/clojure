@@ -1,9 +1,9 @@
 (ns simpleserver.test-utils.dynamodb-utils
   (:require [simpleserver.test-utils.test-data :as test-data]
-            [cognitect.aws.client.api :as aws]
-            [clojure.tools.logging :as log]
+            [simpleserver.test-utils.test-service :as test-service]
             [simpleserver.service.user.user-common :as ss-user-common]
-            [simpleserver.service.user.user-interface :as ss-user-i]))
+            [cognitect.aws.client.api :as aws]
+            [clojure.tools.logging :as log]))
 
 
 ;; ******************************************************
@@ -36,7 +36,7 @@
       (if (not (empty? ret))
         (throw (ex-info "Failed to put products" ret))))))
 
-(defn init-domain [env]
+(defmethod test-service/init-domain :ddb [env]
   (log/debug "ENTER init-domain")
   (let [client (get-in env [:service :domain :db :client])
         product-groups-table (get-in env [:service :domain :db :tables :product-group])
@@ -49,7 +49,7 @@
 ;; ******************************************************
 ;; Session
 
-(defn get-sessions [env]
+(defmethod test-service/get-sessions :ddb [env]
   (log/debug "ENTER get-sessions")
   (let [items (aws/invoke (get-in env [:service :session :db :client]) {:op :Scan
                                                                         :request {:TableName (get-in env [:service :session :db :tables :session])}})]
@@ -67,11 +67,11 @@
       (throw (ex-info "Failed to get token" result))
       result)))
 
-(defn reset-sessions! [env]
+(defmethod test-service/reset-sessions! :ddb [env]
   (log/debug "ENTER reset-sessions!")
   (if (= (:profile env) :test)
     (let [db (get-in env [:service :session :db])
-          sessions (get-sessions env)]
+          sessions (test-service/get-sessions env)]
       (dorun (map (partial remove-token! db) sessions)))
     (throw (java.lang.UnsupportedOperationException. "You can reset sessions only in test environment!"))))
 
@@ -110,7 +110,7 @@
       (throw (ex-info "Failed to add new user without hashing password" ret))
       {:email email, :ret :ok})))
 
-(defn get-users [env]
+(defmethod test-service/get-users :ddb [env]
   (log/debug (str "ENTER -get-users"))
   (let [db (get-in env [:service :user :db])
         raw-users (aws/invoke (:client db) {:op :Scan
@@ -123,11 +123,11 @@
               {}
               converted-users))))
 
-(defn reset-users! [env]
+(defmethod test-service/reset-users! :ddb [env]
   (log/debug (str "ENTER -reset-users!"))
   (if (= (:profile env) :test)
     (let [db (get-in env [:service :user :db])]
-      (let [users-to-delete (get-users env)
+      (let [users-to-delete (test-service/get-users env)
             emails-to-delete (map (fn [item]
                                     (:email (second item)))
                                   users-to-delete)
@@ -164,7 +164,5 @@
   (simpleserver.test-config/test-env)
   (get-sessions (simpleserver.test-config/test-env))
 
-  (init-domain-test-data (simpleserver.test-config/test-env))
-  (test-data/raw-products "1")
-
+  (init-domain (simpleserver.test-config/test-env))
   )

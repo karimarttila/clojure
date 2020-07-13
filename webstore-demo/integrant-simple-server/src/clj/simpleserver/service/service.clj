@@ -5,9 +5,11 @@
             [simpleserver.service.session.session-csv :as session-csv]
             [simpleserver.service.session.session-dynamodb :as session-ddb]
             [simpleserver.service.user.user-csv :as user-csv]
-            [simpleserver.service.user.user-dynamodb :as user-ddb]
-            [simpleserver.service.dynamodb-config :as ddb-config]))
+            [simpleserver.service.user.user-dynamodb :as user-ddb]))
 
+
+;;; NOTE: You need to force load the multimethod namespaces somewhere.
+;;; They are force loaded in test-config.
 
 (defn- get-domain
   "Gets domain environment."
