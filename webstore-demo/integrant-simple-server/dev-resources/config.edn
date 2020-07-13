@@ -1,5 +1,5 @@
 {
-
+ ; Profile injected to Integrant.
  :backend/profile #profile {:prod :prod
                             :dev :dev
                             :test :test}
@@ -7,18 +7,29 @@
  ; csv, ddb, postgres
  :backend/active-db #or [#env SS_DB :csv]
  ;:backend/active-db #or [#env SS_DB :ddb]
+ ;:backend/active-db #or [#env SS_DB :postgres]
 
  :backend/csv {:profile #ig/ref :backend/profile
                :active-db #ig/ref :backend/active-db
                :data-dir "dev-resources/data"}
 
  :backend/ddb {:active-db #ig/ref :backend/active-db
-                     :ss-table-prefix "ss"
-                     :ss-env #profile {:prod "prod"
-                                       :dev "dev"
-                                       :test "test"}
-                     :endpoint {:protocol :http :hostname "localhost" :port 8000}
-                     :aws-profile "local-dynamodb"}
+               :ss-table-prefix "ss"
+               :ss-env #profile {:prod "prod"
+                                 :dev "dev"
+                                 :test "test"}
+               :endpoint {:protocol :http :hostname "localhost" :port 8000}
+               :aws-profile "local-dynamodb"}
+
+ :backend/postgresql {:adapter "postgresql"
+                      :username #or [#env DB_USERNAME "simpleserver"]
+                      :password #or [#env DB_PASSWORD "simpleserver"]
+                      :server-name #or [#env DB_HOST "localhost"]
+                      :port-number #long #or [#env DB_PORT 5532]
+                      :database-name #or [#env DB_NAME "simpleserver"]
+                      :connection-timeout 3000
+                      :validation-timeout 3000
+                      :maximum-pool-size 5}
 
  ; Gather different data store services here.
  :backend/service {:profile #ig/ref :backend/profile

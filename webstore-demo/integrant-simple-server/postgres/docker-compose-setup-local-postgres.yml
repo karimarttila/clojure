@@ -1,7 +1,7 @@
 # Setting up local postgres for this exercise.
 version: '3'
 services:
-  local-postgres:
+  postgres:
     build: .
     expose:
       - 5432

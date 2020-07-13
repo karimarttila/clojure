@@ -7,6 +7,7 @@
     [integrant.repl :as ig-repl]
     [integrant.core :as ig]
     [aero.core :as aero]
+    [hikari-cp.core :as hikari-cp]
     [simpleserver.service.service :as ss-service]
     [simpleserver.webserver.server :as ss-webserver]
     [simpleserver.service.dynamodb-config :as ddb-config]
@@ -45,6 +46,13 @@
   (log/debug "ENTER ig/init-key :backend/ddb")
   (if (= active-db :ddb)
     (ddb-config/get-dynamodb-config ss-table-prefix ss-env endpoint aws-profile)))
+
+
+(defmethod ig/init-key :backend/postgresql [_ opts]
+  {:datasource (hikari-cp/make-datasource opts)})
+
+(defmethod ig/halt-key! :backend/postgresql [_ this]
+  (hikari-cp/close-datasource (:datasource this)))
 
 (defmethod ig/init-key :backend/service [_ {:keys [active-db csv ddb]}]
   (log/debug "ENTER ig/init-key :backend/service")
