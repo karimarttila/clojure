@@ -25,6 +25,8 @@
         ;; Use the same data dir also for test system. It just initializes data.
         (assoc-in [:backend/csv :data-dir] "dev-resources/data")
         (assoc-in [:backend/jetty :port] test-port)
+        ;; In Postgres test setup use simpleserver_test database.
+        (assoc-in [:backend/postgres :database-name] "simpleserver_test")
         ;; No nrepl needed in tests. If used, use other port than the main system.
         (assoc-in [:backend/nrepl :bind] nil)
         (assoc-in [:backend/nrepl :port] nil)
@@ -77,6 +79,7 @@
 (comment
   (-call-api :get "info" nil nil)
   (simpleserver.test-config/go)
+  (simpleserver.test-config/test-config)
   simpleserver.test-config/test-system
   (simpleserver.test-config/test-env)
   (simpleserver.test-config/test-service)

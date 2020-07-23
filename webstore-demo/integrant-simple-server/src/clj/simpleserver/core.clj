@@ -48,15 +48,15 @@
     (ddb-config/get-dynamodb-config ss-table-prefix ss-env endpoint aws-profile)))
 
 
-(defmethod ig/init-key :backend/postgresql [_ opts]
+(defmethod ig/init-key :backend/postgres [_ opts]
   {:datasource (hikari-cp/make-datasource opts)})
 
-(defmethod ig/halt-key! :backend/postgresql [_ this]
+(defmethod ig/halt-key! :backend/postgres [_ this]
   (hikari-cp/close-datasource (:datasource this)))
 
-(defmethod ig/init-key :backend/service [_ {:keys [active-db csv ddb]}]
+(defmethod ig/init-key :backend/service [_ {:keys [active-db csv ddb postgres]}]
   (log/debug "ENTER ig/init-key :backend/service")
-  (ss-service/get-service-config active-db csv ddb))
+  (ss-service/get-service-config active-db csv ddb postgres))
 
 (defmethod ig/init-key :backend/env [_ env]
   env)

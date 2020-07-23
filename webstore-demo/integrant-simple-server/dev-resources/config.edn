@@ -5,9 +5,9 @@
                             :test :test}
 
  ; csv, ddb, postgres
- :backend/active-db #or [#env SS_DB :csv]
+ ;:backend/active-db #or [#env SS_DB :csv]
  ;:backend/active-db #or [#env SS_DB :ddb]
- ;:backend/active-db #or [#env SS_DB :postgres]
+ :backend/active-db #or [#env SS_DB :postgres]
 
  :backend/csv {:profile #ig/ref :backend/profile
                :active-db #ig/ref :backend/active-db
@@ -21,7 +21,7 @@
                :endpoint {:protocol :http :hostname "localhost" :port 8000}
                :aws-profile "local-dynamodb"}
 
- :backend/postgresql {:adapter "postgresql"
+ :backend/postgres {:adapter "postgresql"
                       :username #or [#env DB_USERNAME "simpleserver"]
                       :password #or [#env DB_PASSWORD "simpleserver"]
                       :server-name #or [#env DB_HOST "localhost"]
@@ -36,6 +36,7 @@
                    :active-db #ig/ref :backend/active-db
                    :csv #ig/ref :backend/csv
                    :ddb #ig/ref :backend/ddb
+                   :postgres #ig/ref :backend/postgres
                    }
 
  ; Miscellaneous options.

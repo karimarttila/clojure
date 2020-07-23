@@ -54,5 +54,6 @@
 ; Rich comment.
 #_(comment
   (ss-tc/go)
+  (ss-test-service/init-domain (ss-tc/test-env))
   (ss-tc/test-env)
   )

@@ -11,8 +11,6 @@
 (defn env [] (:backend/env (system)))
 (defn service [] (:service (env)))
 
-
-
 ;; NOTE: In Cursive, Integrant hot keys are:
 ;; M-h: go
 ;; M-j: reset
