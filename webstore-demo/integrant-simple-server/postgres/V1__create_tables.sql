@@ -16,7 +16,7 @@ CREATE TABLE simpleserver.product
     id      TEXT PRIMARY KEY,
     pg_id   TEXT REFERENCES simpleserver.product_group (id) ON DELETE RESTRICT,
     title   TEXT,
-    price   INT,
+    price   NUMERIC(6,2),
     a_or_d  TEXT,
     year    INT,
     country TEXT,

@@ -23,6 +23,7 @@
                                   commons-logging/commons-logging {:mvn/version "1.2"}
                                   ch.qos.logback/logback-classic {:mvn/version "1.2.3"}
                                   hikari-cp {:mvn/version "2.12.0"}
+                                  com.layerware/hugsql {:mvn/version "0.5.1"}
                                   org.postgresql/postgresql {:mvn/version "42.2.12"}
                                   ring/ring-core {:mvn/version "1.8.0"}
                                   ring/ring-jetty-adapter {:mvn/version "1.7.1"}
