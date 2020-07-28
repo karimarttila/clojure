@@ -35,6 +35,9 @@
 ; Rich comment.
 #_(comment
   (ss-tc/go)
+  (ss-session-s/create-json-web-token (ss-tc/test-env) "jee")
+  (ss-test-service/reset-sessions! (ss-tc/test-env))
+  (ss-test-service/get-sessions (ss-tc/test-env))
   (ss-tc/test-env)
   (ss-session-s/create-json-web-token (ss-tc/test-env) "jee@com")
   (ss-session-s/validate-token "eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImplZUBjb20iLCJleHAiOjE1OTA1MTg3Nzh9.hNk1f1Wuog2bFhqwpohTimc5JqNmz15jXADQVdCGMaI" (ss-tc/test-env))

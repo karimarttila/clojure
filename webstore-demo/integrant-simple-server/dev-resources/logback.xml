@@ -43,7 +43,11 @@
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="FILE" />
 	</logger>
-
+	<logger name="com.zaxxer.hikari" level="warn"
+		additivity="false">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE" />
+	</logger>
 
 	<root level="trace">
 		<appender-ref ref="STDOUT" />

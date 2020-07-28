@@ -10,8 +10,6 @@
 
 (hugsql/def-db-fns "simpleserver/service/domain/domain-postgres.sql" {:quoting :ansi})
 
-()
-
 (defrecord PostgresR [db]
   ss-domain-i/DomainInterface
 

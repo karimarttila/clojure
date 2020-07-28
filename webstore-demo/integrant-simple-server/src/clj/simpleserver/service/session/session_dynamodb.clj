@@ -16,8 +16,8 @@
 (defn get-token
   [token db]
   (let [result (aws/invoke (:client db) {:op :GetItem
-                                   :request {:TableName (get-in db [:tables :session])
-                                             :Key {"token" {:S token}}}})]
+                                         :request {:TableName (get-in db [:tables :session])
+                                                   :Key {"token" {:S token}}}})]
     (if (:__type result)
       (throw (ex-info "Failed to get token" result))
       (get-in result [:Item :token :S]))))
@@ -25,10 +25,10 @@
 (defn remove-token!
   [token db]
   (let [result (aws/invoke (:client db) {:op :DeleteItem
-                                   :request {:TableName (get-in db [:tables :session])
-                                             :Key {"token" {:S token}}}})]
+                                         :request {:TableName (get-in db [:tables :session])
+                                                   :Key {"token" {:S token}}}})]
     (if (:__type result)
-      (throw (ex-info "Failed to get token" result))
+      (throw (ex-info "Failed to remove token" result))
       result)))
 
 (defrecord AwsDynamoDbR [db]
@@ -39,8 +39,8 @@
     (log/debug (str "ENTER create-json-web-token, email: " email))
     (let [json-web-token (ss-session-common/create-json-web-token env email)
           ret (aws/invoke (:client db) {:op :PutItem
-                                :request {:TableName (get-in db [:tables :session])
-                                          :Item {"token" {:S json-web-token}}}})]
+                                        :request {:TableName (get-in db [:tables :session])
+                                                  :Item {"token" {:S json-web-token}}}})]
       ; https://docs.aws.amazon.com/cli/latest/reference/dynamodb/put-item.html
       ; The ReturnValues parameter is used by several DynamoDB operations; however, PutItem does not recognize any values other than NONE or ALL_OLD .
       (if (empty? ret)
@@ -50,10 +50,7 @@
   (validate-token
     [_ _ token]
     (log/debug (str "ENTER validate-token, token: " token))
-    (ss-session-common/validate-token token db get-token remove-token!)
-    )
-
-  )
+    (ss-session-common/validate-token token db get-token remove-token!)))
 
 #_(comment
     (-get-sessions

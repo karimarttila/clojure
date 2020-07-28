@@ -50,10 +50,17 @@
 
 (defmethod test-service/get-sessions :postgres [env]
   (log/debug "ENTER get-sessions")
-  )
+  (let [db (get-in env [:service :session :db])]
+    (with-open [connection (jdbc/get-connection (:datasource db))]
+      (jdbc/execute-one! connection ["SELECT token FROM session"]))))
 
 (defmethod test-service/reset-sessions! :postgres [env]
   (log/debug "ENTER reset-sessions!")
+  (if (= (:profile env) :test)
+    (let [db (get-in env [:service :domain :db])]
+      (with-open [connection (jdbc/get-connection (:datasource db))]
+        (jdbc/execute-one! connection ["DELETE FROM session"])))
+    (throw (java.lang.UnsupportedOperationException. "You can reset sessions only in test environment!")))
   )
 
 ;; ******************************************************
