@@ -36,12 +36,23 @@
   (get-product
     [_ _ pg-id p-id]
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
-    ))
+    (if-let [kv (sql-get-product db {:pg-id (str pg-id) :p-id (str p-id)})]
+      [(:id kv)
+       (:pg_id kv)
+       (:title kv)
+       (.toPlainString (.stripTrailingZeros (:price kv)))
+       (:a_or_d kv)
+       (str (:year kv))
+       (:country kv)
+       (:g_or_l kv)])))
 
 
 (comment
   (simpleserver.test-config/go)
+  (simpleserver.test-config/halt)
   (simpleserver.test-config/test-env)
   (let [db (get-in (simpleserver.test-config/test-env) [:service :domain :db])]
     (sql-get-products db {:pg-id (str 2)}))
+  (let [db (get-in (simpleserver.test-config/test-env) [:service :domain :db])]
+    (sql-get-product db {:pg-id (str 2) :p-id (str 4)}))
   )
