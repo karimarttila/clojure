@@ -5,10 +5,11 @@
     [integrant.core :as ig]
     [clj-http.client :as http-client]
     [simpleserver.core :as core]
-    ;; Now force load the multimethods.
+    ;; NOTE: Now force load the multimethods.
+    ;; NOTE: If you later add new data stores you have to add them here! **************************
     [simpleserver.test-utils.csv-utils]
     [simpleserver.test-utils.dynamodb-utils]
-    )
+    [simpleserver.test-utils.postgres-utils])
   (:import (java.net ServerSocket)))
 
 (defonce test-system (atom nil))

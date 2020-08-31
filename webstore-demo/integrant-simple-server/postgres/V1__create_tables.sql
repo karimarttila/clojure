@@ -3,7 +3,7 @@ CREATE SCHEMA IF NOT EXISTS simpleserver;
 DROP TABLE IF EXISTS simpleserver.product_group CASCADE;
 DROP TABLE IF EXISTS simpleserver.product CASCADE;
 DROP TABLE IF EXISTS simpleserver.session CASCADE;
-DROP TABLE IF EXISTS simpleserver.user CASCADE;
+DROP TABLE IF EXISTS simpleserver.ssuser CASCADE; -- NOTE: user is a reserved word in sql!
 
 CREATE TABLE simpleserver.product_group
 (
@@ -29,7 +29,7 @@ CREATE TABLE simpleserver.session
     token  TEXT PRIMARY KEY
 );
 
-CREATE TABLE simpleserver.user
+CREATE TABLE simpleserver.ssuser
 (
     id      TEXT PRIMARY KEY,
     email   TEXT,

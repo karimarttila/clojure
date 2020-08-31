@@ -13,11 +13,11 @@
 
 # Start backend repl.
 @backend:
-    clj -A:dev:test:common:backend -m nrepl.cmdline -i -C
+    clj -A:dev:test:common:backend:postgres -m nrepl.cmdline -i -C
 
 # Start backend repl with my toolbox.
 @backend-kari:
-    clj -A:dev:test:common:backend:kari -m nrepl.cmdline -i -C
+    clj -A:dev:test:common:backend:postgres:kari -m nrepl.cmdline -i -C
 
 # Lint
 @lint:

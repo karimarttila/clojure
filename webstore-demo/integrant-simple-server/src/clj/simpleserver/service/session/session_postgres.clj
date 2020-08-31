@@ -1,8 +1,8 @@
 (ns simpleserver.service.session.session-postgres
-  (:require [simpleserver.service.session.session-interface :as ss-session-i]
-            [simpleserver.service.session.session-common :as ss-session-common]
-            [hugsql.core :as hugsql]
-            [clojure.tools.logging :as log]))
+  (:require [hugsql.core :as hugsql]
+            [clojure.tools.logging :as log]
+            [simpleserver.service.session.session-interface :as ss-session-i]
+            [simpleserver.service.session.session-common :as ss-session-common]))
 
 (declare sql-get-token)
 (declare sql-insert-token)

@@ -1,10 +1,9 @@
 
 Tee Simple Server Integrant -harjoituksesta blogi-postaus: nimenomaan Integrantin esittelyä.
-- Tee vielä PostgreSQL tietovarasto-vaihtoehto.
--- Tee Babashkalla alkudatan (domain + users) syöttö.
+- [DONE] Tee vielä PostgreSQL tietovarasto-vaihtoehto.
+-- [DONE] Tee Babashkalla alkudatan (domain + users) syöttö.
 - Sitten tästä versiosta blogi: Integrant vs oma tilanhallinta.
-
-Babashkasta voisi kirjoittaa myös oman blogin.
+- Babashkasta voisi kirjoittaa myös oman blogin.
 
 
 Tee Simple Server Integrant-harjoitukseen lisäosia:
@@ -14,7 +13,6 @@ Tee Simple Server Integrant-harjoitukseen lisäosia:
 -- malli
 
 - Tee backendiin uudet tietovarastovaihtoehdot:
--- PostgreSQL
 -- Datomic => + oma blogi
 
 - Tee frontti:
@@ -22,5 +20,6 @@ Tee Simple Server Integrant-harjoitukseen lisäosia:
 -- helix => + oma blogi
 -- rum => + oma blogi
 
+Tee: reitit, malli ja muuntaja -harjoitukset ja kirjoita niistä blogi: jotta opit ne kunnolla.
 
 Sitten syksyllä voisi keksiä jonkin uuden projektin. Välillä voisi katsoa, josko minusta jo voisi olla apua Metosin-kirjastoissa joissain helpommissa tehtävissä...

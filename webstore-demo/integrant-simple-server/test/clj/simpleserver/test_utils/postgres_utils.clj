@@ -43,7 +43,7 @@
       (doseq [pg-id (keys (test-data/product-groups))]
         (let [products (test-data/raw-products pg-id)]
           (init-product-table db products))))
-    (throw (java.lang.UnsupportedOperationException. "You can reset sessions only in test environment!"))))
+    (throw (java.lang.UnsupportedOperationException. "You can reset domain only in test environment!"))))
 
 ;; ******************************************************
 ;; Session
@@ -66,11 +66,37 @@
 ;; ******************************************************
 ;; User
 
+(defn convert-users [raw-users]
+    (map (fn [user]
+           (def my-user user)
+           {:userid (:ssuser/id user)
+            :email (:ssuser/email user)
+            :first-name (:ssuser/f_name user)
+            :last-name (:ssuser/l_name user)
+            :hashed-password (:ssuser/hpwd user)})
+         raw-users))
+
 (defmethod test-service/get-users :postgres [env]
   (log/debug (str "ENTER -get-users"))
-  )
+  (let [db (get-in env [:service :session :db])]
+    (convert-users
+      (with-open [connection (jdbc/get-connection (:datasource db))]
+        (jdbc/execute! connection ["SELECT * FROM ssuser"])))))
 
 (defmethod test-service/reset-users! :postgres [env]
   (log/debug (str "ENTER -reset-users!"))
+  (if (= (:profile env) :test)
+    (let [db (get-in env [:service :user :db])]
+      (with-open [connection (jdbc/get-connection (:datasource db))]
+        (jdbc/execute-one! connection ["DELETE FROM ssuser"]))
+      (with-open [connection (jdbc/get-connection (:datasource db))]
+        (let [initial-users (test-data/users)]
+          (doseq [user (vals initial-users)]
+            (sql/insert! connection :ssuser {:id (:userid user)
+                                             :email (:email user)
+                                             :f_name (:first-name user)
+                                             :l_name (:last-name user)
+                                             :hpwd (:hashed-password user)})))))
+    (throw (java.lang.UnsupportedOperationException. "You can reset users only in test environment!")))
   )
 

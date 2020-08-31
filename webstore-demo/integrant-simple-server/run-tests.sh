@@ -11,7 +11,7 @@ fi
 
 MYDB=$1
 
-if [[ "$MYDB" =~ ^(csv|ddb)$ ]]; then
+if [[ "$MYDB" =~ ^(csv|ddb|postgres)$ ]]; then
     echo "Starting tests with $MYDB configuration..."
 else
     echo "Unknown DB configuration: $MYDB, exiting..."

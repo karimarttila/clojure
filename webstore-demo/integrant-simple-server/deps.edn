@@ -38,6 +38,7 @@
                                   clj-http {:mvn/version "3.10.0"}
                                   nrepl {:mvn/version "0.7.0"}
                                   }}
+           :postgres {:extra-paths ["postgres"]}
 
            ;; Test runner in console.
            :test-runner {:extra-paths ["test"]

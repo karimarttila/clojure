@@ -25,34 +25,38 @@
   profile)
 
 (defmethod ig/init-key :backend/active-db [_ active-db]
-  (log/debug (str "ENTER ig/init-key :backend/active-db :") active-db)
+  (log/debug (str "ENTER ig/init-key :backend/active-db:") active-db)
   (keyword active-db))
 
 (defmethod ig/init-key :backend/csv [_ {:keys [profile active-db data-dir]}]
   (log/debug "ENTER ig/init-key :backend/csv")
   ; We simulate this data store using atom.
   ; We initialize the "db" from :data-dir.
-  (let [csv-data
-        {:data-dir data-dir
-         :db (atom {:domain {}
-                    :session #{}
-                    :user {}})}]
-    ; Let's keep the test database empty.
-    (if (and (= active-db :csv) (not (= profile :test)))
-      (csv-db-loader/load-csv-db csv-data))
-    (:db csv-data)))
+  (if (= active-db :csv)
+    (let [csv-data
+          {:data-dir data-dir
+           :db (atom {:domain {}
+                      :session #{}
+                      :user {}})}]
+      ; Let's keep the test database empty.
+      (if (not= profile :test)
+        (csv-db-loader/load-csv-db csv-data))
+      (:db csv-data))))
 
 (defmethod ig/init-key :backend/ddb [_ {:keys [active-db ss-table-prefix ss-env endpoint aws-profile]}]
   (log/debug "ENTER ig/init-key :backend/ddb")
   (if (= active-db :ddb)
     (ddb-config/get-dynamodb-config ss-table-prefix ss-env endpoint aws-profile)))
 
-
 (defmethod ig/init-key :backend/postgres [_ opts]
-  {:datasource (hikari-cp/make-datasource opts)})
+  (log/debug "ENTER ig/init-key :backend/postgres")
+  (if (= (:active-db opts) :postgres)
+    {:datasource (hikari-cp/make-datasource (dissoc opts :active-db)) :active-db (:active-db opts)}))
 
 (defmethod ig/halt-key! :backend/postgres [_ this]
-  (hikari-cp/close-datasource (:datasource this)))
+  (log/debug "ENTER ig/halt-key! :backend/postgres")
+  (if (= (:active-db this) :postgres)
+    (hikari-cp/close-datasource (:datasource this))))
 
 (defmethod ig/init-key :backend/service [_ {:keys [active-db csv ddb postgres]}]
   (log/debug "ENTER ig/init-key :backend/service")
