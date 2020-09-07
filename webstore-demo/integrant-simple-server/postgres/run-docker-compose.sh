@@ -6,7 +6,7 @@ docker-compose -p ss-postgres -f docker-compose-setup-local-postgres.yml up -d
 sleep 5
 echo "Creating Simple Server schemas..."
 ./create-schema.sh
-sleep 5
+sleep 1
 echo "Loading data..."
 ./run-bb-load-data.sh
 sleep 1
