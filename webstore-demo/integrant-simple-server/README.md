@@ -7,7 +7,6 @@
 - [Application State Management](#application-state-management)
   - [Manual State Management](#manual-state-management)
   - [State Management Using Integrant](#state-management-using-integrant)
-  - [State Management in Tests](#state-management-in-tests)
   - [Comparison](#comparison)
 - [Personal Experiences](#personal-experiences)
 - [The Rest of the Application](#the-rest-of-the-application)
@@ -23,16 +22,16 @@ NOTE:
 
 - I don't iterate those Clojure development observations in this README.md that I already found out when I did the previous Clojure Simple Server versions - I recommend the reader to read the README.md file of those previous implementations if you are interested about it.
 - Most of the application code in this new Simple Server implementation is same as in the previous Clojure Simple Server implementations (except those areas where I did most of the changes: application state management using Integrant etc. ).
+- In the previous Simple Server exercise there were two data stores: CSV and DynamoDB. In this new exercise I added Postgres and did some refactoring - the idea was to test how Integrant supports this kind of refactoring work.
 - This implementation is not meant to be an example how to create a production level web server in Clojure - it is just my personal Clojure exercise.
 
 If you are interested to read my personal observations regarding the five languages I used to implement this same web server you might be interested to read my [Five Languages, Five Stories](https://medium.com/@kari.marttila/five-languages-five-stories-1afd7b0b583f) blog post. (There is actually nowadays also an implementation using Kotlin, see my Github repo.)
 
-**NOTE:** This readme might be a bit outdated - I read it through briefly after finishing the exercise. There might be some old stuff mentioned in this readme file that I actually fixed later on. I also wrote a blog article regarding this exercise, you might want to read it, too: [Clojure Integrant Exercise](https://www.karimarttila.fi/clojure/2020/09/07/clojure-integrant-exercise.html).
+**NOTE:** This readme is a bit short. If you want to read a longer story about this exercise go to my blog: **[Clojure Integrant Exercise](https://www.karimarttila.fi/clojure/2020/09/07/clojure-integrant-exercise.html)**.
 
 # Technical Description
 
 Simple Server is implemented using [Clojure](https://clojure.org/) and [Ring](https://github.com/ring-clojure). For routing I used [reitit](https://github.com/metosin/reitit). For state management I used [Integrant library](https://github.com/weavejester/integrant) and for the REPL related workflow I used [Integrant-REPL workflow](https://github.com/weavejester/integrant-repl).
-
 
 # Application State Management
 
@@ -50,38 +49,17 @@ The above mentioned manual state management solution is just fine at least with 
 
 ## State Management Using Integrant
 
-Let's see how the same thing could be implemented using Integrant. The first part of the solution is pretty much the same, we need to have methods for starting and stopping the web server:
-
-![alt text](doc/integrant_state.png)
-
-But this time we don't need any atom to store the web server instance since we let Integrant to take care of state managent - therefore our ```start-web-server``` function starts the web server and just returns the created (and started) web server instance.
-
-Then the Integrant specific part.
+This time we don't need any atom to store the web server instance since we let Integrant to take care of state managent.
 
 ![alt text](doc/integrant_config.png)
 
-We first create a system configuration (function ```system-config```). Basically the only thing here that we really need is the ```::web-server``` part which has the initialization values for our web server. Then we have integrant hooks ```ig/init-key``` and ```ig/halt-key!```. These methods are called by Integrant when we reset the Integrant managed state of our application. As you can see, we just call the previous functions ```start-web-server``` and ```stop-web-server```.
+We first create a system configuration (function ```system-config```). Basically the only thing here that we really need is the ```:backend/jetty``` part which has the initialization values for our web server. Then we have integrant hooks ```ig/init-key``` and ```ig/halt-key!```. These methods are called by Integrant when we reset the Integrant managed state of our application. As you can see, we just start and stop jetty with these hooks.
 
 In REPL driven development you can then use three ```integrant.repl``` namespace functions: 
 
 - go: start the system (in our case start the web server)
 - halt: halt the system (in our case stop the web server)
 - reset: reset the system
-
-## State Management in Tests
-
-One more comparison. Let's first show how to handle state in the tests in which we want to start/stop webserver. First in manual state management:
-
-![alt text](doc/manual_test.png)
-
-So, we just use the ```start-web-server``` and ```stop-web-server``` functions.
-
-Then the same using Integrant:
-
-![alt text](doc/integrant_test.png)
-
-This time we can use Integrant state management. First call the Integrant ```init``` function with the system configuration and store the returned system map so that after the test we can halt the system using Integrant ```halt!``` function (stop web server in our case).
-
 
 ## Comparison
 
