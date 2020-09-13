@@ -138,10 +138,11 @@
   (let [command (str "SELECT * FROM product;")]
     (run-sql command)))
 
-(defn run-me []
+(defn run-me
   "Loads data only if running from babashka script which sets the environment variable.
   We don't want the repl to load the data when reloading the namespace.
   In repl experimentation use the rich comment below."
+  []
   (let [running-bb? (System/getenv "RUNNING_BB")]
     (if (= running-bb? "TRUE")
       (import-data))))

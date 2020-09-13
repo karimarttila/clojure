@@ -8,6 +8,8 @@
             [reitit.ring :as re-ring]
             [reitit.ring.coercion :as re-co]
             [reitit.coercion.spec :as re-co-spec]
+            [reitit.ring.middleware.dev]
+            [ring.middleware.cors :refer [wrap-cors]]
             [muuntaja.core :as mu-core]
             [simpleserver.service.domain.domain-service :as ss-domain-s]
             [simpleserver.service.user.user-service :as ss-user-s]
@@ -117,9 +119,9 @@
         p-id (get-in req [:path-params :p-id])
         token-ok (-valid-token? env req)
         response-value (if token-ok
-                         {:ret     :ok,
-                          :pg-id   pg-id
-                          :p-id    p-id
+                         {:ret :ok,
+                          :pg-id pg-id
+                          :p-id p-id
                           :product (ss-domain-s/get-product env pg-id p-id)}
                          {:ret :failed, :msg "Given token is not valid"})]
     (-set-http-status (ri-resp/response response-value) (:ret response-value))))
@@ -147,26 +149,57 @@
 (defn handler
   "Handler."
   [routes]
-  (re-ring/ring-handler
-    (re-ring/router routes
-                    {:data {:muuntaja   mu-core/instance
-                            :coercion   re-co-spec/coercion
-                            :middleware [ri-params/wrap-params
-                                         re-mu/format-middleware
-                                         re-co/coerce-exceptions-middleware
-                                         re-co/coerce-request-middleware
-                                         re-co/coerce-response-middleware]}})
-    (re-ring/routes
-      (re-ring/create-resource-handler {:path "/"})
-      (re-ring/create-default-handler))))
+  (->
+    (re-ring/ring-handler
+      #_(-> routes
+            (wrap-cors :access-control-allow-origin [#"http://localhost"]
+                       :access-control-allow-methods [:get :put :post :delete]))
+      (re-ring/router routes {
+                              ; Use this to debug middleware handling:
+                              :reitit.middleware/transform reitit.ring.middleware.dev/print-request-diffs
+                              :data {:muuntaja mu-core/instance
+                                     :coercion re-co-spec/coercion
+                                     :middleware [ri-params/wrap-params
+                                                  re-mu/format-middleware
+                                                  re-co/coerce-exceptions-middleware
+                                                  re-co/coerce-request-middleware
+                                                  re-co/coerce-response-middleware]}})
 
+
+      (re-ring/routes
+        (re-ring/create-resource-handler {:path "/"})
+        (re-ring/create-default-handler)))
+    ; Testing with my previous Simple Frontend which is running in localhost:8000.
+    (wrap-cors :access-control-allow-origin  #"http://localhost:8000"
+               :access-control-allow-methods [:get :put :post :delete])
+    ))
 
 ; Rich comment.
-#_(comment
+(comment
+
+  (clj-http.client/get
+    (str "http://localhost:6161/info") {:debug true :accept "application/json"})
+
+  (clj-http.client/get
+    (str "http://localhost:6161/index.html") {:debug true})
+
+  (clj-http.client/get
+    (str "http://localhost:6161") {:debug true})
+
+  (clj-http.client/get
+    (str "http://localhost:6161/index.html") {:debug true})
+
   (user/system)
   (ss-domain-s/get-product-groups (user/env))
   (simpleserver.test-config/go)
   (ss-domain-s/get-product-groups (simpleserver.test-config/test-env))
   (ss-domain-s/get-product-groups (user/env))
   (handler {:routes (routes (user/env))})
+
+  (clj-http.client/get
+    (str "https://reqres.in/api/users/2") {:debug true :accept "application/json"})
+
+  (clj-http.client/get
+    (str "http://localhost:6161/info") {:debug true :accept "application/edn"})
+
   )

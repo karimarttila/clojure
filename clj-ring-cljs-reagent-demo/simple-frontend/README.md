@@ -179,7 +179,7 @@ You can use Python's HTTPServer for quick testing that the production deployment
 
 ```
 cd public
-python -m SimpleHTTPServer
+python3 -m http.server
 ```
 
 This starts a http server on port 8000: Open url in browser and test: http://localhost:8000/
