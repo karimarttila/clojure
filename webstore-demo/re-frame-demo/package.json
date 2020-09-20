@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "shadow-cljs": "^2.11.4"
+  },
+  "dependencies": {
+    "create-react-class": "^15.6.3",
+    "highlight.js": "10.2.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-highlight.js": "^1.0.7"
+  }
+}

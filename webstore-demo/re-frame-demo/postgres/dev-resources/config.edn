@@ -1,0 +1,63 @@
+{
+ ; Profile injected to Integrant.
+ :backend/profile #profile {:prod :prod
+                            :dev :dev
+                            :test :test}
+
+ ; csv, ddb, postgres
+ ;:backend/active-db #or [#env SS_DB :csv]
+ ;:backend/active-db #or [#env SS_DB :ddb]
+ :backend/active-db #or [#env SS_DB :postgres]
+
+ :backend/csv {:profile #ig/ref :backend/profile
+               :active-db #ig/ref :backend/active-db
+               :data-dir "dev-resources/data"}
+
+ :backend/ddb {:active-db #ig/ref :backend/active-db
+               :ss-table-prefix "ss"
+               :ss-env #profile {:prod "prod"
+                                 :dev "dev"
+                                 :test "test"}
+               :endpoint {:protocol :http :hostname "localhost" :port 8000}
+               :aws-profile "local-dynamodb"}
+
+ :backend/postgres {:active-db #ig/ref :backend/active-db
+                    :adapter "postgresql"
+                    :username #or [#env DB_USERNAME "simpleserver"]
+                    :password #or [#env DB_PASSWORD "simpleserver"]
+                    :server-name #or [#env DB_HOST "localhost"]
+                    :port-number #long #or [#env DB_PORT 5532]
+                    :database-name #or [#env DB_NAME "simpleserver"]
+                    :connection-timeout 3000
+                    :validation-timeout 3000
+                    :maximum-pool-size 5}
+
+ ; Gather different data store services here.
+ :backend/service {:profile #ig/ref :backend/profile
+                   :active-db #ig/ref :backend/active-db
+                   :csv #ig/ref :backend/csv
+                   :ddb #ig/ref :backend/ddb
+                   :postgres #ig/ref :backend/postgres
+                   }
+
+ ; Miscellaneous options.
+ :backend/options {:jwt {:exp #profile {:prod 1000
+                                        :dev 2000
+                                        :test 5000}}}
+
+ :backend/env {; Using profile just for debugging purposes.
+               :profile #ig/ref :backend/profile
+               :active-db #ig/ref :backend/active-db
+               :service #ig/ref :backend/service
+               :options #ig/ref :backend/options}
+
+ :backend/jetty {:port 6161
+                 :join? false
+                 :env #ig/ref :backend/env}
+
+ :backend/nrepl {:bind #profile {:prod "0.0.0.0"
+                                 :dev "localhost"}
+                 :port 3131}
+ }
+
+

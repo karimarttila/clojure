@@ -1,0 +1,16 @@
+# Setting up local postgres for this exercise.
+version: '3'
+services:
+  postgres:
+    build: .
+    expose:
+      - 5432
+    ports:
+      - "5532:5432"
+    volumes:
+      - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    networks:
+      [ss-network]
+networks:
+  ss-network:
+    driver: bridge

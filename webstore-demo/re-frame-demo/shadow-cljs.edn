@@ -1,0 +1,23 @@
+{:deps {:aliases [:dev :common :frontend]}
+ :nrepl {:port 6661}
+ :http {:port 9666
+        :host "localhost"}
+ :builds {:app {:target :browser
+                :output-dir "target/shadow/dev/resources/public/js"
+                :asset-path "/js"
+                :modules {:main {:entries [simplefrontend.main]}}
+                :compiler-options {:infer-externs :auto
+                                   :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}}
+                :source-map true
+
+                :nrepl {:port 9081}
+
+                ;; start a development http server
+                :devtools {:watch-dir "target/shadow/dev/resources/public"
+                           :preloads [devtools.preload
+                                      reagent-dev-tools.preload
+                                      day8.re-frame-10x.preload]}
+                :dev {}
+                :release {:output-dir "target/shadow/prod/resources/public/js"
+                          :compiler-options {:source-map "target/shadow/prod/resources/public/js/main.js.map"
+                                             :optimizations :advanced}}}}}

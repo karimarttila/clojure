@@ -1,0 +1,24 @@
+# Setting up local dynamodb for AWS DynamoDB development in this exercise.
+# DynamoDB
+version: '3'
+services:
+  local-dynamodb:
+    image: amazon/dynamodb-local:1.12.0
+    expose:
+      - 8000
+    ports:
+      - "8000:8000"
+    networks:
+      [ss-network]
+# Setup dynamodb tables and import data
+  uploader-app:
+    image: ss-uploader:0.1
+    links:
+      - local-dynamodb
+    networks:
+      [ss-network]
+    depends_on:
+      - local-dynamodb
+networks:
+  ss-network:
+    driver: bridge

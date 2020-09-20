@@ -1,0 +1,53 @@
+@list:
+   just --list
+
+# TODO: just db which runs a docker-compose which starts both local-dynamodb and local-postgres
+
+# Start local dynamodb emulator.
+@dynamodb:
+    cd dynamodb && ./run-docker-compose.sh
+
+# Start local postgres database.
+@postgres:
+    cd postgres && ./run-docker-compose.sh
+
+# Start backend repl.
+@backend:
+    clj -A:dev:test:common:backend:postgres -m nrepl.cmdline -i -C
+
+# Start backend repl with my toolbox.
+@backend-kari:
+    clj -A:dev:test:common:backend:postgres:kari -m nrepl.cmdline -i -C
+
+# Init node packages.
+@init:
+   mkdir -p target
+   mkdir -p classes
+   npm install
+
+# Start frontend auto-compilation.
+@frontend-kari:
+   clj -A:dev:common:frontend:kari -m shadow.cljs.devtools.cli watch app
+
+# SASS auto-compile.
+@css:
+	clj -Acss --auto
+
+# Update dependencies.
+@outdated:
+    clj -A:dev:test:common:backend:frontend:outdated --update
+
+# Create uberjar.
+uberjar:
+    clojure -A:css -t target/shadow/prod/resources/public/css
+    clojure -A:common:frontend -m shadow.cljs.devtools.cli release app
+    clojure -A:common:backend:uberjar
+
+# Lint.
+@lint:
+    clj -A:dev -m clj-kondo.main --lint src
+
+# Test.
+@test db:
+    ./run-tests.sh {{db}}
+

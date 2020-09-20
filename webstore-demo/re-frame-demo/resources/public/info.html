@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Simple Server</h1>
+
+<p>This is the Simple Server.
+
+Available commands are:
+
+<ul style="list-style-type:disc">
+  <li>GET / - The Frontend.</li>
+  <li>GET /info.html - This file.</li>
+  <li>GET /api/info - Gives general information.</li>
+  <li>GET /api/ping - Ping test.</li>
+  <li>POST /api/ping - Ping test (expects to find parameter ping in body).</li>
+  <li>POST /api/sign-in - Creates a new user.</li>
+  <li>POST /api/login - Logs on to service using credentials created using sign-in. You get json web token that must be supplied in following requests.</li>
+  <li>GET /api/products-groups - Gets product groups.</li>
+  <li>GET /api/products/<product-group> - Gets products in product group.</li>
+  <li>GET /api/product/<product-group><product-id> - Gets specific product information.</li>
+</ul>
+
+NOTE: You can see examples how to call these endpoints in the scripts directory (using curl).
+
+</p>
+
+
+</body>
+</html>

@@ -1,0 +1,14 @@
+CREATE SCHEMA IF NOT EXISTS ss;
+
+DROP TABLE IF EXISTS ss.domain_product_group CASCADE;
+DROP TABLE IF EXISTS ss.domain_product CASCADE;
+DROP TABLE IF EXISTS ss.session CASCADE;
+DROP TABLE IF EXISTS ss.user CASCADE;
+
+CREATE SEQUENCE IF NOT EXISTS ss.ss_id_seq START WITH 10000;
+
+CREATE TABLE ss.domain_product_group
+(
+    id    TEXT PRIMARY KEY,
+    pg    TEXT
+);

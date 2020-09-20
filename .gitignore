@@ -29,6 +29,12 @@ personal-info/
 # Cache directory
 .cpcache/
 
+# Node modules
+node_modules/
+
+# Shadow cljs
+.shadow-cljs/
+
 # Leiningen
 # Always ignore .lein-env in Clojure projects since there could be secrets related to environments.
 .lein-env
