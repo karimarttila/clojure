@@ -1,6 +1,7 @@
 (ns simplefrontend.main
   (:require [re-frame.core :as re-frame]
             [reagent.core :as reagent]
+            [reagent-dev-tools.core :as dev-tools]
             [reitit.core :as r]
             [reitit.coercion.spec :as rss]
             [reitit.frontend :as rf]
@@ -10,35 +11,35 @@
 ;;; Events ;;;
 
 (re-frame/reg-event-db
- ::initialize-db
- (fn [_ _]
-   {:current-route nil}))
+  ::initialize-db
+  (fn [_ _]
+    {:current-route nil}))
 
 (re-frame/reg-event-fx
- ::navigate
- (fn [db [_ & route]]
-   ;; See `navigate` effect in routes.cljs
-   {::navigate! route}))
+  ::navigate
+  (fn [db [_ & route]]
+    ;; See `navigate` effect in routes.cljs
+    {::navigate! route}))
 
 (re-frame/reg-event-db
- ::navigated
- (fn [db [_ new-match]]
-   (let [old-match   (:current-route db)
-         controllers (rfc/apply-controllers (:controllers old-match) new-match)]
-     (assoc db :current-route (assoc new-match :controllers controllers)))))
+  ::navigated
+  (fn [db [_ new-match]]
+    (let [old-match (:current-route db)
+          controllers (rfc/apply-controllers (:controllers old-match) new-match)]
+      (assoc db :current-route (assoc new-match :controllers controllers)))))
 
 ;;; Subscriptions ;;;
 
 (re-frame/reg-sub
- ::current-route
- (fn [db]
-   (:current-route db)))
+  ::current-route
+  (fn [db]
+    (:current-route db)))
 
 ;;; Views ;;;
 
 (defn home-page []
   [:div
-   [:h1 "This is home page"]
+   [:h1 "Web Store"]
    [:button
     ;; Dispatch navigate event that triggers a (side)effect.
     {:on-click #(re-frame/dispatch [::navigate ::sub-page2])}
@@ -56,9 +57,9 @@
 
 ;; Triggering navigation from events.
 (re-frame/reg-fx
- ::navigate!
- (fn [route]
-   (apply rfe/push-state route)))
+  ::navigate!
+  (fn [route]
+    (apply rfe/push-state route)))
 
 ;;; Routes ;;;
 
@@ -74,29 +75,29 @@
 (def routes
   ["/"
    [""
-    {:name      ::home
-     :view      home-page
+    {:name ::home
+     :view home-page
      :link-text "Home"
      :controllers
      [{;; Do whatever initialization needed for home page
        ;; I.e (re-frame/dispatch [::events/load-something-with-ajax])
-       :start (fn [& params](js/console.log "Entering home page"))
+       :start (fn [& params] (js/console.log "Entering home page"))
        ;; Teardown can be done here.
-       :stop  (fn [& params] (js/console.log "Leaving home page"))}]}]
+       :stop (fn [& params] (js/console.log "Leaving home page"))}]}]
    ["sub-page1"
-    {:name      ::sub-page1
-     :view      sub-page1
+    {:name ::sub-page1
+     :view sub-page1
      :link-text "Sub page 1"
      :controllers
      [{:start (fn [& params] (js/console.log "Entering sub-page 1"))
-       :stop  (fn [& params] (js/console.log "Leaving sub-page 1"))}]}]
+       :stop (fn [& params] (js/console.log "Leaving sub-page 1"))}]}]
    ["sub-page2"
-    {:name      ::sub-page2
-     :view      sub-page2
+    {:name ::sub-page2
+     :view sub-page2
      :link-text "Sub-page 2"
      :controllers
      [{:start (fn [& params] (js/console.log "Entering sub-page 2"))
-       :stop  (fn [& params] (js/console.log "Leaving sub-page 2"))}]}]])
+       :stop (fn [& params] (js/console.log "Leaving sub-page 2"))}]}]])
 
 (defn on-navigate [new-match]
   (when new-match
@@ -104,21 +105,21 @@
 
 (def router
   (rf/router
-   routes
-   {:data {:coercion rss/coercion}}))
+    routes
+    {:data {:coercion rss/coercion}}))
 
 (defn init-routes! []
   (js/console.log "initializing routes")
   (rfe/start!
-   router
-   on-navigate
-   {:use-fragment true}))
+    router
+    on-navigate
+    {:use-fragment true}))
 
 (defn nav [{:keys [router current-route]}]
   [:ul
    (for [route-name (r/route-names router)
-         :let       [route (r/match-by-name router route-name)
-                     text (-> route :data :link-text)]]
+         :let [route (r/match-by-name router route-name)
+               text (-> route :data :link-text)]]
      [:li {:key route-name}
       (when (= route-name (-> current-route :data :name))
         "> ")
@@ -142,12 +143,18 @@
     (println "dev mode")))
 
 (defn mount-root []
+  (js/console.log "mount-root")
   (re-frame/clear-subscription-cache!)
   (init-routes!) ;; Reset routes on figwheel reload
-  (reagent/render [router-component {:router router}]
-                  (.getElementById js/document "app")))
+  (reagent.dom/render [router-component {:router router}
+                       (if (:open? @dev-tools/dev-state)
+                         {:style {:padding-bottom (str (:height @dev-tools/dev-state) "px")}})
+                       ]
+                      (.getElementById js/document "app")))
 
 (defn ^:export init []
   (re-frame/dispatch-sync [::initialize-db])
+  (dev-tools/start! {:state-atom re-frame.db/app-db})
   (dev-setup)
+  (js/console.log "init")
   (mount-root))

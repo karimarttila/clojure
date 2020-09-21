@@ -7,7 +7,9 @@
                 :asset-path "/js"
                 :modules {:main {:entries [simplefrontend.main]}}
                 :compiler-options {:infer-externs :auto
-                                   :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}}
+                                   :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}
+                                   :external-config {:reagent-dev-tools {:state-atom re-frame.db.app-db}}
+                                   }
                 :source-map true
 
                 :nrepl {:port 9081}
