@@ -55,36 +55,35 @@
   )
 
 
+
+
 (defn home-page []
   [:div
 
    [:p "Wellcome to the Web Store! Here you can browse books and movies."]
    [:p "But you have to sign-in or login first!"]
-   [:p "Jee!"]
-   [:p "Jee 55!"]
-   [:p "Jee 555!"]
-   [:p "Jee 555!"]
-   [:p "Jee 555!"]
-   [:p "Jee 555!"]
+   [:p "H UUSI"]
 
    [:button
     ;; Dispatch navigate event that triggers a (side)effect.
     {:on-click #(re-frame/dispatch [::navigate ::signin])}
     "Go to sign-in"]])
 
-(defn signin []
+(defn signin-page []
   [:div
    [:h1 "This Sign-in page"]
-   [:p "Demo"]
-   [:p "Demo"]
-   [:p "DemoXXX"]
+   [:p "S UUSI"]
 
    [:button
     ;; Dispatch navigate event that triggers a (side)effect.
     {:on-click #(re-frame/dispatch [::navigate ::home])}
     "Go to home"]])
 
-
+(defn current-view [current-route]
+  (let [name (-> current-route :data :name)]
+    (cond
+      (= name ::home) [home-page]
+      (= name ::signin) [signin-page])))
 
 (defn sub-page2 []
   [:div
@@ -124,7 +123,7 @@
        :stop (fn [& params] (js/console.log "Leaving home page"))}]}]
    ["signin"
     {:name ::signin
-     :view signin
+     :view signin-page
      :link-text "Sign in"
      :controllers
      [{:start (fn [& params] (js/console.log "Entering signin"))
@@ -169,15 +168,10 @@
 (defn router-component [{:keys [router]}]
   (let [current-route @(re-frame/subscribe [::current-route])]
     [:div
-     [:p "router-jee"]
-     [:p "router-jee"]
-     [:p "router-jee"]
-     [:p "router-jee"]
      [nav {:router router :current-route current-route}]
-     (prn "current-route: " current-route)
-     (prn "current-route :data :view: " (-> current-route :data :view))
-     (when current-route
-       [(-> current-route :data :view)])]))
+     (current-view current-route)
+     #_(when current-route
+         [(-> current-route :data :view)])]))
 
 ;;; Setup ;;;
 
