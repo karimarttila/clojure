@@ -62,7 +62,9 @@
 
    [:p "Wellcome to the Web Store! Here you can browse books and movies."]
    [:p "But you have to sign-in or login first!"]
-   [:p "H UUSI"]
+      [:p "H UUSI"]
+      [:p "H UUSI"]
+
 
    [:button
     ;; Dispatch navigate event that triggers a (side)effect.
@@ -74,6 +76,7 @@
    [:h1 "This Sign-in page"]
    [:p "S UUSI"]
 
+
    [:button
     ;; Dispatch navigate event that triggers a (side)effect.
     {:on-click #(re-frame/dispatch [::navigate ::home])}
@@ -81,9 +84,9 @@
 
 (defn current-view [current-route]
   (let [name (-> current-route :data :name)]
-    (cond
-      (= name ::home) [home-page]
-      (= name ::signin) [signin-page])))
+    (case name
+      ::home [home-page]
+      ::signin [signin-page])))
 
 (defn sub-page2 []
   [:div
@@ -169,6 +172,8 @@
   (let [current-route @(re-frame/subscribe [::current-route])]
     [:div
      [nav {:router router :current-route current-route}]
+     ; NOTE: Live-reload is not working when the view is inside the Reitit tree, therefore using simple
+     ; Function based dispatch.
      (current-view current-route)
      #_(when current-route
          [(-> current-route :data :view)])]))
