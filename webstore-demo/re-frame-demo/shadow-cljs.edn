@@ -3,6 +3,7 @@
  :http {:port 9666
         :host "localhost"}
  :builds {:app {:target :browser
+                :init-fn simplefrontend.main/init
                 :output-dir "target/shadow/dev/resources/public/js"
                 :asset-path "/js"
                 :modules {:main {:entries [simplefrontend.main]}}

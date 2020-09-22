@@ -8,7 +8,18 @@
             [reitit.frontend.controllers :as rfc]
             [reitit.frontend.easy :as rfe]))
 
+;; ******************************************************************
+;; NOTE: When starting ClojureScript REPL in Cursive, give first command:
+; (shadow.cljs.devtools.api/repl :app)
+; to connect the REPL to the app running in the browser.
+;; ******************************************************************
+
+
+
 ;;; Events ;;;
+
+(def myatom (reagent/atom {:foo "FOO"}))
+(def click-count (reagent/atom 0))
 
 (re-frame/reg-event-db
   ::initialize-db
@@ -37,17 +48,43 @@
 
 ;;; Views ;;;
 
-(defn home-page []
+(defn header []
   [:div
    [:h1 "Web Store"]
+   ]
+  )
+
+
+(defn home-page []
+  [:div
+
+   [:p "Wellcome to the Web Store! Here you can browse books and movies."]
+   [:p "But you have to sign-in or login first!"]
+   [:p "Jee!"]
+   [:p "Jee 55!"]
+   [:p "Jee 555!"]
+   [:p "Jee 555!"]
+   [:p "Jee 555!"]
+   [:p "Jee 555!"]
+
    [:button
     ;; Dispatch navigate event that triggers a (side)effect.
-    {:on-click #(re-frame/dispatch [::navigate ::sub-page2])}
-    "Go to sub-page 2"]])
+    {:on-click #(re-frame/dispatch [::navigate ::signin])}
+    "Go to sign-in"]])
 
-(defn sub-page1 []
+(defn signin []
   [:div
-   [:h1 "This is sub-page 1"]])
+   [:h1 "This Sign-in page"]
+   [:p "Demo"]
+   [:p "Demo"]
+   [:p "DemoXXX"]
+
+   [:button
+    ;; Dispatch navigate event that triggers a (side)effect.
+    {:on-click #(re-frame/dispatch [::navigate ::home])}
+    "Go to home"]])
+
+
 
 (defn sub-page2 []
   [:div
@@ -72,7 +109,8 @@
   ([k params query]
    (rfe/href k params query)))
 
-(def routes
+
+(def routes-dev
   ["/"
    [""
     {:name ::home
@@ -84,13 +122,13 @@
        :start (fn [& params] (js/console.log "Entering home page"))
        ;; Teardown can be done here.
        :stop (fn [& params] (js/console.log "Leaving home page"))}]}]
-   ["sub-page1"
-    {:name ::sub-page1
-     :view sub-page1
-     :link-text "Sub page 1"
+   ["signin"
+    {:name ::signin
+     :view signin
+     :link-text "Sign in"
      :controllers
-     [{:start (fn [& params] (js/console.log "Entering sub-page 1"))
-       :stop (fn [& params] (js/console.log "Leaving sub-page 1"))}]}]
+     [{:start (fn [& params] (js/console.log "Entering signin"))
+       :stop (fn [& params] (js/console.log "Leaving signin"))}]}]
    ["sub-page2"
     {:name ::sub-page2
      :view sub-page2
@@ -98,6 +136,8 @@
      :controllers
      [{:start (fn [& params] (js/console.log "Entering sub-page 2"))
        :stop (fn [& params] (js/console.log "Leaving sub-page 2"))}]}]])
+
+(def routes routes-dev)
 
 (defn on-navigate [new-match]
   (when new-match
@@ -129,7 +169,13 @@
 (defn router-component [{:keys [router]}]
   (let [current-route @(re-frame/subscribe [::current-route])]
     [:div
+     [:p "router-jee"]
+     [:p "router-jee"]
+     [:p "router-jee"]
+     [:p "router-jee"]
      [nav {:router router :current-route current-route}]
+     (prn "current-route: " current-route)
+     (prn "current-route :data :view: " (-> current-route :data :view))
      (when current-route
        [(-> current-route :data :view)])]))
 
@@ -142,15 +188,32 @@
     (enable-console-print!)
     (println "dev mode")))
 
-(defn mount-root []
-  (js/console.log "mount-root")
-  (re-frame/clear-subscription-cache!)
-  (init-routes!) ;; Reset routes on figwheel reload
+
+(defn ^:dev/after-load start []
+  (js/console.log "start")
   (reagent.dom/render [router-component {:router router}
                        (if (:open? @dev-tools/dev-state)
                          {:style {:padding-bottom (str (:height @dev-tools/dev-state) "px")}})
                        ]
-                      (.getElementById js/document "app")))
+                      (.getElementById js/document "app"))
+  )
+
+;; optional
+(defn ^:dev/before-load stop []
+  (js/console.log "stop"))
+
+(defn mount-root []
+  (js/console.log "mount-root")
+  (re-frame/clear-subscription-cache!)
+  (init-routes!) ;; Reset routes on figwheel reload
+  ;; ***************************************************
+  ;; NOTE: You need to render to see the page!
+  (reagent.dom/render [router-component {:router router}
+                       (if (:open? @dev-tools/dev-state)
+                         {:style {:padding-bottom (str (:height @dev-tools/dev-state) "px")}})
+                       ]
+                      (.getElementById js/document "app"))
+  )
 
 (defn ^:export init []
   (re-frame/dispatch-sync [::initialize-db])
@@ -158,3 +221,7 @@
   (dev-setup)
   (js/console.log "init")
   (mount-root))
+
+(comment
+  (reagent.dom/render [])
+  )
