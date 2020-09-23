@@ -12,3 +12,38 @@ div#app {
   height: 100%;
 }
 
+.titlesplit {
+  height: 10%;
+  width: 50%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+/* Title left side: the title text */
+.left {
+  left: 0;
+  background-color: whitesmoke;
+  padding-left: 30px;
+  font-size: 200%;
+  font-family: "Times New Roman", Times, serif;
+}
+
+/* Title right side: sign-in and login buttons */
+.right {
+  right: 0;
+  background-color: whitesmoke;
+}
+
+/* The main content area */
+.mainsplit {
+  height: 90%;
+  width: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 50px;
+  overflow-x: hidden;
+  padding-top: 20px;
+}

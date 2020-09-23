@@ -24,7 +24,8 @@
 (re-frame/reg-event-db
   ::initialize-db
   (fn [_ _]
-    {:current-route nil}))
+    {:current-route nil
+     :logged-in false}))
 
 (re-frame/reg-event-fx
   ::navigate
@@ -50,33 +51,36 @@
 
 (defn header []
   [:div
-   [:h1 "Web Store"]
+   [:div {:class "titlesplit left"} "Web Store"]
+   [:div {:class "titlesplit right"}
+    [:button
+     ;; Dispatch navigate event that triggers a (side)effect.
+     {:on-click #(re-frame/dispatch [::navigate ::signin])}
+     "Sign-In"]
+    [:button
+     {:on-click #(re-frame/dispatch [::navigate ::login])}
+     "Login"]]
    ]
   )
 
-
-
-
 (defn home-page []
-  [:div
-
-   [:p "Wellcome to the Web Store! Here you can browse books and movies."]
+  [:div {:class "mainsplit"}
+   [:p "Welcome to the Web Store!"]
+   [:p "Here you can browse books and movies."]
    [:p "But you have to sign-in or login first!"]
-      [:p "H UUSI"]
-      [:p "H UUSI"]
-
-
-   [:button
-    ;; Dispatch navigate event that triggers a (side)effect.
-    {:on-click #(re-frame/dispatch [::navigate ::signin])}
-    "Go to sign-in"]])
+   ])
 
 (defn signin-page []
-  [:div
-   [:h1 "This Sign-in page"]
-   [:p "S UUSI"]
+  [:div {:class "mainsplit"}
+   [:h1 "This Sign-In page"]
+   [:button
+    ;; Dispatch navigate event that triggers a (side)effect.
+    {:on-click #(re-frame/dispatch [::navigate ::home])}
+    "Go to home"]])
 
-
+(defn login-page []
+  [:div {:class "mainsplit"}
+   [:h1 "This Login page"]
    [:button
     ;; Dispatch navigate event that triggers a (side)effect.
     {:on-click #(re-frame/dispatch [::navigate ::home])}
@@ -86,11 +90,11 @@
   (let [name (-> current-route :data :name)]
     (case name
       ::home [home-page]
-      ::signin [signin-page])))
-
-(defn sub-page2 []
-  [:div
-   [:h1 "This is sub-page 2"]])
+      ::signin [signin-page]
+      ::login [login-page]
+      (do
+        (js/console.log "current-view: no matching clause, giving home-page")
+        [home-page]))))
 
 ;;; Effects ;;;
 
@@ -127,17 +131,18 @@
    ["signin"
     {:name ::signin
      :view signin-page
-     :link-text "Sign in"
+     :link-text "Sign-In"
      :controllers
      [{:start (fn [& params] (js/console.log "Entering signin"))
        :stop (fn [& params] (js/console.log "Leaving signin"))}]}]
-   ["sub-page2"
-    {:name ::sub-page2
-     :view sub-page2
-     :link-text "Sub-page 2"
+   ["login"
+    {:name ::login
+     :view login-page
+     :link-text "Login"
      :controllers
-     [{:start (fn [& params] (js/console.log "Entering sub-page 2"))
-       :stop (fn [& params] (js/console.log "Leaving sub-page 2"))}]}]])
+     [{:start (fn [& params] (js/console.log "Entering login"))
+       :stop (fn [& params] (js/console.log "Leaving login"))}]}]
+   ])
 
 (def routes routes-dev)
 
@@ -157,21 +162,11 @@
     on-navigate
     {:use-fragment true}))
 
-(defn nav [{:keys [router current-route]}]
-  [:ul
-   (for [route-name (r/route-names router)
-         :let [route (r/match-by-name router route-name)
-               text (-> route :data :link-text)]]
-     [:li {:key route-name}
-      (when (= route-name (-> current-route :data :name))
-        "> ")
-      ;; Create a normal links that user can click
-      [:a {:href (href route-name)} text]])])
-
 (defn router-component [{:keys [router]}]
+  (js/console.log "router-component")
   (let [current-route @(re-frame/subscribe [::current-route])]
     [:div
-     [nav {:router router :current-route current-route}]
+     [header]
      ; NOTE: Live-reload is not working when the view is inside the Reitit tree, therefore using simple
      ; Function based dispatch.
      (current-view current-route)
@@ -188,31 +183,19 @@
     (println "dev mode")))
 
 
-(defn ^:dev/after-load start []
-  (js/console.log "start")
+(defn render-app []
   (reagent.dom/render [router-component {:router router}
                        (if (:open? @dev-tools/dev-state)
                          {:style {:padding-bottom (str (:height @dev-tools/dev-state) "px")}})
                        ]
-                      (.getElementById js/document "app"))
-  )
-
-;; optional
-(defn ^:dev/before-load stop []
-  (js/console.log "stop"))
+                      (.getElementById js/document "app")))
 
 (defn mount-root []
   (js/console.log "mount-root")
   (re-frame/clear-subscription-cache!)
   (init-routes!) ;; Reset routes on figwheel reload
   ;; ***************************************************
-  ;; NOTE: You need to render to see the page!
-  (reagent.dom/render [router-component {:router router}
-                       (if (:open? @dev-tools/dev-state)
-                         {:style {:padding-bottom (str (:height @dev-tools/dev-state) "px")}})
-                       ]
-                      (.getElementById js/document "app"))
-  )
+  (render-app))
 
 (defn ^:export init []
   (re-frame/dispatch-sync [::initialize-db])
@@ -220,6 +203,8 @@
   (dev-setup)
   (js/console.log "init")
   (mount-root))
+
+(render-app)
 
 (comment
   (reagent.dom/render [])
