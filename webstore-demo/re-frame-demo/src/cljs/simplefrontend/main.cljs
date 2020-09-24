@@ -18,9 +18,6 @@
 
 ;;; Events ;;;
 
-(def myatom (reagent/atom {:foo "FOO"}))
-(def click-count (reagent/atom 0))
-
 (re-frame/reg-event-db
   ::initialize-db
   (fn [_ _]
@@ -47,31 +44,36 @@
   (fn [db]
     (:current-route db)))
 
+(re-frame/reg-sub
+  ::logged-in
+  (fn [db]
+    (:logged-in db)))
+
 ;;; Views ;;;
 
 (defn header []
-  [:div
-   [:div {:class "titlesplit left"} "Web Store"]
-   [:div {:class "titlesplit right"}
-    [:button
-     ;; Dispatch navigate event that triggers a (side)effect.
-     {:on-click #(re-frame/dispatch [::navigate ::signin])}
-     "Sign-In"]
-    [:button
-     {:on-click #(re-frame/dispatch [::navigate ::login])}
-     "Login"]]
-   ]
-  )
+  [:div {:class "top"} "Web Store"
+   (let [logged-in @(re-frame/subscribe [::logged-in])]
+     (js/console.log "logged-in: " logged-in)
+     (if-not logged-in
+       [:div {:class "headerbuttons"}
+             [:button
+              {:on-click #(re-frame/dispatch [::navigate ::signin])}
+              "Sign-In"]
+             [:button
+              {:on-click #(re-frame/dispatch [::navigate ::login])}
+              "Login"]]))
+   [:div {:class "headerbuttons"}]])
 
 (defn home-page []
-  [:div {:class "mainsplit"}
+  [:div
    [:p "Welcome to the Web Store!"]
    [:p "Here you can browse books and movies."]
    [:p "But you have to sign-in or login first!"]
    ])
 
 (defn signin-page []
-  [:div {:class "mainsplit"}
+  [:div
    [:h1 "This Sign-In page"]
    [:button
     ;; Dispatch navigate event that triggers a (side)effect.
@@ -79,7 +81,7 @@
     "Go to home"]])
 
 (defn login-page []
-  [:div {:class "mainsplit"}
+  [:div
    [:h1 "This Login page"]
    [:button
     ;; Dispatch navigate event that triggers a (side)effect.
@@ -165,7 +167,7 @@
 (defn router-component [{:keys [router]}]
   (js/console.log "router-component")
   (let [current-route @(re-frame/subscribe [::current-route])]
-    [:div
+    [:div {:class "main"}
      [header]
      ; NOTE: Live-reload is not working when the view is inside the Reitit tree, therefore using simple
      ; Function based dispatch.
@@ -204,6 +206,7 @@
   (js/console.log "init")
   (mount-root))
 
+; We don't need any hooks, just call it as top level form => re-renders when namespace is reloaded.
 (render-app)
 
 (comment
