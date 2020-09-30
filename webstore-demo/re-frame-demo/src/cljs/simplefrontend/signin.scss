@@ -9,10 +9,16 @@ body {
 
 }
 
-.top {
+.signinbody {
+  font-size: 34px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.signininput {
   font-size: 34px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
-

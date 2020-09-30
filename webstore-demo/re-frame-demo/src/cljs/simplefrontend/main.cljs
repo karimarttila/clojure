@@ -1,12 +1,12 @@
 (ns simplefrontend.main
   (:require [re-frame.core :as re-frame]
-            [reagent.core :as reagent]
             [reagent-dev-tools.core :as dev-tools]
-            [reitit.core :as r]
             [reitit.coercion.spec :as rss]
             [reitit.frontend :as rf]
             [reitit.frontend.controllers :as rfc]
-            [reitit.frontend.easy :as rfe]))
+            [reitit.frontend.easy :as rfe]
+            [simplefrontend.signin :as signin]
+            [simplefrontend.login :as login]))
 
 ;; ******************************************************************
 ;; NOTE: When starting ClojureScript REPL in Cursive, give first command:
@@ -56,44 +56,28 @@
    (let [logged-in @(re-frame/subscribe [::logged-in])]
      (js/console.log "logged-in: " logged-in)
      (if-not logged-in
-       [:div {:class "headerbuttons"}
-             [:button
-              {:on-click #(re-frame/dispatch [::navigate ::signin])}
-              "Sign-In"]
-             [:button
-              {:on-click #(re-frame/dispatch [::navigate ::login])}
-              "Login"]]))
-   [:div {:class "headerbuttons"}]])
+       [:div
+        [:button
+         {:on-click #(re-frame/dispatch [::navigate ::signin])}
+         "Sign-In"]
+        [:button
+         {:on-click #(re-frame/dispatch [::navigate ::login])}
+         "Login"]]))
+   [:div ]])
 
 (defn home-page []
   [:div
-   [:p "Welcome to the Web Store!"]
+   [:h3 "Welcome!"]
    [:p "Here you can browse books and movies."]
    [:p "But you have to sign-in or login first!"]
    ])
-
-(defn signin-page []
-  [:div
-   [:h1 "This Sign-In page"]
-   [:button
-    ;; Dispatch navigate event that triggers a (side)effect.
-    {:on-click #(re-frame/dispatch [::navigate ::home])}
-    "Go to home"]])
-
-(defn login-page []
-  [:div
-   [:h1 "This Login page"]
-   [:button
-    ;; Dispatch navigate event that triggers a (side)effect.
-    {:on-click #(re-frame/dispatch [::navigate ::home])}
-    "Go to home"]])
 
 (defn current-view [current-route]
   (let [name (-> current-route :data :name)]
     (case name
       ::home [home-page]
-      ::signin [signin-page]
-      ::login [login-page]
+      ::signin [signin/signin-page]
+      ::login [login/login-page]
       (do
         (js/console.log "current-view: no matching clause, giving home-page")
         [home-page]))))
@@ -122,6 +106,8 @@
   ["/"
    [""
     {:name ::home
+     ;; NOTE: :view entities not actually used in this exercise since couldn't make live reload work with reitit,
+     ;; see current-view dispatcher above.
      :view home-page
      :link-text "Home"
      :controllers
@@ -132,14 +118,14 @@
        :stop (fn [& params] (js/console.log "Leaving home page"))}]}]
    ["signin"
     {:name ::signin
-     :view signin-page
+     :view signin/signin-page
      :link-text "Sign-In"
      :controllers
      [{:start (fn [& params] (js/console.log "Entering signin"))
        :stop (fn [& params] (js/console.log "Leaving signin"))}]}]
    ["login"
     {:name ::login
-     :view login-page
+     :view login/login-page
      :link-text "Login"
      :controllers
      [{:start (fn [& params] (js/console.log "Entering login"))
@@ -207,7 +193,7 @@
   (mount-root))
 
 ; We don't need any hooks, just call it as top level form => re-renders when namespace is reloaded.
-(render-app)
+(init)
 
 (comment
   (reagent.dom/render [])
