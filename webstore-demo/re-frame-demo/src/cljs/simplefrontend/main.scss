@@ -1,18 +1,40 @@
+
 body {
   font-family: "Times New Roman", Times, serif;
   padding: 100px;
   font-size: 18px;
 }
 
-.main {
-  background: #fff;
+////////////////////////////////////////
+// Generic styles
 
+.sf-label {
+  display: inline-block;
+  width: 110px;
+  color: darkslategray;
 }
 
-.top {
+.sf-main {
+  background: #fff;
+}
+
+.sf-header {
   font-size: 34px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
 
+
+.sf-debug-panel {
+  margin-top: 100px;
+}
+
+
+.sf-go-to-home-button {
+  margin-top: 25px;
+}
+
+.sf-header-signin-button {
+  margin-right: 5px;
+}

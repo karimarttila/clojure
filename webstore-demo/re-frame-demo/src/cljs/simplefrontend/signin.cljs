@@ -2,18 +2,23 @@
   (:require
     [re-frame.core :as re-frame]
     [reagent.core :as r]
+    [simplefrontend.util :as sf-util]
     ))
+
+(defn save! [a k]
+  #(swap! a assoc k (-> % .-target .-value)))
 
 (defn input
   "Input field component for e.g. First name, Last name, Email address and Password."
-  [label name type my-atom]
-  [:div {:class "signininput"}
-   [:label label]
-   [:input {:id name
-            :name name
+  [label k-name type state]
+  [:div
+   [:label {:class "sf-label"} label]
+   [:input {:class "sf-input input"
+            :id (name k-name)
+            :name (name k-name)
             :type type
-            :value @my-atom
-            :on-change #(reset! my-atom (-> % .-target .-value))}]
+            :value @state
+            :on-change (save! state k-name)}]
    ])
 
 (defn signin-page
@@ -26,16 +31,23 @@
     (fn []
       [:div
        [:h3 "Sign-in"]
-       [:div {:class "signinbody"}
+       [:div
         [:form
          (input "First name: " "first-name" "text" first-name-atom)
          (input "Last name: " "last-name" "text" last-name-atom)
          (input "Email: " "email" "text" email-atom)
          (input "Password: " "password" "text" password-atom)]
-        [:div
-         [:p]]
         [:div {:class "backbutton"}
          [:button
           ;; Dispatch navigate event that triggers a (side)effect.
-          {:on-click #(re-frame/dispatch [:simplefrontend.main/navigate :simplefrontend.main/home])}
-          "Go to home"]]]])))
+          {:class "sf-go-to-home-button"
+           :on-click #(re-frame/dispatch [:simplefrontend.main/navigate :simplefrontend.main/home])}
+          "Go to home"]]
+        (sf-util/debug-panel "jee!")]])))
+
+(comment
+  @re-frame.db/app-db
+  (swap! re-frame.db/app-db assoc :debug (not (:debug @re-frame.db/app-db)))
+
+
+  )

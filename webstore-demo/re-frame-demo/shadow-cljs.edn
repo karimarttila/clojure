@@ -1,5 +1,4 @@
 {:deps {:aliases [:dev :common :frontend]}
- :nrepl {:port 6661}
  :http {:port 9666
         :host "localhost"}
  :builds {:app {:target :browser

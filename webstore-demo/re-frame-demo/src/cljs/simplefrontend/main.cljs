@@ -5,8 +5,9 @@
             [reitit.frontend :as rf]
             [reitit.frontend.controllers :as rfc]
             [reitit.frontend.easy :as rfe]
-            [simplefrontend.signin :as signin]
-            [simplefrontend.login :as login]))
+            [simplefrontend.signin :as sf-signin]
+            [simplefrontend.subscriptions :as sf-subs]
+            [simplefrontend.login :as sf-login]))
 
 ;; ******************************************************************
 ;; NOTE: When starting ClojureScript REPL in Cursive, give first command:
@@ -22,7 +23,8 @@
   ::initialize-db
   (fn [_ _]
     {:current-route nil
-     :logged-in false}))
+     :logged-in false
+     :debug false}))
 
 (re-frame/reg-event-fx
   ::navigate
@@ -37,31 +39,21 @@
           controllers (rfc/apply-controllers (:controllers old-match) new-match)]
       (assoc db :current-route (assoc new-match :controllers controllers)))))
 
-;;; Subscriptions ;;;
-
-(re-frame/reg-sub
-  ::current-route
-  (fn [db]
-    (:current-route db)))
-
-(re-frame/reg-sub
-  ::logged-in
-  (fn [db]
-    (:logged-in db)))
 
 ;;; Views ;;;
 
 (defn header []
-  [:div {:class "top"} "Web Store"
-   (let [logged-in @(re-frame/subscribe [::logged-in])]
+  [:div {:class "sf-header"} "Web Store"
+   (let [logged-in @(re-frame/subscribe [::sf-subs/logged-in])]
      (js/console.log "logged-in: " logged-in)
      (if-not logged-in
        [:div
         [:button
-         {:on-click #(re-frame/dispatch [::navigate ::signin])}
+         {:class "sf-header-signin-button"
+          :on-click #(re-frame/dispatch [::navigate ::sf-subs/signin])}
          "Sign-In"]
         [:button
-         {:on-click #(re-frame/dispatch [::navigate ::login])}
+         {:on-click #(re-frame/dispatch [::navigate ::sf-subs/login])}
          "Login"]]))
    [:div ]])
 
@@ -76,10 +68,10 @@
   (let [name (-> current-route :data :name)]
     (case name
       ::home [home-page]
-      ::signin [signin/signin-page]
-      ::login [login/login-page]
+      ::sf-subs/signin [sf-signin/signin-page]
+      ::sf-subs/login [sf-login/login-page]
       (do
-        (js/console.log "current-view: no matching clause, giving home-page")
+        (js/console.log (str "current-view: no matching clause, giving home-page, name: " name))
         [home-page]))))
 
 ;;; Effects ;;;
@@ -117,15 +109,15 @@
        ;; Teardown can be done here.
        :stop (fn [& params] (js/console.log "Leaving home page"))}]}]
    ["signin"
-    {:name ::signin
-     :view signin/signin-page
+    {:name ::sf-subs/signin
+     :view sf-signin/signin-page
      :link-text "Sign-In"
      :controllers
      [{:start (fn [& params] (js/console.log "Entering signin"))
        :stop (fn [& params] (js/console.log "Leaving signin"))}]}]
    ["login"
-    {:name ::login
-     :view login/login-page
+    {:name ::sf-subs/login
+     :view sf-login/login-page
      :link-text "Login"
      :controllers
      [{:start (fn [& params] (js/console.log "Entering login"))
@@ -152,8 +144,8 @@
 
 (defn router-component [{:keys [router]}]
   (js/console.log "router-component")
-  (let [current-route @(re-frame/subscribe [::current-route])]
-    [:div {:class "main"}
+  (let [current-route @(re-frame/subscribe [::sf-subs/current-route])]
+    [:div {:class "sf-main"}
      [header]
      ; NOTE: Live-reload is not working when the view is inside the Reitit tree, therefore using simple
      ; Function based dispatch.
