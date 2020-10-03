@@ -6,44 +6,40 @@
     ))
 
 (defn save! [a k]
-  #(swap! a assoc k (-> % .-target .-value)))
+  (let [_ (js/console.log (str "save!, k: " k))]
+    #(swap! a assoc k (-> % .-target .-value))))
 
 (defn input
   "Input field component for e.g. First name, Last name, Email address and Password."
-  [label k-name type state]
+  [label k type state]
   [:div
-   [:label {:class "sf-label"} label]
-   [:input {:class "sf-input input"
-            :id (name k-name)
-            :name (name k-name)
+   [:label.sf-label label]
+   [:input.sf-input {
+            :id (name k)
+            :name (name k)
             :type type
-            :value @state
-            :on-change (save! state k-name)}]
-   ])
+            :value (k @state)
+            :on-change (save! state k)}]])
 
 (defn signin-page
   "Sign-in view."
   []
-  (let [first-name-atom (r/atom nil)
-        last-name-atom (r/atom nil)
-        email-atom (r/atom nil)
-        password-atom (r/atom nil)]
+  (let [user-data (r/atom {:first-name "" :last-name "" :email "" :password ""})]
     (fn []
       [:div
        [:h3 "Sign-in"]
        [:div
         [:form
-         (input "First name: " "first-name" "text" first-name-atom)
-         (input "Last name: " "last-name" "text" last-name-atom)
-         (input "Email: " "email" "text" email-atom)
-         (input "Password: " "password" "text" password-atom)]
-        [:div {:class "backbutton"}
-         [:button
+         (input "First name: " :first-name "text" user-data)
+         (input "Last name: " :last-name "text" user-data)
+         (input "Email: " :email "text" user-data)
+         (input "Password: " :password "password" user-data)]
+        [:div.backbutton
+         [:button.sf-go-to-home-button
           ;; Dispatch navigate event that triggers a (side)effect.
-          {:class "sf-go-to-home-button"
-           :on-click #(re-frame/dispatch [:simplefrontend.main/navigate :simplefrontend.main/home])}
+          {:on-click #(re-frame/dispatch [:simplefrontend.main/navigate :simplefrontend.main/home])}
           "Go to home"]]
-        (sf-util/debug-panel "jee!")]])))
+        (sf-util/debug-panel {:user-data user-data})]])))
 
 (comment
   @re-frame.db/app-db

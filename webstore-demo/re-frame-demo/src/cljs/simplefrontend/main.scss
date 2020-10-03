@@ -27,7 +27,15 @@ body {
 
 
 .sf-debug-panel {
+  .hr {
   margin-top: 100px;
+  }
+  .header {
+    font-size: 28px;
+  }
+  .body {
+    font-size: 12px;
+  }
 }
 
 
@@ -38,3 +46,4 @@ body {
 .sf-header-signin-button {
   margin-right: 5px;
 }
+

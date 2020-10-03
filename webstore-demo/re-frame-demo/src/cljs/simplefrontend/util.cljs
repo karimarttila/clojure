@@ -7,7 +7,7 @@
   (let [debug @(re-frame/subscribe [::sf-subs/debug])]
     (js/console.log (str "ENTER debug-panel, debug: " debug))
     (if debug
-      [:div {:class "sf-debug-panel"}
-       [:hr]
-       [:h3 "DEBUG-PANEL"]
-       [:pre (with-out-str (clojure.pprint/pprint data))]])))
+      [:div.sf-debug-panel
+       [:hr.sf-debug-panel.hr]
+       [:h3.sf-debug-panel.header "DEBUG-PANEL"]
+       [:pre.sf-debug-panel.body (with-out-str (clojure.pprint/pprint data))]])))

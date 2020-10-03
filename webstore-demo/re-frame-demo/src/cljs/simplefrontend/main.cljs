@@ -24,7 +24,7 @@
   (fn [_ _]
     {:current-route nil
      :logged-in false
-     :debug false}))
+     :debug true}))
 
 (re-frame/reg-event-fx
   ::navigate
@@ -43,14 +43,13 @@
 ;;; Views ;;;
 
 (defn header []
-  [:div {:class "sf-header"} "Web Store"
+  [:div.sf-header "Web Store"
    (let [logged-in @(re-frame/subscribe [::sf-subs/logged-in])]
      (js/console.log "logged-in: " logged-in)
      (if-not logged-in
        [:div
-        [:button
-         {:class "sf-header-signin-button"
-          :on-click #(re-frame/dispatch [::navigate ::sf-subs/signin])}
+        [:button.sf-header-signin-button
+         {:on-click #(re-frame/dispatch [::navigate ::sf-subs/signin])}
          "Sign-In"]
         [:button
          {:on-click #(re-frame/dispatch [::navigate ::sf-subs/login])}
@@ -145,7 +144,7 @@
 (defn router-component [{:keys [router]}]
   (js/console.log "router-component")
   (let [current-route @(re-frame/subscribe [::sf-subs/current-route])]
-    [:div {:class "sf-main"}
+    [:div.sf-main
      [header]
      ; NOTE: Live-reload is not working when the view is inside the Reitit tree, therefore using simple
      ; Function based dispatch.
