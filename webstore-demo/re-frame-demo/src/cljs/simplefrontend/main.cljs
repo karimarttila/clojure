@@ -6,7 +6,7 @@
             [reitit.frontend.controllers :as rfc]
             [reitit.frontend.easy :as rfe]
             [simplefrontend.signin :as sf-signin]
-            [simplefrontend.subscriptions :as sf-subs]
+            [simplefrontend.state :as sf-state]
             [simplefrontend.login :as sf-login]))
 
 ;; ******************************************************************
@@ -14,8 +14,6 @@
 ; (shadow.cljs.devtools.api/repl :app)
 ; to connect the REPL to the app running in the browser.
 ;; ******************************************************************
-
-
 
 ;;; Events ;;;
 
@@ -44,17 +42,19 @@
 
 (defn header []
   [:div.sf-header "Web Store"
-   (let [logged-in @(re-frame/subscribe [::sf-subs/logged-in])]
+   (let [logged-in @(re-frame/subscribe [::sf-state/logged-in])
+         current-route @(re-frame/subscribe [::sf-state/current-route])]
      (js/console.log "logged-in: " logged-in)
-     (if-not logged-in
+     (if (and (= (:path current-route) "/") (not logged-in) )
        [:div
         [:button.sf-header-signin-button
-         {:on-click #(re-frame/dispatch [::navigate ::sf-subs/signin])}
+         {:on-click #(re-frame/dispatch [::navigate ::sf-state/signin])}
          "Sign-In"]
         [:button
-         {:on-click #(re-frame/dispatch [::navigate ::sf-subs/login])}
+         {:on-click #(re-frame/dispatch [::navigate ::sf-state/login])}
          "Login"]]))
-   [:div ]])
+   [:div] ; Extra div so that we able to see the Sign-in and Login buttons with the 10x tool panel.
+   ])
 
 (defn home-page []
   [:div
@@ -67,8 +67,8 @@
   (let [name (-> current-route :data :name)]
     (case name
       ::home [home-page]
-      ::sf-subs/signin [sf-signin/signin-page]
-      ::sf-subs/login [sf-login/login-page]
+      ::sf-state/signin [sf-signin/signin-page]
+      ::sf-state/login [sf-login/login-page]
       (do
         (js/console.log (str "current-view: no matching clause, giving home-page, name: " name))
         [home-page]))))
@@ -108,14 +108,25 @@
        ;; Teardown can be done here.
        :stop (fn [& params] (js/console.log "Leaving home page"))}]}]
    ["signin"
-    {:name ::sf-subs/signin
+    {:name ::sf-state/signin
      :view sf-signin/signin-page
      :link-text "Sign-In"
      :controllers
      [{:start (fn [& params] (js/console.log "Entering signin"))
-       :stop (fn [& params] (js/console.log "Leaving signin"))}]}]
+       :stop (fn [& params] (js/console.log "Leaving signin"))}]}
+    #_["/post"
+     {:name ::sf-state/signin-post
+      :view sf-signin/signin-page
+      :link-text "Sign-In"
+      :controllers
+      [simplefrontend.signin/controller
+       {:start (fn [& params] (js/console.log "Entering signin-post"))
+        :stop (fn [& params] (js/console.log "Leaving signin-post"))}]}
+     ]
+
+    ]
    ["login"
-    {:name ::sf-subs/login
+    {:name ::sf-state/login
      :view sf-login/login-page
      :link-text "Login"
      :controllers
@@ -143,7 +154,7 @@
 
 (defn router-component [{:keys [router]}]
   (js/console.log "router-component")
-  (let [current-route @(re-frame/subscribe [::sf-subs/current-route])]
+  (let [current-route @(re-frame/subscribe [::sf-state/current-route])]
     [:div.sf-main
      [header]
      ; NOTE: Live-reload is not working when the view is inside the Reitit tree, therefore using simple

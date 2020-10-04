@@ -2,6 +2,19 @@
   (:require [re-frame.core :as re-frame]))
 
 
-(re-frame/reg-event-db ::todo
-  (fn [db [_ data]]
-    (assoc-in db [:data :todo] data)))
+;;; Subscriptions ;;;
+
+(re-frame/reg-sub
+  ::current-route
+  (fn [db]
+    (:current-route db)))
+
+(re-frame/reg-sub
+  ::logged-in
+  (fn [db]
+    (:logged-in db)))
+
+(re-frame/reg-sub
+  ::debug
+  (fn [db]
+    (:debug db)))
