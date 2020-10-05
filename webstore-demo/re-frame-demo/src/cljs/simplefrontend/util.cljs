@@ -21,3 +21,9 @@
        [:hr.sf-debug-panel.hr]
        [:h3.sf-debug-panel.header "DEBUG-PANEL"]
        [:pre.sf-debug-panel.body (with-out-str (clojure.pprint/pprint data))]])))
+
+(defn pprint
+  ([msg] (pprint msg nil))
+  ([msg data]
+   (if-not (nil? msg) (clojure.pprint/pprint (str msg ": ")))
+   (clojure.pprint/pprint data)))

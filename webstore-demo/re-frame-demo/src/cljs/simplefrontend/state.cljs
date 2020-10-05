@@ -1,8 +1,8 @@
 (ns simplefrontend.state
-  (:require [re-frame.core :as re-frame]))
+  (:require [re-frame.core :as re-frame]
+            [simplefrontend.http :as sf-http]))
 
-
-;;; Subscriptions ;;;
+;; Subscriptions
 
 (re-frame/reg-sub
   ::current-route

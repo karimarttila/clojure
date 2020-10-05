@@ -1,5 +1,6 @@
 (ns simplefrontend.main
   (:require [re-frame.core :as re-frame]
+            [day8.re-frame.http-fx] ; Needed to register :http-xhrio to re-frame.
             [reagent-dev-tools.core :as dev-tools]
             [reitit.coercion.spec :as rss]
             [reitit.frontend :as rf]
@@ -22,7 +23,8 @@
   (fn [_ _]
     {:current-route nil
      :logged-in false
-     :debug true}))
+     :debug true
+     :signin nil}))
 
 (re-frame/reg-event-fx
   ::navigate
@@ -34,8 +36,11 @@
   ::navigated
   (fn [db [_ new-match]]
     (let [old-match (:current-route db)
+          new-path (:path new-match)
           controllers (rfc/apply-controllers (:controllers old-match) new-match)]
-      (assoc db :current-route (assoc new-match :controllers controllers)))))
+      (js/console.log (str "new-path: " new-path))
+      (cond-> (assoc db :current-route (assoc new-match :controllers controllers))
+          (if (= "/") new-path) (assoc :signin nil)))))
 
 
 ;;; Views ;;;
@@ -113,18 +118,7 @@
      :link-text "Sign-In"
      :controllers
      [{:start (fn [& params] (js/console.log "Entering signin"))
-       :stop (fn [& params] (js/console.log "Leaving signin"))}]}
-    #_["/post"
-     {:name ::sf-state/signin-post
-      :view sf-signin/signin-page
-      :link-text "Sign-In"
-      :controllers
-      [simplefrontend.signin/controller
-       {:start (fn [& params] (js/console.log "Entering signin-post"))
-        :stop (fn [& params] (js/console.log "Leaving signin-post"))}]}
-     ]
-
-    ]
+       :stop (fn [& params] (js/console.log "Leaving signin"))}]}]
    ["login"
     {:name ::sf-state/login
      :view sf-login/login-page
