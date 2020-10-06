@@ -25,23 +25,35 @@
    mkdir -p classes
    npm install
 
+# start frontend auto-compilation
+@frontend:
+    npm run dev
+
+# SASS auto-compile
+@css:
+    npm run build:sass
+
 # Start frontend auto-compilation.
-@frontend-kari:
-   clj -A:dev:common:frontend:kari -m shadow.cljs.devtools.cli watch app
+# @frontend-kari:
+#   clj -A:dev:common:frontend:kari -m shadow.cljs.devtools.cli watch app
 
 # SASS auto-compile.
-@css:
-	clj -Acss --auto
+# @css:
+# 	clj -Acss --auto
 
 # Update dependencies.
 @outdated:
     clj -A:dev:test:common:backend:frontend:outdated --update
 
 # Create uberjar.
-uberjar:
-    clojure -A:css -t target/shadow/prod/resources/public/css
-    clojure -A:common:frontend -m shadow.cljs.devtools.cli release app
-    clojure -A:common:backend:uberjar
+@uberjar:
+    npm run build:sass
+    shadow-cljs release app
+    mkdir -p prod-resources/public/js
+    mkdir -p prod-resources/public/css
+    cp dev-resources/public/js/main.js prod-resources/public/js/main.js
+    cp dev-resources/public/css/style.css prod-resources/public/css/style.css
+    clj -Adev:common:backend:uberjar
 
 # Lint.
 @lint:

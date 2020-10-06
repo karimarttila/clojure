@@ -17,6 +17,7 @@ Tee Simple Server Integrant-harjoitukseen lisäosia:
 
 - Tee frontti:
 -- re-frame => + oma blogi
+-- Tee sama re-frame harjoitus ja kokeile tehdä elementit esim. Antd tai Material tms. Google ClojureScript: mikä helpoin käyttää...
 -- helix => + oma blogi
 -- rum => + oma blogi
 
