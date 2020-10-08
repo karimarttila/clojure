@@ -2,92 +2,109 @@
   (:require
     [re-frame.core :as re-frame]
     [reagent.core :as r]
-    [simplefrontend.util :as sf-util]
     [day8.re-frame.http-fx]
     [ajax.core :as ajax]
-    ))
+    [simplefrontend.http :as sf-http]
+    [simplefrontend.util :as sf-util]))
 
-(defn save! [a k]
-  #(swap! a assoc k (-> % .-target .-value)))
-
-(defn input
-  "Input field component for e.g. First name, Last name, Email address and Password."
-  [label k type state]
-  [:div
-   [:label.sf-label label]
-   [:input.sf-input {
-                     :id (name k)
-                     :name (name k)
-                     :type type
-                     :value (k @state)
-                     :on-change (save! state k)}]])
-
-(defn valid? [[_ v]]
-  (and (string? v) (not (empty? v))))
-
-#_(re-frame/reg-sub
-    ::submit-result
-    (fn [db]
-      (get-in db [:signin :result])))
+(defn empty-user []
+  {:first-name "" :last-name "" :email "" :password ""})
 
 (re-frame/reg-event-db
-  ::signin-ok
+  ::signin-ret-ok
   (fn [db [_ res-body]]
-    (let [data (get res-body :data)]
-      (assoc-in db [:signin :result] {:ret :OK :data data}))))
+    #_(sf-util/clog "reg-event-db ok: " res-body)
+    (assoc-in db [:signin :response] {:ret :ok
+                                      :msg (str "Email address registered: " (:email res-body))})))
 
 (re-frame/reg-event-db
-  ::signin-failed
+  ::signin-ret-failed
   (fn [db [_ res-body]]
-    (let [msg (get-in res-body [:response :msg])]
-      (assoc-in db [:signin :res-body] {:ret :failed :msg msg :res-body res-body}))))
+    #_(sf-util/clog "reg-event-db failed" db)
+    (assoc-in db [:signin :response] {:ret :failed
+                                      :msg (get-in res-body [:response :msg])})))
+
+(re-frame/reg-event-db
+  ::close-notification
+  (fn [db [_ e]]
+    (sf-util/clog "reg-event-db close-notification, db: " db)
+    (sf-util/clog "reg-event-db close-notification, e: " e)
+    (assoc-in db [:signin :response] nil)))
+
+(re-frame/reg-sub
+  ::signin-response
+  (fn [db]
+    #_(sf-util/clog "reg-sub" db)
+    (:response (:signin db))))
 
 (re-frame/reg-event-fx
   ::signin-user
   (fn [{:keys [db]} [_ user-data]]
-    (js/console.log (sf-util/pprint "user-data" user-data))
-    #_(js/alert (str "::signin-user, user-data: " user-data))
-    {:http-xhrio {:method :post
-                  :uri (str "/api/signin")
-                  :params user-data
-                  :format (ajax/json-request-format)
-                  :response-format (ajax/json-response-format {:keywords? true})
-                  :on-success [::signin-ok]
-                  :on-failure [::signin-failed]}
-     :db db}))
+    (sf-util/clog "user-data" user-data)
+    (sf-http/post db "/api/signin" user-data ::signin-ret-ok ::signin-ret-failed)))
 
 (defn signin-page
   "Sign-in view."
   []
-  (let [user-data (r/atom {:first-name "" :last-name "" :email "" :password ""})
-        submit-result nil ; TODO @(re-frame/subscribe [::submit-result])
-        ]
+  ; NOTE: The user data atom needs to be here and not inside the rendering function
+  ; or you create a new atom every time the component re-renders.
+  (let [user-data (r/atom (empty-user))]
     (fn []
-      [:div
-       [:h3 "Sign-in"]
-       [:div
-        [:form
-         (input "First name: " :first-name "text" user-data)
-         (input "Last name: " :last-name "text" user-data)
-         (input "Email: " :email "text" user-data)
-         (input "Password: " :password "password" user-data)
-         (if (and (not submit-result) (every? valid? @user-data))
-           [:div
-            [:button.sf-submit-button
-             {;:type :primary
-              :on-click (fn [e]
-                          (.preventDefault e)
-                          (re-frame/dispatch [::signin-user @user-data]))
-              }
-             "Submit"]])]
+      ; NOTE: The re-frame subscription needs to be inside the rendering function or the watch
+      ; is not registered to the rendering function.
+      (let [{:keys [ret msg] :as r-body} @(re-frame/subscribe [::signin-response])
+            notify-div (case ret
+                         :ok :div.sf-ok-notify
+                         :failed :div.sf-error-notify
+                         nil)]
         [:div
-         [:button.sf-go-to-home-button
-          {:on-click #(re-frame/dispatch [:simplefrontend.main/navigate :simplefrontend.main/home])}
-          "Go to home"]]
-        (sf-util/debug-panel {:user-data user-data
-                              :submit-result submit-result})]])))
+         [:h3 "Sign-in"]
+         [:div.sf-sign-container
+          [:div.sf-sign-form
+           [:form
+            (sf-util/input "First name: " :first-name "text" user-data)
+            (sf-util/input "Last name: " :last-name "text" user-data)
+            (sf-util/input "Email: " :email "text" user-data)
+            (sf-util/input "Password: " :password "password" user-data)
+            (if (and (not ret) (every? sf-util/valid? @user-data))
+              [:div
+               [:button.sf-submit-button
+                {;:type :primary
+                 :on-click (fn [e]
+                             (.preventDefault e)
+                             (re-frame/dispatch [::signin-user @user-data]))
+                 }
+                "Submit"]])]
+           [:div
+            [:button.sf-go-to-home-button
+             {:on-click #(re-frame/dispatch [:simplefrontend.main/navigate :simplefrontend.main/home])}
+             "Go to home"]
+            ]
+           ]
+          (if ret
+            [:div.sf-sign-inner-notification
+             [notify-div
+              [:span.sf-closebtn {:on-click (fn [e]
+                                              (.preventDefault e)
+                                              (re-frame/dispatch [::close-notification]))}
+               "×"]
+              msg
+              ]])
+          ]
+
+         (sf-util/debug-panel {:user-data user-data
+                               :ret ret
+                               :msg msg
+                               :r-body r-body})]))))
 
 (comment
+
+  (def foo (re-frame/subscribe [::signin-response]))
+  foo
+
+  @re-frame.db/app-db
+
+  (swap! re-frame.db/app-db assoc-in [:signin :response] {:ret :jee :msg "oh, fuck"})
   @re-frame.db/app-db
   (swap! re-frame.db/app-db assoc :debug (not (:debug @re-frame.db/app-db)))
   )

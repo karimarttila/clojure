@@ -1,6 +1,5 @@
 (ns simplefrontend.state
-  (:require [re-frame.core :as re-frame]
-            [simplefrontend.http :as sf-http]))
+  (:require [re-frame.core :as re-frame]))
 
 ;; Subscriptions
 

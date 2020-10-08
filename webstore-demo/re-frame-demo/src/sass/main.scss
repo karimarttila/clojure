@@ -50,3 +50,38 @@ body {
   margin-right: 5px;
 }
 
+sf-notify {
+  padding: 5px;
+  font-size: 15px;
+  color: black;
+}
+
+.sf-error-notify {
+//  @extend .sf-notify;
+  padding: 5px;
+  font-size: 15px;
+  color: black;
+  background-color: #f44336;
+}
+
+// TODO: For some reason extend not working another time.
+.sf-ok-notify {
+//  @extend .sf-notify;
+  padding: 5px;
+  font-size: 15px;
+  color: black;
+  background-color: #36f4b2;
+}
+
+.sf-closebtn {
+  margin-left: 20px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 25px;
+  line-height: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+@import "signin";
