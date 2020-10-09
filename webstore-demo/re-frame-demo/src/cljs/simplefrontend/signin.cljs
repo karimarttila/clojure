@@ -48,7 +48,8 @@
   []
   ; NOTE: The user data atom needs to be here and not inside the rendering function
   ; or you create a new atom every time the component re-renders.
-  (let [user-data (r/atom (empty-user))]
+  (let [user-data (r/atom (empty-user))
+        _ (sf-util/clog "let user-data" @user-data)]
     (fn []
       ; NOTE: The re-frame subscription needs to be inside the rendering function or the watch
       ; is not registered to the rendering function.
@@ -75,11 +76,15 @@
                              (re-frame/dispatch [::signin-user @user-data]))
                  }
                 "Submit"]])]
-           [:div
-            [:button.sf-go-to-home-button
-             {:on-click #(re-frame/dispatch [:simplefrontend.main/navigate :simplefrontend.main/home])}
-             "Go to home"]
-            ]
+           (if-not ret
+             [:div
+              [:button.sf-go-to-home-button
+               {:on-click (fn [e]
+                            (.preventDefault e)
+                            (re-frame/dispatch [:simplefrontend.main/navigate :simplefrontend.main/home]))
+                }
+               "Go to home"]
+              ])
            ]
           (if ret
             [:div.sf-sign-inner-notification

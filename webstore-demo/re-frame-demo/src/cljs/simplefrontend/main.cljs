@@ -22,8 +22,9 @@
   ::initialize-db
   (fn [_ _]
     {:current-route nil
-     :logged-in false
+     :jwt nil
      :debug true
+     :login nil
      :signin nil}))
 
 (re-frame/reg-event-fx
@@ -40,24 +41,34 @@
           controllers (rfc/apply-controllers (:controllers old-match) new-match)]
       (js/console.log (str "new-path: " new-path))
       (cond-> (assoc db :current-route (assoc new-match :controllers controllers))
-          (if (= "/") new-path) (assoc :signin nil)))))
+              (if (= "/") new-path) (-> (assoc :signin nil)
+                                        (assoc :login nil))))))
 
+(re-frame/reg-event-db
+  ::logout
+  (fn [db [_]]
+    (assoc db :jwt nil)))
 
 ;;; Views ;;;
 
 (defn header []
   [:div.sf-header "Web Store"
-   (let [logged-in @(re-frame/subscribe [::sf-state/logged-in])
+   (let [jwt @(re-frame/subscribe [::sf-state/jwt])
          current-route @(re-frame/subscribe [::sf-state/current-route])]
-     (js/console.log "logged-in: " logged-in)
-     (if (and (= (:path current-route) "/") (not logged-in) )
-       [:div
-        [:button.sf-header-signin-button
+     (js/console.log "jwt: " jwt)
+     [:div
+      (if (and (= (:path current-route) "/") (not jwt))
+        [:button.sf-header-button
          {:on-click #(re-frame/dispatch [::navigate ::sf-state/signin])}
-         "Sign-In"]
-        [:button
+         "Sign-In"])
+      (if (and (= (:path current-route) "/") (not jwt))
+        [:button.sf-header-button
          {:on-click #(re-frame/dispatch [::navigate ::sf-state/login])}
-         "Login"]]))
+         "Login"])
+      (if (and (= (:path current-route) "/") jwt)
+        [:button.sf-header-button
+         {:on-click #(re-frame/dispatch [::logout])}
+         "Logout"])])
    [:div] ; Extra div so that we able to see the Sign-in and Login buttons with the 10x tool panel.
    ])
 
@@ -107,10 +118,7 @@
      :view home-page
      :link-text "Home"
      :controllers
-     [{;; Do whatever initialization needed for home page
-       ;; I.e (re-frame/dispatch [::events/load-something-with-ajax])
-       :start (fn [& params] (js/console.log "Entering home page"))
-       ;; Teardown can be done here.
+     [{:start (fn [& params] (js/console.log "Entering home page"))
        :stop (fn [& params] (js/console.log "Leaving home page"))}]}]
    ["signin"
     {:name ::sf-state/signin

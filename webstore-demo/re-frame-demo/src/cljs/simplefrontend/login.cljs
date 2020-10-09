@@ -15,16 +15,17 @@
 (re-frame/reg-event-db
   ::login-ret-ok
   (fn [db [_ res-body]]
-    #_(sf-util/clog "reg-event-db ok: " res-body)
-    (assoc-in db [:login :response] {:ret :ok
-                                      :msg (str "Email logged in: " (:email res-body))})))
+    (sf-util/clog "reg-event-db ok: " res-body)
+    (-> db
+        (assoc-in [:login :response] {:ret :ok :msg (:msg res-body)})
+        (assoc-in [:jwt] (:json-web-token res-body)))))
 
 (re-frame/reg-event-db
   ::login-ret-failed
   (fn [db [_ res-body]]
     #_(sf-util/clog "reg-event-db failed" db)
     (assoc-in db [:login :response] {:ret :failed
-                                      :msg (get-in res-body [:response :msg])})))
+                                     :msg (get-in res-body [:response :msg])})))
 
 (re-frame/reg-event-db
   ::close-notification
@@ -75,11 +76,14 @@
                              (re-frame/dispatch [::login-user @login-data]))
                  }
                 "Submit"]])]
-           [:div
-            [:button.sf-go-to-home-button
-             {:on-click #(re-frame/dispatch [:simplefrontend.main/navigate :simplefrontend.main/home])}
-             "Go to home"]
-            ]
+           (if-not ret
+             [:div
+              [:button.sf-go-to-home-button
+               {:on-click(fn [e]
+                            (.preventDefault e)
+                            (re-frame/dispatch [:simplefrontend.main/navigate :simplefrontend.main/home]))}
+               "Go to home"]
+              ])
            ]
           (if ret
             [:div.sf-sign-inner-notification

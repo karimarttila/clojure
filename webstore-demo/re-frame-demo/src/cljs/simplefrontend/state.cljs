@@ -9,9 +9,9 @@
     (:current-route db)))
 
 (re-frame/reg-sub
-  ::logged-in
+  ::jwt
   (fn [db]
-    (:logged-in db)))
+    (:jwt db)))
 
 (re-frame/reg-sub
   ::debug
