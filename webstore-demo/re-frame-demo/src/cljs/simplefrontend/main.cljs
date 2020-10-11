@@ -1,5 +1,6 @@
 (ns simplefrontend.main
   (:require [re-frame.core :as re-frame]
+            [reagent.dom :as r-dom]
             [day8.re-frame.http-fx] ; Needed to register :http-xhrio to re-frame.
             [reagent-dev-tools.core :as dev-tools]
             [reitit.coercion.spec :as rss]
@@ -56,7 +57,6 @@
 ;;; Views ;;;
 
 (defn welcome []
-  (sf-util/clog "welcome 1")
   [:div
    [:h3 "Welcome!"]
    [:p "Here you can browse books and movies."]
@@ -69,6 +69,7 @@
     (sf-util/clog "ENTER home-page")
     (if jwt
       (re-frame/dispatch [::sf-state/navigate ::sf-state/product-group])
+      ;; NOTE: You need the div here or you are going to see only the debug-panel!
       [:div
        (welcome)
        (sf-util/debug-panel {:jwt jwt})])))
@@ -164,43 +165,24 @@
     (println "dev mode")))
 
 
-(defn render-app []
-  (reagent.dom/render [router-component {:router router}
+(defn ^:dev/after-load start []
+  (js/console.log "ENTER start")
+  (re-frame/clear-subscription-cache!)
+  (init-routes!)
+  (r-dom/render [router-component {:router router}
                        (if (:open? @dev-tools/dev-state)
                          {:style {:padding-bottom (str (:height @dev-tools/dev-state) "px")}})
                        ]
                       (.getElementById js/document "app")))
 
-(defn mount-root []
-  (js/console.log "mount-root")
-  (re-frame/clear-subscription-cache!)
-  (init-routes!) ;; Reset routes on figwheel reload
-  ;; ***************************************************
-  (render-app))
 
 (defn ^:export init []
+  (js/console.log "ENTER init")
   (re-frame/dispatch-sync [::initialize-db])
   (dev-tools/start! {:state-atom re-frame.db/app-db})
   (dev-setup)
-  (js/console.log "init")
-  (mount-root))
-
-(defonce init-done (atom false))
-
-(defn init-once! []
-  (reset! init-done true)
-  (init))
-
-; We don't need any hooks, just call it as top level form => re-renders when namespace is reloaded.
-(if @init-done
-  (render-app)
-  (init-once!))
-
-
-
+  (start))
 
 (comment
-
-
   (reagent.dom/render [])
   )

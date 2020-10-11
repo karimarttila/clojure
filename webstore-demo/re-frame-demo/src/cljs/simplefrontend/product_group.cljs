@@ -31,6 +31,12 @@
                 [:td [:a {:href (str "#/products/" my-key)} my-value]]]))
            data)]]))
 
+(re-frame/reg-event-fx
+  ::get-product-groups
+  (fn [{:keys [db]} [_]]
+    (sf-util/clog "get-product-groups")
+    (let [jwt (:jwt db)]
+      (sf-http/http-post db "/api/product-groups" ::ret-ok ::ret-failed))))
 
 (defn product-group-page
   "Product Groups view."
@@ -42,7 +48,8 @@
        [:h3 "Product Groups"]
        [:div.sf-pg-container
         ]
-       (if true ;; TODO
+       (if-not @product-groups
+         (re-frame/dispatch [::get-product-groups])
          [:div
           [:button.sf-go-to-home-button
            {:on-click (fn [e]
@@ -50,5 +57,5 @@
                         (re-frame/dispatch [::sf-state/navigate ::sf-state/home]))}
            "Go to home"]
           ])
-       (sf-util/debug-panel {})])))
+       (sf-util/debug-panel {:product-groups @product-groups})])))
 
