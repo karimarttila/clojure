@@ -6,9 +6,11 @@
             [reitit.frontend :as rf]
             [reitit.frontend.controllers :as rfc]
             [reitit.frontend.easy :as rfe]
+            [simplefrontend.util :as sf-util]
             [simplefrontend.signin :as sf-signin]
             [simplefrontend.state :as sf-state]
-            [simplefrontend.login :as sf-login]))
+            [simplefrontend.login :as sf-login]
+            [simplefrontend.product-group :as sf-product-group]))
 
 ;; ******************************************************************
 ;; NOTE: When starting ClojureScript REPL in Cursive, give first command:
@@ -28,13 +30,13 @@
      :signin nil}))
 
 (re-frame/reg-event-fx
-  ::navigate
+  ::sf-state/navigate
   (fn [db [_ & route]]
     ;; See `navigate` effect in routes.cljs
     {::navigate! route}))
 
 (re-frame/reg-event-db
-  ::navigated
+  ::sf-state/navigated
   (fn [db [_ new-match]]
     (let [old-match (:current-route db)
           new-path (:path new-match)
@@ -44,50 +46,33 @@
               (if (= "/") new-path) (-> (assoc :signin nil)
                                         (assoc :login nil))))))
 
-(re-frame/reg-event-db
-  ::logout
-  (fn [db [_]]
-    (assoc db :jwt nil)))
+(re-frame/reg-event-fx
+  ::sf-state/logout
+  (fn [cofx [_]]
+    {:db (assoc (:db cofx) :jwt nil)
+     :fx [[:dispatch [::sf-state/navigate ::sf-state/home]]]}))
+
 
 ;;; Views ;;;
 
-(defn header []
-  [:div.sf-header "Web Store"
-   (let [jwt @(re-frame/subscribe [::sf-state/jwt])
-         current-route @(re-frame/subscribe [::sf-state/current-route])]
-     (js/console.log "jwt: " jwt)
-     [:div
-      (if (and (= (:path current-route) "/") (not jwt))
-        [:button.sf-header-button
-         {:on-click #(re-frame/dispatch [::navigate ::sf-state/signin])}
-         "Sign-In"])
-      (if (and (= (:path current-route) "/") (not jwt))
-        [:button.sf-header-button
-         {:on-click #(re-frame/dispatch [::navigate ::sf-state/login])}
-         "Login"])
-      (if (and (= (:path current-route) "/") jwt)
-        [:button.sf-header-button
-         {:on-click #(re-frame/dispatch [::logout])}
-         "Logout"])])
-   [:div] ; Extra div so that we able to see the Sign-in and Login buttons with the 10x tool panel.
-   ])
-
-(defn home-page []
+(defn welcome []
+  (sf-util/clog "welcome 1")
   [:div
    [:h3 "Welcome!"]
    [:p "Here you can browse books and movies."]
    [:p "But you have to sign-in or login first!"]
    ])
 
-(defn current-view [current-route]
-  (let [name (-> current-route :data :name)]
-    (case name
-      ::home [home-page]
-      ::sf-state/signin [sf-signin/signin-page]
-      ::sf-state/login [sf-login/login-page]
-      (do
-        (js/console.log (str "current-view: no matching clause, giving home-page, name: " name))
-        [home-page]))))
+(defn home-page []
+  (let [jwt @(re-frame/subscribe [::sf-state/jwt])]
+    ; If we have jwt in app db we are logged-in.
+    (sf-util/clog "ENTER home-page")
+    (if jwt
+      (re-frame/dispatch [::sf-state/navigate ::sf-state/product-group])
+      [:div
+       (welcome)
+       (sf-util/debug-panel {:jwt jwt})])))
+
 
 ;;; Effects ;;;
 
@@ -112,7 +97,7 @@
 (def routes-dev
   ["/"
    [""
-    {:name ::home
+    {:name ::sf-state/home
      ;; NOTE: :view entities not actually used in this exercise since couldn't make live reload work with reitit,
      ;; see current-view dispatcher above.
      :view home-page
@@ -134,13 +119,20 @@
      :controllers
      [{:start (fn [& params] (js/console.log "Entering login"))
        :stop (fn [& params] (js/console.log "Leaving login"))}]}]
+   ["product-group"
+    {:name ::sf-state/product-group
+     :view sf-product-group/product-group-page
+     :link-text "Product group"
+     :controllers
+     [{:start (fn [& params] (js/console.log "Entering product-group"))
+       :stop (fn [& params] (js/console.log "Leaving product-group"))}]}]
    ])
 
 (def routes routes-dev)
 
 (defn on-navigate [new-match]
   (when new-match
-    (re-frame/dispatch [::navigated new-match])))
+    (re-frame/dispatch [::sf-state/navigated new-match])))
 
 (def router
   (rf/router
@@ -155,15 +147,12 @@
     {:use-fragment true}))
 
 (defn router-component [{:keys [router]}]
-  (js/console.log "router-component")
+  (js/console.log "ENTER router-component")
   (let [current-route @(re-frame/subscribe [::sf-state/current-route])]
     [:div.sf-main
-     [header]
-     ; NOTE: Live-reload is not working when the view is inside the Reitit tree, therefore using simple
-     ; Function based dispatch.
-     (current-view current-route)
-     #_(when current-route
-         [(-> current-route :data :view)])]))
+     [sf-util/header]
+     (when current-route
+       [(-> current-route :data :view)])]))
 
 ;;; Setup ;;;
 
@@ -196,9 +185,22 @@
   (js/console.log "init")
   (mount-root))
 
+(defonce init-done (atom false))
+
+(defn init-once! []
+  (reset! init-done true)
+  (init))
+
 ; We don't need any hooks, just call it as top level form => re-renders when namespace is reloaded.
-(init)
+(if @init-done
+  (render-app)
+  (init-once!))
+
+
+
 
 (comment
+
+
   (reagent.dom/render [])
   )

@@ -5,6 +5,7 @@
     [day8.re-frame.http-fx]
     [ajax.core :as ajax]
     [simplefrontend.http :as sf-http]
+    [simplefrontend.state :as sf-state]
     [simplefrontend.util :as sf-util]))
 
 (defn empty-user []
@@ -41,7 +42,7 @@
   ::signin-user
   (fn [{:keys [db]} [_ user-data]]
     (sf-util/clog "user-data" user-data)
-    (sf-http/post db "/api/signin" user-data ::signin-ret-ok ::signin-ret-failed)))
+    (sf-http/http-post db "/api/signin" user-data ::signin-ret-ok ::signin-ret-failed)))
 
 (defn signin-page
   "Sign-in view."
@@ -49,6 +50,7 @@
   ; NOTE: The user data atom needs to be here and not inside the rendering function
   ; or you create a new atom every time the component re-renders.
   (let [user-data (r/atom (empty-user))
+        _ (sf-util/clog "ENTER signin-page")
         _ (sf-util/clog "let user-data" @user-data)]
     (fn []
       ; NOTE: The re-frame subscription needs to be inside the rendering function or the watch
@@ -60,8 +62,8 @@
                          nil)]
         [:div
          [:h3 "Sign-in"]
-         [:div.sf-sign-container
-          [:div.sf-sign-form
+         [:div.sf-page-container
+          [:div.sf-page-form
            [:form
             (sf-util/input "First name: " :first-name "text" user-data)
             (sf-util/input "Last name: " :last-name "text" user-data)
@@ -81,13 +83,13 @@
               [:button.sf-go-to-home-button
                {:on-click (fn [e]
                             (.preventDefault e)
-                            (re-frame/dispatch [:simplefrontend.main/navigate :simplefrontend.main/home]))
+                            (re-frame/dispatch [::sf-state/navigate ::sf-state/home]))
                 }
                "Go to home"]
               ])
            ]
           (if ret
-            [:div.sf-sign-inner-notification
+            [:div.sf-page-inner-notification
              [notify-div
               [:span.sf-closebtn {:on-click (fn [e]
                                               (.preventDefault e)
@@ -109,7 +111,11 @@
 
   @re-frame.db/app-db
 
-  (swap! re-frame.db/app-db assoc-in [:signin :response] {:ret :jee :msg "oh, fuck"})
+  (swap! re-frame.db/app-db assoc-in [:signin :response] {:ret :jee :msg "oh, no"})
   @re-frame.db/app-db
   (swap! re-frame.db/app-db assoc :debug (not (:debug @re-frame.db/app-db)))
   )
+
+
+
+

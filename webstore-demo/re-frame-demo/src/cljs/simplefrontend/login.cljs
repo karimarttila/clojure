@@ -5,6 +5,7 @@
     [day8.re-frame.http-fx]
     [ajax.core :as ajax]
     [simplefrontend.http :as sf-http]
+    [simplefrontend.state :as sf-state]
     [simplefrontend.util :as sf-util]))
 
 (defn empty-creds []
@@ -44,26 +45,27 @@
   ::login-user
   (fn [{:keys [db]} [_ user-data]]
     (sf-util/clog "user-data" user-data)
-    (sf-http/post db "/api/login" user-data ::login-ret-ok ::login-ret-failed)))
+    (sf-http/http-post db "/api/login" user-data ::login-ret-ok ::login-ret-failed)))
 
 (defn login-page
   "Login view."
   []
-  ; NOTE: The user data atom needs to be here and not inside the rendering function
+  ; NOTE: The login data atom needs to be here and not inside the rendering function
   ; or you create a new atom every time the component re-renders.
   (let [login-data (r/atom (empty-creds))]
     (fn []
       ; NOTE: The re-frame subscription needs to be inside the rendering function or the watch
       ; is not registered to the rendering function.
-      (let [{:keys [ret msg] :as r-body} @(re-frame/subscribe [::login-response])
+      (let [_ (sf-util/clog "ENTER login-page")
+            {:keys [ret msg] :as r-body} @(re-frame/subscribe [::login-response])
             notify-div (case ret
                          :ok :div.sf-ok-notify
                          :failed :div.sf-error-notify
                          nil)]
         [:div
          [:h3 "Login-in"]
-         [:div.sf-sign-container
-          [:div.sf-sign-form
+         [:div.sf-page-container
+          [:div.sf-page-form
            [:form
             (sf-util/input "Email: " :email "text" login-data)
             (sf-util/input "Password: " :password "password" login-data)
@@ -81,12 +83,12 @@
               [:button.sf-go-to-home-button
                {:on-click(fn [e]
                             (.preventDefault e)
-                            (re-frame/dispatch [:simplefrontend.main/navigate :simplefrontend.main/home]))}
+                            (re-frame/dispatch [::sf-state/navigate ::sf-state/home]))}
                "Go to home"]
               ])
            ]
           (if ret
-            [:div.sf-sign-inner-notification
+            [:div.sf-page-inner-notification
              [notify-div
               [:span.sf-closebtn {:on-click (fn [e]
                                               (.preventDefault e)

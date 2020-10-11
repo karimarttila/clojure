@@ -84,4 +84,13 @@ sf-notify {
   transition: 0.3s;
 }
 
-@import "signin";
+.sf-page-container {
+  display: flex;
+  flex-flow: row;
+}
+
+.sf-page-inner-notification {
+  padding-left: 20px;
+}
+
+//@import "signin";
