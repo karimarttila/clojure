@@ -99,8 +99,6 @@
   ["/"
    [""
     {:name ::sf-state/home
-     ;; NOTE: :view entities not actually used in this exercise since couldn't make live reload work with reitit,
-     ;; see current-view dispatcher above.
      :view home-page
      :link-text "Home"
      :controllers

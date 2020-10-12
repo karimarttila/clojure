@@ -24,15 +24,19 @@
   [env req]
   (log/debug "ENTER -valid-token?")
   (let [basic (get-in req [:headers "authorization"])
+        ;_ (def BASIC basic )
         ;_ (log/debug (str "basic: " basic))
         basic-str (and basic
                        (last (re-find #"^Basic (.*)$" basic)))
+        ;_ (log/debug (str "basic-str: " basic-str))
         raw-token (and basic-str
                        (apply str (map char (base64/decode (.getBytes basic-str)))))
         ;_ (log/debug (str "raw-token: " raw-token))
         ; Finally strip the password part if testing with curl
         token (and raw-token
-                   (string/replace raw-token #":NOT" ""))]
+                   (string/replace raw-token #":NOT" ""))
+        ;_ (log/debug (str "token: " token))
+        ]
     ;; Session namespace does the actual validation logic.
     ;; Note: clj-kondo complains if else branch is missing.
     (if token
