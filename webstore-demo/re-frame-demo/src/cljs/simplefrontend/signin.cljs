@@ -71,7 +71,7 @@
             (sf-util/input "Password: " :password "password" user-data)
             (if (and (not ret) (every? sf-util/valid? @user-data))
               [:div
-               [:button.sf-submit-button
+               [:button.sf-basic-button
                 {;:type :primary
                  :on-click (fn [e]
                              (.preventDefault e)
@@ -80,7 +80,7 @@
                 "Submit"]])]
            (if-not ret
              [:div
-              [:button.sf-go-to-home-button
+              [:button.sf-basic-button
                {:on-click (fn [e]
                             (.preventDefault e)
                             (re-frame/dispatch [::sf-state/navigate ::sf-state/home]))

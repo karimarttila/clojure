@@ -16,26 +16,40 @@
   (str "Basic " (-base64-encode (str jwt))))
 
 
-(defn auth-header [db]
+(defn get-jwt [db]
   (let [jwt (get-in db [:jwt])
         ret (if jwt
-              [:Authorization (-encode-token jwt)]
+              (-encode-token jwt)
               nil)
         _ (sf-util/clog "auth-header, ret: " ret)]
     ret))
 
+; TODO: How to use EDN in request and response bodys?
+; Now for some reason we get edn response with 200 status just fine but
+; e.g. login goes to error handler.
+; [:Accept "application/edn" :Content-Type "application/edn"]
+(defn get-headers [db]
+  (let [jwt (get-jwt db)
+        ret (cond-> {:Accept "application/json" :Content-Type "application/json"}
+                    jwt (assoc :Authorization jwt))
+        _ (sf-util/clog "get-headers, ret" ret)]
+    ret
+    ))
+
 ;; See: https://github.com/day8/re-frame-http-fx
 (defn http [method db uri data on-success on-failure]
-  {:http-xhrio {:debug true
-                :method method
-                :uri uri
-                :params data
-                :headers (auth-header db)
-                :format (ajax/json-request-format)
-                :response-format (ajax/json-response-format {:keywords? true})
-                :on-success [on-success]
-                :on-failure [on-failure]}
-   :db db})
+  (sf-util/clog "http, uri" uri)
+  (let [xhrio (cond-> {:debug true
+                       :method method
+                       :uri uri
+                       :headers (get-headers db)
+                       :format (ajax/json-request-format)
+                       :response-format (ajax/json-response-format {:keywords? true})
+                       :on-success [on-success]
+                       :on-failure [on-failure]}
+                      data (assoc :params data))]
+    {:http-xhrio xhrio
+     :db db}))
 
 (def http-post (partial http :post))
 (def http-get (partial http :get))

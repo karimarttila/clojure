@@ -11,7 +11,9 @@
             [simplefrontend.signin :as sf-signin]
             [simplefrontend.state :as sf-state]
             [simplefrontend.login :as sf-login]
-            [simplefrontend.product-group :as sf-product-group]))
+            [simplefrontend.product-group :as sf-product-group]
+            [simplefrontend.products :as sf-products]
+            [simplefrontend.product :as sf-product]))
 
 ;; ******************************************************************
 ;; NOTE: When starting ClojureScript REPL in Cursive, give first command:
@@ -60,8 +62,7 @@
   [:div
    [:h3 "Welcome!"]
    [:p "Here you can browse books and movies."]
-   [:p "But you have to sign-in or login first!"]
-   ])
+   [:p "But you have to sign-in or login first!"]])
 
 (defn home-page []
   (let [jwt @(re-frame/subscribe [::sf-state/jwt])]
@@ -95,6 +96,15 @@
    (rfe/href k params query)))
 
 
+(defn item-page [match]
+  (let [{:keys [path query]} (:parameters match)
+        {:keys [id]} path]
+    [:div
+     [:h2 "Selected item " id]
+     (if (:foo query)
+       [:p "Optional foo query param: " (:foo query)])]))
+
+
 (def routes-dev
   ["/"
    [""
@@ -125,11 +135,29 @@
      :controllers
      [{:start (fn [& params] (js/console.log "Entering product-group"))
        :stop (fn [& params] (js/console.log "Leaving product-group"))}]}]
-   ])
+   ; TODO Why we cannot pass the path parameter here?
+   ["products/:pgid"
+    {:name ::sf-state/products
+     :parameters {:path {:pgid int?}}
+     :view sf-products/products-page
+     :link-text "Products"
+     :controllers
+     [{:start (fn [& params] (js/console.log "Entering products, params: " params))
+       :stop (fn [& params] (js/console.log "Leaving products"))}]}]
+   ["product/:pgid/:pid"
+    {:name ::sf-state/product
+     :parameters {:path {:pgid int?
+                         :pid int?}}
+     :view sf-product/product-page
+     :link-text "Product"
+     :controllers
+     [{:start (fn [& params] (js/console.log "Entering product, params: " params))
+       :stop (fn [& params] (js/console.log "Leaving product"))}]}]])
 
 (def routes routes-dev)
 
 (defn on-navigate [new-match]
+  (sf-util/clog "on-navigate, new-match" new-match)
   (when new-match
     (re-frame/dispatch [::sf-state/navigated new-match])))
 
@@ -168,10 +196,10 @@
   (re-frame/clear-subscription-cache!)
   (init-routes!)
   (r-dom/render [router-component {:router router}
-                       (if (:open? @dev-tools/dev-state)
-                         {:style {:padding-bottom (str (:height @dev-tools/dev-state) "px")}})
-                       ]
-                      (.getElementById js/document "app")))
+                 (if (:open? @dev-tools/dev-state)
+                   {:style {:padding-bottom (str (:height @dev-tools/dev-state) "px")}})
+                 ]
+                (.getElementById js/document "app")))
 
 
 (defn ^:export init []

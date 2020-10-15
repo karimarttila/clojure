@@ -1,5 +1,6 @@
 (ns simplefrontend.product-group
   (:require
+    [reitit.frontend.easy :as rfe]
     [re-frame.core :as re-frame]
     [reagent.core :as r]
     [day8.re-frame.http-fx]
@@ -16,13 +17,13 @@
      [:th "Name"]]]
    [:tbody
     (map (fn [item]
-           (let [[my-key my-value] item]
-             [:tr {:key my-key}
-              [:td my-key]
-              [:td [:a {:href (str "#/products/" my-key)} my-value]]]))
+           (let [[k v] item
+                 ; String for historical reasons, coerced to keyword.
+                 kn (name k)]
+             [:tr {:key k}
+              [:td k]
+              [:td [:a {:href (rfe/href ::sf-state/products {:pgid kn})} v]]]))
          data)]])
-
-
 
 (re-frame/reg-event-db
   ::ret-ok
@@ -64,7 +65,7 @@
          [:div.sf-pg-container
           (product-groups-table product-groups-data)]
          [:div
-          [:button.sf-go-to-home-button
+          [:button.sf-basic-button
            {:on-click (fn [e]
                         (.preventDefault e)
                         (re-frame/dispatch [::sf-state/navigate ::sf-state/home]))}
