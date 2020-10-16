@@ -1,8 +1,10 @@
 (ns simplefrontend.main
   (:require [re-frame.core :as re-frame]
             [reagent.dom :as r-dom]
+            [reagent.core :as r-core]
             [day8.re-frame.http-fx] ; Needed to register :http-xhrio to re-frame.
             [reagent-dev-tools.core :as dev-tools]
+            [fipp.edn :as fedn]
             [reitit.coercion.spec :as rss]
             [reitit.frontend :as rf]
             [reitit.frontend.controllers :as rfc]
@@ -55,7 +57,6 @@
     {:db (assoc (:db cofx) :jwt nil)
      :fx [[:dispatch [::sf-state/navigate ::sf-state/home]]]}))
 
-
 ;;; Views ;;;
 
 (defn welcome []
@@ -94,15 +95,6 @@
    (href k params nil))
   ([k params query]
    (rfe/href k params query)))
-
-
-(defn item-page [match]
-  (let [{:keys [path query]} (:parameters match)
-        {:keys [id]} path]
-    [:div
-     [:h2 "Selected item " id]
-     (if (:foo query)
-       [:p "Optional foo query param: " (:foo query)])]))
 
 
 (def routes-dev
@@ -173,13 +165,16 @@
     on-navigate
     {:use-fragment true}))
 
-(defn router-component [{:keys [router]}]
-  (js/console.log "ENTER router-component")
-  (let [current-route @(re-frame/subscribe [::sf-state/current-route])]
+(defn router-component [{:keys [router] :as params}]
+  (sf-util/clog "ENTER router-component")
+  (let [current-route @(re-frame/subscribe [::sf-state/current-route])
+        path-params (:path-params current-route)
+        _ (sf-util/clog "router-component, path-params" path-params)]
     [:div.sf-main
      [sf-util/header]
+     ; NOTE: when you supply the current-route to the view it can parse path-params there (from path)
      (when current-route
-       [(-> current-route :data :view)])]))
+       [(-> current-route :data :view) current-route])]))
 
 ;;; Setup ;;;
 

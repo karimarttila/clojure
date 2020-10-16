@@ -39,7 +39,7 @@
   (fn [db [_ res-body]]
     (sf-util/clog "reg-event-db failed" db)
     (assoc-in db [:product :response] {:ret :failed
-                                        :msg (get-in res-body [:response :msg])})))
+                                       :msg (get-in res-body [:response :msg])})))
 
 (re-frame/reg-sub
   ::product-data
@@ -51,19 +51,6 @@
           _ (sf-util/clog "product-data" data)]
       (get-in data [pgid pid]))))
 
-
-(re-frame/reg-sub
-  ::pgid
-  (fn [db]
-    (sf-util/clog "::pgid")
-    (get-in db [:current-route :path-params :pgid])))
-
-(re-frame/reg-sub
-  ::pid
-  (fn [db]
-    (sf-util/clog "::pid")
-    (get-in db [:current-route :path-params :pid])))
-
 (re-frame/reg-event-fx
   ::get-product
   (fn [{:keys [db]} [_ pg-id p-id]]
@@ -74,24 +61,24 @@
 (defn product-page
   "Product view."
   [match]
-  ;; NOTE: Path not working in reitit frontend at the moment.
-  ;; Therefore getting the pgid from re-frame app-db
   (let [_ (sf-util/clog "ENTER product-page, match" match)
         {:keys [path]} (:parameters match)
-        {:keys [pgid]} path
-        _ (js/console.log match)]
+        {:keys [pgid pid]} path
+        pgid (str pgid)
+        pid (str pid)
+        _ (sf-util/clog "path" path)
+        _ (sf-util/clog "pgid" pgid)
+        _ (sf-util/clog "pid" pid)]
+
     (fn []
-      (let [;; Getting pgid and pid here since reitit frontend path params not working.
-            pgid @(re-frame/subscribe [::pgid])
-            pid @(re-frame/subscribe [::pid])
-            titles (if (= pgid "1")
-                 ["Id" "Pg-Id" "Name" "Price" "Author" "Year" "Country" "Language"] ; Book
-                 ["Id" "Pg-Id" "Name" "Price" "Director" "Year" "Country" "Category"] ; Movie
-                 )
+      (let [titles (if (= pgid "1")
+                     ["Id" "Pg-Id" "Name" "Price" "Author" "Year" "Country" "Language"] ; Book
+                     ["Id" "Pg-Id" "Name" "Price" "Director" "Year" "Country" "Category"] ; Movie
+                     )
             product-data @(re-frame/subscribe [::product-data pgid pid])
             _ (if-not product-data (re-frame/dispatch [::get-product pgid pid]))]
         [:div
-         [:h3 "Products " pgid " " pid]
+         [:h3 "Product "]
          [:div.sf-pg-container
           (product-table product-data titles)]
          [:div

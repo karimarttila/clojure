@@ -61,13 +61,6 @@
           data (get-in db [:product-groups :data])]
       (pgid data))))
 
-
-(re-frame/reg-sub
-  ::pgid
-  (fn [db]
-    (sf-util/clog "::pgid")
-    (get-in db [:current-route :path-params :pgid])))
-
 (re-frame/reg-event-fx
   ::get-products
   (fn [{:keys [db]} [_ pg-id]]
@@ -77,17 +70,15 @@
 
 (defn products-page
   "Products view."
-  [match]
-  ;; NOTE: Path not working in reitit frontend at the moment.
-  ;; Therefore getting the pgid from re-frame app-db
+  [match] ; NOTE: This is the current-route given as paramter to the view. You can get the pgid also from :path-params.
   (let [_ (sf-util/clog "ENTER products-page, match" match)
         {:keys [path]} (:parameters match)
         {:keys [pgid]} path
-        _ (js/console.log match)]
+        pgid (str pgid)
+        _ (sf-util/clog "path" path)
+        _ (sf-util/clog "pgid" pgid)]
     (fn []
-      (let [;; Getting pgid here since reitit frontend path params not working.
-            pgid @(re-frame/subscribe [::pgid])
-            products-data @(re-frame/subscribe [::products-data pgid])
+      (let [products-data @(re-frame/subscribe [::products-data pgid])
             product-group-name @(re-frame/subscribe [::product-group-name pgid])
             _ (if-not products-data (re-frame/dispatch [::get-products pgid]))]
         [:div

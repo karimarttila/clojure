@@ -6,5 +6,5 @@
 /yarn.lock
 /package-lock.json
 /.shadow-cljs
-
+dynamodb/dev-resources/
 
