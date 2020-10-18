@@ -3,7 +3,7 @@ Tee Simple Server Integrant -harjoituksesta blogi-postaus: nimenomaan Integranti
 - [DONE] Tee vielä PostgreSQL tietovarasto-vaihtoehto.
 -- [DONE] Tee Babashkalla alkudatan (domain + users) syöttö.
 - Sitten tästä versiosta blogi: Integrant vs oma tilanhallinta.
-- Babashkasta voisi kirjoittaa myös oman blogin.
+- [DONE] Babashkasta voisi kirjoittaa myös oman blogin.
 
 
 Tee Simple Server Integrant-harjoitukseen lisäosia:
@@ -13,10 +13,14 @@ Tee Simple Server Integrant-harjoitukseen lisäosia:
 -- malli
 
 - Tee backendiin uudet tietovarastovaihtoehdot:
--- Datomic => + oma blogi
+-- Datomic => + oma blogi (tee samaan re-frame-harjoitukseen, koska vain uusi datastore...)
+
+- Re-frame-harjoitukseen issue-korjaukset:
+-- index.html pois urista.
+-- edn http requesteissa.
 
 - Tee frontti:
--- re-frame => + oma blogi
+-- [TODO] re-frame => + oma blogi
 -- Tee sama re-frame harjoitus ja kokeile tehdä elementit esim. Antd tai Material tms. Google ClojureScript: mikä helpoin käyttää...
 -- helix => + oma blogi
 -- rum => + oma blogi
