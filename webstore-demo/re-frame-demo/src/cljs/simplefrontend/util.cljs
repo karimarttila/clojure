@@ -1,6 +1,7 @@
 (ns simplefrontend.util
   (:require [re-frame.core :as re-frame]
-            [clojure.pprint]
+            [cljs.pprint]
+    ;[clojure.pprint]
             [simplefrontend.state :as sf-state]))
 
 ;; Application wide properties.
@@ -9,7 +10,7 @@
 (defn valid?
   "Simple validator. Checks in [k v] v is a string and not empty."
   [[_ v]]
-  (and (string? v) (not (empty? v))))
+  (and (string? v) (seq v)))
 
 (defn save!
   "Fetches an event value and swaps the value of given atom a's key k to this value."
@@ -66,7 +67,7 @@
       [:div.sf-debug-panel
        [:hr.sf-debug-panel.hr]
        [:h3.sf-debug-panel.header "DEBUG-PANEL"]
-       [:pre.sf-debug-panel.body (with-out-str (clojure.pprint/pprint data))]])))
+       [:pre.sf-debug-panel.body (with-out-str (cljs.pprint/pprint data))]])))
 
 (defn clog
   "Javascript console logger helper."

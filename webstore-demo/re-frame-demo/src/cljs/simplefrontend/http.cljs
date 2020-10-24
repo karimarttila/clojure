@@ -1,8 +1,7 @@
 (ns simplefrontend.http
-  (:require [re-frame.core :as re-frame]
-            [simplefrontend.util :as sf-util]
+  (:require [simplefrontend.util :as sf-util]
             [goog.crypt.base64 :as base64]
-            [ajax.core :as ajax]))
+            [ajax.core :as ajax :refer []])) ; NOTE: Empty refer for clj-kondo
 
 (defn -base64-encode
   "Does the base64 encoding for the string"

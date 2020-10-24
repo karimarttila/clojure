@@ -13,11 +13,11 @@
 
 # Start backend repl.
 @backend:
-    clj -A:dev:test:common:backend:postgres -m nrepl.cmdline -i -C
+    clj -M:dev:test:common:backend:postgres -m nrepl.cmdline -i -C
 
 # Start backend repl with my toolbox.
 @backend-kari:
-    clj -A:dev:test:common:backend:postgres:kari -m nrepl.cmdline -i -C
+    clj -M:dev:test:common:backend:postgres:kari -m nrepl.cmdline -i -C
 
 # Init node packages.
 @init:
@@ -35,15 +35,15 @@
 
 # Start frontend auto-compilation.
 # @frontend-kari:
-#   clj -A:dev:common:frontend:kari -m shadow.cljs.devtools.cli watch app
+#   clj -M:dev:common:frontend:kari -m shadow.cljs.devtools.cli watch app
 
 # SASS auto-compile.
 # @css:
-# 	clj -Acss --auto
+# 	clj -Mcss --auto
 
 # Update dependencies.
 @outdated:
-    clj -A:dev:test:common:backend:frontend:outdated --update
+    clj -M:dev:test:common:backend:frontend:outdated --update
 
 # Create uberjar.
 @uberjar:
@@ -57,7 +57,7 @@
 
 # Lint.
 @lint:
-    clj -A:dev -m clj-kondo.main --lint src
+    clj -M:dev -m clj-kondo.main --lint src
 
 # Test.
 @test db:

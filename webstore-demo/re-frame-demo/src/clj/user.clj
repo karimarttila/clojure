@@ -11,6 +11,9 @@
 (defn env [] (:backend/env (system)))
 (defn service [] (:service (env)))
 
+(defn my-dummy-reset []
+  (reset))
+
 ;; NOTE: In Cursive, Integrant hot keys are:
 ;; M-h: go
 ;; M-j: reset
@@ -20,3 +23,4 @@
   (user/system)
   (user/env)
   )
+

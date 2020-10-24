@@ -2,9 +2,7 @@
   (:require
     [re-frame.core :as re-frame]
     [reitit.frontend.easy :as rfe]
-    [reagent.core :as r]
     [day8.re-frame.http-fx]
-    [ajax.core :as ajax]
     [simplefrontend.http :as sf-http]
     [simplefrontend.state :as sf-state]
     [simplefrontend.util :as sf-util]))
@@ -70,7 +68,7 @@
 
 (defn products-page
   "Products view."
-  [match] ; NOTE: This is the current-route given as paramter to the view. You can get the pgid also from :path-params.
+  [match] ; NOTE: This is the current-route given as parameter to the view. You can get the pgid also from :path-params.
   (let [_ (sf-util/clog "ENTER products-page, match" match)
         {:keys [path]} (:parameters match)
         {:keys [pgid]} path

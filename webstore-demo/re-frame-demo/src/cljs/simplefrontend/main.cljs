@@ -1,10 +1,9 @@
 (ns simplefrontend.main
   (:require [re-frame.core :as re-frame]
+            [re-frame.db]
             [reagent.dom :as r-dom]
-            [reagent.core :as r-core]
             [day8.re-frame.http-fx] ; Needed to register :http-xhrio to re-frame.
             [reagent-dev-tools.core :as dev-tools]
-            [fipp.edn :as fedn]
             [reitit.coercion.spec :as rss]
             [reitit.frontend :as rf]
             [reitit.frontend.controllers :as rfc]
@@ -36,7 +35,7 @@
 
 (re-frame/reg-event-fx
   ::sf-state/navigate
-  (fn [db [_ & route]]
+  (fn [_ [_ & route]]
     ;; See `navigate` effect in routes.cljs
     {::navigate! route}))
 
@@ -48,8 +47,8 @@
           controllers (rfc/apply-controllers (:controllers old-match) new-match)]
       (js/console.log (str "new-path: " new-path))
       (cond-> (assoc db :current-route (assoc new-match :controllers controllers))
-              (if (= "/") new-path) (-> (assoc :signin nil)
-                                        (assoc :login nil))))))
+              (= "/" new-path) (-> (assoc :signin nil)
+                                   (assoc :login nil))))))
 
 (re-frame/reg-event-fx
   ::sf-state/logout
@@ -104,47 +103,42 @@
      :view home-page
      :link-text "Home"
      :controllers
-     [{:start (fn [& params] (js/console.log "Entering home page"))
-       :stop (fn [& params] (js/console.log "Leaving home page"))}]}]
+     [{:start (fn [& params] (js/console.log (str "Entering home page, params: " params)))
+       :stop (fn [& params] (js/console.log (str "Leaving home page, params: " params)))}]}]
    ["signin"
     {:name ::sf-state/signin
      :view sf-signin/signin-page
      :link-text "Sign-In"
      :controllers
-     [{:start (fn [& params] (js/console.log "Entering signin"))
-       :stop (fn [& params] (js/console.log "Leaving signin"))}]}]
+     [{:start (fn [& params] (js/console.log (str "Entering signin, params: " params)))
+       :stop (fn [& params] (js/console.log (str "Leaving signin, params: " params)))}]}]
    ["login"
     {:name ::sf-state/login
      :view sf-login/login-page
      :link-text "Login"
-     :controllers
-     [{:start (fn [& params] (js/console.log "Entering login"))
-       :stop (fn [& params] (js/console.log "Leaving login"))}]}]
+     :controllers [{:start (fn [& params] (js/console.log (str "Entering login, params: " params)))
+                    :stop (fn [& params] (js/console.log (str "Leaving login, params: " params)))}]}]
    ["product-group"
     {:name ::sf-state/product-group
      :view sf-product-group/product-group-page
      :link-text "Product group"
-     :controllers
-     [{:start (fn [& params] (js/console.log "Entering product-group"))
-       :stop (fn [& params] (js/console.log "Leaving product-group"))}]}]
-   ; TODO Why we cannot pass the path parameter here?
+     :controllers [{:start (fn [& params] (js/console.log (str "Entering product-group, params: " params)))
+                    :stop (fn [& params] (js/console.log (str "Leaving product-group, params: " params)))}]}]
    ["products/:pgid"
     {:name ::sf-state/products
      :parameters {:path {:pgid int?}}
      :view sf-products/products-page
      :link-text "Products"
-     :controllers
-     [{:start (fn [& params] (js/console.log "Entering products, params: " params))
-       :stop (fn [& params] (js/console.log "Leaving products"))}]}]
+     :controllers [{:start (fn [& params] (js/console.log (str "Entering products, params: " params)))
+                    :stop (fn [& params] (js/console.log (str "Leaving products, params: " params)))}]}]
    ["product/:pgid/:pid"
     {:name ::sf-state/product
      :parameters {:path {:pgid int?
                          :pid int?}}
      :view sf-product/product-page
      :link-text "Product"
-     :controllers
-     [{:start (fn [& params] (js/console.log "Entering product, params: " params))
-       :stop (fn [& params] (js/console.log "Leaving product"))}]}]])
+     :controllers [{:start (fn [& params] (js/console.log (str "Entering product, params: " params)))
+                    :stop (fn [& params] (js/console.log (str "Leaving product, params: "params)))}]}]])
 
 (def routes routes-dev)
 
@@ -165,7 +159,7 @@
     on-navigate
     {:use-fragment true}))
 
-(defn router-component [{:keys [router] :as params}]
+(defn router-component [_] ; {:keys [router] :as params}
   (sf-util/clog "ENTER router-component")
   (let [current-route @(re-frame/subscribe [::sf-state/current-route])
         path-params (:path-params current-route)

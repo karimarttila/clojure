@@ -18,6 +18,6 @@ else
     exit 2
 fi
 
-SS_DB=$MYDB clojure -A:dev:test:common:backend -m kaocha.runner
+SS_DB=$MYDB clojure -M:dev:test:common:backend -m kaocha.runner
 
 

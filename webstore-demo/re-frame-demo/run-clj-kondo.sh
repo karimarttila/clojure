@@ -1,3 +1,3 @@
 #!/bin/bash
 
-clj -A:clj-kondo --lint src
+clj -M:clj-kondo --lint src

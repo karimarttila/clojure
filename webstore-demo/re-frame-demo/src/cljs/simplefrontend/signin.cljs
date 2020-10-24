@@ -3,7 +3,6 @@
     [re-frame.core :as re-frame]
     [reagent.core :as r]
     [day8.re-frame.http-fx]
-    [ajax.core :as ajax]
     [simplefrontend.http :as sf-http]
     [simplefrontend.state :as sf-state]
     [simplefrontend.util :as sf-util]))
