@@ -51,6 +51,13 @@
   (simpleserver.test-config/test-env)
   (let [db (get-in (simpleserver.test-config/test-env) [:service :domain :db])]
     (sql-get-products db {:pg-id (str 2)}))
+  (require '[portal.api :as portal-api])
+  (portal.api/open)
+  (portal.api/tap)
+  (tap> (let [db (get-in (simpleserver.test-config/test-env) [:service :domain :db])]
+    (sql-get-products db {:pg-id (str 2)})))
+
+
   (let [db (get-in (simpleserver.test-config/test-env) [:service :domain :db])]
     (sql-get-product db {:pg-id (str 2) :p-id (str 4)}))
   )
