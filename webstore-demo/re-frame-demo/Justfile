@@ -3,13 +3,25 @@
 
 # TODO: just db which runs a docker-compose which starts both local-dynamodb and local-postgres
 
-# Start local dynamodb emulator.
+# Start local Dynamodb emulator.
 @dynamodb:
     cd dynamodb && ./run-docker-compose.sh
 
-# Start local postgres database.
+# Start local PostgreSQL database.
 @postgres:
     cd postgres && ./run-docker-compose.sh
+
+# Start local Datomic database.
+@datomic:
+    cd datomic && ./start-datomic.sh
+
+# Start Datomic Peer Server.
+@datomic-peer-server:
+    cd datomic && ./start-peer-server.sh
+
+# Start Datomic Console.
+@datomic-console:
+    cd datomic && ./start-console.sh
 
 # Start backend repl.
 @backend:
@@ -18,6 +30,10 @@
 # Start backend repl with my toolbox.
 @backend-kari:
     clj -M:dev:test:common:backend:postgres:kari -m nrepl.cmdline -i -C
+
+# Start backend repl with my toolbox and with debug-repl capability.
+@backend-debug-kari:
+    clj -M:dev:test:common:backend:kari -m nrepl.cmdline -m com.gfredericks.debug-repl/wrap-debug-repl -i -C
 
 # Init node packages.
 @init:
