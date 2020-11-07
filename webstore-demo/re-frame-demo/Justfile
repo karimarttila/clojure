@@ -15,6 +15,10 @@
 @datomic:
     cd datomic && ./start-datomic.sh
 
+# Reset Datomic SimpleServer databases.
+@datomic-ss-reset:
+    cd datomic && ./reset-simpleserver-db.sh
+
 # Start Datomic Peer Server.
 @datomic-peer-server:
     cd datomic && ./start-peer-server.sh
