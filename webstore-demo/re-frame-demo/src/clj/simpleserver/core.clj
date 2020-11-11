@@ -8,6 +8,7 @@
     [integrant.core :as ig]
     [aero.core :as aero]
     [hikari-cp.core :as hikari-cp]
+    [datomic.api :as d]
     [simpleserver.service.service :as ss-service]
     [simpleserver.webserver.server :as ss-webserver]
     [simpleserver.service.dynamodb-config :as ddb-config]
@@ -58,9 +59,19 @@
   (if (= (:active-db this) :postgres)
     (hikari-cp/close-datasource (:datasource this))))
 
-(defmethod ig/init-key :backend/service [_ {:keys [active-db csv ddb postgres]}]
+(defmethod ig/init-key :backend/datomic [_ {:keys [active-db uri]}]
+  (log/debug "ENTER ig/init-key :backend/datomic")
+  (if (= active-db :datomic)
+    {:conn (d/connect uri)}))
+
+(defmethod ig/halt-key! :backend/datomic [_ this]
+  (log/debug "ENTER ig/halt-key! :backend/datomic")
+  (if (= (:active-db this) :datomic)
+    (d/release (:conn this))))
+
+(defmethod ig/init-key :backend/service [_ {:keys [active-db csv ddb postgres datomic]}]
   (log/debug "ENTER ig/init-key :backend/service")
-  (ss-service/get-service-config active-db csv ddb postgres))
+  (ss-service/get-service-config {:active-db active-db :csv csv :ddb ddb :postgres postgres :datomic datomic}))
 
 (defmethod ig/init-key :backend/env [_ env]
   env)

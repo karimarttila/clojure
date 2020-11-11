@@ -28,6 +28,7 @@
         (assoc-in [:backend/jetty :port] test-port)
         ;; In Postgres test setup use simpleserver_test database.
         (assoc-in [:backend/postgres :database-name] "simpleserver_test")
+        (assoc-in [:backend/datomic :uri] "datomic:dev://localhost:4334/simpleserver_test")
         ;; No nrepl needed in tests. If used, use other port than the main system.
         (assoc-in [:backend/nrepl :bind] nil)
         (assoc-in [:backend/nrepl :port] nil)
