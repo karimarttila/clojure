@@ -57,6 +57,42 @@
   :db/cardinality :db.cardinality/one
   :db/doc "The genre or language of the product"}
 
+ {:db/ident :user.user/id
+  :db/valueType :db.type/long
+  :db/cardinality :db.cardinality/one
+  :db/unique :db.unique/identity
+  :db/doc "The id of the user"}
+
+ {:db/ident :user.user/email
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "The email of the user"}
+
+ {:db/ident :user.user/first-name
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "The first name of the user"}
+
+ {:db/ident :user.user/last-name
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "The last name of the user"}
+
+ {:db/ident :user.user/hashed-password
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "The hashed password of the user"}
+
+ {:db/ident :user.user/hashed-password
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/doc "The hashed password of the user"}
+
+ {:db/ident :session.session/token
+  :db/valueType :db.type/string
+  :db/cardinality :db.cardinality/one
+  :db/unique :db.unique/identity
+  :db/doc "The session token"}
  ]
 
 

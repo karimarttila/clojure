@@ -30,4 +30,5 @@
 (comment
   (simpleserver.test-config/go)
   (simpleserver.test-config/test-env)
+  (simpleserver.test-config/halt)
   )

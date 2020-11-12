@@ -28,7 +28,7 @@
                                         :g_or_l (nth product 7)}))))
 
 (defn- empty-domain-tables [db]
-  (log/debug "empty-domain-tables")
+  (log/debug "ENTER empty-domain-tables")
   (with-open [connection (jdbc/get-connection (:datasource db))]
     (jdbc/execute-one! connection ["DELETE FROM product"]))
   (with-open [connection (jdbc/get-connection (:datasource db))]
