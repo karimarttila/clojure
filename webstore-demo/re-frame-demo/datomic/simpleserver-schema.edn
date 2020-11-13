@@ -13,19 +13,13 @@
  {:db/ident :domain.product/id
   :db/valueType :db.type/long
   :db/cardinality :db.cardinality/one
+  :db/unique :db.unique/identity
   :db/doc "The id of the product"}
 
  {:db/ident :domain.product/pg-id
   :db/valueType :db.type/ref
   :db/cardinality :db.cardinality/one
   :db/doc "The product group id of the product"}
-
- {:db/ident :domain.product/id+pg-id
- :db/valueType :db.type/tuple
- :db/tupleAttrs [:domain.product/id :domain.product/pg-id]
- :db/cardinality :db.cardinality/one
- :db/unique :db.unique/identity
- :db/doc "The unique composite key of the product: product id + product group id"}
 
  {:db/ident :domain.product/title
   :db/valueType :db.type/string
