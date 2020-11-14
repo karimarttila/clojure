@@ -9,7 +9,8 @@
     ;; NOTE: If you later add new data stores you have to add them here! **************************
     [simpleserver.test-utils.csv-utils]
     [simpleserver.test-utils.dynamodb-utils]
-    [simpleserver.test-utils.postgres-utils])
+    [simpleserver.test-utils.postgres-utils]
+    [simpleserver.test-utils.datomic-utils])
   (:import (java.net ServerSocket)))
 
 (defonce test-system (atom nil))
@@ -79,7 +80,10 @@
 
 ; Rich comment.
 (comment
-  (-call-api :get "info" nil nil)
+  (user/env)
+  *ns*
+  (simpleserver.test-config/-call-api :get "info" nil nil)
+
   (simpleserver.test-config/go)
   (simpleserver.test-config/test-config)
   simpleserver.test-config/test-system

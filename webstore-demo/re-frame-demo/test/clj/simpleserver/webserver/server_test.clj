@@ -124,10 +124,15 @@
       (is (= p-id "4"))
       (is (= product right-product)))))
 
+(comment
+  ;(require '[com.gfredericks.debug-repl :refer [break! unbreak!]])
+  ;(unbreak!)
+  )
+
 ; Rich comment.
 #_(comment
-  (ss-tc/go)
-  (ss-tc/halt)
-  @ss-tc/test-system
-  (user/system)
-  )
+    (ss-tc/go)
+    (ss-tc/halt)
+    @ss-tc/test-system
+    (user/system)
+    )

@@ -22,7 +22,8 @@
   (get-products
     [_ _ pg-id]
     (log/debug (str "ENTER get-products, pg-id: " pg-id))
-    (let [raw-products (d/q '[:find ?id ?pg-id ?title ?price
+    (let [pg-id (if (string? pg-id) (Long/parseLong pg-id) pg-id)
+          raw-products (d/q '[:find ?id ?pg-id ?title ?price
                               :in $ ?pg-id
                               :where
                               [?e :domain.product/id ?id]
@@ -36,7 +37,9 @@
   (get-product
     [_ _ pg-id p-id]
     (log/debug (str "ENTER get-product, pg-id: " pg-id ", p-id: " p-id))
-    (let [raw-product (d/q '[:find ?id ?pg-id ?title ?price ?a_or_d ?year ?country ?g_or_l
+    (let [pg-id (if (string? pg-id) (Long/parseLong pg-id) pg-id)
+          p-id (if (string? p-id) (Long/parseLong p-id) p-id)
+          raw-product (d/q '[:find ?id ?pg-id ?title ?price ?a_or_d ?year ?country ?g_or_l
                              :in $ ?pg-id ?id
                              :where
                              [?e :domain.product/id ?id]
