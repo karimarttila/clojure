@@ -58,12 +58,41 @@
     (throw (java.lang.UnsupportedOperationException. "You can reset domain only in test environment!"))))
 
 
+;; ******************************************************
+;; Session
+
+(defmethod test-service/get-sessions :datomic [env]
+  (log/debug "ENTER get-sessions")
+  (let [token-ids (d/q '[:find ?token
+                         :where [_ :session.session/token ?token]]
+                       (d/db (get-in env [:service :domain :conn])))]
+    (reduce (fn [s [token-id]]
+              (conj s token-id))
+            #{}
+            token-ids)))
+
+(defmethod test-service/reset-sessions! :datomic [env]
+  (log/debug "ENTER reset-sessions!")
+  (if (= (:profile env) :test)
+    (let [conn (get-in env [:service :domain :conn])
+          token-ids (d/q '[:find ?id
+                            :where
+                            [?id :session.session/token]]
+                          (d/db conn))]
+      (doseq [token-id token-ids]
+        @(d/transact conn [[:db.fn/retractEntity (first token-id)]])))
+    (throw (java.lang.UnsupportedOperationException. "You can reset sessions only in test environment!"))))
+
+
 (comment
 
   (simpleserver.test-config/go)
   (simpleserver.test-config/test-env)
   (test-service/init-domain (simpleserver.test-config/test-env))
   (simpleserver.test-config/halt)
+
+  (test-service/get-sessions (simpleserver.test-config/test-env))
+  (test-service/reset-sessions! (simpleserver.test-config/test-env))
 
   (test-data/raw-products "2")
 

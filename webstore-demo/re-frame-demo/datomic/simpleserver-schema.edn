@@ -1,4 +1,6 @@
 [
+ ; DOMAIN
+ ; Product group
  {:db/ident :domain.product-group/id
   :db/valueType :db.type/long
   :db/cardinality :db.cardinality/one
@@ -10,6 +12,7 @@
   :db/cardinality :db.cardinality/one
   :db/doc "The name of the product group"}
 
+ ; Product
  {:db/ident :domain.product/id
   :db/valueType :db.type/long
   :db/cardinality :db.cardinality/one
@@ -51,6 +54,8 @@
   :db/cardinality :db.cardinality/one
   :db/doc "The genre or language of the product"}
 
+ ; USER
+ ; user
  {:db/ident :user.user/id
   :db/valueType :db.type/long
   :db/cardinality :db.cardinality/one
@@ -82,6 +87,8 @@
   :db/cardinality :db.cardinality/one
   :db/doc "The hashed password of the user"}
 
+ ; SESSION
+ ; session
  {:db/ident :session.session/token
   :db/valueType :db.type/string
   :db/cardinality :db.cardinality/one
