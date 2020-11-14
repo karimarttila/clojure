@@ -68,7 +68,6 @@
 
 (defn convert-users [raw-users]
     (map (fn [user]
-           (def my-user user)
            {:userid (:ssuser/id user)
             :email (:ssuser/email user)
             :first-name (:ssuser/f_name user)

@@ -76,18 +76,69 @@
   (if (= (:profile env) :test)
     (let [conn (get-in env [:service :domain :conn])
           token-ids (d/q '[:find ?id
-                            :where
-                            [?id :session.session/token]]
-                          (d/db conn))]
+                           :where
+                           [?id :session.session/token]]
+                         (d/db conn))]
       (doseq [token-id token-ids]
         @(d/transact conn [[:db.fn/retractEntity (first token-id)]])))
     (throw (java.lang.UnsupportedOperationException. "You can reset sessions only in test environment!"))))
 
 
+;; ******************************************************
+;; User
+
+(defn convert-users [raw-users]
+  (map (fn [[id email first-name last-name hashed-password]]
+         {:userid id
+          :email email
+          :first-name first-name
+          :last-name last-name
+          :hashed-password hashed-password})
+       raw-users))
+
+(defmethod test-service/get-users :datomic [env]
+  (log/debug (str "ENTER -get-users"))
+  (let [conn (get-in env [:service :session :conn])
+        raw-users (d/q '[:find ?id ?email ?first-name ?last-name ?hashed-password
+                         :where
+                         [?e :user.user/id ?id]
+                         [?e :user.user/email ?email]
+                         [?e :user.user/first-name ?first-name]
+                         [?e :user.user/last-name ?last-name]
+                         [?e :user.user/hashed-password ?hashed-password]]
+                       (d/db conn))]
+    (convert-users raw-users)))
+
+(defmethod test-service/reset-users! :datomic [env]
+  (log/debug (str "ENTER -reset-users!"))
+  (if (= (:profile env) :test)
+    (let [conn (get-in env [:service :user :conn])
+          old-user-ids (d/q '[:find ?id
+                              :where
+                              [?id :user.user/id]]
+                            (d/db conn))
+          new-users (mapv (fn [user]
+                            {:user.user/id (:userid user)
+                             :user.user/email (:email user)
+                             :user.user/first-name (:first-name user)
+                             :user.user/last-name (:last-name user)
+                             :user.user/hashed-password (:hashed-password user)})
+                          (vals (test-data/users)))]
+      (doseq [user-id old-user-ids]
+        @(d/transact conn [[:db.fn/retractEntity (first user-id)]]))
+      @(d/transact conn new-users))
+    (throw (java.lang.UnsupportedOperationException. "You can reset users only in test environment!")))
+  )
+
 (comment
+  (test-service/get-users (simpleserver.test-config/test-env))
+
 
   (simpleserver.test-config/go)
   (simpleserver.test-config/test-env)
+  (test-service/reset-users! (simpleserver.test-config/test-env))
+  (test-service/get-users (simpleserver.test-config/test-env))
+
   (test-service/init-domain (simpleserver.test-config/test-env))
   (simpleserver.test-config/halt)
 
