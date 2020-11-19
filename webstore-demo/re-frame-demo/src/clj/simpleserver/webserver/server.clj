@@ -2,12 +2,14 @@
   (:require [clojure.tools.logging :as log]
             [clojure.string :as string]
             [clojure.data.codec.base64 :as base64]
-            [ring.middleware.params :as ri-params]
             [ring.util.response :as ri-resp]
-            [reitit.ring.middleware.muuntaja :as re-mu]
             [reitit.ring :as re-ring]
-            [reitit.ring.coercion :as re-co]
-            [reitit.coercion.spec :as re-co-spec]
+            [reitit.coercion.malli]
+            [reitit.swagger :as re-swagger]
+            [reitit.ring.coercion :as re-coercion]
+            [reitit.ring.middleware.muuntaja :as re-muuntaja]
+            [reitit.ring.middleware.exception :as re-exception]
+            [reitit.ring.middleware.parameters :as re-parameters]
             [reitit.ring.middleware.dev]
             [muuntaja.core :as mu-core]
             [simpleserver.service.domain.domain-service :as ss-domain-s]
@@ -169,14 +171,40 @@
                               ; Use this to debug middleware handling:
                               ;:reitit.middleware/transform reitit.ring.middleware.dev/print-request-diffs
                               :data {:muuntaja mu-core/instance
-                                     :coercion re-co-spec/coercion
-                                     :middleware [ri-params/wrap-params
-                                                  re-mu/format-middleware
-                                                  re-co/coerce-exceptions-middleware
-                                                  re-co/coerce-request-middleware
-                                                  re-co/coerce-response-middleware]}})
-
-
+                                     :coercion (reitit.coercion.malli/create
+                                                 {;; set of keys to include in error messages
+                                                  :error-keys #{:type :coercion :in #_:schema #_:value #_:errors :humanized #_:transformed}
+                                                  ;; validate request & response
+                                                  :validate true
+                                                  ;; top-level short-circuit to disable request & response coercion
+                                                  :enabled true
+                                                  ;; strip-extra-keys (effects only predefined transformers)
+                                                  :strip-extra-keys true
+                                                  ;; add/set default values
+                                                  :default-values true
+                                                  ;; malli options
+                                                  :options nil}) ;; malli
+                                     :middleware [;; swagger feature
+                                                  re-swagger/swagger-feature
+                                                  ;; query-params & form-params
+                                                  re-parameters/parameters-middleware
+                                                  ;; content-negotiation
+                                                  re-muuntaja/format-negotiate-middleware
+                                                  ;; encoding response body
+                                                  re-muuntaja/format-response-middleware
+                                                  ;; exception handling
+                                                  (re-exception/create-exception-middleware
+                                                    (merge
+                                                      re-exception/default-handlers
+                                                      {::re-exception/wrap (fn [handler ^Exception e request]
+                                                                          (log/error e (.getMessage e))
+                                                                          (handler e request))}))
+                                                  ;; decoding request body
+                                                  re-muuntaja/format-request-middleware
+                                                  ;; coercing response bodys
+                                                  re-coercion/coerce-response-middleware
+                                                  ;; coercing request parameters
+                                                  re-coercion/coerce-request-middleware]}})
       (re-ring/routes
         (re-ring/redirect-trailing-slash-handler)
         (re-ring/create-file-handler {:path "/", :root "target/shadow/dev/resources/public"})

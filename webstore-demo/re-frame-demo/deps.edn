@@ -14,13 +14,14 @@
                                seancorfield/next.jdbc {:mvn/version "1.1.569"}}}
            ;; Let's learn to use a common part already now since in the next exercise we create frontend with re-frame.
            :common {:extra-paths ["src/cljc"]
-                    :extra-deps {metosin/reitit {:mvn/version "0.5.5"}
+                    :extra-deps {metosin/reitit {:mvn/version "0.5.10"}
                                  aero/aero {:mvn/version "1.1.6"}
                                  metosin/potpuri {:mvn/version "0.5.2"}
                                  integrant/repl {:mvn/version "0.3.1"}
                                  }}
            :backend {:extra-paths ["src/clj"]
                      :extra-deps {integrant/integrant {:mvn/version "0.8.0"}
+                                  clj-time/clj-time {:mvn/version "0.15.2"}
                                   org.clojure/data.json {:mvn/version "1.0.0"}
                                   org.clojure/data.csv {:mvn/version "1.0.0"}
                                   metosin/maailma {:mvn/version "1.1.0"}
