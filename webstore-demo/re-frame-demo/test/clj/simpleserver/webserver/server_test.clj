@@ -3,9 +3,7 @@
             [clojure.tools.logging :as log]
             [clojure.data.codec.base64 :as base64]
             [simpleserver.test-config :as ss-tc]
-            [simpleserver.test-utils.test-service :as ss-test-service]
-            [simpleserver.service.user.user-service :as ss-user-s]
-            [simpleserver.service.session.session-service :as ss-session-s]))
+            [simpleserver.test-utils.test-service :as ss-test-service]))
 
 (defn init-fixture
   []

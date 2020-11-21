@@ -16,7 +16,7 @@
                                   :request {:TableName product-groups-table
                                             :Item {"pgid" {:S (first pg)}
                                                    "pgname" {:S (second pg)}}}})]
-      (if (not (empty? ret))
+      (if (seq ret)
         (throw (ex-info "Failed to put product-groups" ret))))))
 
 
@@ -33,7 +33,7 @@
                                                    "year" {:S (nth product 5)}
                                                    "country" {:S (nth product 6)}
                                                    "g_or_l" {:S (nth product 7)}}}})]
-      (if (not (empty? ret))
+      (if (seq ret)
         (throw (ex-info "Failed to put products" ret))))))
 
 (defmethod test-service/init-domain :ddb [env]
@@ -95,7 +95,7 @@
        (:Items raw-users)))
 
 (defn- add-new-user-without-hashing-password!
-  [env my-ddb my-table email first-name last-name password]
+  [_ my-ddb my-table email first-name last-name password]
   (log/debug (str "ENTER add-new-user"))
   (let [new-id (ss-user-common/uuid)
         request {:TableName my-table
@@ -126,32 +126,32 @@
 (defmethod test-service/reset-users! :ddb [env]
   (log/debug (str "ENTER -reset-users!"))
   (if (= (:profile env) :test)
-    (let [db (get-in env [:service :user :db])]
-      (let [users-to-delete (test-service/get-users env)
-            emails-to-delete (map (fn [item]
-                                    (:email (second item)))
-                                  users-to-delete)
-            initial-users (test-data/users)]
-        (dorun (map (fn [email]
-                      (let [ret (aws/invoke (:client db) {:op :DeleteItem
-                                                          :request {
-                                                                    :TableName (get-in db [:tables :users])
-                                                                    :Key {"email" {:S email}}}})]
-                        (if (:__type ret)
-                          (throw (ex-info "Failed to delete user" ret))
-                          ret)))
-                    emails-to-delete))
-        (dorun (map (fn [user]
-                      (let [user-map (second user)]
-                        (add-new-user-without-hashing-password!
-                          env
-                          (:client db)
-                          (get-in db [:tables :users])
-                          (:email user-map)
-                          (:first-name user-map)
-                          (:last-name user-map)
-                          (:hashed-password user-map))))
-                    initial-users))))
+    (let [db (get-in env [:service :user :db])
+          users-to-delete (test-service/get-users env)
+          emails-to-delete (map (fn [item]
+                                  (:email (second item)))
+                                users-to-delete)
+          initial-users (test-data/users)]
+      (dorun (map (fn [email]
+                    (let [ret (aws/invoke (:client db) {:op :DeleteItem
+                                                        :request {
+                                                                  :TableName (get-in db [:tables :users])
+                                                                  :Key {"email" {:S email}}}})]
+                      (if (:__type ret)
+                        (throw (ex-info "Failed to delete user" ret))
+                        ret)))
+                  emails-to-delete))
+      (dorun (map (fn [user]
+                    (let [user-map (second user)]
+                      (add-new-user-without-hashing-password!
+                        env
+                        (:client db)
+                        (get-in db [:tables :users])
+                        (:email user-map)
+                        (:first-name user-map)
+                        (:last-name user-map)
+                        (:hashed-password user-map))))
+                  initial-users)))
     (throw (java.lang.UnsupportedOperationException. "You can reset users only in test environment!"))))
 
 (comment

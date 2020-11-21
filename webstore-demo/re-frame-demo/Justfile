@@ -77,7 +77,7 @@
 
 # Lint.
 @lint:
-    clj -M:dev -m clj-kondo.main --lint src
+    clj -M:dev:backend:common:frontend:test -m clj-kondo.main --lint src test
 
 # Test.
 @test db:

@@ -75,7 +75,9 @@
                 :content-type :json
                 :throw-exceptions false
                 :coerce :always}
-               ) [:status :body]))))
+               ) [:status :body])
+      (catch Exception e
+        (log/error (str "ERROR in -call-api: " (.getMessage e)))))))
 
 
 ; Rich comment.

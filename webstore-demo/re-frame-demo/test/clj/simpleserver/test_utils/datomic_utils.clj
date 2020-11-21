@@ -43,7 +43,7 @@
                              products)]
     @(d/transact conn product-datoms)))
 
-(defn- empty-domain-tables [conn]
+(defn- empty-domain-tables [_]
   (log/debug "ENTER empty-domain-tables"))
 
 (defmethod test-service/init-domain :datomic [env]
