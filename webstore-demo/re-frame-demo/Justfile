@@ -83,3 +83,8 @@
 @test db:
     ./run-tests.sh {{db}}
 
+# Clean .cpcache and .shadow-cljs directories, run npm install
+@clean:
+    rm -rf .cpcache/*
+    rm -rf .shadow-cljs/*
+    npm install

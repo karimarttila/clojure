@@ -6,11 +6,15 @@
             [reitit.ring :as re-ring]
             [reitit.coercion.malli]
             [reitit.swagger :as re-swagger]
+            [reitit.ring.malli]
             [reitit.ring.coercion :as re-coercion]
             [reitit.ring.middleware.muuntaja :as re-muuntaja]
             [reitit.ring.middleware.exception :as re-exception]
             [reitit.ring.middleware.parameters :as re-parameters]
             [reitit.ring.middleware.dev]
+            [reitit.swagger :as swagger]
+            [reitit.swagger-ui :as swagger-ui]
+            [malli.util :as m-util]
             [muuntaja.core :as mu-core]
             [simpleserver.service.domain.domain-service :as ss-domain-s]
             [simpleserver.service.user.user-service :as ss-user-s]
@@ -129,32 +133,73 @@
 (defn routes
   "Routes."
   [env]
-  [
+  ;; http://localhost:6161/swagger.json
+  [["/swagger.json"
+    {:get {:no-doc true
+           :swagger {:info {:title "simpleserver api"
+                            :description "SimpleServer Api"}
+                     :tags [{:name "api", :description "api"}]}
+           :handler (swagger/create-swagger-handler)}}]
+   ;; http://localhost:6161/api-docs/index.html
+   ["/api-docs/*"
+    {:get {:no-doc true
+           :handler (swagger-ui/create-swagger-ui-handler
+                      {:config {:validatorUrl nil}
+                       :url "/swagger.json"})}}]
    ["/api"
-    ; For development purposes
+    {:swagger {:tags ["api"]}}
+    ; For development purposes. Try curl http://localhost:6161/api/ping
     ["/ping" {:get {:summary "ping get"
-                    :responses {200 {:description "ping"}}
+                    ; Don't allow any query parameters.
+                    :parameters {:query [:map]}
+                    :responses {200 {:description "Ping success"}}
                     :handler (fn [_]
                                (-> {:ret :ok :reply "pong"}
                                    (ri-resp/response)
                                    (-set-http-status :ok)))}
               :post {:summary "ping post"
-                     :parameters {:body any?}
+                     :responses {200 {:description "Ping success"}}
+                     ;; reitit adds mt/strip-extra-keys-transformer - probably changes in reitit 1.0,
+                     ;; and therefore {:closed true} is not used with reitit < 1.0.
+                     :parameters {:body [:map {:closed true} [:ping string?]]}
                      :handler (fn [req]
                                 (let [body (get-in req [:parameters :body])
                                       myreq (:ping body)]
                                   (-> {:ret :ok :request myreq :reply "pong"}
                                       (ri-resp/response)
                                       (-set-http-status :ok))))}}]
-    ["/info" {:get {:handler (fn [{}] (-info env)) :responses {200 {:description ""}}}}]
-    ["/print-req-get/:jee" {:get (fn [req] (prn (str "req: ") req))}] ; An example how to print the ring request
-    ["/print-req-post" {:post (fn [req] (prn (str "req: ") req))}] ; An example how to print the ring request
-    ["/signin" {:post (fn [{{:keys [first-name last-name password email]} :body-params}] (-signin env first-name last-name password email))}]
-    ["/login" {:post (fn [{{:keys [email password]} :body-params}] (-login env email password))}]
-    ["/product-groups" {:get {:handler (fn [req] (-product-groups env req))}}]
-    ["/products/:pg-id" {:get {:handler (fn [req] (-products env req))}}]
-    ["/product/:pg-id/:p-id" {:get {:handler (fn [req] (-product env req))}}]]
-   ])
+    ["/info" {:get {:summary "Get info regarding the api"
+                    :parameters {:query [:map]}
+                    :responses {200 {:description "Info success"}}
+                    :handler (fn [{}] (-info env))}}]
+    ["/signin" {:post {:summary "Sign-in to get an account"
+                       :responses {200 {:description "Sign-in success"}}
+                       :parameters {:body [:map
+                                           [:first-name string?]
+                                           [:last-name string?]
+                                           [:email string?]
+                                           [:password string?]]}
+                       :handler (fn [{{:keys [first-name last-name password email]}
+                                      :body-params}] (-signin env first-name last-name password email))}}]
+    ["/login" {:post {:summary "Login to the web-store"
+                      :responses {200 {:description "Login success"}}
+                      :parameters {:body [:map
+                                          [:email string?]
+                                          [:password string?]]}
+                      :handler (fn [{{:keys [email password]}
+                                     :body-params}] (-login env email password))}}]
+    ["/product-groups" {:get {:summary "Get products groups"
+                              :responses {200 {:description "Product groups success"}}
+                              :parameters {:query [:map]}
+                              :handler (fn [req] (-product-groups env req))}}]
+    ["/products/:pg-id" {:get {:summary "Get products"
+                               :responses {200 {:description "Products success"}}
+                               :parameters {:query [:map]}
+                               :handler (fn [req] (-products env req))}}]
+    ["/product/:pg-id/:p-id" {:get {:summary "Get product"
+                                    :responses {200 {:description "Product success"}}
+                                    :parameters {:query [:map]}
+                                    :handler (fn [req] (-product env req))}}]]])
 
 ;; NOTE: If you want to check what middleware does you can uncomment rows 67-69 in:
 ;; https://github.com/metosin/reitit/blob/master/examples/ring-swagger/src/example/server.clj#L67-L69
@@ -197,8 +242,8 @@
                                                     (merge
                                                       re-exception/default-handlers
                                                       {::re-exception/wrap (fn [handler ^Exception e request]
-                                                                          (log/error e (.getMessage e))
-                                                                          (handler e request))}))
+                                                                             (log/error e (.getMessage e))
+                                                                             (handler e request))}))
                                                   ;; decoding request body
                                                   re-muuntaja/format-request-middleware
                                                   ;; coercing response bodys

@@ -26,6 +26,55 @@
       (is (= (ret :status) 200))
       (is (= (ret :body) {:info "/info.html => Info in HTML format"})))))
 
+(deftest ping-get-test
+  (log/debug "ENTER ping-get-test")
+  (testing "GET: /api/ping"
+    (let [ret (ss-tc/-call-api :get "ping" nil nil)]
+      (is (= (ret :status) 200))
+      (is (= (ret :body) {:reply "pong" :ret "ok"})))))
+
+(deftest failed-ping-get-extra-query-params-test
+  (log/debug "ENTER failed-ping-get-extra-query-params-test")
+  (testing "GET: /api/ping"
+    (let [ret (ss-tc/-call-api :get "ping?a=1" nil nil)]
+      (is (= (ret :status) 400))
+      (is (= (ret :body) {:coercion "malli"
+                          :humanized {:a ["disallowed key"]}
+                          :in ["request"
+                               "query-params"]
+                          :type "reitit.coercion/request-coercion"})))))
+
+(deftest ping-post-test
+  (log/debug "ENTER ping-post-test")
+  (testing "POST: /api/ping"
+    (let [ret (ss-tc/-call-api :post "ping" nil {:ping "hello"})]
+      (is (= (ret :status) 200))
+      (is (= (ret :body) {:reply "pong" :request "hello" :ret "ok"})))))
+
+(deftest failed-ping-post-missing-key-test
+  (log/debug "ENTER failed-ping-post-missing-key-test")
+  (testing "POST: /api/ping"
+    (let [ret (ss-tc/-call-api :post "ping" nil {:wrong-key "hello"})]
+      (is (= (ret :status) 400))
+      (is (= (ret :body) {:coercion "malli"
+                          :humanized {:ping ["missing required key"]}
+                          :in ["request"
+                               "body-params"]
+                          :type "reitit.coercion/request-coercion"})))))
+
+;; reitit adds mt/strip-extra-keys-transformer - probably changes in reitit 1.0,
+;; and therefore {:closed true} is not used with reitit < 1.0.
+#_(deftest failed-ping-post-extra-key-test
+    (log/debug "ENTER failed-ping-post-extra-key-test")
+    (testing "POST: /api/ping"
+      (let [ret (ss-tc/-call-api :post "ping" nil {:ping "hello" :extra-key "hello"})]
+        (is (= (ret :status) 400))
+        (is (= (ret :body) {:coercion "malli"
+                            :humanized {:ping ["TODO extra key"]}
+                            :in ["request"
+                                 "body-params"]
+                            :type "reitit.coercion/request-coercion"})))))
+
 (deftest signin-test
   (log/debug "ENTER signin-test")
   (testing "POST: /api/signin"
