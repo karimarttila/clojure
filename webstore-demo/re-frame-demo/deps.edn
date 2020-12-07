@@ -20,11 +20,11 @@
                                  integrant/repl {:mvn/version "0.3.1"}
                                  }}
            :backend {:extra-paths ["src/clj"]
-                     :extra-deps {integrant/integrant {:mvn/version "0.8.0"}
+                     :extra-deps {metosin/ring-http-response {:mvn/version "0.9.1"}
+                                  integrant/integrant {:mvn/version "0.8.0"}
                                   clj-time/clj-time {:mvn/version "0.15.2"}
                                   org.clojure/data.json {:mvn/version "1.0.0"}
                                   org.clojure/data.csv {:mvn/version "1.0.0"}
-                                  metosin/maailma {:mvn/version "1.1.0"}
                                   org.clojure/tools.logging {:mvn/version "1.0.0"}
                                   commons-logging/commons-logging {:mvn/version "1.2"}
                                   ch.qos.logback/logback-classic {:mvn/version "1.2.3"}
@@ -33,7 +33,6 @@
                                   org.postgresql/postgresql {:mvn/version "42.2.12"}
                                   ring/ring-core {:mvn/version "1.8.0"}
                                   ring/ring-jetty-adapter {:mvn/version "1.7.1"}
-                                  ring-cors/ring-cors {:mvn/version "0.1.13"}
                                   ring/ring-json {:mvn/version "0.4.0"}
                                   ring/ring-defaults {:mvn/version "0.3.2"}
                                   buddy/buddy-sign {:mvn/version "3.1.0"}

@@ -58,7 +58,7 @@
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="FILE" />
 	</logger>
-	<logger name="org.apache.activemq" level="warn"
+	<logger name="org.apache" level="warn"
 		additivity="false">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="FILE" />

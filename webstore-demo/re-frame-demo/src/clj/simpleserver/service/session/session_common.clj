@@ -1,7 +1,7 @@
 (ns simpleserver.service.session.session-common
   (:require [clojure.tools.logging :as log]
             [buddy.sign.jwt :as buddy-jwt]
-            [clj-time.core :as c-time]))
+            [clj-time.core :as clj-time]))
 
 (def my-hex-secret
   "Creates dynamically a hex secret when the server boots."
@@ -18,7 +18,7 @@
   [env email]
   (log/debug (str "ENTER create-json-web-token, email: " email))
   (let [my-secret my-hex-secret
-        exp-time (c-time/plus (c-time/now) (c-time/seconds (get-in env [:options :jwt :exp])))
+        exp-time (clj-time/plus (clj-time/now) (clj-time/seconds (get-in env [:options :jwt :exp])))
         my-claim {:email email :exp exp-time}
         json-web-token (buddy-jwt/sign my-claim my-secret)]
     json-web-token))

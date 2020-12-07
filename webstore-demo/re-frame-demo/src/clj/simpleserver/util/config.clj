@@ -1,11 +1,11 @@
 (ns simpleserver.util.config
   (:require
     [aero.core :as aero]
-    [clojure.java.io]))                                     ;; clj-kondo requires this?
+    [clojure.java.io :as io]))                                     ;; clj-kondo requires this?
 
 (defn create-config
   []
-  (aero/read-config (clojure.java.io/resource "config.edn")))
+  (aero/read-config (io/resource "config.edn")))
 
 
 ;; Commented out for clj-kondo
