@@ -13,7 +13,6 @@
             [reitit.ring.middleware.exception :as reitit-exception]
             [reitit.ring.middleware.parameters :as reitit-parameters]
             [reitit.ring.middleware.dev]
-            [malli.util :as m-util]
             [muuntaja.core :as mu-core]
             [simpleserver.service.domain.domain-service :as ss-domain-s]
             [simpleserver.service.user.user-service :as ss-user-s]
