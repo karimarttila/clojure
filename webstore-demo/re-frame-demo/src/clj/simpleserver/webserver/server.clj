@@ -186,23 +186,20 @@
                                            (-product-groups env auth)))}}]
     ["/products/:pg-id" {:get {:summary "Get products"
                                :responses {200 {:description "Products success"}}
-                               :parameters {:query [:map]}
+                               :parameters {:query [:map]
+                                            :path [:map [:pg-id string?]]}
                                :handler (fn [req]
                                           (let [auth (get-in req [:headers "authorization"])
-                                                ; TODO: Miksi ei sisällä :parameters :path ?
-                                                ; pg-id (get-in req [:parameters :path :pg-id])
-                                                pg-id (get-in req [:path-params :pg-id])]
+                                                pg-id (get-in req [:parameters :path :pg-id])]
                                             (-products env auth pg-id)))}}]
     ["/product/:pg-id/:p-id" {:get {:summary "Get product"
                                     :responses {200 {:description "Product success"}}
-                                    :parameters {:query [:map]}
+                                    :parameters {:query [:map]
+                                                 :path [:map [:pg-id string?] [:p-id string?]]}
                                     :handler (fn [req]
                                                (let [auth (get-in req [:headers "authorization"])
-                                                     ; TODO: Miksi ei sisällä :parameters :path ?
-                                                     ;pg-id (get-in req [:parameters :path :pg-id])
-                                                     pg-id (get-in req [:path-params :pg-id])
-                                                     ;p-id (get-in req [:parameters :path :p-id])
-                                                     p-id (get-in req [:path-params :p-id])]
+                                                     pg-id (get-in req [:parameters :path :pg-id])
+                                                     p-id (get-in req [:parameters :path :p-id])]
                                                  (-product env auth pg-id p-id)))}}]]])
 
 ;; NOTE: If you want to check what middleware does you can uncomment rows 67-69 in:
