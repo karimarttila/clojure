@@ -1,0 +1,16 @@
+{
+
+ :backend/data {:file-name "data/csv/d025f231-b860-44e8-90dc-c42e4482f976_Data.csv"}
+
+ :backend/jetty {:port 5522
+                 :join? false
+                 :env #ig/ref :backend/env}
+
+ :backend/env {:data #ig/ref :backend/data}
+
+
+ :backend/nrepl {:bind #profile {:prod "0.0.0.0"
+                                 :dev "localhost"}
+                 :port 3131}
+ }
+

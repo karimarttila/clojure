@@ -1,0 +1,60 @@
+@list:
+   just --list
+
+# Start backend repl.
+@backend:
+    clj -M:dev:test:common:backend:postgres -m nrepl.cmdline -i -C
+
+# Start backend repl with my toolbox.
+@backend-kari:
+    clj -M:dev:test:common:backend:postgres:kari -m nrepl.cmdline -i -C
+
+# Start backend repl with my toolbox and with debug-repl capability.
+@backend-debug-kari:
+    clj -M:dev:test:common:backend:kari -m nrepl.cmdline -m com.gfredericks.debug-repl/wrap-debug-repl -i -C
+
+# Init node packages.
+@init:
+   mkdir -p target
+   mkdir -p classes
+   npm install
+
+# start frontend auto-compilation
+@frontend:
+    npm run dev
+
+# SASS auto-compile
+@css:
+    npm run build:sass
+
+# Start frontend auto-compilation.
+# @frontend-kari:
+#   clj -M:dev:common:frontend:kari -m shadow.cljs.devtools.cli watch app
+
+# Update dependencies.
+@outdated:
+    clj -M:dev:test:common:backend:frontend:outdated --update
+
+# Create uberjar.
+@uberjar:
+    npm run build:sass
+    shadow-cljs release app
+    mkdir -p prod-resources/public/js
+    mkdir -p prod-resources/public/css
+    cp dev-resources/public/js/main.js prod-resources/public/js/main.js
+    cp dev-resources/public/css/style.css prod-resources/public/css/style.css
+    clj -Adev:common:backend:uberjar
+
+# Lint.
+@lint:
+    clj -M:dev:backend:common:frontend:test -m clj-kondo.main --lint src test
+
+# Test.
+@test options:
+    ./run-tests.sh {{options}}
+
+# Clean .cpcache and .shadow-cljs directories, run npm install
+@clean:
+    rm -rf .cpcache/*
+    rm -rf .shadow-cljs/*
+    npm install
