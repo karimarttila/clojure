@@ -60,13 +60,35 @@
            :years #{}}
           points))
 
+(defn- series-codes-to-names [series]
+  (reduce (fn [acc item]
+            (assoc acc (:series-code item) (:series-name item)))
+          {}
+          series))
+
+(defn- country-codes-to-names [countries]
+  (reduce (fn [acc item]
+            (assoc acc (:country-code item) (:country-name item)))
+          {}
+          countries))
+
 (defn get-data [data-files]
-  (let [data-points (get-data-points data-files)]
-    (merge
-      {:data data-points}
-      (get-metadata data-points))))
+  (let [data-points (get-data-points data-files)
+        {:keys [countries series years]} (get-metadata data-points)]
+    {:data data-points
+     :countries countries
+     :series series
+     :years years
+     :country-codes (country-codes-to-names countries)
+     :series-codes (series-codes-to-names series)}))
 
 (comment
   (sort (:years (get-metadata (take 10000 (:data (user/data))))))
+  (:series (user/data))
+  (:years (user/data))
+  (:countries (user/data))
+  (:country-codes (user/data))
+  (:series-codes (user/data))
+
 
   )
