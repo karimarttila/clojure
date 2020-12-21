@@ -17,7 +17,7 @@
    (remove #(and (= (code1 %) value1) (= (code2 %) value2) (= (code3 %) value3)) points)))
 
 (defn remove-na-values [points]
-  (remove-by :value "N/A" points))
+  (remove-by :value :na points))
 
 (comment
   (:series (user/data))
@@ -35,6 +35,11 @@
        (into #{})
        )
 
+  (->> (:data (user/data))
+       (filter-by :value :na)
+       count
+       )
+  (count (:data (user/data)))
 
 
   )
