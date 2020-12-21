@@ -10,6 +10,7 @@
     [aero.core :as aero]
     [nrepl.server :as nrepl]
     [potpuri.core :as p]
+    [hashp.core]
     [worldstat.backend.routes.http :as http]
     [worldstat.backend.routes.routes :as routes]
     [worldstat.backend.data.init :as init])
@@ -36,12 +37,13 @@
   (.stop server))
 
 
-(defmethod ig/init-key :backend/data [_ {:keys [file-name]}]
-  (init/get-data file-name))
+(defmethod ig/init-key :backend/data [_ {:keys [data-files]}]
+  (init/get-data data-files))
 
-;; Data doesn't change, no need to reload it.
-(defmethod ig/resume-key :backend/nrepl [_ _ _ old-impl]
-  old-impl)
+(defmethod ig/resume-key :backend/data [_ {:keys [always-reset data-files]} _ old-impl]
+  (if always-reset
+    (init/get-data data-files)
+    old-impl))
 
 (defmethod ig/init-key :backend/nrepl [_ {:keys [bind port]}]
   (if (and bind port)
@@ -77,3 +79,6 @@
   (ig-repl/go)
   )
 
+(comment
+  (require '[hashp.core])
+  )

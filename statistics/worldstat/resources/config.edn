@@ -1,6 +1,9 @@
 {
 
- :backend/data {:file-name "data/csv/d025f231-b860-44e8-90dc-c42e4482f976_Data.csv"}
+ :backend/data {:always-reset true
+                :data-files ["data/csv/d025f231-b860-44e8-90dc-c42e4482f976_Data.csv"
+                             "data/csv/6f85ca2a-e4ad-4def-9a7e-536f827a55c7_Data.csv"]
+                }
 
  :backend/jetty {:port 5522
                  :join? false
