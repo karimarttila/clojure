@@ -20,26 +20,4 @@
   (remove-by :value :na points))
 
 (comment
-  (:series (user/data))
-
-  (count (filter-by :series-code :CC.EST (:data (user/data))))
-
-  (:SH.TBS.INCD (:series-codes (user/data)))
-  (->> (:data (user/data))
-       (filter-by :series-code :SH.TBS.INCD)
-       remove-na-values
-       (sort-by :value)
-       (reverse)
-       (take 100)
-       (map :country-name)
-       (into #{})
-       )
-
-  (->> (:data (user/data))
-       (filter-by :value :na)
-       count
-       )
-  (count (:data (user/data)))
-
-
   )
