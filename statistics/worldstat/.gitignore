@@ -10,6 +10,7 @@ node_modules/
 yarn.lock
 package-lock.json
 .shadow-cljs/
-
+prod-resources/public/js/
+prod-resources/public/css/
 
 

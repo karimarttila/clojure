@@ -1,6 +1,3 @@
-(ns worldstat.frontend.main)
-
-
 (ns worldstat.frontend.main
   (:require [re-frame.core :as re-frame]
             [re-frame.db]
