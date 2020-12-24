@@ -14,6 +14,6 @@
 
  :backend/nrepl {:bind #profile {:prod "0.0.0.0"
                                  :dev "localhost"}
-                 :port 3131}
+                 :port 5533}
  }
 

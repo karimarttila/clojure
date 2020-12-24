@@ -1,10 +1,10 @@
 # Shadow
-/dev-resources/public/js
-/dev-resources/public/css
-/node_modules
-/target
-/yarn.lock
-/package-lock.json
-/.shadow-cljs
+dev-resources/public/js/
+dev-resources/public/css/
+node_modules/
+target/
+yarn.lock
+package-lock.json
+.shadow-cljs/
 dynamodb/dev-resources/
-
+prod-resources/

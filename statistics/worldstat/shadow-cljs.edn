@@ -1,0 +1,18 @@
+{:deps {:aliases [:dev :common :frontend]}
+ :builds {:app {:target :browser
+                :output-dir "dev-resources/public/js"
+                :asset-path "/js"
+                :devtools {:watch-dir "dev-resources/public/css"
+                           :watch-path "/css"
+                           ;:preloads [devtools.preload
+                           ;           reagent-dev-tools.preload
+                           ;           day8.re-frame-10x.preload
+                           ;           ]
+                           }
+                :modules {:main {:entries [worldstat.frontend.main]}}
+                ;:compiler-options {:infer-externs :auto
+                ;                   :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}
+                ;                   :external-config {:reagent-dev-tools {:state-atom re-frame.db.app-db}}
+                ;                   }
+                ;; :source-map true
+                }}}

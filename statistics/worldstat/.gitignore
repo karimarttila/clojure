@@ -2,3 +2,14 @@
 scratch/
 .~lock*
 data/raw-data/
+target/
+
+dev-resources/public/js/
+dev-resources/public/css/
+node_modules/
+yarn.lock
+package-lock.json
+.shadow-cljs/
+
+
+

@@ -1,0 +1,100 @@
+
+body {
+  font-family: "Times New Roman", Times, serif;
+  padding: 100px;
+  font-size: 18px;
+}
+
+////////////////////////////////////////
+// Generic styles
+
+.ws-label {
+  display: inline-block;
+  width: 110px;
+  color: darkslategray;
+}
+
+.ws-main {
+  background: #fff;
+}
+
+.ws-header {
+  font-size: 34px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+
+.ws-debug-panel {
+  .hr {
+  margin-top: 100px;
+  }
+  .header {
+    font-size: 28px;
+  }
+  .body {
+    font-size: 12px;
+  }
+}
+
+.ws-basic-button {
+  margin-top: 25px;
+  margin-left: 10px;
+}
+
+.ws-header-button {
+  margin-right: 5px;
+}
+
+sf-notify {
+  padding: 5px;
+  font-size: 15px;
+  color: black;
+}
+
+.ws-error-notify {
+//  @extend .ws-notify;
+  padding: 5px;
+  font-size: 15px;
+  color: black;
+  background-color: #f44336;
+}
+
+// TODO: For some reason extend not working another time.
+.ws-ok-notify {
+//  @extend .ws-notify;
+  padding: 5px;
+  font-size: 15px;
+  color: black;
+  background-color: #36f4b2;
+}
+
+.ws-closebtn {
+  margin-left: 20px;
+  color: white;
+  font-weight: bold;
+  float: right;
+  font-size: 25px;
+  line-height: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.ws-page-container {
+  display: flex;
+  flex-flow: row;
+}
+
+.ws-page-inner-notification {
+  padding-left: 20px;
+}
+
+.ws-table {
+  th, td {
+    text-align: left;
+    padding: 8px;
+  }
+
+}
+
