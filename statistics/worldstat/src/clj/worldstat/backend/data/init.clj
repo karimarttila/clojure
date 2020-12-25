@@ -72,6 +72,9 @@
           {}
           countries))
 
+(defn non-country-codes []
+  #{:SAS :TSA :ECA :TLA :PRE :TMN :LTE :OED :LIC :CAF :SSF :SST :EAP :TEC })
+
 (defn get-data [data-files]
   (let [data-points (get-data-points data-files)
         {:keys [countries series years]} (get-metadata data-points)]
@@ -80,7 +83,10 @@
      :series series
      :years years
      :country-codes (country-codes-to-names countries)
-     :series-codes (series-codes-to-names series)}))
+     :series-codes (series-codes-to-names series)
+     :non-country-codes non-country-codes}))
+
+
 
 (comment
   (sort (:years (get-metadata (take 10000 (:data (user/data))))))

@@ -11,6 +11,7 @@
             [oz.core :as oz]
             [worldstat.frontend.util :as ws-util]
             [worldstat.frontend.state :as ws-state]
+            [worldstat.frontend.worldmap :as ws-wmap]
             ))
 
 
@@ -69,14 +70,14 @@
   [:div
    [:p "Trying  oz..."]
    [:p ""]
-   [oz/vega-lite line-plot]])
+   [oz/vega-lite line-plot {:log-level :debug}]
+   [oz/vega-lite ws-wmap/world-schema]])
 
 
 (defn home-page []
   (let []
     ; If we have jwt in app db we are logged-in.
     (ws-util/clog "ENTER home-page")
-    (re-frame/dispatch [::ws-state/navigate ::ws-state/product-group])
     ;; NOTE: You need the div here or you are going to see only the debug-panel!
     [:div
      (content)
