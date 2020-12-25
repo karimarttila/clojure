@@ -8,6 +8,7 @@
             [reitit.frontend :as rf]
             [reitit.frontend.controllers :as rfc]
             [reitit.frontend.easy :as rfe]
+            [oz.core :as oz]
             [worldstat.frontend.util :as ws-util]
             [worldstat.frontend.state :as ws-state]
             ))
@@ -46,8 +47,30 @@
 
 ;;; Views ;;;
 
-(defn welcome []
-  [:div])
+;; An example how to visualize data with Oz / Vega lite.
+
+(defn get-data [& names]
+  (for [n names
+        i (range 2002 2018)]
+    {:year i :country n :value (+ (Math/pow (* i (count n)) 0.65) (rand-int (* (count n) 18.54)))}))
+
+(def line-plot
+  {:data {:values (get-data "Finland" "India")}
+   :encoding {:x {:title "Year" :field "year" :type "quantitative"
+                  :axis {:labelAngle -45
+                         :tickCount 10
+                         :labelExp "tostring(datum.label[0])"
+                         :format ".0f"}}
+              :y {:title "Nutrition" :field "value" :type "quantitative"}
+              :color {:field "country" :type "nominal"}}
+   :mark "line"})
+
+(defn content []
+  [:div
+   [:p "Trying  oz..."]
+   [:p ""]
+   [oz/vega-lite line-plot]])
+
 
 (defn home-page []
   (let []
@@ -56,7 +79,7 @@
     (re-frame/dispatch [::ws-state/navigate ::ws-state/product-group])
     ;; NOTE: You need the div here or you are going to see only the debug-panel!
     [:div
-     (welcome)
+     (content)
      (ws-util/debug-panel {:TODO "todo"})]))
 
 
