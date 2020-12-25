@@ -5,6 +5,12 @@
             [worldstat.backend.routes.app-routes :as app-routes]
             ))
 
+;; ******************************************************************
+; Curl api like:
+; http localhost:5522/worldstat/api/version
+;; ******************************************************************
+
+
 (def my-version {:version 0.1 :date "2020-12-19"})
 
 (defn create [env]

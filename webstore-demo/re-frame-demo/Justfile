@@ -87,4 +87,11 @@
 @clean:
     rm -rf .cpcache/*
     rm -rf .shadow-cljs/*
+    rm -rf target/*
+    rm -rf dev-resources/public/js/*
+    rm -rf dev-resources/public/css/*
+    rm -rf prod-resources/public/js/*
+    rm -rf prod-resources/public/css/*
+    rm -rf dynamodb/dev-resources/*
+    rm -rf out/*
     npm install

@@ -15,6 +15,8 @@
     [clojure.tools.logging :as log]
     [ring.util.http-response :as r]))
 
+;; Test: http localhost:5522/worldstat/api/health/ping
+
 (defn handler [{:keys [routes]}]
   (ring/ring-handler
     (ring/router
