@@ -147,10 +147,8 @@
 
 ;;; Setup ;;;
 
-(def debug? ^boolean goog.DEBUG)
-
 (defn dev-setup []
-  (when debug?
+  (when ws-util/debug?
     (enable-console-print!)
     (println "dev mode")))
 

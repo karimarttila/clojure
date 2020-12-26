@@ -57,11 +57,9 @@
      :value 0,
      }
     {:name "center0",
-     :value 0,
-     :bind {:input "range", :min -180, :max 180, :step 1}}
+     :value 0,}
     {:name "center1",
-     :value 0,
-     :bind {:input "range", :min -90, :max 90, :step 1}}
+     :value 23,}
     {:name "translate0", :update "width / 2"}
     {:name "translate1", :update "height / 2"}
     {:name "graticuleDash" :value 0}

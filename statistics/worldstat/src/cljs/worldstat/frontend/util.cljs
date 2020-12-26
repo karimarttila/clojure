@@ -3,8 +3,16 @@
             [cljs.pprint]
             [worldstat.frontend.state :as ws-state]))
 
+
+(def debug? ^boolean goog.DEBUG)
+
+(defn vega-debug []
+  (if debug?
+    {:log-level :debug}
+    {}))
+
 ;; Application wide properties.
-(def backend-host-config {:host "localhost" :port 6161})
+(def backend-host-config {:host "localhost" :port 5522})
 
 (defn valid?
   "Simple validator. Checks in [k v] v is a string and not empty."
