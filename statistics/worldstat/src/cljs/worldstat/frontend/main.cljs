@@ -53,7 +53,7 @@
 (defn get-data [& names]
   (for [n names
         i (range 2002 2018)]
-    {:year i :country n :value (+ (Math/pow (* i (count n)) 0.65) (rand-int (* (count n) 18.54)))}))
+    {:year i :country n :value (+ (Math/pow (* i (count n)) 0.66) (rand-int (* (count n) 18.54)))}))
 
 (def line-plot
   {:data {:values (get-data "Finland" "India")}
@@ -70,8 +70,8 @@
   [:div
    [:p "Trying  oz..."]
    [:p ""]
-   [oz/vega-lite line-plot {:log-level :debug}]
-   [oz/vega-lite ws-wmap/world-schema]])
+   [oz/vega-lite line-plot (ws-util/vega-debug)]
+   [oz/vega-lite ws-wmap/world-schema (ws-util/vega-debug)]])
 
 
 (defn home-page []

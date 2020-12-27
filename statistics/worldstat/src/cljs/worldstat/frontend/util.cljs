@@ -6,10 +6,14 @@
 
 (def debug? ^boolean goog.DEBUG)
 
-(defn vega-debug []
+(defn vega-debug
+  "In development show the actions menu and log with debug level.
+  In production logging is :none, and show only export in actions menu."
+  []
   (if debug?
     {:log-level :debug}
-    {}))
+    {:log-level :none
+     :actions {:export true, :source false, :compiled false, :editor false}}))
 
 ;; Application wide properties.
 (def backend-host-config {:host "localhost" :port 5522})
