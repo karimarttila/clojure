@@ -21,7 +21,12 @@
 
 (comment
   (count (filter-by :country-id nil (:data (user/data))))
-  (set! *print-length* 200)
+  (reduce (fn [acc country]
+            (conj acc {:country-name (:country-name country)
+                       :country-code (:country-code country)}))
+          #{}
+          (filter-by :country-id nil (:data (user/data))))
+  (set! *print-length* 2000)
   (sort-by :country-name (:countries (user/data)))
 
   )

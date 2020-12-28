@@ -82,15 +82,29 @@
           :id (Integer/parseInt id)
           :name name}) (create-csv-data file :separator \;)))
 
-(defn non-country-codes []
-  #{:SAS :TSA :ECA :TLA :PRE :TMN :LTE :OED :LIC :CAF :SSF :SST :EAP :TEC})
+(def non-country-codes
+  #{;Continents, income groups etc.
+    :SAS :TSA :ECA :TLA :PRE :TMN :LTE :OED :LIC :CAF :SSF :SST :EAP :TEC :LMY :LAC :NAC :LMC :EUU :EAR :FCS
+    :UMC :SSA :HIC :ECS :MEA :LDC :INX :TSS :TEA :CEB :LNC :MIC :EMU :HPC :ARB :MNA :PST :EAS :LCN
+    ; Small countries
+    :SXM :CUW :IMN :TLS :JEY :PSE :PSS :CSS :CHI :MAF :OSS
+    ; Couldn't find country-id
+    :SSD ; South Sudan
+    :XKX ; Kosovo
+    })
+
+(defn remove-non-country-values [values a-set]
+  (remove (fn [item]
+            (a-set (:country-code item)))
+          values))
 
 (defn get-data [data-files topojson-file]
   (let [topojson-country-codes (read-topojson-country-codes topojson-file)
         ids (into {} (map (juxt :acr :id) topojson-country-codes))
         data-points (get-data-points data-files ids)
         {:keys [countries series years]} (get-metadata data-points)]
-    {:data data-points
+    {:raw-data data-points
+     :data (remove-non-country-values data-points non-country-codes)
      :countries countries
      :series series
      :years years
@@ -110,7 +124,7 @@
   (:series (user/data))
   (:years (user/data))
   (:countries (user/data))
+  (sort-by :country-name (:countries (user/data)))
   (:country-codes (user/data))
   (:series-codes (user/data))
-
   )
