@@ -20,6 +20,7 @@
                                  }}
            :backend {:extra-paths ["src/clj"]
                      :extra-deps {metosin/ring-http-response {:mvn/version "0.9.1"}
+                                  metosin/jsonista {:mvn/version "0.2.7"}
                                   integrant/integrant {:mvn/version "0.8.0"}
                                   kixi/stats {:mvn/version "0.5.4"}
                                   tick/tick {:mvn/version "0.4.27-alpha"}
@@ -35,8 +36,7 @@
                                   buddy/buddy-sign {:mvn/version "3.1.0"}
                                   org.eclipse.jetty/jetty-client {:mvn/version "9.4.26.v20200117"}
                                   clj-http/clj-http {:mvn/version "3.10.1"}
-                                  nrepl/nrepl {:mvn/version "0.8.2"}
-                                  }}
+                                  nrepl/nrepl {:mvn/version "0.8.2"}}}
 
            :frontend {:extra-paths ["src/cljs"]
                       :extra-deps {org.clojure/clojurescript {:mvn/version "1.10.764"}

@@ -37,12 +37,12 @@
   (.stop server))
 
 
-(defmethod ig/init-key :backend/data [_ {:keys [data-files]}]
-  (init/get-data data-files))
+(defmethod ig/init-key :backend/data [_ {:keys [data-files topojson-file]}]
+  (init/get-data data-files topojson-file))
 
-(defmethod ig/resume-key :backend/data [_ {:keys [always-reset data-files]} _ old-impl]
+(defmethod ig/resume-key :backend/data [_ {:keys [always-reset data-files topojson-file]} _ old-impl]
   (if always-reset
-    (init/get-data data-files)
+    (init/get-data data-files topojson-file)
     old-impl))
 
 (defmethod ig/init-key :backend/nrepl [_ {:keys [bind port]}]

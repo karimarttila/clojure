@@ -67,11 +67,12 @@
    :mark "line"})
 
 (defn content []
-  [:div
-   [:p "Trying  oz..."]
-   [:p ""]
-   [oz/vega-lite line-plot (ws-util/vega-debug)]
-   [oz/vega-lite ws-wmap/world-schema (ws-util/vega-debug)]])
+  [:div.ws-content
+   [:div.ws-metric-content
+    [:p "Tähän metriikka valinta"]
+    [oz/vega-lite line-plot (ws-util/vega-debug)]]
+   [:div.ws-worldmap-content
+    [oz/vega-lite ws-wmap/world-schema (ws-util/vega-debug)]]])
 
 
 (defn home-page []

@@ -21,7 +21,8 @@
     "vega": "^5.13.0",
     "vega-lite": "^4.17.0",
     "vega-themes": "^2.9.1",
-    "vega-embed": "^6.15.0"
+    "vega-embed": "^6.15.0",
+    "bulma": "^0.9.1"
   },
   "scripts": {
     "watch:sass": "rollup -c -w",

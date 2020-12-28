@@ -8,6 +8,15 @@ body {
 ////////////////////////////////////////
 // Generic styles
 
+
+.ws-header {
+  font-size: 34px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+
 .ws-label {
   display: inline-block;
   width: 110px;
@@ -18,12 +27,26 @@ body {
   background: #fff;
 }
 
-.ws-header {
-  font-size: 34px;
+.ws-content {
+  font-size: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ws-metric-content {
+  font-size: 18px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
+
+.ws-worldmap-content {
+  font-size: 18px;
+  display: flex;
+  justify-content: space-between;
+}
+
 
 
 .ws-debug-panel {
@@ -38,63 +61,5 @@ body {
   }
 }
 
-.ws-basic-button {
-  margin-top: 25px;
-  margin-left: 10px;
-}
 
-.ws-header-button {
-  margin-right: 5px;
-}
-
-sf-notify {
-  padding: 5px;
-  font-size: 15px;
-  color: black;
-}
-
-.ws-error-notify {
-//  @extend .ws-notify;
-  padding: 5px;
-  font-size: 15px;
-  color: black;
-  background-color: #f44336;
-}
-
-// TODO: For some reason extend not working another time.
-.ws-ok-notify {
-//  @extend .ws-notify;
-  padding: 5px;
-  font-size: 15px;
-  color: black;
-  background-color: #36f4b2;
-}
-
-.ws-closebtn {
-  margin-left: 20px;
-  color: white;
-  font-weight: bold;
-  float: right;
-  font-size: 25px;
-  line-height: 10px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.ws-page-container {
-  display: flex;
-  flex-flow: row;
-}
-
-.ws-page-inner-notification {
-  padding-left: 20px;
-}
-
-.ws-table {
-  th, td {
-    text-align: left;
-    padding: 8px;
-  }
-
-}
 

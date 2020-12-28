@@ -71,6 +71,5 @@
    [{:name "world",
      :url "data/world-110m.json",
      :format {:type "topojson", :feature "countries"}}
-    {:name "graticule", :transform [{:type "graticule"}]}]})
-
-
+    {:name "graticule", :transform [{:type "graticule"}]}
+    ]})

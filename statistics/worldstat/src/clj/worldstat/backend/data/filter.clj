@@ -20,4 +20,8 @@
   (remove-by :value :na points))
 
 (comment
+  (count (filter-by :country-id nil (:data (user/data))))
+  (set! *print-length* 200)
+  (sort-by :country-name (:countries (user/data)))
+
   )

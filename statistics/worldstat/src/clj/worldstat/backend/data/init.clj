@@ -3,10 +3,10 @@
             [clojure.data.csv :as csv]))
 
 
-(defn- create-csv-data [csv-file]
+(defn- create-csv-data [csv-file & opts]
   (with-open [reader (io/reader csv-file)]
     (doall
-      (csv/read-csv reader))))
+      (apply csv/read-csv reader opts))))
 
 (defn- convert-row [row]
   (when (seq (second row))
@@ -35,14 +35,17 @@
   (let [na-country-codes (get-na-country-codes points)]
     (remove #(na-country-codes (:country-code %)) points)))
 
-(defn- convert-all [csv-data]
-  (mapcat convert-row (rest csv-data)))
+(defn- convert-all [csv-data ids]
+  (map (fn [item]
+         (let [country-code (:country-code item)]
+           (assoc item :country-id (country-code ids))))
+       (mapcat convert-row (rest csv-data))))
 
-(defn- get-data-points [data-files]
+(defn- get-data-points [data-files ids]
   (-> (flatten (for [file data-files]
                  (-> file
                      create-csv-data
-                     convert-all)))
+                     (convert-all ids))))
       ; filter-na-countries
       ))
 
@@ -72,11 +75,20 @@
           {}
           countries))
 
-(defn non-country-codes []
-  #{:SAS :TSA :ECA :TLA :PRE :TMN :LTE :OED :LIC :CAF :SSF :SST :EAP :TEC })
 
-(defn get-data [data-files]
-  (let [data-points (get-data-points data-files)
+(defn read-topojson-country-codes [file]
+  (map (fn [[name acr id]]
+         {:acr (keyword acr)
+          :id (Integer/parseInt id)
+          :name name}) (create-csv-data file :separator \;)))
+
+(defn non-country-codes []
+  #{:SAS :TSA :ECA :TLA :PRE :TMN :LTE :OED :LIC :CAF :SSF :SST :EAP :TEC})
+
+(defn get-data [data-files topojson-file]
+  (let [topojson-country-codes (read-topojson-country-codes topojson-file)
+        ids (into {} (map (juxt :acr :id) topojson-country-codes))
+        data-points (get-data-points data-files ids)
         {:keys [countries series years]} (get-metadata data-points)]
     {:data data-points
      :countries countries
@@ -84,17 +96,21 @@
      :years years
      :country-codes (country-codes-to-names countries)
      :series-codes (series-codes-to-names series)
-     :non-country-codes non-country-codes}))
+     :non-country-codes non-country-codes
+     :country-ids ids
+     :topojson-country-codes topojson-country-codes
+
+     }))
 
 
 
 (comment
-  (sort (:years (get-metadata (take 10000 (:data (user/data))))))
+  (create-csv-data "data/csv/topojson-country-codes.csv")
+  (sort (:years (get-metadata (take 100 (:data (user/data))))))
   (:series (user/data))
   (:years (user/data))
   (:countries (user/data))
   (:country-codes (user/data))
   (:series-codes (user/data))
-
 
   )
