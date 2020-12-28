@@ -77,19 +77,18 @@
 
 
 (defn read-topojson-country-codes [file]
-  (map (fn [[name acr id]]
+  (map (fn [[name _ acr id]]
          {:acr (keyword acr)
           :id (Integer/parseInt id)
-          :name name}) (create-csv-data file :separator \;)))
+          :name name})
+       ; Skip the header row.
+       (rest (create-csv-data file :separator \;))))
 
 (def non-country-codes
-  #{;Continents, income groups etc.
-    :SAS :TSA :ECA :TLA :PRE :TMN :LTE :OED :LIC :CAF :SSF :SST :EAP :TEC :LMY :LAC :NAC :LMC :EUU :EAR :FCS
-    :UMC :SSA :HIC :ECS :MEA :LDC :INX :TSS :TEA :CEB :LNC :MIC :EMU :HPC :ARB :MNA :PST :EAS :LCN
-    ; Small countries
-    :SXM :CUW :IMN :TLS :JEY :PSE :PSS :CSS :CHI :MAF :OSS
-    ; Couldn't find country-id
-    :SSD ; South Sudan
+  #{;Continents, income groups etc, small countries etc.
+    :SAS :TSA :ECA :TLA :PRE :TMN :LTE :OED :LIC :CAF :SSF :SST :EAP :TEC :LMY :LAC :NAC :LMC :EUU :EAR :FCS :WLD :UMC
+    :SSA :HIC :ECS :MEA :LDC :INX :TSS :TEA :CEB :LNC :MIC :EMU :HPC :ARB :MNA :PST :EAS :LCN :PSS :CSS :ANT :CHI :OSS
+    ; Couldn't find country id
     :XKX ; Kosovo
     })
 
@@ -120,6 +119,7 @@
 
 (comment
   (create-csv-data "data/csv/topojson-country-codes.csv")
+  (read-topojson-country-codes "data/csv/topojson-country-codes.csv")
   (sort (:years (get-metadata (take 100 (:data (user/data))))))
   (:series (user/data))
   (:years (user/data))
