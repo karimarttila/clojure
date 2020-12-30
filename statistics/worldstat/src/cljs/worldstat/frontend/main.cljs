@@ -10,9 +10,8 @@
             [reitit.frontend.easy :as rfe]
             [oz.core :as oz]
             [worldstat.frontend.util :as ws-util]
-            [worldstat.frontend.state :as ws-state]
-            [worldstat.frontend.worldmap :as ws-wmap]
-            ))
+            [worldstat.frontend.http :as ws-http]
+            [worldstat.frontend.state :as ws-state]))
 
 
 ;; ******************************************************************
@@ -24,6 +23,42 @@
 ;; ******************************************************************
 
 ;;; Events ;;;
+
+
+(re-frame/reg-event-db
+  ::ret-ok
+  (fn [db [_ res-body]]
+    (ws-util/clog "reg-event-db ok: " res-body)
+    (let [world-data (:world-data res-body)
+          _ (ws-util/clog "world-data" world-data)
+          metric (keyword (:metric res-body))
+          _ (ws-util/clog "metric" metric)]
+      (-> db
+          (assoc-in [:data metric] world-data)))))
+
+(re-frame/reg-event-db
+  ::ret-failed
+  (fn [db [_ res-body]]
+    (ws-util/clog "reg-event-db failed" db)
+    (assoc-in db [:error :response] {:ret :failed
+                                     :msg (get-in res-body [:response :msg])})))
+
+(re-frame/reg-sub
+  ::world-data
+  (fn [db params]
+    (ws-util/clog "::world-data, params" params)
+    (let [metric (nth params 1)
+          _ (ws-util/clog "metric" metric)
+          world-data (get-in db [:data metric])
+          _ (ws-util/clog "world-data" world-data)
+          _ (ws-util/clog "db" db)]
+      world-data)))
+
+(re-frame/reg-event-fx
+  ::get-world-data
+  (fn [{:keys [db]} [_ metric]]
+    (ws-util/clog "get-world-data, metric" {:metric metric})
+    (ws-http/http-get db (str "/worldstat/api/data/" (name metric)) nil ::ret-ok ::ret-failed)))
 
 (re-frame/reg-event-db
   ::initialize-db
@@ -66,23 +101,23 @@
               :color {:field "country" :type "nominal"}}
    :mark "line"})
 
-(defn content []
-  [:div.ws-content
-   [:div.ws-metric-content
-    [:p "Tähän metriikka valinta"]
-    [oz/vega-lite line-plot (ws-util/vega-debug)]]
-   [:div.ws-worldmap-content
-    [oz/vega-lite ws-wmap/world-schema (ws-util/vega-debug)]]])
-
-
 (defn home-page []
-  (let []
-    ; If we have jwt in app db we are logged-in.
-    (ws-util/clog "ENTER home-page")
-    ;; NOTE: You need the div here or you are going to see only the debug-panel!
-    [:div
-     (content)
-     (ws-util/debug-panel {:TODO "todo"})]))
+  ; If we have jwt in app db we are logged-in.
+  (ws-util/clog "ENTER home-page")
+  ;; NOTE: You need the div here or you are going to see only the debug-panel!
+  (fn []
+    (let [metric :SP.POP.TOTL ; TODO
+          world-data @(re-frame/subscribe [::world-data metric])
+          _ (if-not world-data (re-frame/dispatch [::get-world-data metric]))]
+      [:div.ws-content
+       [:div.ws-metric-content
+        [:p "Tähän metriikka valinta"]
+        [oz/vega-lite line-plot (ws-util/vega-debug)]]
+       [:div.ws-worldmap-content
+        [oz/vega-lite world-data (ws-util/vega-debug)]]
+       (ws-util/debug-panel {:metric metric
+                             :world-data world-data})]
+      )))
 
 
 ;;; Effects ;;;

@@ -1,6 +1,7 @@
 (ns worldstat.backend.data.init
   (:require [clojure.java.io :as io]
-            [clojure.data.csv :as csv]))
+            [clojure.data.csv :as csv]
+            [clojure.tools.logging :as log]))
 
 
 (defn- create-csv-data [csv-file & opts]
@@ -77,6 +78,7 @@
 
 
 (defn read-topojson-country-codes [file]
+  (log/debug "ENTER read-topojson-country-codes")
   (map (fn [[name _ acr id]]
          {:acr (keyword acr)
           :id (Integer/parseInt id)
@@ -98,6 +100,7 @@
           values))
 
 (defn get-data [data-files topojson-file]
+  (log/debug "ENTER get-data")
   (let [topojson-country-codes (read-topojson-country-codes topojson-file)
         ids (into {} (map (juxt :acr :id) topojson-country-codes))
         data-points (get-data-points data-files ids)

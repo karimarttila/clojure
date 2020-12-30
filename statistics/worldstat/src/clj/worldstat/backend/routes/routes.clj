@@ -2,8 +2,8 @@
   (:require [reitit.swagger-ui :as swagger-ui]
             [reitit.swagger :as swagger]
             [ring.util.http-response :as r]
-            [worldstat.backend.routes.app-routes :as app-routes]
-            ))
+            [worldstat.backend.data.world :as world]
+            [worldstat.backend.routes.app-routes :as app-routes]))
 
 ;; ******************************************************************
 ; Curl api like:
@@ -32,8 +32,8 @@
    ["/api"
     ["/version" {:swagger {:tags ["version"]}}
      ["" {:get {:summary "get version info"
-                     :responses {200 {:description "version info"}}
-                     :handler (constantly {:status 200, :body my-version})}}]]
+                :responses {200 {:description "version info"}}
+                :handler (constantly {:status 200, :body my-version})}}]]
     ["/health" {:swagger {:tags ["health"]}}
      ["/ping" {:get {:summary "ping"
                      :responses {200 {:description "pong"}}
@@ -50,6 +50,14 @@
                                  (let [body (get-in req [:parameters :body])
                                        myreq (:ping body)]
                                    (r/ok {:request myreq :reply "pong"})))}}]]
+    ["/data" {:swagger {:tags ["data"]}}
+     ["/:metric" {:get {:summary "metric"
+                        :parameters {:path [:map [:metric string?]]}
+                        :responses {200 {:description "data"}}
+                        :handler (fn [req]
+                                   (let [metric (get-in req [:parameters :path :metric])]
+                                     (-> (world/get-world-data (keyword metric))
+                                         r/ok)))}}]]
     (app-routes/routes env)]])
 
 (comment

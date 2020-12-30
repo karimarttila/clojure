@@ -1,4 +1,5 @@
-(ns worldstat.frontend.worldmap)
+(ns worldstat.backend.data.world
+  (:require [clojure.tools.logging :as log]))
 
 ;; Using the example in https://vega.github.io/vega/examples/world-map/
 ;; + minor tuning.
@@ -62,4 +63,7 @@
           {:name "graticule" :transform [{:type "graticule"}]}
           {:name "country-names" :transform [{:type "graticule"}]}]})
 
-
+(defn get-world-data [metric]
+  (log/debug "ENTER get-world-data, metric: " metric)
+  {:metric metric
+   :world-data world-schema})
