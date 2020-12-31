@@ -1,32 +1,25 @@
 (ns worldstat.backend.data.filter)
 
 (defn filter-by
-  ([code value points]
-   (filter #(= (code %) value) points))
-  ([code1 value1 code2 value2 points]
-   (filter #(and (= (code1 %) value1) (= (code2 %) value2)) points))
-  ([code1 value1 code2 value2 code3 value3 points]
-   (filter #(and (= (code1 %) value1) (= (code2 %) value2) (= (code3 %) value3)) points)))
+  "A transducer for filtering by code/value."
+  [code value]
+  (filter #(= (code %) value)))
 
 (defn remove-by
-  ([code value points]
-   (remove #(= (code %) value) points))
-  ([code1 value1 code2 value2 points]
-   (remove #(and (= (code1 %) value1) (= (code2 %) value2)) points))
-  ([code1 value1 code2 value2 code3 value3 points]
-   (remove #(and (= (code1 %) value1) (= (code2 %) value2) (= (code3 %) value3)) points)))
+  "A transducer for removing entities by code/value"
+  [code value]
+  (remove #(= (code %) value)))
 
 (defn remove-na-values [points]
-  (remove-by :value :na points))
+  (transduce (remove-by :value :na) conj points))
 
 (comment
-  (count (filter-by :country-id nil (:data (user/data))))
-  (reduce (fn [acc country]
-            (conj acc {:country-name (:country-name country)
-                       :country-code (:country-code country)}))
-          #{}
-          (filter-by :country-id nil (:data (user/data))))
   (set! *print-length* 2000)
-  (sort-by :country-name (:countries (user/data)))
+  (count (:data (user/data)))
+  (count (remove-na-values (:data (user/data))))
+  (count (transduce (filter-by :value :na) conj (:data (user/data))))
+  (transduce (filter-by :country-code :FIN) conj (:data (user/data)))
+  (def xf-fin-y2002 (comp (filter-by :country-code :FIN) (filter-by :year 2002)))
+  (transduce xf-fin-y2002 conj (:data (user/data)))
 
   )
