@@ -56,7 +56,7 @@
                         :responses {200 {:description "data"}}
                         :handler (fn [req]
                                    (let [metric (get-in req [:parameters :path :metric])]
-                                     (-> (world/get-world-data (keyword metric))
+                                     (-> (world/get-world-data env (keyword metric))
                                          r/ok)))}}]]
     (app-routes/routes env)]])
 

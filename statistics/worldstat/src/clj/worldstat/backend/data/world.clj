@@ -1,15 +1,16 @@
 (ns worldstat.backend.data.world
   (:require [clojure.tools.logging :as log]
-            [jsonista.core :as jsonista]))
+            [jsonista.core :as jsonista]
+            [worldstat.backend.data.filter :as w-filter]))
 
 ;; Using the example in https://vega.github.io/vega/examples/world-map/
 ;; + minor tuning.
 
-(defn enrich-world-data [metric]
+(defn enrich-world-data [env metric]
   (-> (slurp "resources/public/data/world-110m.json")
       jsonista/read-value))
 
-(defn get-world-schema [metric]
+(defn get-world-schema [env metric]
   {:schema "https://vega.github.io/schema/vega/v5.json"
    :description "A configurable map of countries of the world."
    :autosize "none"
@@ -64,22 +65,25 @@
 
    :data [{:name "world"
            ; Slow for some reason.
-           ;:values (enrich-world-data metric)
+           ;:values (enrich-world-data env metric)
            :url "data/world-110m.json"
            :format {:type "topojson" :feature "countries"}
            }
           {:name "graticule" :transform [{:type "graticule"}]}
-          {:name "countries" }
+          {:metric-data (transduce (w-filter/filter-by-metric metric) conj (get-in env [:data :points]))}
           {:name "country-names" :transform [{:type "graticule"}]}
           ]
    :transform [{:lookup :id}
                :from {:data "TODO"}
                ]
-
-
    })
 
-(defn get-world-data [metric]
+(defn get-world-data [env metric]
   (log/debug "ENTER get-world-data, metric: " metric)
   {:metric metric
-   :world-data (get-world-schema metric)})
+   :world-data (get-world-schema env metric)})
+
+(comment
+  (keys (:data (user/env)))
+  (get-in (user/env) [:data :points])
+  )

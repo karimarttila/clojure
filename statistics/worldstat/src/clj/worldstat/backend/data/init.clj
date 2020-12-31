@@ -105,8 +105,8 @@
         ids (into {} (map (juxt :acr :id) topojson-country-codes))
         data-points (get-data-points data-files ids)
         {:keys [countries series years]} (get-metadata data-points)]
-    {:raw-data data-points
-     :data (remove-non-country-values data-points non-country-codes)
+    {:raw-points data-points
+     :points (remove-non-country-values data-points non-country-codes)
      :countries countries
      :series series
      :years years
@@ -115,7 +115,6 @@
      :non-country-codes non-country-codes
      :country-ids ids
      :topojson-country-codes topojson-country-codes
-
      }))
 
 
@@ -123,7 +122,7 @@
 (comment
   (create-csv-data "data/csv/topojson-country-codes.csv")
   (read-topojson-country-codes "data/csv/topojson-country-codes.csv")
-  (sort (:years (get-metadata (take 100 (:data (user/data))))))
+  (sort (:years (get-metadata (take 100 (:points (user/data))))))
   (:series (user/data))
   (:years (user/data))
   (:countries (user/data))

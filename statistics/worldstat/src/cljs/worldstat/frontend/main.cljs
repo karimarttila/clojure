@@ -116,7 +116,8 @@
        [:div.ws-worldmap-content
         [oz/vega-lite world-data (ws-util/vega-debug)]]
        (ws-util/debug-panel {:metric metric
-                             :world-data world-data})]
+                             #_#_:world-data world-data
+                             })]
       )))
 
 
