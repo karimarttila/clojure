@@ -11,7 +11,8 @@
             [oz.core :as oz]
             [worldstat.frontend.util :as ws-util]
             [worldstat.frontend.http :as ws-http]
-            [worldstat.frontend.state :as ws-state]))
+            [worldstat.frontend.state :as ws-state]
+            [worldstat.frontend.data :as ws-data]))
 
 
 ;; ******************************************************************
@@ -29,10 +30,10 @@
   ::ret-ok
   (fn [db [_ res-body]]
     (ws-util/clog "::ret-ok")
-    (let [world-data (:world-data res-body)
+    (let [points (:points res-body)
           metric (keyword (:metric res-body))]
       (-> db
-          (assoc-in [:data metric] world-data)))))
+          (assoc-in [:data metric] points)))))
 
 (re-frame/reg-event-db
   ::ret-failed
@@ -45,9 +46,8 @@
   ::world-data
   (fn [db params]
     (ws-util/clog "::world-data, params" params)
-    (let [metric (nth params 1)
-          world-data (get-in db [:data metric])]
-      world-data)))
+    (let [metric (nth params 1)]
+      (get-in db [:data metric]))))
 
 (re-frame/reg-event-fx
   ::get-world-data
@@ -102,15 +102,17 @@
   ;; NOTE: You need the div here or you are going to see only the debug-panel!
   (fn []
     (let [metric :SP.POP.TOTL ; TODO
-          world-data @(re-frame/subscribe [::world-data metric])
-          _ (if-not world-data (re-frame/dispatch [::get-world-data metric]))]
+          year 2010 ; TODO
+          points @(re-frame/subscribe [::world-data metric])
+          _ (if-not points (re-frame/dispatch [::get-world-data metric]))]
       [:div.ws-content
        [:div.ws-metric-content
         [:p "Tähän metriikka valinta"]
         [oz/vega-lite line-plot (ws-util/vega-debug)]]
        [:div.ws-worldmap-content
-        [oz/vega-lite world-data (ws-util/vega-debug)]]
+        [oz/vega-lite (ws-data/world-schema points year) (ws-util/vega-debug)]]
        (ws-util/debug-panel {:metric metric
+                             :year year
                              #_#_:world-data world-data
                              })])))
 

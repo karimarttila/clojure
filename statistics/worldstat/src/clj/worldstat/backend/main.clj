@@ -1,7 +1,6 @@
 (ns worldstat.backend.main
   (:require
     [clojure.tools.logging :as log]
-    [clojure.edn :as cedn]
     [ring.adapter.jetty :as jetty]
     [clojure.java.io :as io]
     [clojure.tools.reader.edn :as edn]

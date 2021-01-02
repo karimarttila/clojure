@@ -1,4 +1,4 @@
-(ns worldstat.backend.data.filter)
+(ns worldstat.common.data.filter)
 
 (defn filter-by
   "Returns a transducer for filtering by code/value."

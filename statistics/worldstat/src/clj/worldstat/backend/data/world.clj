@@ -1,7 +1,7 @@
 (ns worldstat.backend.data.world
   (:require [clojure.tools.logging :as log]
             [jsonista.core :as jsonista]
-            [worldstat.backend.data.filter :as wf]))
+            [worldstat.common.data.filter :as wf]))
 
 ;; Using the example in https://vega.github.io/vega/examples/world-map/
 ;; + minor tuning.
@@ -81,7 +81,7 @@
 
      })
 
-(defn get-world-schema [env metric]
+#_ (defn get-world-schema [env metric]
   {:schema "https://vega.github.io/schema/vega-lite/v4.json",
    :width 800
    :height 500
@@ -95,7 +95,6 @@
    :projection {:type "mercator"}
    :mark "geoshape"
    :encoding {:color {:field "value", :type "quantitative"}}}
-
   )
 
 
@@ -103,7 +102,7 @@
 (defn get-world-data [env metric]
   (log/debug "ENTER get-world-data, metric: " metric)
   {:metric metric
-   :world-data (get-world-schema env metric)})
+   :points (transduce (comp (wf/filter-by-metric metric)) conj (get-in env [:data :points]))})
 
 (comment
   (keys (:data (user/env)))
