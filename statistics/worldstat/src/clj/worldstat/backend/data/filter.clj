@@ -18,6 +18,19 @@
   [metric]
   (filter-by :series-code metric))
 
+(defn filter-by-year
+  "Returns a transducer that filters by a year."
+  [year]
+  (filter-by :year year))
+
+(defn get-data-table
+  "Returns a data table regarding a metric for each year for all countries."
+  [metric points]
+  (conj (map (fn [{:keys [country-id value]}]
+                 [country-id value])
+             (transduce (comp (filter-by-metric metric) (filter-by-year 2010)) conj points))
+          ["country-id" "2010"]))
+
 (comment
   (set! *print-length* 2000)
   (count (:data (user/data)))
@@ -27,5 +40,7 @@
   (def xf-fin-y2002 (comp (filter-by :country-code :FIN) (filter-by :year 2002)))
   (transduce xf-fin-y2002 conj (:data (user/data)))
   (transduce (filter-by-metric :SP.POP.TOTL) conj (:data (user/data)))
+  (get-data-table :SP.POP.TOTL (:points (user/data)))
+  (transduce (comp (filter-by-metric :SP.POP.TOTL) (filter-by-year 2010)) conj (:points (user/data)))
 
   )

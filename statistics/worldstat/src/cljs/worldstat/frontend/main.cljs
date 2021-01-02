@@ -28,18 +28,16 @@
 (re-frame/reg-event-db
   ::ret-ok
   (fn [db [_ res-body]]
-    (ws-util/clog "reg-event-db ok: " res-body)
+    (ws-util/clog "::ret-ok")
     (let [world-data (:world-data res-body)
-          _ (ws-util/clog "world-data" world-data)
-          metric (keyword (:metric res-body))
-          _ (ws-util/clog "metric" metric)]
+          metric (keyword (:metric res-body))]
       (-> db
           (assoc-in [:data metric] world-data)))))
 
 (re-frame/reg-event-db
   ::ret-failed
   (fn [db [_ res-body]]
-    (ws-util/clog "reg-event-db failed" db)
+    (ws-util/clog "::ret-failed" db)
     (assoc-in db [:error :response] {:ret :failed
                                      :msg (get-in res-body [:response :msg])})))
 
@@ -54,7 +52,7 @@
 (re-frame/reg-event-fx
   ::get-world-data
   (fn [{:keys [db]} [_ metric]]
-    (ws-util/clog "get-world-data, metric" {:metric metric})
+    (ws-util/clog "::get-world-data")
     (ws-http/http-get db (str "/worldstat/api/data/" (name metric)) nil ::ret-ok ::ret-failed)))
 
 (re-frame/reg-event-db
@@ -75,7 +73,7 @@
     (let [old-match (:current-route db)
           new-path (:path new-match)
           controllers (rfc/apply-controllers (:controllers old-match) new-match)]
-      (js/console.log (str "new-path: " new-path))
+      (ws-util/clog (str "new-path: " new-path))
       (cond-> (assoc db :current-route (assoc new-match :controllers controllers))))))
 
 ;;; Views ;;;
@@ -144,8 +142,8 @@
      :view home-page
      :link-text "Home"
      :controllers
-     [{:start (fn [& params] (js/console.log (str "Entering home page, params: " params)))
-       :stop (fn [& params] (js/console.log (str "Leaving home page, params: " params)))}]}]
+     [{:start (fn [& params] (ws-util/clog (str "Entering home page, params: " params)))
+       :stop (fn [& params] (ws-util/clog (str "Leaving home page, params: " params)))}]}]
    ])
 
 (def routes routes-dev)
@@ -161,7 +159,7 @@
     {:data {:coercion rss/coercion}}))
 
 (defn init-routes! []
-  (js/console.log "initializing routes")
+  (ws-util/clog "initializing routes")
   (rfe/start!
     router
     on-navigate
@@ -187,7 +185,7 @@
 
 
 (defn ^:dev/after-load start []
-  (js/console.log "ENTER start")
+  (ws-util/clog "ENTER start")
   (re-frame/clear-subscription-cache!)
   (init-routes!)
   (r-dom/render [router-component {:router router}
@@ -198,7 +196,7 @@
 
 
 (defn ^:export init []
-  (js/console.log "ENTER init")
+  (ws-util/clog "ENTER init")
   (re-frame/dispatch-sync [::initialize-db])
   (dev-tools/start! {:state-atom re-frame.db/app-db})
   (dev-setup)

@@ -10,7 +10,7 @@
   (-> (slurp "resources/public/data/world-110m.json")
       jsonista/read-value))
 
-(defn get-world-schema [env metric]
+#_(defn get-world-schema [env metric]
   {:schema "https://vega.github.io/schema/vega/v5.json"
    :description "A configurable map of countries of the world."
    :autosize "none"
@@ -31,7 +31,12 @@
                      :hover {:strokeWidth {:signal "+borderWidth + 1"}
                              :stroke {:value "firebrick"}
                              :zindex {:value 1}}}
-            :transform [{:type "geoshape" :projection "projection"}]}]
+            :transform [{:lookup "id"
+                         :from {:data {:url "data/metric.tsv"}
+                                :key "country-id"
+                                :fields ["rate"]}}]
+            ;:transform [{:type "geoshape" :projection "projection"}]
+            }]
    :projections [{:name "projection"
                   :type {:signal "type"}
                   :scale {:signal "scale"}
@@ -73,10 +78,27 @@
           {:name "metric-data" :points (transduce (w-filter/filter-by-metric metric) conj (get-in env [:data :points]))}
           {:name "country-names" :transform [{:type "graticule"}]}
           ]
-   :transform [{:lookup :id}
-               :from {:data "TODO"}
-               ]
+
    })
+
+(defn get-world-schema [env metric]
+    {:schema "https://vega.github.io/schema/vega-lite/v4.json",
+     :width 800
+     :height 500
+     :data {:url "data/world-110m.json"
+            :format {:type "topojson", :feature "countries"}}
+     :transform [{:lookup "id"
+                  :from {:data
+                         {:url "data/metric.tsv"}
+                         :key "country-id"
+                         :fields ["rate"]}}]
+     :projection {:type "mercator"}
+     :mark "geoshape"
+     :encoding {:color {:field "rate", :type "quantitative"}}}
+
+    )
+
+;(transduce (comp (filter-by-metric :SP.POP.TOTL) (filter-by-year 2010)) conj (:points (user/data)))
 
 (defn get-world-data [env metric]
   (log/debug "ENTER get-world-data, metric: " metric)
