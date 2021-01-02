@@ -70,7 +70,7 @@
            :format {:type "topojson" :feature "countries"}
            }
           {:name "graticule" :transform [{:type "graticule"}]}
-          {:metric-data (transduce (w-filter/filter-by-metric metric) conj (get-in env [:data :points]))}
+          {:name "metric-data" :points (transduce (w-filter/filter-by-metric metric) conj (get-in env [:data :points]))}
           {:name "country-names" :transform [{:type "graticule"}]}
           ]
    :transform [{:lookup :id}

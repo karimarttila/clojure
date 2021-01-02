@@ -48,10 +48,7 @@
   (fn [db params]
     (ws-util/clog "::world-data, params" params)
     (let [metric (nth params 1)
-          _ (ws-util/clog "metric" metric)
-          world-data (get-in db [:data metric])
-          _ (ws-util/clog "world-data" world-data)
-          _ (ws-util/clog "db" db)]
+          world-data (get-in db [:data metric])]
       world-data)))
 
 (re-frame/reg-event-fx
@@ -117,8 +114,7 @@
         [oz/vega-lite world-data (ws-util/vega-debug)]]
        (ws-util/debug-panel {:metric metric
                              #_#_:world-data world-data
-                             })]
-      )))
+                             })])))
 
 
 ;;; Effects ;;;
