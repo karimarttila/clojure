@@ -21,6 +21,7 @@
 
 # start frontend auto-compilation
 @frontend:
+    cp node_modules/bulma/css/bulma.min.css dev-resources/public/css/.
     npm run dev
 
 # SASS auto-compile

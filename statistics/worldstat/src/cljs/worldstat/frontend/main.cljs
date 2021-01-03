@@ -86,7 +86,7 @@
     {:year i :country n :value (+ (Math/pow (* i (count n)) 0.66) (rand-int (* (count n) 18.54)))}))
 
 (def line-plot
-  {:data {:values (get-data "Finland" "India")}
+  {:data {:values (get-data "Finland")}
    :encoding {:x {:title "Year" :field "year" :type "quantitative"
                   :axis {:labelAngle -45
                          :tickCount 10
@@ -105,16 +105,37 @@
           year 2010 ; TODO
           points @(re-frame/subscribe [::world-data metric])
           _ (if-not points (re-frame/dispatch [::get-world-data metric]))]
-      [:div.ws-content
-       [:div.ws-metric-content
-        [:p "Tähän metriikka valinta"]
-        [oz/vega-lite line-plot (ws-util/vega-debug)]]
-       [:div.ws-worldmap-content
-        [oz/vega-lite (ws-data/world-schema points year) (ws-util/vega-debug)]]
-       (ws-util/debug-panel {:metric metric
-                             :year year
-                             #_#_:world-data world-data
-                             })])))
+      [:div.container
+       [:div.rows
+        [:div.row
+         [:div.columns
+          [:div.column.is-half
+           [:div.columns
+            [:div.column.is-half
+             [:div.rows
+              [:div.row
+               [:p.is-size-5 "Select metric:"]]
+              [:div.row
+               [:p "Combobox tähän"]]]
+             ]
+            [:div.column.is-half
+             [:div.rows
+              [:div.row
+               [:p.is-size-5 "Select year:"]]
+              [:div.row
+               [:p "Slider"]]]]]]
+          [:div.column.is-half
+           [oz/vega-lite line-plot (ws-util/vega-debug)]]]]
+        [:div.row
+         [:div.column.is-full
+          [oz/vega-lite (ws-data/world-schema points year) (ws-util/vega-debug)]]]
+        [:div.row
+         [:p "Read more about this app in my blog: TODO-URL"]]
+        [:div.row
+         (ws-util/debug-panel {:metric metric
+                               :year year
+                               #_#_:world-data world-data
+                               })]]])))
 
 
 ;;; Effects ;;;
@@ -172,7 +193,7 @@
   (let [current-route @(re-frame/subscribe [::ws-state/current-route])
         path-params (:path-params current-route)
         _ (ws-util/clog "router-component, path-params" path-params)]
-    [:div.ws-main
+    [:div.container
      [ws-util/header]
      ; NOTE: when you supply the current-route to the view it can parse path-params there (from path)
      (when current-route

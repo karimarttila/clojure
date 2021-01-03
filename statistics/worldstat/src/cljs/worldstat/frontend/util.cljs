@@ -33,8 +33,7 @@
   [label k type state]
   [:div
    [:label.ws-label label]
-   [:input.ws-input {
-                     :id (name k)
+   [:input.ws-input {:id (name k)
                      :name (name k)
                      :type type
                      :value (k @state)
@@ -49,7 +48,10 @@
 
 
 (defn header []
-  [:div.ws-header "World Statistics"
+  [:div.column.is-full
+   [:div.level
+    [:p.level-item.has-text-centered.is-size-1
+     "World Statistics"]]
    (let [current-route @(re-frame/subscribe [::ws-state/current-route])])])
 
 (defn debug-panel
