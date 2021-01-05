@@ -97,7 +97,13 @@
    :encoding {:color {:field "value", :type "quantitative"}}}
   )
 
+(defn get-metric-names [env]
+  (log/debug "ENTER get-metric-names")
+  {:metric-names (get-in env [:data :series-codes])})
 
+(defn get-years [env]
+  (log/debug "ENTER get-years")
+  {:years (sort (get-in env [:data :years]))})
 
 (defn get-world-data [env metric]
   (log/debug "ENTER get-world-data, metric: " metric)

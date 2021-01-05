@@ -25,22 +25,21 @@
 
 ;;; Events ;;;
 
-
-(re-frame/reg-event-db
-  ::ret-ok
-  (fn [db [_ res-body]]
-    (ws-util/clog "::ret-ok")
-    (let [points (:points res-body)
-          metric (keyword (:metric res-body))]
-      (-> db
-          (assoc-in [:data metric] points)))))
-
 (re-frame/reg-event-db
   ::ret-failed
   (fn [db [_ res-body]]
     (ws-util/clog "::ret-failed" db)
     (assoc-in db [:error :response] {:ret :failed
                                      :msg (get-in res-body [:response :msg])})))
+
+(re-frame/reg-event-db
+  ::ret-ok-world-data
+  (fn [db [_ res-body]]
+    (ws-util/clog "::ret-ok-world-data")
+    (let [points (:points res-body)
+          metric (keyword (:metric res-body))]
+      (-> db
+          (assoc-in [:data metric] points)))))
 
 (re-frame/reg-sub
   ::world-data
@@ -53,7 +52,48 @@
   ::get-world-data
   (fn [{:keys [db]} [_ metric]]
     (ws-util/clog "::get-world-data")
-    (ws-http/http-get db (str "/worldstat/api/data/" (name metric)) nil ::ret-ok ::ret-failed)))
+    (ws-http/http-get db (str "/worldstat/api/data/metric/" (name metric)) nil ::ret-ok-world-data ::ret-failed)))
+
+(re-frame/reg-event-db
+  ::ret-ok-years
+  (fn [db [_ res-body]]
+    (ws-util/clog "::ret-ok-years")
+    (let [years (:years res-body)]
+      (-> db
+          (assoc-in [:data :years] years)))))
+
+(re-frame/reg-sub
+  ::years
+  (fn [db _]
+    (ws-util/clog "::years")
+    (get-in db [:data :years])))
+
+(re-frame/reg-event-fx
+  ::load-years
+  (fn [{:keys [db]} [_]]
+    (ws-util/clog "::load-years")
+    (ws-http/http-get db (str "/worldstat/api/data/years/") nil ::ret-ok-years ::ret-failed)))
+
+(re-frame/reg-event-db
+  ::ret-ok-metric-names
+  (fn [db [_ res-body]]
+    (ws-util/clog "::ret-ok-metric-names")
+    (let [metric-names (:metric-names res-body)]
+      (-> db
+          (assoc-in [:data :metric-names] metric-names)))))
+
+(re-frame/reg-sub
+  ::metric-names
+  (fn [db _]
+    (ws-util/clog "::metric-names")
+    (get-in db [:data :metric-names])))
+
+(re-frame/reg-event-fx
+  ::load-metric-names
+  (fn [{:keys [db]} [_]]
+    (ws-util/clog "::load-metric-names")
+    (ws-http/http-get db (str "/worldstat/api/data/metric-names/") nil ::ret-ok-metric-names ::ret-failed)))
+
 
 (re-frame/reg-event-db
   ::initialize-db
@@ -104,6 +144,8 @@
     (let [metric :SP.POP.TOTL ; TODO
           year 2010 ; TODO
           points @(re-frame/subscribe [::world-data metric])
+          metric-names @(re-frame/subscribe [::metric-names])
+          years @(re-frame/subscribe [::years])
           _ (if-not points (re-frame/dispatch [::get-world-data metric]))]
       [:div.container
        [:div.rows
@@ -114,10 +156,10 @@
             [:div.column.is-half
              [:div.rows
               [:div.row
-               [:p.is-size-5 "Select metric:"]]
-              [:div.row
-               [:p "Combobox tähän"]]]
-             ]
+               ;[:p.is-size-5 "Select metric:"]
+               (ws-util/dropdown metric-names)
+               ]
+              ]]
             [:div.column.is-half
              [:div.rows
               [:div.row
@@ -221,6 +263,8 @@
 (defn ^:export init []
   (ws-util/clog "ENTER init")
   (re-frame/dispatch-sync [::initialize-db])
+  ;(re-frame/dispatch-sync [::load-years])
+  ;(re-frame/dispatch-sync [::load-metric-names])
   (dev-tools/start! {:state-atom re-frame.db/app-db})
   (dev-setup)
   (start))

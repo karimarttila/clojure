@@ -51,13 +51,26 @@
                                        myreq (:ping body)]
                                    (r/ok {:request myreq :reply "pong"})))}}]]
     ["/data" {:swagger {:tags ["data"]}}
-     ["/:metric" {:get {:summary "metric"
-                        :parameters {:path [:map [:metric string?]]}
-                        :responses {200 {:description "data"}}
-                        :handler (fn [req]
-                                   (let [metric (get-in req [:parameters :path :metric])]
-                                     (-> (world/get-world-data env (keyword metric))
-                                         r/ok)))}}]]
+     ["/metric/:metric" {:get {:summary "metric"
+                               :parameters {:path [:map [:metric string?]]}
+                               :responses {200 {:description "data"}}
+                               :handler (fn [req]
+                                          (let [metric (get-in req [:parameters :path :metric])]
+                                            (-> (world/get-world-data env (keyword metric))
+                                                r/ok)))}}]]
+    ["/data" {:swagger {:tags ["data"]}}
+     ["/years" {:get {:summary "years"
+                      :responses {200 {:description "data"}}
+                      :handler (fn [req]
+                                 (-> (world/get-years env)
+                                     r/ok))}}]]
+    ["/data" {:swagger {:tags ["data"]}}
+     ["/metric-names" {:get {:summary "metric-names"
+                      :responses {200 {:description "data"}}
+                      :handler (fn [req]
+                                 (-> (world/get-metric-names env)
+                                     r/ok))}}]]
+
     (app-routes/routes env)]])
 
 (comment

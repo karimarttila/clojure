@@ -65,6 +65,38 @@
        [:p.level-item.has-text-centered.is-size-3 "DEBUG PANEL"]
        [:pre.body (with-out-str (cljs.pprint/pprint data))]])))
 
+#_(defn dropdown [values]
+  [:div.dropdown
+   [:div {:class "dropdown-trigger"}
+    [:button {:class "button" :aria-haspopup "true" :aria-controls "dropdown-menu"}
+     [:span "Select"]
+     [:span {:class "icon is-small"}
+      [:i {:class "fas fa-angle-down" :aria-hidden "true"}]]]]
+   [:div {:class "dropdown-menu" :id "dropdown-menu" :role "menu"}
+    [:div.dropdown-content
+     [:a {:href "#1"} "1"]
+     [:a {:href "#2"} "2"]
+     ]]])
+
+(defn dropdown [values]
+  [:div.dropdown.is-hoverable
+   [:div.dropdown-trigger
+    [:button.button {:aria-haspopup true :aria-controls :dropdown-menu}
+     [:span "Select metric"]
+     [:span.icon.is-small
+      [:i.fas.fa-angle-down {:aria-hidden true}]
+      ]
+     ]
+    ]
+   [:div.dropdown-menu {:id :dropdown-menu :role :menu}
+    [:div.dropdown-content
+     [:a.dropdown-item {:href "#1"} "1"]
+     [:a.dropdown-item {:href "#2"} "2"]
+     ]
+    ]
+   ]
+  )
+
 (defn clog
   "Javascript console logger helper."
   ([msg] (clog msg nil))

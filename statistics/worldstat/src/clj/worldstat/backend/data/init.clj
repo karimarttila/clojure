@@ -53,7 +53,7 @@
 (defn- get-metadata [points]
   (reduce (fn [acc point]
             (let [country (dissoc point :year :value :series-code :series-name)
-                  series (dissoc point :year :value :country-code :country-name)
+                  series (dissoc point :year :value :country-code :country-name :country-id)
                   year (dissoc point :value :series-code :series-name :country-code :country-name)]
               (-> acc
                   (update-in [:countries] conj country)
