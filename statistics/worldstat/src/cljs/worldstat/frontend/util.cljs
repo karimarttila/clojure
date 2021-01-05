@@ -60,10 +60,10 @@
   (let [debug @(re-frame/subscribe [::ws-state/debug])]
     #_(js/console.log (str "ENTER debug-panel, debug: " debug))
     (if debug
-      [:div.ws-debug-panel
-       [:hr.ws-debug-panel.hr]
-       [:h3.ws-debug-panel.header "DEBUG-PANEL"]
-       [:pre.ws-debug-panel.body (with-out-str (cljs.pprint/pprint data))]])))
+      [:div.column.is-full
+       [:hr]
+       [:p.level-item.has-text-centered.is-size-3 "DEBUG PANEL"]
+       [:pre.body (with-out-str (cljs.pprint/pprint data))]])))
 
 (defn clog
   "Javascript console logger helper."
