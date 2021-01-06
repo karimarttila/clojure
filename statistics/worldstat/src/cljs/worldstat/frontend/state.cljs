@@ -7,7 +7,7 @@
 (re-frame/reg-event-db
   ::initialize-db
   (fn [_ _]
-    {:current-metric :SP.POP.TOTL
+    {:current-metric {:code :SP.POP.0014.TO :name "Population ages 00-14, total"}
      :current-year 2002
      :current-route nil
      :debug true}))
@@ -22,6 +22,16 @@
   (fn [_ [_ & route]]
     ;; See `navigate` effect in routes.cljs
     {::navigate! route}))
+
+(re-frame/reg-event-db
+  ::select-metric
+  (fn [db [_ metric]]
+    (assoc-in db [:current-metric] metric)))
+
+(re-frame/reg-sub
+  ::current-metric
+  (fn [db]
+    (:current-metric db)))
 
 (re-frame/reg-event-db
   ::navigated

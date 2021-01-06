@@ -48,13 +48,16 @@
   (ws-log/clog "ENTER home-page")
   ;; NOTE: You need the div here or you are going to see only the debug-panel!
   (fn []
-    (let [metric :SP.POP.TOTL ; TODO
+    (let [{selected-metric-code :code selected-metric-name :name} @(re-frame/subscribe [::ws-state/current-metric])
           year 2010 ; TODO
-          points @(re-frame/subscribe [::ws-state/world-data metric])
+          points @(re-frame/subscribe [::ws-state/world-data selected-metric-code])
           metric-names @(re-frame/subscribe [::ws-state/metric-names])
           years @(re-frame/subscribe [::ws-state/years])
-          _ (if-not points (re-frame/dispatch [::ws-state/get-world-data metric]))]
+          _ (if-not points (re-frame/dispatch [::ws-state/get-world-data selected-metric-code]))]
       [:div.container
+       [:div.row
+        [:div.column.is-full
+         [:p.is-size-5 (str "Selected metric: ") selected-metric-name]]]
        [:div.rows
         [:div.row
          [:div.columns
@@ -63,10 +66,7 @@
             [:div.column.is-half
              [:div.rows
               [:div.row
-               ;[:p.is-size-5 "Select metric:"]
-               (ws-util/dropdown metric-names)
-               ]
-              ]]
+               (ws-util/dropdown "Select metric" metric-names)]]]
             [:div.column.is-half
              [:div.rows
               [:div.row
@@ -81,7 +81,8 @@
         [:div.row
          [:p "Read more about this app in my blog: TODO-URL"]]
         [:div.row
-         (ws-util/debug-panel {:metric metric
+         (ws-util/debug-panel {:selected-metric-code selected-metric-code
+                               :seletected-metric-name selected-metric-name
                                :year year
                                #_#_:world-data world-data
                                })]]])))

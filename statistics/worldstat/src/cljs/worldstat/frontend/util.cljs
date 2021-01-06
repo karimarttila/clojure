@@ -1,7 +1,8 @@
 (ns worldstat.frontend.util
   (:require [re-frame.core :as re-frame]
             [cljs.pprint]
-            [worldstat.frontend.state :as ws-state]))
+            [worldstat.frontend.state :as ws-state]
+            [worldstat.frontend.log :as ws-log]))
 
 
 (def debug? ^boolean goog.DEBUG)
@@ -65,21 +66,27 @@
        [:p.level-item.has-text-centered.is-size-3 "DEBUG PANEL"]
        [:pre.body (with-out-str (cljs.pprint/pprint data))]])))
 
-(defn dropdown [values]
-  [:div.dropdown.is-hoverable
+(defn toggle-is-activate [id]
+  (let [myClass (.-classList (.getElementById js/document (name id)))]
+    (-> myClass (.toggle "is-active"))))
+
+(defn dropdown [prompt values]
+  [:div.dropdown {:id :dropdown-parent}
    [:div.dropdown-trigger
-    [:button.button {:aria-haspopup true :aria-controls :dropdown-menu}
-     [:span "Select metric"]
+    [:button.button {:aria-haspopup true :aria-controls :dropdown-menu
+                     :on-click (fn [event]
+                                 (.preventDefault event)
+                                 (toggle-is-activate :dropdown-parent))}
+     [:span prompt]
      [:span.icon.is-small
-      [:i.fas.fa-angle-down {:aria-hidden true}]
-      ]
-     ]
-    ]
+      [:i.fas.fa-angle-down {:aria-hidden true}]]]]
    [:div.dropdown-menu {:id :dropdown-menu :role :menu}
     [:div.dropdown-content
-     [:a.dropdown-item {:href "#1"} "1"]
-     [:a.dropdown-item {:href "#2"} "2"]
-     ]
-    ]
-   ]
-  )
+     (map (fn [[m-code m-name]]
+            [:a.dropdown-item {:key m-code
+                               :on-click (fn [event]
+                                           (.preventDefault event)
+                                           (toggle-is-activate :dropdown-parent)
+                                           (re-frame/dispatch [::ws-state/select-metric {:code m-code :name m-name}]))}
+             m-name])
+          values)]]])
