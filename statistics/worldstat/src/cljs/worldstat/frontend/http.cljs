@@ -1,10 +1,10 @@
 (ns worldstat.frontend.http
-  (:require [worldstat.frontend.util :as ws-util]
+  (:require [worldstat.frontend.log :as ws-log]
             [ajax.core :as ajax :refer []])) ; NOTE: Empty refer for clj-kondo
 
 ;; See: https://github.com/day8/re-frame-http-fx
 (defn http [method db uri data on-success on-failure]
-  (ws-util/clog "http, uri" uri)
+  (ws-log/clog "http, uri" uri)
   (let [xhrio (cond-> {:debug true
                        :method method
                        :uri uri

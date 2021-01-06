@@ -6,11 +6,10 @@
             [reagent-dev-tools.core :as dev-tools]
             [reitit.coercion.spec :as rss]
             [reitit.frontend :as rf]
-            [reitit.frontend.controllers :as rfc]
             [reitit.frontend.easy :as rfe]
             [oz.core :as oz]
+            [worldstat.frontend.log :as ws-log]
             [worldstat.frontend.util :as ws-util]
-            [worldstat.frontend.http :as ws-http]
             [worldstat.frontend.state :as ws-state]
             [worldstat.frontend.data :as ws-data]))
 
@@ -23,98 +22,6 @@
 ; http://localhost:5522/worldstat/index.html
 ;; ******************************************************************
 
-;;; Events ;;;
-
-(re-frame/reg-event-db
-  ::ret-failed
-  (fn [db [_ res-body]]
-    (ws-util/clog "::ret-failed" db)
-    (assoc-in db [:error :response] {:ret :failed
-                                     :msg (get-in res-body [:response :msg])})))
-
-(re-frame/reg-event-db
-  ::ret-ok-world-data
-  (fn [db [_ res-body]]
-    (ws-util/clog "::ret-ok-world-data")
-    (let [points (:points res-body)
-          metric (keyword (:metric res-body))]
-      (-> db
-          (assoc-in [:data metric] points)))))
-
-(re-frame/reg-sub
-  ::world-data
-  (fn [db params]
-    (ws-util/clog "::world-data, params" params)
-    (let [metric (nth params 1)]
-      (get-in db [:data metric]))))
-
-(re-frame/reg-event-fx
-  ::get-world-data
-  (fn [{:keys [db]} [_ metric]]
-    (ws-util/clog "::get-world-data")
-    (ws-http/http-get db (str "/worldstat/api/data/metric/" (name metric)) nil ::ret-ok-world-data ::ret-failed)))
-
-(re-frame/reg-event-db
-  ::ret-ok-years
-  (fn [db [_ res-body]]
-    (ws-util/clog "::ret-ok-years")
-    (let [years (:years res-body)]
-      (-> db
-          (assoc-in [:data :years] years)))))
-
-(re-frame/reg-sub
-  ::years
-  (fn [db _]
-    (ws-util/clog "::years")
-    (get-in db [:data :years])))
-
-(re-frame/reg-event-fx
-  ::load-years
-  (fn [{:keys [db]} [_]]
-    (ws-util/clog "::load-years")
-    (ws-http/http-get db (str "/worldstat/api/data/years/") nil ::ret-ok-years ::ret-failed)))
-
-(re-frame/reg-event-db
-  ::ret-ok-metric-names
-  (fn [db [_ res-body]]
-    (ws-util/clog "::ret-ok-metric-names")
-    (let [metric-names (:metric-names res-body)]
-      (-> db
-          (assoc-in [:data :metric-names] metric-names)))))
-
-(re-frame/reg-sub
-  ::metric-names
-  (fn [db _]
-    (ws-util/clog "::metric-names")
-    (get-in db [:data :metric-names])))
-
-(re-frame/reg-event-fx
-  ::load-metric-names
-  (fn [{:keys [db]} [_]]
-    (ws-util/clog "::load-metric-names")
-    (ws-http/http-get db (str "/worldstat/api/data/metric-names/") nil ::ret-ok-metric-names ::ret-failed)))
-
-
-(re-frame/reg-event-db
-  ::initialize-db
-  (fn [_ _]
-    {:current-route nil
-     :debug true}))
-
-(re-frame/reg-event-fx
-  ::ws-state/navigate
-  (fn [_ [_ & route]]
-    ;; See `navigate` effect in routes.cljs
-    {::navigate! route}))
-
-(re-frame/reg-event-db
-  ::ws-state/navigated
-  (fn [db [_ new-match]]
-    (let [old-match (:current-route db)
-          new-path (:path new-match)
-          controllers (rfc/apply-controllers (:controllers old-match) new-match)]
-      (ws-util/clog (str "new-path: " new-path))
-      (cond-> (assoc db :current-route (assoc new-match :controllers controllers))))))
 
 ;;; Views ;;;
 
@@ -138,15 +45,15 @@
 
 (defn home-page []
   ; If we have jwt in app db we are logged-in.
-  (ws-util/clog "ENTER home-page")
+  (ws-log/clog "ENTER home-page")
   ;; NOTE: You need the div here or you are going to see only the debug-panel!
   (fn []
     (let [metric :SP.POP.TOTL ; TODO
           year 2010 ; TODO
-          points @(re-frame/subscribe [::world-data metric])
-          metric-names @(re-frame/subscribe [::metric-names])
-          years @(re-frame/subscribe [::years])
-          _ (if-not points (re-frame/dispatch [::get-world-data metric]))]
+          points @(re-frame/subscribe [::ws-state/world-data metric])
+          metric-names @(re-frame/subscribe [::ws-state/metric-names])
+          years @(re-frame/subscribe [::ws-state/years])
+          _ (if-not points (re-frame/dispatch [::ws-state/get-world-data metric]))]
       [:div.container
        [:div.rows
         [:div.row
@@ -207,14 +114,14 @@
      :view home-page
      :link-text "Home"
      :controllers
-     [{:start (fn [& params] (ws-util/clog (str "Entering home page, params: " params)))
-       :stop (fn [& params] (ws-util/clog (str "Leaving home page, params: " params)))}]}]
+     [{:start (fn [& params] (ws-log/clog (str "Entering home page, params: " params)))
+       :stop (fn [& params] (ws-log/clog (str "Leaving home page, params: " params)))}]}]
    ])
 
 (def routes routes-dev)
 
 (defn on-navigate [new-match]
-  (ws-util/clog "on-navigate, new-match" new-match)
+  (ws-log/clog "on-navigate, new-match" new-match)
   (when new-match
     (re-frame/dispatch [::ws-state/navigated new-match])))
 
@@ -224,17 +131,17 @@
     {:data {:coercion rss/coercion}}))
 
 (defn init-routes! []
-  (ws-util/clog "initializing routes")
+  (ws-log/clog "initializing routes")
   (rfe/start!
     router
     on-navigate
     {:use-fragment true}))
 
 (defn router-component [_] ; {:keys [router] :as params}
-  (ws-util/clog "ENTER router-component")
+  (ws-log/clog "ENTER router-component")
   (let [current-route @(re-frame/subscribe [::ws-state/current-route])
         path-params (:path-params current-route)
-        _ (ws-util/clog "router-component, path-params" path-params)]
+        _ (ws-log/clog "router-component, path-params" path-params)]
     [:div.container
      [ws-util/header]
      ; NOTE: when you supply the current-route to the view it can parse path-params there (from path)
@@ -250,7 +157,7 @@
 
 
 (defn ^:dev/after-load start []
-  (ws-util/clog "ENTER start")
+  (ws-log/clog "ENTER start")
   (re-frame/clear-subscription-cache!)
   (init-routes!)
   (r-dom/render [router-component {:router router}
@@ -261,10 +168,10 @@
 
 
 (defn ^:export init []
-  (ws-util/clog "ENTER init")
-  (re-frame/dispatch-sync [::initialize-db])
-  ;(re-frame/dispatch-sync [::load-years])
-  ;(re-frame/dispatch-sync [::load-metric-names])
+  (ws-log/clog "ENTER init")
+  (re-frame/dispatch-sync [::ws-state/initialize-db])
+  (re-frame/dispatch-sync [::ws-state/load-years])
+  (re-frame/dispatch-sync [::ws-state/load-metric-names])
   (dev-tools/start! {:state-atom re-frame.db/app-db})
   (dev-setup)
   (start))
