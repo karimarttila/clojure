@@ -8,3 +8,7 @@ body {
 ////////////////////////////////////////
 // We use mostly Bulma styles.
 
+.dropdown-content {
+  max-height: 20em;
+  overflow: auto;
+}

@@ -1,6 +1,7 @@
 (ns worldstat.frontend.main
   (:require [re-frame.core :as re-frame]
             [re-frame.db]
+            [reagent.core :as r]
             [reagent.dom :as r-dom]
             [day8.re-frame.http-fx] ; Needed to register :http-xhrio to re-frame.
             [reagent-dev-tools.core :as dev-tools]
@@ -48,42 +49,51 @@
   (ws-log/clog "ENTER home-page")
   ;; NOTE: You need the div here or you are going to see only the debug-panel!
   (fn []
-    (let [{selected-metric-code :code selected-metric-name :name} @(re-frame/subscribe [::ws-state/current-metric])
-          year 2010 ; TODO
+    (let [current-route @(re-frame/subscribe [::ws-state/current-route])
+          {selected-metric-code :code selected-metric-name :name} @(re-frame/subscribe [::ws-state/current-metric])
+          selected-year @(re-frame/subscribe [::ws-state/current-year])
           points @(re-frame/subscribe [::ws-state/world-data selected-metric-code])
           metric-names @(re-frame/subscribe [::ws-state/metric-names])
+          _ (ws-log/clog (str "DEBUG-COUNT: " (count metric-names)))
           years @(re-frame/subscribe [::ws-state/years])
           _ (if-not points (re-frame/dispatch [::ws-state/get-world-data selected-metric-code]))]
+
       [:div.container
-       [:div.row
-        [:div.column.is-full
-         [:p.is-size-5 (str "Selected metric: ") selected-metric-name]]]
+       [:div.rows
+        [:div.row
+         [:div.column.is-full
+          [:p.level-item.has-text-centered.is-size-1 "World Statistics"]]]
+        [:div.row
+         [:div.column.is-full
+          [:p.level-item.has-text-centered.is-size-2 selected-metric-name]]]]
        [:div.rows
         [:div.row
          [:div.columns
-          [:div.column.is-half
-           [:div.columns
-            [:div.column.is-half
-             [:div.rows
-              [:div.row
-               (ws-util/dropdown "Select metric" metric-names)]]]
-            [:div.column.is-half
-             [:div.rows
-              [:div.row
-               [:p.is-size-5 "Select year:"]]
-              [:div.row
-               [:p "Slider"]]]]]]
-          [:div.column.is-half
-           [oz/vega-lite line-plot (ws-util/vega-debug)]]]]
+          [:div.column.is-2
+           (ws-util/dropdown "Select metric" metric-names)]
+          [:div.column.is-3
+           (let [slider-value (r/atom 2009)]
+             [:div.slider-content
+              [:input.slider.is-fullwidth {:id "year-slider" :step 1 :min 2002 :max 2017 :value @slider-value :type "range"
+                                           :on-change (fn [event]
+                                                        (.preventDefault event)
+                                                        (let [new-value (.-value (.getElementById js/document "year-slider"))]
+                                                          (reset! slider-value new-value)
+                                                          (re-frame/dispatch [::ws-state/select-year (js/parseInt new-value)])))}]])]
+          [:div.column.is-2
+           [:p.level-item.has-text-centered.is-size-2 selected-year]]]]
         [:div.row
-         [:div.column.is-full
-          [oz/vega-lite (ws-data/world-schema points year) (ws-util/vega-debug)]]]
+         [:div.columns
+          [:div.column.is-9
+           [oz/vega-lite (ws-data/world-schema points selected-year) (ws-util/vega-debug)]]
+          [:div.column.auto
+           [oz/vega-lite line-plot (ws-util/vega-debug)]]]]
         [:div.row
          [:p "Read more about this app in my blog: TODO-URL"]]
         [:div.row
          (ws-util/debug-panel {:selected-metric-code selected-metric-code
                                :seletected-metric-name selected-metric-name
-                               :year year
+                               :selected-year selected-year
                                #_#_:world-data world-data
                                })]]])))
 
@@ -144,7 +154,6 @@
         path-params (:path-params current-route)
         _ (ws-log/clog "router-component, path-params" path-params)]
     [:div.container
-     [ws-util/header]
      ; NOTE: when you supply the current-route to the view it can parse path-params there (from path)
      (when current-route
        [(-> current-route :data :view) current-route])]))

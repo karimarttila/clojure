@@ -8,7 +8,7 @@
   ::initialize-db
   (fn [_ _]
     {:current-metric {:code :SP.POP.0014.TO :name "Population ages 00-14, total"}
-     :current-year 2002
+     :current-year 2017
      :current-route nil
      :debug true}))
 
@@ -32,6 +32,16 @@
   ::current-metric
   (fn [db]
     (:current-metric db)))
+
+(re-frame/reg-event-db
+  ::select-year
+  (fn [db [_ year]]
+    (assoc-in db [:current-year] year)))
+
+(re-frame/reg-sub
+  ::current-year
+  (fn [db]
+    (:current-year db)))
 
 (re-frame/reg-event-db
   ::navigated

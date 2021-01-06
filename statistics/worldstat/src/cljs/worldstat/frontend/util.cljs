@@ -47,14 +47,6 @@
         url (str "http://" host ":" port)]
     url))
 
-
-(defn header []
-  [:div.column.is-full
-   [:div.level
-    [:p.level-item.has-text-centered.is-size-1
-     "World Statistics"]]
-   (let [current-route @(re-frame/subscribe [::ws-state/current-route])])])
-
 (defn debug-panel
   "Debug panel - you can use this panel in any view to show some page specific debug data."
   [data]
@@ -82,11 +74,14 @@
       [:i.fas.fa-angle-down {:aria-hidden true}]]]]
    [:div.dropdown-menu {:id :dropdown-menu :role :menu}
     [:div.dropdown-content
-     (map (fn [[m-code m-name]]
-            [:a.dropdown-item {:key m-code
-                               :on-click (fn [event]
-                                           (.preventDefault event)
-                                           (toggle-is-activate :dropdown-parent)
-                                           (re-frame/dispatch [::ws-state/select-metric {:code m-code :name m-name}]))}
-             m-name])
-          values)]]])
+     (sort-by (fn [item]
+                (:name (second item)))
+              (map (fn [[m-code m-name]]
+                     [:a.dropdown-item {:name m-name
+                                        :key m-code
+                                        :on-click (fn [event]
+                                                    (.preventDefault event)
+                                                    (toggle-is-activate :dropdown-parent)
+                                                    (re-frame/dispatch [::ws-state/select-metric {:code m-code :name m-name}]))}
+                      m-name])
+                   values))]]])
