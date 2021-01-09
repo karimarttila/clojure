@@ -72,7 +72,7 @@
           [:div.column.is-2
            (ws-util/dropdown "Select metric" metric-names)]
           [:div.column.is-3
-           (let [slider-value (r/atom 2009)]
+           (let [slider-value (r/atom selected-year)]
              [:div.slider-content
               [:input.slider.is-fullwidth {:id "year-slider" :step 1 :min 2002 :max 2017 :value @slider-value :type "range"
                                            :on-change (fn [event]
