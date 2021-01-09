@@ -21,14 +21,14 @@
                         {:year (first tuple)
                          :value (try
                                   (Double/parseDouble (second tuple))
-                                  (catch NumberFormatException _ :na))})
+                                  (catch NumberFormatException _ nil))})
                       (map vector (range 2002 2018) year-points))]
       (map (fn [tuple]
              (merge metadata tuple))
            tuples))))
 
 (defn- get-na-country-codes [points]
-  (reduce #(conj %1 (:country-code %2)) #{} (filter #(= :na (:value %)) points)))
+  (reduce #(conj %1 (:country-code %2)) #{} (filter #(nil? (:value %)) points)))
 
 (defn- filter-na-countries
   "Remove those countries that have even one :na (not available) as value."

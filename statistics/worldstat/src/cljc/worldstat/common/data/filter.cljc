@@ -10,8 +10,8 @@
   [code value]
   (remove #(= (code %) value)))
 
-(def remove-na-values
-  (remove-by :value :na))
+(def remove-nil-values
+  (remove-by :value nil))
 
 (defn filter-by-metric
   "Returns a transducer that filters by a metric."
@@ -32,15 +32,20 @@
           ["country-id" "2010"]))
 
 (comment
-  (set! *print-length* 2000)
-  (count (:data (user/data)))
-  (count (transduce remove-na-values conj (:data (user/data))))
-  (count (transduce (filter-by :value :na) conj (:data (user/data))))
-  (transduce (filter-by :country-code :FIN) conj (:data (user/data)))
+
+  (set! *print-length* 50)
+  (count (:points (user/data)))
+  (count (transduce remove-nil-values conj (:points (user/data))))
+  (count (transduce (filter-by :value :na) conj (:points (user/data))))
+  (transduce (filter-by :country-code :FIN) conj (:points (user/data)))
+  (transduce remove-nil-values conj (:points (user/data)))
   (def xf-fin-y2002 (comp (filter-by :country-code :FIN) (filter-by :year 2002)))
-  (transduce xf-fin-y2002 conj (:data (user/data)))
-  (transduce (filter-by-metric :SP.POP.TOTL) conj (:data (user/data)))
+  (transduce xf-fin-y2002 conj (:points (user/data)))
+  (transduce (filter-by-metric :SP.POP.TOTL) conj (:points (user/data)))
   (get-data-table :SP.POP.TOTL (:points (user/data)))
   (transduce (comp (filter-by-metric :SP.POP.TOTL) (filter-by-year 2010)) conj (:points (user/data)))
+  (count (transduce (comp (filter-by-year 2010) remove-nil-values) conj (:points (user/data))))
+  (count (transduce (comp remove-nil-values (filter-by-year 2010)) conj (:points (user/data))))
+  (count (transduce (comp (filter-by-year 2010)) conj (:points (user/data))))
 
   )

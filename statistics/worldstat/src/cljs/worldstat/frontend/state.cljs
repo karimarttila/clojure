@@ -7,8 +7,12 @@
 (re-frame/reg-event-db
   ::initialize-db
   (fn [_ _]
-    {:current-metric {:code :SP.POP.0014.TO :name "Population ages 00-14, total"}
-     :current-year 2017
+    {;; TODO
+     ;:current-metric {:code :SP.POP.0014.TO :name "Population ages 00-14, total"}
+     :current-metric {:code :SH.MED.BEDS.ZS :name "Hospital beds (per 1,000 people)"}
+     ;; TODO
+     :current-year 2002
+     ;:current-year 2017
      :current-route nil
      :debug true}))
 
