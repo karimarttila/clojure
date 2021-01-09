@@ -1,7 +1,6 @@
 (ns worldstat.frontend.main
   (:require [re-frame.core :as re-frame]
             [re-frame.db]
-            [reagent.core :as r]
             [reagent.dom :as r-dom]
             [day8.re-frame.http-fx] ; Needed to register :http-xhrio to re-frame.
             [reagent-dev-tools.core :as dev-tools]
@@ -72,14 +71,7 @@
           [:div.column.is-2
            (ws-util/dropdown "Select metric" metric-names)]
           [:div.column.is-3
-           (let [slider-value (r/atom selected-year)]
-             [:div.slider-content
-              [:input.slider.is-fullwidth {:id "year-slider" :step 1 :min 2002 :max 2017 :value @slider-value :type "range"
-                                           :on-change (fn [event]
-                                                        (.preventDefault event)
-                                                        (let [new-value (.-value (.getElementById js/document "year-slider"))]
-                                                          (reset! slider-value new-value)
-                                                          (re-frame/dispatch [::ws-state/select-year (js/parseInt new-value)])))}]])]
+           (ws-util/slider "year-slider" selected-year 1 2002 2017 "range")]
           [:div.column.is-2
            [:p.level-item.has-text-centered.is-size-2 selected-year]]]]
         [:div.row

@@ -1,8 +1,8 @@
 (ns worldstat.frontend.util
   (:require [re-frame.core :as re-frame]
             [cljs.pprint]
-            [worldstat.frontend.state :as ws-state]
-            [worldstat.frontend.log :as ws-log]))
+            [reagent.core :as r]
+            [worldstat.frontend.state :as ws-state]))
 
 
 (def debug? ^boolean goog.DEBUG)
@@ -85,3 +85,13 @@
                                                     (re-frame/dispatch [::ws-state/select-metric {:code m-code :name m-name}]))}
                       m-name])
                    values))]]])
+
+(defn slider [id initial step min max type]
+  (let [slider-value (r/atom initial)]
+    [:div.slider-content
+     [:input.slider.is-fullwidth {:id id :step step :min min :max max :value @slider-value :type type
+                                  :on-change (fn [event]
+                                               (.preventDefault event)
+                                               (let [new-value (.-value (.getElementById js/document id))]
+                                                 (reset! slider-value new-value)
+                                                 (re-frame/dispatch [::ws-state/select-year (js/parseInt new-value)])))}]]))
