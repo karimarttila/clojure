@@ -19,7 +19,7 @@
      :encoding {:color {:field "value"
                         :type "quantitative"}}})
 
-(defn world-schema [points year metric-name]
+(defn world-schema [points year metric-name min max]
   {:schema "https://vega.github.io/schema/vega/v5.json"
    :autosize "none"
    :width 900
@@ -44,7 +44,7 @@
             :transform [{:type "geoshape" :projection "projection"}]}
            {:type "shape"
             :from {:data "world"}
-            :encode {:enter {:tooltip {:signal "format(datum.value, '0.1')"}},
+            :encode {:enter {:tooltip {:signal "{'country': datum.country_name, 'value': format(datum.value, '0.9')}"}},
                      :update {:fill {:scale "color", :field "value"}},
                      :hover {:fill {:value "red"}}},
             :transform [{:type "geoshape"
@@ -83,7 +83,7 @@
                         :from "countries"
                         :key "country-id"
                         :fields ["id"]
-                        :values ["value" "country-name"]}]}
+                        :values ["value" "country_name"]}]}
           {:name "graticule"
            :transform [{:type "graticule"}]}]})
 

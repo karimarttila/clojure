@@ -11,7 +11,8 @@
 
 (defn- convert-row [row]
   (when (seq (second row))
-    (let [metadata {:country-name (nth row 0)
+    (let [metadata { ; NOTE: Vega tooltip formatting does not accept lisp-case, must be snake-case (country_name).
+                    :country_name (nth row 0)
                     :country-code (keyword (nth row 1))
                     :series-name (nth row 2)
                     :series-code (keyword (nth row 3))}
@@ -53,8 +54,8 @@
 (defn- get-metadata [points]
   (reduce (fn [acc point]
             (let [country (dissoc point :year :value :series-code :series-name)
-                  series (dissoc point :year :value :country-code :country-name :country-id)
-                  year (dissoc point :value :series-code :series-name :country-code :country-name)]
+                  series (dissoc point :year :value :country-code :country_name :country-id)
+                  year (dissoc point :value :series-code :series-name :country-code :country_name)]
               (-> acc
                   (update-in [:countries] conj country)
                   (update-in [:series] conj series)
@@ -72,7 +73,7 @@
 
 (defn- country-codes-to-names [countries]
   (reduce (fn [acc item]
-            (assoc acc (:country-code item) (:country-name item)))
+            (assoc acc (:country-code item) (:country_name item)))
           {}
           countries))
 
@@ -126,7 +127,7 @@
   (:series (user/data))
   (:years (user/data))
   (:countries (user/data))
-  (sort-by :country-name (:countries (user/data)))
+  (sort-by :country_name (:countries (user/data)))
   (:country-codes (user/data))
   (:series-codes (user/data))
   )
