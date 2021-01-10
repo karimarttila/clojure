@@ -77,7 +77,7 @@
         [:div.row
          [:div.columns
           [:div.column.is-9
-           [oz/vega-lite (ws-data/world-schema points selected-year) (ws-util/vega-debug)]]
+           [oz/vega-lite (ws-data/world-schema points selected-year selected-metric-name) (ws-util/vega-debug)]]
           [:div.column.auto
            [oz/vega-lite line-plot (ws-util/vega-debug)]]]]
         [:div.row
