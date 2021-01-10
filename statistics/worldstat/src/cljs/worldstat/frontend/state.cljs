@@ -72,10 +72,16 @@
   ::ret-ok-world-data
   (fn [db [_ res-body]]
     (ws-log/clog "::ret-ok-world-data")
-    (let [points (:points res-body)
-          metric (keyword (:metric res-body))]
+    (let [metric (keyword (:metric res-body))
+          data {:points (:points res-body)
+                :metric metric
+                :metric-name (:metric-name res-body)
+                :min (:min res-body)
+                :max (:max res-body)
+                :mean (:mean res-body)
+                :standard-deviation (:standard-deviation res-body)}]
       (-> db
-          (assoc-in [:data metric] points)))))
+          (assoc-in [:data metric] data)))))
 
 (re-frame/reg-sub
   ::world-data

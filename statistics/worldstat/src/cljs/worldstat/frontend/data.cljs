@@ -26,7 +26,8 @@
    :height 500
    :scales [{:name "color",
              :type "quantize",
-             :domain {:data "world" :field "value"}
+             ;:domain {:data "world" :field "value"}
+             :domain [min max]
              :range {:scheme "blues", :count 20}}]
    :legends [{:fill "color",
               :orient "bottom-left",
@@ -43,8 +44,7 @@
             :transform [{:type "geoshape" :projection "projection"}]}
            {:type "shape"
             :from {:data "world"}
-            :encode {:enter
-                     {:tooltip {:signal "format(datum.value, '0.1')"}},
+            :encode {:enter {:tooltip {:signal "format(datum.value, '0.1')"}},
                      :update {:fill {:scale "color", :field "value"}},
                      :hover {:fill {:value "red"}}},
             :transform [{:type "geoshape"

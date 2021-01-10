@@ -1,14 +1,10 @@
 (ns worldstat.backend.data.world
   (:require [clojure.tools.logging :as log]
-            [jsonista.core :as jsonista]
+            [kixi.stats.core :as kixi]
             [worldstat.common.data.filter :as wf]))
 
 ;; Using the example in https://vega.github.io/vega/examples/world-map/
 ;; + minor tuning.
-
-(defn enrich-world-data [env metric]
-  (-> (slurp "resources/public/data/world-110m.json")
-      jsonista/read-value))
 
 (defn get-metric-names [env]
   (log/debug "ENTER get-metric-names")
@@ -20,8 +16,16 @@
 
 (defn get-world-data [env metric]
   (log/debug "ENTER get-world-data, metric: " metric)
-  {:metric metric
-   :points (transduce (comp (wf/filter-by-metric metric)) conj (get-in env [:data :points]))})
+  (let [metric-name (metric (get-in env [:data :series-codes]))
+        points (transduce (comp (wf/filter-by-metric metric)) conj (get-in env [:data :points]))]
+    {:metric metric
+     :metric-name metric-name
+     :points points
+     :min (transduce (map :value) kixi/min points)
+     :max (transduce (map :value) kixi/max points)
+     :mean (transduce (map :value) kixi/mean points)
+     :standard-deviation (transduce (map :value) kixi/standard-deviation points)}
+    ))
 
 (comment
   (keys (:data (user/env)))

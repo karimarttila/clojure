@@ -51,7 +51,7 @@
     (let [current-route @(re-frame/subscribe [::ws-state/current-route])
           {selected-metric-code :code selected-metric-name :name} @(re-frame/subscribe [::ws-state/current-metric])
           selected-year @(re-frame/subscribe [::ws-state/current-year])
-          points @(re-frame/subscribe [::ws-state/world-data selected-metric-code])
+          {:keys [points min max mean standard-deviation]} @(re-frame/subscribe [::ws-state/world-data selected-metric-code])
           metric-names @(re-frame/subscribe [::ws-state/metric-names])
           _ (ws-log/clog (str "DEBUG-COUNT: " (count metric-names)))
           years @(re-frame/subscribe [::ws-state/years])
@@ -64,7 +64,13 @@
           [:p.level-item.has-text-centered.is-size-1 "World Statistics"]]]
         [:div.row
          [:div.column.is-full
-          [:p.level-item.has-text-centered.is-size-2 selected-metric-name]]]]
+          [:p.level-item.has-text-centered.is-size-2 selected-metric-name]]]
+        [:div.row
+         [:div.column.is-full
+          [:p.level-item.has-text-centered.is-size-3 (str "Min: " (ws-util/one-decimal min)
+                                                          ", Max: " (ws-util/one-decimal max)
+                                                          ", Mean: " (ws-util/one-decimal mean)
+                                                          ", Std.Dev: " (ws-util/one-decimal standard-deviation))]]]]
        [:div.rows
         [:div.row
          [:div.columns
@@ -77,7 +83,7 @@
         [:div.row
          [:div.columns
           [:div.column.is-9
-           [oz/vega-lite (ws-data/world-schema points selected-year selected-metric-name) (ws-util/vega-debug)]]
+           [oz/vega-lite (ws-data/world-schema points selected-year selected-metric-name min max) (ws-util/vega-debug)]]
           [:div.column.auto
            [oz/vega-lite line-plot (ws-util/vega-debug)]]]]
         [:div.row

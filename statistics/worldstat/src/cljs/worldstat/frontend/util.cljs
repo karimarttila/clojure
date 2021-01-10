@@ -95,3 +95,6 @@
                                                (let [new-value (.-value (.getElementById js/document id))]
                                                  (reset! slider-value new-value)
                                                  (re-frame/dispatch [::ws-state/select-year (js/parseInt new-value)])))}]]))
+
+(defn one-decimal [f]
+   (/ (.round js/Math (* 10 f)) 10))
