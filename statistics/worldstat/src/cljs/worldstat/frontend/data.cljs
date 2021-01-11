@@ -44,7 +44,7 @@
             :transform [{:type "geoshape" :projection "projection"}]}
            {:type "shape"
             :from {:data "world"}
-            :encode {:enter {:tooltip {:signal "{'country': datum.country_name, 'value': format(datum.value, '0.9')}"}},
+            :encode {:enter {:tooltip {:signal "datum.value === null ? {'country': datum.country_name, 'value': 'Missing data'} : {'country': datum.country_name, 'value': format(datum.value, '.2f')}"}},
                      ;; If missing data show as grey.
                      :update {:fill [{:test "datum.value === null" :value "gray"}
                                      {:scale "color" "field" "value"}]}
@@ -57,14 +57,14 @@
                          :projection "projection"}]}]
    :projections [{:name "projection"
                   :type {:signal "type"}
-                  :scale {:signal "scale"}
-                  :rotate [{:signal "rotate0"} {:signal "rotate1"} {:signal "rotate2"}]
+                  :scale {:signal "zoom"}
+                  :rotate [{:signal "move"} {:signal "rotate1"} {:signal "rotate2"}]
                   :center [{:signal "center0"} {:signal "center1"}]
                   :translate [{:signal "translate0"} {:signal "translate1"}]}]
    :signals [{:name "type" :value "mercator"}
-             {:name "scale" :value 150
+             {:name "zoom" :value 150
               :bind {:input "range" :min 50 :max 2000 :step 1}}
-             {:name "rotate0" :value -8
+             {:name "move" :value -8
               :bind {:input "range" :min -180 :max 180 :step 1}}
              {:name "rotate1" :value 0}
              {:name "rotate2" :value 0}
