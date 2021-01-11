@@ -45,7 +45,9 @@
            {:type "shape"
             :from {:data "world"}
             :encode {:enter {:tooltip {:signal "{'country': datum.country_name, 'value': format(datum.value, '0.9')}"}},
-                     :update {:fill {:scale "color", :field "value"}},
+                     ;; If missing data show as grey.
+                     :update {:fill [{:test "datum.value === null" :value "gray"}
+                                     {:scale "color" "field" "value"}]}
                      :hover {:fill {:value "red"}}},
             :transform [{:type "geoshape"
                          :lookup "id"

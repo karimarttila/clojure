@@ -87,6 +87,8 @@
           [:div.column.auto
            [oz/vega-lite line-plot (ws-util/vega-debug)]]]]
         [:div.row
+         [:p "(Missing data shown with color gray)"]]
+        [:div.row
          [:p "Read more about this app in my blog: TODO-URL"]]
         [:div.row
          (ws-util/debug-panel {:selected-metric-code selected-metric-code
