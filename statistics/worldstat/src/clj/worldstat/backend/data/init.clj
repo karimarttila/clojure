@@ -13,7 +13,7 @@
   (when (seq (second row))
     (let [metadata { ; NOTE: Vega tooltip formatting does not accept lisp-case, must be snake-case (country_name).
                     :country_name (nth row 0)
-                    :country-code (keyword (nth row 1))
+                    :country_code (keyword (nth row 1))
                     :series-name (nth row 2)
                     :series-code (keyword (nth row 3))}
           ; drop metadata, take only years 2002-2017
@@ -29,17 +29,17 @@
            tuples))))
 
 (defn- get-na-country-codes [points]
-  (reduce #(conj %1 (:country-code %2)) #{} (filter #(nil? (:value %)) points)))
+  (reduce #(conj %1 (:country_code %2)) #{} (filter #(nil? (:value %)) points)))
 
 (defn- filter-na-countries
   "Remove those countries that have even one :na (not available) as value."
   [points]
   (let [na-country-codes (get-na-country-codes points)]
-    (remove #(na-country-codes (:country-code %)) points)))
+    (remove #(na-country-codes (:country_code %)) points)))
 
 (defn- convert-all [csv-data ids]
   (map (fn [item]
-         (let [country-code (:country-code item)]
+         (let [country-code (:country_code item)]
            (assoc item :country-id (country-code ids))))
        (mapcat convert-row (rest csv-data))))
 
@@ -54,8 +54,8 @@
 (defn- get-metadata [points]
   (reduce (fn [acc point]
             (let [country (dissoc point :year :value :series-code :series-name)
-                  series (dissoc point :year :value :country-code :country_name :country-id)
-                  year (dissoc point :value :series-code :series-name :country-code :country_name)]
+                  series (dissoc point :year :value :country_code :country_name :country-id)
+                  year (dissoc point :value :series-code :series-name :country_code :country_name)]
               (-> acc
                   (update-in [:countries] conj country)
                   (update-in [:series] conj series)
@@ -73,7 +73,7 @@
 
 (defn- country-codes-to-names [countries]
   (reduce (fn [acc item]
-            (assoc acc (:country-code item) (:country_name item)))
+            (assoc acc (:country_code item) (:country_name item)))
           {}
           countries))
 
@@ -97,7 +97,7 @@
 
 (defn remove-non-country-values [values a-set]
   (remove (fn [item]
-            (a-set (:country-code item)))
+            (a-set (:country_code item)))
           values))
 
 (defn get-data [data-files topojson-file]
