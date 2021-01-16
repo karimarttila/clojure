@@ -14,6 +14,10 @@
   (log/debug "ENTER get-years")
   {:years (sort (get-in env [:data :years]))})
 
+(defn get-countries[env]
+  (log/debug "ENTER get-countries")
+  {:countries (sort-by :country_name (get-in env [:data :countries]))})
+
 (defn get-world-data [env metric]
   (log/debug "ENTER get-world-data, metric: " metric)
   (let [metric-name (metric (get-in env [:data :series-codes]))
@@ -24,8 +28,7 @@
      :min (transduce (map :value) kixi/min points)
      :max (transduce (map :value) kixi/max points)
      :mean (transduce (map :value) kixi/mean points)
-     :standard-deviation (transduce (map :value) kixi/standard-deviation points)}
-    ))
+     :standard-deviation (transduce (map :value) kixi/standard-deviation points)}))
 
 (comment
   (keys (:data (user/env)))

@@ -27,22 +27,6 @@
 
 ;; An example how to visualize data with Oz / Vega lite.
 
-(defn get-data [& names]
-  (for [n names
-        i (range 2002 2018)]
-    {:year i :country n :value (+ (Math/pow (* i (count n)) 0.66) (rand-int (* (count n) 18.54)))}))
-
-(def line-plot
-  {:data {:values (get-data "Finland")}
-   :encoding {:x {:title "Year" :field "year" :type "quantitative"
-                  :axis {:labelAngle -45
-                         :tickCount 10
-                         :labelExp "tostring(datum.label[0])"
-                         :format ".0f"}}
-              :y {:title "Nutrition" :field "value" :type "quantitative"}
-              :color {:field "country" :type "nominal"}}
-   :mark "line"})
-
 (defn home-page []
   ; If we have jwt in app db we are logged-in.
   (ws-log/clog "ENTER home-page")
@@ -51,12 +35,11 @@
     (let [current-route @(re-frame/subscribe [::ws-state/current-route])
           {selected-metric-code :code selected-metric-name :name} @(re-frame/subscribe [::ws-state/current-metric])
           selected-year @(re-frame/subscribe [::ws-state/current-year])
+          {selected-country-code :code selected-country-name :name} @(re-frame/subscribe [::ws-state/current-country])
           {:keys [points min max mean standard-deviation]} @(re-frame/subscribe [::ws-state/world-data selected-metric-code])
           metric-names @(re-frame/subscribe [::ws-state/metric-names])
-          _ (ws-log/clog (str "DEBUG-COUNT: " (count metric-names)))
-          years @(re-frame/subscribe [::ws-state/years])
-          _ (if-not points (re-frame/dispatch [::ws-state/get-world-data selected-metric-code]))]
-
+          _ (if-not points (re-frame/dispatch [::ws-state/get-world-data selected-metric-code]))
+          country-stats (if selected-country-code (ws-data/get-stats points selected-country-code ))]
       [:div.container
        [:div.rows
         [:div.row
@@ -85,7 +68,16 @@
           [:div.column.is-9
            [oz/vega-lite (ws-data/world-schema points selected-year selected-metric-name min max) (ws-util/vega-debug)]]
           [:div.column.auto
-           [oz/vega-lite line-plot (ws-util/vega-debug)]]]]
+           [:div.rows
+            [:div.row
+             [:p.is-size-3 selected-country-name]]
+            [:div.row
+             [:p.is-size-5 "Min: " (ws-util/one-decimal (:min country-stats))]
+             [:p.is-size-5 "Max: " (ws-util/one-decimal (:max country-stats))]
+             [:p.is-size-5 "Mean: " (ws-util/one-decimal (:mean country-stats))]
+             [:p.is-size-5 "Std.dev: " (ws-util/one-decimal (:standard-deviation country-stats))]]
+            [:div.row
+             [oz/vega-lite (ws-data/country-year-diagram points selected-metric-name selected-country-code min max) (ws-util/vega-debug)]]]]]]
         [:div.row
          [:p "(Missing data shown with color gray)"]]
         [:div.row
@@ -94,6 +86,8 @@
          (ws-util/debug-panel {:selected-metric-code selected-metric-code
                                :seletected-metric-name selected-metric-name
                                :selected-year selected-year
+                               :selected-country-code selected-country-code
+                               :selected-country-name selected-country-name
                                #_#_:world-data world-data
                                })]]])))
 
@@ -127,6 +121,14 @@
      :controllers
      [{:start (fn [& params] (ws-log/clog (str "Entering home page, params: " params)))
        :stop (fn [& params] (ws-log/clog (str "Leaving home page, params: " params)))}]}]
+   ["country/:country-code"
+    {:name ::ws-state/country
+     :parameters {:path {:country-code string?}}
+     :view home-page
+     :link-text "country"
+     :controllers
+     [{:start (fn [& params] (js/console.log (str "Entering country, params: " params)))
+       :stop (fn [& params] (js/console.log (str "Leaving country, params: " params)))}]}]
    ])
 
 (def routes routes-dev)
@@ -152,6 +154,7 @@
   (ws-log/clog "ENTER router-component")
   (let [current-route @(re-frame/subscribe [::ws-state/current-route])
         path-params (:path-params current-route)
+        ;_ (ws-log/clog "router-component, current-route" (js/JSON.stringify current-route))
         _ (ws-log/clog "router-component, path-params" path-params)]
     [:div.container
      ; NOTE: when you supply the current-route to the view it can parse path-params there (from path)
@@ -182,6 +185,7 @@
   (re-frame/dispatch-sync [::ws-state/initialize-db])
   (re-frame/dispatch-sync [::ws-state/load-years])
   (re-frame/dispatch-sync [::ws-state/load-metric-names])
+  (re-frame/dispatch-sync [::ws-state/load-countries])
   (dev-tools/start! {:state-atom re-frame.db/app-db})
   (dev-setup)
   (start))

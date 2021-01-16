@@ -4,15 +4,18 @@
             [worldstat.frontend.log :as ws-log]
             [reitit.frontend.controllers :as rfc]))
 
+(defn get-country-name [code]
+  (let [countries @(re-frame/subscribe [::countries])]
+    (-> (filter #(= (:country_code %) code) countries)
+        first
+        :country_name)))
+
 (re-frame/reg-event-db
   ::initialize-db
   (fn [_ _]
-    {;; TODO
-     ;:current-metric {:code :SP.POP.0014.TO :name "Population ages 00-14, total"}
-     :current-metric {:code :SH.MED.BEDS.ZS :name "Hospital beds (per 1,000 people)"}
-     ;; TODO
-     :current-year 2002
-     ;:current-year 2017
+    {:current-metric {:name "Physicians (per 1,000 people)", :code :SH.MED.PHYS.ZS}
+     :current-country nil
+     :current-year 2017
      :current-route nil
      :debug true}))
 
@@ -47,14 +50,24 @@
   (fn [db]
     (:current-year db)))
 
+(re-frame/reg-sub
+  ::current-country
+  (fn [db]
+    (:current-country db)))
+
 (re-frame/reg-event-db
   ::navigated
   (fn [db [_ new-match]]
     (let [old-match (:current-route db)
           new-path (:path new-match)
+          country-code (get-in new-match [:parameters :path :country-code])
+          country-name (get-country-name country-code)
+          _ (ws-log/clog "***************************** country-name: " country-name)
           controllers (rfc/apply-controllers (:controllers old-match) new-match)]
-      (ws-log/clog (str "new-path: " new-path))
-      (cond-> (assoc db :current-route (assoc new-match :controllers controllers))))))
+      (ws-log/clog (str "::state/navigated, new-path: " new-path))
+      (ws-log/clog (str "::state/navigated, country-code: " country-code))
+      (cond-> (assoc db :current-route (assoc new-match :controllers controllers))
+              country-code (assoc :current-country {:code country-code :name country-name})))))
 
 (re-frame/reg-sub
   ::debug
@@ -135,3 +148,24 @@
   (fn [{:keys [db]} [_]]
     (ws-log/clog "::load-metric-names")
     (ws-http/http-get db (str "/worldstat/api/data/metric-names/") nil ::ret-ok-metric-names ::ret-failed)))
+
+
+(re-frame/reg-event-db
+  ::ret-ok-countries
+  (fn [db [_ res-body]]
+    (ws-log/clog "::ret-ok-countries")
+    (let [countries (:countries res-body)]
+      (-> db
+          (assoc-in [:data :countries] countries)))))
+
+(re-frame/reg-sub
+  ::countries
+  (fn [db _]
+    (ws-log/clog "::countries")
+    (get-in db [:data :countries])))
+
+(re-frame/reg-event-fx
+  ::load-countries
+  (fn [{:keys [db]} [_]]
+    (ws-log/clog "::load-countries")
+    (ws-http/http-get db (str "/worldstat/api/data/countries/") nil ::ret-ok-countries ::ret-failed)))

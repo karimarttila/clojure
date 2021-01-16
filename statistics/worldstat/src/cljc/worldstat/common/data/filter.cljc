@@ -23,6 +23,11 @@
   [year]
   (filter-by :year year))
 
+(defn filter-by-country
+  "Returns a transducer that filters by a country."
+  [country-code]
+  (filter-by :country_code country-code))
+
 (defn get-data-table
   "Returns a data table regarding a metric for each year for all countries."
   [metric points]
@@ -35,6 +40,12 @@
 
   (set! *print-length* 50)
   (count (:points (user/data)))
+  (count (transduce remove-nil-values conj (:points (user/data))))
+  (count (transduce remove-nil-values conj (:points (user/data))))
+  (count (transduce (filter-by :value :na) conj (:points (user/data))))
+  (count (transduce (filter-by-country :FIN) conj (:points (user/data))))
+  (count (transduce remove-nil-values conj (:points (user/data))))
+  (count (transduce (filter-by :value :na) conj (:points (user/data))))
   (count (transduce remove-nil-values conj (:points (user/data))))
   (count (transduce (filter-by :value :na) conj (:points (user/data))))
   (transduce (filter-by :country_code :FIN) conj (:points (user/data)))

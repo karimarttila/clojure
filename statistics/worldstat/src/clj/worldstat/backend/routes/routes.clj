@@ -57,19 +57,23 @@
                                :handler (fn [req]
                                           (let [metric (get-in req [:parameters :path :metric])]
                                             (-> (world/get-world-data env (keyword metric))
-                                                r/ok)))}}]]
-    ["/data" {:swagger {:tags ["data"]}}
+                                                r/ok)))}}]
+     ["/countries" {:get {:summary "countries"
+                          :responses {200 {:description "data"}}
+                          :handler (fn [req]
+                                 (-> (world/get-countries env)
+                                     r/ok))}}]
      ["/years" {:get {:summary "years"
                       :responses {200 {:description "data"}}
                       :handler (fn [req]
                                  (-> (world/get-years env)
-                                     r/ok))}}]]
-    ["/data" {:swagger {:tags ["data"]}}
+                                     r/ok))}}]
      ["/metric-names" {:get {:summary "metric-names"
-                      :responses {200 {:description "data"}}
-                      :handler (fn [req]
-                                 (-> (world/get-metric-names env)
-                                     r/ok))}}]]
+                             :responses {200 {:description "data"}}
+                             :handler (fn [req]
+                                        (-> (world/get-metric-names env)
+                                            r/ok))}}]]
+
 
     (app-routes/routes env)]])
 

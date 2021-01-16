@@ -1,5 +1,7 @@
 (ns worldstat.frontend.data
-  (:require [worldstat.common.data.filter :as ws-filter]))
+  (:require [kixi.stats.core :as kixi]
+            [worldstat.frontend.log :as ws-log]
+            [worldstat.common.data.filter :as ws-filter]))
 
 ;; An alternative way to make the map.
 ;; But missing values must be handled some way.
@@ -44,7 +46,8 @@
             :transform [{:type "geoshape" :projection "projection"}]}
            {:type "shape"
             :from {:data "world"}
-            :encode {:enter {:tooltip {:signal "datum.value === null ? {'country': datum.country_name, 'value': 'Missing data'} : {'country': datum.country_name, 'value': format(datum.value, '.2f')}"}},
+            :encode {:enter {:tooltip {:signal "datum.value === null ? {'country': datum.country_name, 'value': 'Missing data'} : {'country': datum.country_name, 'value': format(datum.value, '.2f')}"}
+                             :href {:field "url" :type "nominal"}}
                      ;; If missing data show as grey.
                      :update {:fill [{:test "datum.value === null" :value "gray"}
                                      {:scale "color" "field" "value"}]}
@@ -72,9 +75,7 @@
              {:name "graticuleDash" :value 0}
              {:name "borderWidth" :value 1}
              {:name "background" :value "#ffffff"}
-             {:name "invert" :value false}
-             ;; TODO-KARI: Jatka tästä huomenna: tee hook, jolla otat ylös valitun maan ja teet hookiin viereen toisen graafin.
-             ]
+             {:name "invert" :value false}]
    :data [{:name "countries"
            :values (transduce (ws-filter/filter-by-year year) conj points)}
           {:name "world"
@@ -84,8 +85,28 @@
                         :from "countries"
                         :key "country-id"
                         :fields ["id"]
-                        :values ["value" "country_name" "country_code"]}]}
+                        :values ["value" "country_name" "country_code"]}
+                       {:type "formula"
+                        :from "countries"
+                        :expr "'#/country/' + datum.country_code" :as "url"}]}
           {:name "graticule"
            :transform [{:type "graticule"}]}]})
 
+(defn country-year-diagram [points metric-name country-code min max]
+  {:data {:values (transduce (ws-filter/filter-by-country country-code) conj points)}
+   :encoding {:x {:title "Year" :field "year" :type "quantitative"
+                  :axis {:labelAngle -45
+                         :tickCount 10
+                         :format ".0f"}}
+              :y {:scale {:domain [min max]}
+                  :title metric-name :field "value" :type "quantitative"}
+              :color {:field "country_name" :type "nominal"}
+              }
+   :mark "line"})
 
+(defn get-stats [points country-code]
+  (let [filtered-points (transduce (ws-filter/filter-by-country country-code) conj points)]
+    {:min (transduce (map :value) kixi/min filtered-points)
+     :max (transduce (map :value) kixi/max filtered-points)
+     :mean (transduce (map :value) kixi/mean filtered-points)
+     :standard-deviation (transduce (map :value) kixi/standard-deviation filtered-points)}))
