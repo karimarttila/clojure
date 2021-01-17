@@ -2,18 +2,17 @@
   (:require [re-frame.core :as re-frame]
             [cljs.pprint]
             [reagent.core :as r]
+            [worldstat.frontend.log :as ws-log]
             [worldstat.frontend.state :as ws-state]))
 
-
-(def debug? ^boolean goog.DEBUG)
 
 (defn vega-debug
   "In development show the actions menu and log with debug level.
   In production logging is :none, and show only export in actions menu."
   []
-  (if debug?
+  (if ws-log/debug?
     {:log-level :debug}
-    {:log-level :none
+    {:log-level :info
      :actions {:export true, :source false, :compiled false, :editor false}}))
 
 ;; Application wide properties.

@@ -1,5 +1,7 @@
 (ns worldstat.frontend.log)
 
+(def debug? ^boolean goog.DEBUG)
+
 (defn clog
   "Javascript console logger helper."
   ([msg] (clog msg nil))
@@ -7,4 +9,6 @@
    (let [buf (if data
                (str msg ": " data)
                msg)]
-     (js/console.log buf))))
+     (when debug?
+       (js/console.log buf)))))
+

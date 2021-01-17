@@ -164,7 +164,7 @@
 ;;; Setup ;;;
 
 (defn dev-setup []
-  (when ws-util/debug?
+  (when ws-log/debug?
     (enable-console-print!)
     (println "dev mode")))
 
