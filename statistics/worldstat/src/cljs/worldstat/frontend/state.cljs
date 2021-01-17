@@ -62,7 +62,6 @@
           new-path (:path new-match)
           country-code (get-in new-match [:parameters :path :country-code])
           country-name (get-country-name country-code)
-          _ (ws-log/clog "***************************** country-name: " country-name)
           controllers (rfc/apply-controllers (:controllers old-match) new-match)]
       (ws-log/clog (str "::state/navigated, new-path: " new-path))
       (ws-log/clog (str "::state/navigated, country-code: " country-code))

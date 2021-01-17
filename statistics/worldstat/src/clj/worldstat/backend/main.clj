@@ -9,7 +9,6 @@
     [aero.core :as aero]
     [nrepl.server :as nrepl]
     [potpuri.core :as p]
-    [hashp.core]
     [worldstat.backend.routes.http :as http]
     [worldstat.backend.routes.routes :as routes]
     [worldstat.backend.data.init :as init])

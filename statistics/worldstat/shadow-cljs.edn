@@ -1,14 +1,17 @@
-{
+{:deps {:aliases [:dev :common :frontend]}
  :log {:level :debug}
- :deps {:aliases [:dev :common :frontend]}
  :builds {:app {:target :browser
                 :output-dir "dev-resources/public/js"
                 :asset-path "/worldstat/js"
-                :release {:compiler-options {:source-map true}}
-                :devtools {:watch-dir "dev-resources/public/css"
-                           :watch-path "/css"
-                           }
                 :modules {:main {:entries [worldstat.frontend.main]}}
-                }}}
+                :compiler-options {:infer-externs :auto
+                                   :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}}
+                :nrepl {:port 5041}
+                ;:devtools {:watch-dir "dev-resources/public/css"
+                ;           :watch-path "/css"}
+                :dev {}
+                :release {:output-dir "target/shadow/prod/resources/public/js"
+                          :compiler-options {:source-map "target/shadow/prod/resources/public/js/main.js.map"
+                                             :optimizations :advanced}}}}}
 
 

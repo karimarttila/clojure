@@ -6,7 +6,8 @@
                 :topojson-file "data/csv/topojson-country-codes.csv"
                 }
 
- :backend/jetty {:port 5522
+ :backend/jetty {:port #profile {:dev 5522
+                                 :prod 5523}
                  :join? false
                  :env #ig/ref :backend/env}
 
@@ -15,6 +16,7 @@
 
  :backend/nrepl {:bind #profile {:prod "0.0.0.0"
                                  :dev "localhost"}
-                 :port 5533}
+                 :port #profile {:dev 5532
+                                 :prod 5533}}
  }
 

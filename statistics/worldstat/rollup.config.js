@@ -32,5 +32,27 @@ export default [
         autoModules: false
       })
     ]
+  },
+  {
+    input: "src/sass/main.scss",
+    output: {
+      file: "target/shadow/prod/resources/public/css/style.css",
+      format: "es"
+    },
+    plugins: [
+      postcss({
+        plugins: [autoprefixer],
+        extract: true,
+        minimize: true,
+        sourceMap: false,
+        extensions: [".scss"],
+        modules: {
+          generateScopedName: "[local]"
+          // getJSON: generateStylesCljs
+        },
+        autoModules: false
+      })
+    ]
   }
+
 ];

@@ -40,13 +40,19 @@
 
 # Create uberjar.
 @uberjar:
-    npm run build:sass
-    shadow-cljs release app
     mkdir -p prod-resources/public/js
     mkdir -p prod-resources/public/css
-    cp dev-resources/public/js/main.js prod-resources/public/js/main.js
-    cp dev-resources/public/css/style.css prod-resources/public/css/style.css
-    clj -Adev:common:backend:uberjar
+    mkdir -p target/shadow/prod/resources/public/data
+    cp resources/public/data/world-110m.json target/shadow/prod/resources/public/data
+    cp dev-resources/public/css/bulma*.css target/shadow/prod/resources/public/css/.
+    cp dev-resources/public/js/bulma*.js target/shadow/prod/resources/public/js/.
+    npm run build:sass
+    clj -M:common:frontend -m shadow.cljs.devtools.cli release app
+    clj -M:common:backend:uberjar
+
+# Run uberjar (run as PROFILE=prod just run-uberjar)
+run-uberjar:
+    java -cp target/worldstat.jar clojure.main -m worldstat.backend.main
 
 # Lint.
 @lint:

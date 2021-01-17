@@ -175,8 +175,7 @@
   (init-routes!)
   (r-dom/render [router-component {:router router}
                  (if (:open? @dev-tools/dev-state)
-                   {:style {:padding-bottom (str (:height @dev-tools/dev-state) "px")}})
-                 ]
+                   {:style {:padding-bottom (str (:height @dev-tools/dev-state) "px")}})]
                 (.getElementById js/document "app")))
 
 
