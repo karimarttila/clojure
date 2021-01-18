@@ -81,10 +81,10 @@
                [oz/vega-lite (ws-data/country-year-diagram points selected-metric-name selected-country-code min max) (ws-util/vega-debug)]]]
              [:p.is-size-4 "Click a country!"])]]]
         [:div.row
-         [:p "(Missing data shown with color gray)"]]
+         [:p "(Missing data for country is shown with color gray)"]]
         [:div.row
          [:p "Read more about this app in my blog "
-          [:a {:href "https://www.karimarttila.fi/clojure/2021/01/18/world-statistics-exercise.html"} "www.karimarttila.fi"]]]
+          [:a {:href "https://www.karimarttila.fi/clojure/2021/01/19/world-statistics-exercise.html"} "www.karimarttila.fi"]]]
         [:div.row
          (when ws-log/debug?
            (ws-util/debug-panel {:selected-metric-code selected-metric-code
