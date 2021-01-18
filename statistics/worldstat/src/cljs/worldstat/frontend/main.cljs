@@ -39,7 +39,7 @@
           {:keys [points min max mean standard-deviation]} @(re-frame/subscribe [::ws-state/world-data selected-metric-code])
           metric-names @(re-frame/subscribe [::ws-state/metric-names])
           _ (if-not points (re-frame/dispatch [::ws-state/get-world-data selected-metric-code]))
-          country-stats (if selected-country-code (ws-data/get-stats points selected-country-code ))]
+          country-stats (if selected-country-code (ws-data/get-stats points selected-country-code))]
       [:div.container
        [:div.rows
         [:div.row
@@ -68,28 +68,31 @@
           [:div.column.is-9
            [oz/vega-lite (ws-data/world-schema points selected-year selected-metric-name min max) (ws-util/vega-debug)]]
           [:div.column.auto
-           [:div.rows
-            [:div.row
-             [:p.is-size-3 selected-country-name]]
-            [:div.row
-             [:p.is-size-5 "Min: " (ws-util/one-decimal (:min country-stats))]
-             [:p.is-size-5 "Max: " (ws-util/one-decimal (:max country-stats))]
-             [:p.is-size-5 "Mean: " (ws-util/one-decimal (:mean country-stats))]
-             [:p.is-size-5 "Std.dev: " (ws-util/one-decimal (:standard-deviation country-stats))]]
-            [:div.row
-             [oz/vega-lite (ws-data/country-year-diagram points selected-metric-name selected-country-code min max) (ws-util/vega-debug)]]]]]]
+           (if country-stats
+             [:div.rows
+              [:div.row
+               [:p.is-size-3 selected-country-name]]
+              [:div.row
+               [:p.is-size-5 "Min: " (ws-util/one-decimal (:min country-stats))]
+               [:p.is-size-5 "Max: " (ws-util/one-decimal (:max country-stats))]
+               [:p.is-size-5 "Mean: " (ws-util/one-decimal (:mean country-stats))]
+               [:p.is-size-5 "Std.dev: " (ws-util/one-decimal (:standard-deviation country-stats))]]
+              [:div.row
+               [oz/vega-lite (ws-data/country-year-diagram points selected-metric-name selected-country-code min max) (ws-util/vega-debug)]]]
+             [:p.is-size-4 "Click a country!"])]]]
         [:div.row
          [:p "(Missing data shown with color gray)"]]
         [:div.row
-         [:p "Read more about this app in my blog: TODO-URL"]]
+         [:p "Read more about this app in my blog: http://karimarttila.fi/TODO-URI"]]
         [:div.row
-         (ws-util/debug-panel {:selected-metric-code selected-metric-code
-                               :seletected-metric-name selected-metric-name
-                               :selected-year selected-year
-                               :selected-country-code selected-country-code
-                               :selected-country-name selected-country-name
-                               #_#_:world-data world-data
-                               })]]])))
+         (when ws-log/debug?
+           (ws-util/debug-panel {:selected-metric-code selected-metric-code
+                                 :seletected-metric-name selected-metric-name
+                                 :selected-year selected-year
+                                 :selected-country-code selected-country-code
+                                 :selected-country-name selected-country-name
+                                 #_#_:world-data world-data
+                                 }))]]])))
 
 
 ;;; Effects ;;;
@@ -127,8 +130,8 @@
      :view home-page
      :link-text "country"
      :controllers
-     [{:start (fn [& params] (js/console.log (str "Entering country, params: " params)))
-       :stop (fn [& params] (js/console.log (str "Leaving country, params: " params)))}]}]
+     [{:start (fn [& params] (ws-log/clog (str "Entering country, params: " params)))
+       :stop (fn [& params] (ws-log/clog (str "Leaving country, params: " params)))}]}]
    ])
 
 (def routes routes-dev)
@@ -164,9 +167,8 @@
 ;;; Setup ;;;
 
 (defn dev-setup []
-  (when ws-log/debug?
-    (enable-console-print!)
-    (println "dev mode")))
+  (enable-console-print!)
+  (println "Running in dev mode!"))
 
 
 (defn ^:dev/after-load start []
@@ -185,8 +187,9 @@
   (re-frame/dispatch-sync [::ws-state/load-years])
   (re-frame/dispatch-sync [::ws-state/load-metric-names])
   (re-frame/dispatch-sync [::ws-state/load-countries])
-  (dev-tools/start! {:state-atom re-frame.db/app-db})
-  (dev-setup)
+  (when ws-log/debug?
+    (dev-tools/start! {:state-atom re-frame.db/app-db})
+    (dev-setup))
   (start))
 
 (comment
