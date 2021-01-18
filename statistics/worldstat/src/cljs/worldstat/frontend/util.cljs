@@ -11,9 +11,10 @@
   In production logging is :none, and show only export in actions menu."
   []
   (if ws-log/debug?
-    {:log-level :debug}
+    {:log-level :debug
+     :actions {:export true, :source true, :compiled false, :editor true}}
     {:log-level :info
-     :actions {:export true, :source false, :compiled false, :editor false}}))
+     :actions false}))
 
 ;; Application wide properties.
 (def backend-host-config {:host "localhost" :port 5522})
