@@ -2,8 +2,7 @@
   (:require [reitit.swagger-ui :as swagger-ui]
             [reitit.swagger :as swagger]
             [ring.util.http-response :as r]
-            [worldstat.backend.data.world :as world]
-            [worldstat.backend.routes.app-routes :as app-routes]))
+            [worldstat.backend.data.world :as world]))
 
 ;; ******************************************************************
 ; Curl api like:
@@ -72,10 +71,7 @@
                              :responses {200 {:description "data"}}
                              :handler (fn [req]
                                         (-> (world/get-metric-names env)
-                                            r/ok))}}]]
-
-
-    (app-routes/routes env)]])
+                                            r/ok))}}]]]])
 
 (comment
   (require '[clj-http.client])
