@@ -65,8 +65,6 @@
                       :main-opts ["-m" "depot.outdated.main" "-a" "outdated"]}
            :clj-kondo {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2020.10.10"}}
                        :main-opts ["-m" "clj-kondo.main"]}
-           ;; Cider specific.
-           :cider-clj {:extra-deps {org.clojure/clojure {:mvn/version "1.10.1"}
-                                    cider/cider-nrepl {:mvn/version "0.22.4"}}
-                       :main-opts ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]}}
+           ;; Emacs Cider specific.
+           :emacs {:extra-deps {cider/cider-nrepl {:mvn/version "0.25.5"}}}}
  }

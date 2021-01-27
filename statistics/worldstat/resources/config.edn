@@ -3,7 +3,8 @@
                              "data/csv/6f85ca2a-e4ad-4def-9a7e-536f827a55c7_Data.csv"]
                 :topojson-file "data/csv/topojson-country-codes.csv"}
 
- :backend/jetty {:port #profile {:dev 5522
+ :backend/jetty {:port #profile {:emacs 5521 ; Just for being able to start repls for both Emacs and Cursive at the same time.
+                                 :dev 5522
                                  :prod #long #or [#env PORT 5523]}
                  :join? false
                  :env #ig/ref :backend/env}
@@ -12,7 +13,9 @@
 
 
  :backend/nrepl {:bind #profile {:prod "0.0.0.0"
-                                 :dev "localhost"}
-                 :port #profile {:dev 5532
+                                 :dev "localhost"
+                                 :emacs "localhost"}
+                 :port #profile {:emacs 5531
+                                 :dev 5532
                                  :prod nil}}}
 

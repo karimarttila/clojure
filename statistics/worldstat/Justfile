@@ -11,7 +11,19 @@
 
 # Start backend repl with my toolbox and with debug-repl capability.
 @backend-debug-kari:
-    clj -M:dev:test:common:backend:kari -m nrepl.cmdline -m com.gfredericks.debug-repl/wrap-debug-repl -i -C
+    clj -M:dev:test:common:backend:kari -m nrepl.cmdline --middleware '[com.gfredericks.debug-repl/wrap-debug-repl]' -i -C
+
+@backend-debug-reveal-kari:
+    # clj -J-Dvlaaad.reveal.prefs="{:theme :light}" -M:dev:test:common:backend:reveal:kari -m nrepl.cmdline --middleware '[com.gfredericks.debug-repl/wrap-debug-repl vlaaad.reveal.nrepl/middleware]' -i -C
+    clj -M:dev:test:common:backend:reveal:kari -m nrepl.cmdline -m com.gfredericks.debug-repl/wrap-debug-repl -m nrepl.cmdline -m vlaaad.reveal.nrepl/middleware -i -C
+
+@backend-debug-reveal-kari-port:
+    # clj -J-Dvlaaad.reveal.prefs="{:theme :light}" -M:dev:test:common:backend:reveal:kari -m nrepl.cmdline --middleware '[com.gfredericks.debug-repl/wrap-debug-repl vlaaad.reveal.nrepl/middleware]' -p 44444 -i -C
+    clj -M:dev:test:common:backend:reveal:kari -m nrepl.cmdline --middleware '[com.gfredericks.debug-repl/wrap-debug-repl vlaaad.reveal.nrepl/middleware]' -p 44444 -i -C
+
+# Start backend repl with my toolbox for Emacs.
+@backend-debug-kari-emacs:
+    PROFILE=emacs clj -M:dev:test:common:backend:reveal:kari:emacs -m nrepl.cmdline --middleware '[com.gfredericks.debug-repl/wrap-debug-repl vlaaad.reveal.nrepl/middleware cider.nrepl/cider-middleware]' -p 55555 -i -C
 
 # Init node packages.
 @init:

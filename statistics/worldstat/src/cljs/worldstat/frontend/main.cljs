@@ -132,8 +132,7 @@
      :link-text "country"
      :controllers
      [{:start (fn [& params] (ws-log/clog (str "Entering country, params: " params)))
-       :stop (fn [& params] (ws-log/clog (str "Leaving country, params: " params)))}]}]
-   ])
+       :stop (fn [& params] (ws-log/clog (str "Leaving country, params: " params)))}]}]])
 
 (def routes routes-dev)
 
