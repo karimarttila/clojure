@@ -1,4 +1,4 @@
-{:deps {:aliases [:dev :common :frontend]}
+{:deps {:aliases [:dev :common :frontend :kari]}
  :log {:level :debug}
  :builds {:app {:target :browser
                 :output-dir "dev-resources/public/js"
@@ -7,8 +7,10 @@
                 :compiler-options {:infer-externs :auto
                                    :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}}
                 :nrepl {:port 5041}
-                ;:devtools {:watch-dir "dev-resources/public/css"
-                ;           :watch-path "/css"}
+                :devtools {:preloads [hashp.core]
+                           ; :watch-dir "dev-resources/public/css"
+                           ; :watch-path "/css"
+                           }
                 :dev {}
                 :release {:output-dir "target/shadow/prod/resources/public/js"
                           :compiler-options {:source-map "target/shadow/prod/resources/public/js/main.js.map"
