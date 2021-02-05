@@ -37,7 +37,10 @@
 
 # Start backend repl with my toolbox and with debug-repl capability.
 @backend-debug-kari:
-    clj -M:dev:test:common:backend:kari -m nrepl.cmdline -m com.gfredericks.debug-repl/wrap-debug-repl -i -C
+    clj -M:dev:test:common:backend:kari -m nrepl.cmdline --middleware com.gfredericks.debug-repl/wrap-debug-repl -i -C
+
+@backend-kari-all:
+    clj -M:dev:test:common:backend:kari:reveal -e "(require '[com.gfredericks.debug-repl] '[hashp.core] )" -m nrepl.cmdline --middleware '[com.gfredericks.debug-repl/wrap-debug-repl vlaaad.reveal.nrepl/middleware]' -i -C
 
 # Init node packages.
 @init:

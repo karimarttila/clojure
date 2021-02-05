@@ -200,4 +200,8 @@
 
 (comment
   (reagent.dom/render [])
+
+  ;(require '[hashp.core :include-macros true])
+  ;(let [a #p (range 5)] a)
+
   )

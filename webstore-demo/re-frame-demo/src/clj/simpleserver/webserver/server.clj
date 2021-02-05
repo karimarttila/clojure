@@ -120,6 +120,7 @@
                          {:ret :failed, :msg "Given token is not valid"})]
     (make-response response-value)))
 
+;; UI is in http://localhost:6161/index.html
 (defn routes
   "Routes."
   [env]
