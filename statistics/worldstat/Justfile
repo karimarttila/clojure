@@ -15,7 +15,7 @@
 
 @backend-debug-reveal-kari:
     # clj -J-Dvlaaad.reveal.prefs="{:theme :light}" -M:dev:test:common:backend:reveal:kari -m nrepl.cmdline --middleware '[com.gfredericks.debug-repl/wrap-debug-repl vlaaad.reveal.nrepl/middleware]' -i -C
-    clj -M:dev:test:common:backend:reveal:kari -m nrepl.cmdline -m com.gfredericks.debug-repl/wrap-debug-repl -m nrepl.cmdline -m vlaaad.reveal.nrepl/middleware -i -C
+    clj -M:dev:test:common:backend:reveal:kari -m nrepl.cmdline --middleware '[com.gfredericks.debug-repl/wrap-debug-repl vlaaad.reveal.nrepl/middleware]'  -i -C
 
 @backend-debug-reveal-kari-port:
     # clj -J-Dvlaaad.reveal.prefs="{:theme :light}" -M:dev:test:common:backend:reveal:kari -m nrepl.cmdline --middleware '[com.gfredericks.debug-repl/wrap-debug-repl vlaaad.reveal.nrepl/middleware]' -p 44444 -i -C
@@ -38,13 +38,13 @@
     cp node_modules/bulma-slider/dist/js/bulma-slider.min.js dev-resources/public/js/.
     npm run dev
 
+# DO NOT USE: Start frontend auto-compilation. Use above frontend instead.
+# @frontend-kari:
+#   clj -M:dev:common:frontend:kari -m shadow.cljs.devtools.cli watch app
+
 # SASS auto-compile
 @css:
     npm run build:sass
-
-# Start frontend auto-compilation.
-# @frontend-kari:
-#   clj -M:dev:common:frontend:kari -m shadow.cljs.devtools.cli watch app
 
 # Update dependencies.
 @outdated:

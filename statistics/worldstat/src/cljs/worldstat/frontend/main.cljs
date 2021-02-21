@@ -23,9 +23,15 @@
 ;; ******************************************************************
 
 
-;;; Views ;;;
 
-;; An example how to visualize data with Oz / Vega lite.
+
+(comment
+  ; TODO: Jostain syystä tämä tulee frontendin REPLiin, mutta jos laittaa hashp alla koodiin ja ajaa, niin menee selaimen consoleen.
+  (require '[hashp.core :include-macros true])
+  (let [a #p (range 5)] a)
+  )
+
+;;; Views ;;;
 
 (defn home-page []
   ; If we have jwt in app db we are logged-in.
