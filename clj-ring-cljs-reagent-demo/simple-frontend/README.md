@@ -61,7 +61,7 @@ Start the server e.g. using Python2:
 
 ```bash
 cd <to this public-demo directory>
-python -m SimpleHTTPServer
+python -m http.server
 ```
 The Simple Frontent wants to connect to the server that listens port 3045 in localhost.
 
