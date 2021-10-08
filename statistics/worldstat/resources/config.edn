@@ -15,7 +15,7 @@
  :backend/nrepl {:bind #profile {:prod "0.0.0.0"
                                  :dev "localhost"
                                  :emacs "localhost"}
-                 :port #profile {:emacs 5531
-                                 :dev 5532
+                 :port #profile {:emacs 55311
+                                 :dev 55312
                                  :prod nil}}}
 

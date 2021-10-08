@@ -16,6 +16,7 @@
 
 ;; ******************************************************************
 ;; NOTE: When starting ClojureScript REPL in Cursive, give first command:
+;; NOTE: First start both backend (and remember (reset)), and frontend.
 ; (shadow.cljs.devtools.api/repl :app)
 ; to connect the REPL to the app running in the browser.
 ; Frontend home page:
@@ -25,11 +26,11 @@
 
 
 
-(comment
-  ; TODO: Jostain syystä tämä tulee frontendin REPLiin, mutta jos laittaa hashp alla koodiin ja ajaa, niin menee selaimen consoleen.
-  (require '[hashp.core :include-macros true])
-  (let [a #p (range 5)] a)
-  )
+;(comment
+;  ; TODO: Jostain syystä tämä tulee frontendin REPLiin, mutta jos laittaa hashp alla koodiin ja ajaa, niin menee selaimen consoleen.
+;  (require '[hashp.core :include-macros true])
+;  (let [a #p (range 5)] a)
+;  )
 
 ;;; Views ;;;
 
