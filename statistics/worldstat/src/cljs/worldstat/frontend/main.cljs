@@ -99,6 +99,9 @@
                                  :selected-year selected-year
                                  :selected-country-code selected-country-code
                                  :selected-country-name selected-country-name
+                                 :min min
+                                 :max max
+                                 ;:points points
                                  #_#_:world-data world-data
                                  }))]]])))
 

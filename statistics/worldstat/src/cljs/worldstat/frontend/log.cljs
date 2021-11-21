@@ -1,6 +1,7 @@
 (ns worldstat.frontend.log)
 
-(def debug? ^boolean goog.DEBUG)
+;(def debug? ^boolean goog.DEBUG)
+(def debug? true)
 
 (defn clog
   "Javascript console logger helper."

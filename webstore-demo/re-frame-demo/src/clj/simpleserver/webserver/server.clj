@@ -259,7 +259,7 @@
 (comment
 
   (clj-http.client/get
-    (str "http://localhost:6161/info") {:debug true :accept "application/json"})
+    (str "http://localhost:6161/api/info") {:debug true :accept "application/json"})
 
   (clj-http.client/get
     (str "http://localhost:6161/index.html") {:debug true})
