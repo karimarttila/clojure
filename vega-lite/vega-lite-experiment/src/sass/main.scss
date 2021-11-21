@@ -1,0 +1,25 @@
+// NOTE: just css
+
+body {
+  font-family: "Times New Roman", Times, serif;
+  padding: 100px;
+  font-size: 18px;
+}
+
+////////////////////////////////////////
+// We use mostly Bulma styles.
+
+.graph-wrapper > div
+  {
+  //border: 1px solid pink;
+   //width: 30vw;
+  //display: flex;
+}
+
+.graph-wrapper > div > canvas
+  {
+  //border: 1px solid blue;
+   //width: 30vw;
+  //flex-grow: 1;
+}
+

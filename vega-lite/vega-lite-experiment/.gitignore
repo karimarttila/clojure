@@ -1,0 +1,50 @@
+# Personal stuff.
+personal/
+scratch/
+
+# Temporary directories.
+tmp/
+
+# Emacs backups.
+*~
+
+# Generated directories.
+public-html/
+
+# Log files
+*.log
+*.tex
+
+# IDEA
+.idea/
+*.iml
+
+# Node
+node_modules/
+
+# Lsp
+lsp/
+
+# cljs-shadow
+dev-resources/public/js/
+dev-resources/public/css/
+target/
+yarn.lock
+package-lock.json
+.shadow-cljs/
+prod-resources/
+
+# Generated directories
+out/
+
+# Cache directory
+.cpcache/
+
+# CLJ errors.
+trace.edn
+
+# clj-kondo cache
+.cache/
+
+# Repl port files
+.nrepl-port
