@@ -55,53 +55,84 @@
 
 ;;; Views ;;;
 
-(defonce my-vl (.register vega-lite-api vega vega-lite #js {:view {:renderer "canvas"}}))
+(def simple-data
+  [{:a "A", :b 155}, {:a "B", :b 55}, {:a "C", :b 43},
+   {:a "D", :b 91}, {:a "E", :b 81}, {:a "F", :b 53},
+   {:a "G", :b 19}, {:a "H", :b 87}, {:a "I", :b 52},
+   ])
 
-(defn my-vega-lite-api
-  "Reagent component that renders vega"
-  [func]
-  (r/create-class
-    {:display-name "vega"
-     :component-did-mount (fn [this]
-                            (func (rd/dom-node this)))
-     :reagent-render (fn [this]
-                       [:div.viz])}))
+(def simple-data2
+  [{:a "A", :b 55}, {:a "B", :b 155}, {:a "C", :b 43},
+   {:a "D", :b 91}, {:a "E", :b 181}, {:a "F", :b 53},
+   {:a "G", :b 99}, {:a "H", :b 187}, {:a "I", :b 52},
+   ])
 
 
+(defn bar-experiment-raw-spec
+  [data]
+  {:mark {:type "bar"},
+   :data {:values data}
+   :encoding {:x {:field "b", :type "quantitative"},
+              :y {:field "a", :type "nominal"}}})
 
-(defn bar-experiment [dom-node]
-  (js/console.log dom-node) ; See the div in browser console.
-  [(-> my-vl
-       (.markBar)
-       (.data (clj->js [{:a "A", :b 155}, {:a "B", :b 55}, {:a "C", :b 43},
-                        {:a "D", :b 91}, {:a "E", :b 81}, {:a "F", :b 53},
-                        {:a "G", :b 19}, {:a "H", :b 87}, {:a "I", :b 52},
-                        ]))
-       (.encode
-         (-> my-vl (.x) (.fieldQ "b"))
-         (-> my-vl (.y) (.fieldN "a")))
-       (.render)
-       (.then
-         (fn [viewElement]
-           (-> dom-node
-               (.appendChild viewElement)))))])
+(defn bar-experiment [data]
+  (-> v-c/my-vl (.markBar)
+      (.data (clj->js data))
+      (.encode
+        (-> v-c/my-vl (.x) (.fieldQ "b"))
+        (-> v-c/my-vl (.y) (.fieldN "a")))))
 
-(defn draw-it [title func]
+
+(defn draw-it [graph title func-name data-name method]
   [:div.box.mr-2.mb-2 {:id "draw-it-box"}
    [:div
     [:p.title.is-5 title]
-    [my-vega-lite-api func]]])
+    [:ul
+     [:li (str "function: " func-name)]
+     [:li (str "data: " data-name)]
+     [:li (str "method: " method)]]
+    [:div.mt-4
+     graph]
+    ]]
+  )
+
+(defn render-it [func data {:keys [title func-name data-name]}]
+  (let [graph [v-c/vega-lite-api-render func data]]
+    [draw-it graph title func-name data-name "vega-lite-api render"]
+    ))
+
+(defn vega-it [func data {:keys [title func-name data-name]}]
+  (let [spec-obj (func data)
+        spec #p (.toSpec spec-obj)
+        graph [v-c/r-vega-lite spec (v-c/vega-debug)]]
+    [draw-it graph title func-name data-name "vega with spec"]
+    ))
+
+(defn vega-it-with-raw-spec [raw-spec-func data {:keys [title func-name data-name]}]
+  (let [graph [v-c/r-vega-lite (raw-spec-func data) (v-c/vega-debug)]]
+    [draw-it graph title func-name data-name "vega with raw spec"]
+    ))
+
+
 
 (defn home-page []
   (v-util/clog "home-page")
-  (let [_ #p "DEBUG!!!"]
-    [:div.container {:id "home-page-container"}
-     [:div.columns.is-multiline.is-mobile.m-2.p-2 {:id "home-page-columns"}
-      [draw-it "Simple Bar Experiment with render" bar-experiment]
-      [draw-it "Copy of Simple Bar Experiment with render" bar-experiment]
-      ]
-     ]
-    ))
+  ;(let [_ #p "DEBUG!!!"])
+  [:div.container {:id "home-page-container"}
+   [:div.columns.is-multiline.is-mobile.m-2.p-2 {:id "home-page-columns"}
+    [render-it bar-experiment simple-data {:title "Bar with vega-lite-api render"
+                                           :func-name "bar-experiment"
+                                           :data-name "simple-data"}]
+    [render-it bar-experiment simple-data2 {:title "Same Bar, different data"
+                                            :func-name "bar-experiment"
+                                            :data-name "simple-data2"}]
+    [vega-it bar-experiment simple-data {:title "Bar, using vega"
+                                           :func-name "bar-experiment"
+                                           :data-name "simple-data"}]
+    [vega-it-with-raw-spec bar-experiment-raw-spec simple-data {:title "Bar, injecting raw spec to vega"
+                                                                :func-name "bar-experiment-raw-spec"
+                                                                :data-name "simple-data"}]
+    ]])
 
 
 ;;; Effects ;;;
@@ -206,9 +237,3 @@
   (js/console.log "ENTER main stop"))
 
 
-
-(comment
-  (reagent.dom/render [])
-  (+ 1 2 )
-
-  )

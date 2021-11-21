@@ -16,16 +16,6 @@
 
 (def debug true)
 
-(defn vega-debug
-  "In development show the actions menu and log with debug level.
-  In production logging is :none, and show only export in actions menu."
-  []
-  (if debug
-    {:log-level :debug
-     :actions {:export true, :source true, :compiled false, :editor true}}
-    {:log-level :info
-     :actions false}))
-
 ;; Application wide properties.
 (def backend-host-config {:host "localhost" :port 7501})
 

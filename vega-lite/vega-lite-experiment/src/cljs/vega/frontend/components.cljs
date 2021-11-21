@@ -11,7 +11,7 @@
   )
 
 ;; ********************************************************'
-;; Vega<
+;; Vega
 ;; From: https://github.com/metasoarous/oz
 
 (defn- apply-log-level
@@ -26,8 +26,20 @@
                  :warn vega/Warn)))
     opts))
 
-(defn ^:no-doc my-embed-vega
-  ([elem doc] (my-embed-vega elem doc {}))
+(def debug true)
+
+(defn vega-debug
+  "In development show the actions menu and log with debug level.
+  In production logging is :none, and show only export in actions menu."
+  []
+  (if debug
+    {:log-level :debug
+     :actions {:export true, :source true, :compiled false, :editor true}}
+    {:log-level :info
+     :actions false}))
+
+(defn ^:no-doc r-embed-vega
+  ([elem doc] (r-embed-vega elem doc {}))
   ([elem doc {:as opts :keys [view-callback]}]
    (when doc
      (let [doc (clj->js doc)
@@ -45,122 +57,53 @@
            (.catch (fn [err]
                      (js/console.log err))))))))
 
-(defn my-vega
-  "Reagent component that renders vega"
-  ([doc] (my-vega doc {}))
+(defn r-vega
+  ([doc] (r-vega doc {}))
   ([doc opts]
    (let [opts (merge {:mode "vega"} opts)]
      (r/create-class
       {:display-name "vega"
        :component-did-mount (fn [this]
-                              (my-embed-vega (rd/dom-node this) doc opts))
+                              (r-embed-vega (rd/dom-node this) doc opts))
        :component-will-update (fn [this [_ new-doc new-opts]]
-                                (my-embed-vega (rd/dom-node this) new-doc new-opts))
+                                (r-embed-vega (rd/dom-node this) new-doc new-opts))
        :reagent-render (fn [doc]
                          [:div.viz])}))))
 
-(defn my-vega-lite
+(defn r-vega-lite
   "Reagent component that renders vega-lite."
-  ([doc] (my-vega-lite doc {}))
+  ([doc] (r-vega-lite doc {}))
   ([doc opts]
    ;; Which way should the merge go?
-   (my-vega doc (merge opts {:mode "vega-lite"}))))
+   (r-vega doc (merge opts {:mode "vega-lite"}))))
 
 
 ;; ********************************************************'
 ;; Vega Lite API
 
-#_(defn vega-lite-api-view
-  []
-  (fn []
-    (let [my-vl (.register vega-lite-api vega vega-lite)]
-      (-> my-vl
-          (.markBar)
-          (.data (clj->js [{:a "A", :b 28}, {:a "B", :b 55}, {:a "C", :b 43},
-                           {:a "D", :b 91}, {:a "E", :b 81}, {:a "F", :b 53},
-                           {:a "G", :b 19}, {:a "H", :b 87}, {:a "I", :b 52},
-                           ]))
-          (.encode
-            (-> my-vl (.x) (.fieldQ "b"))
-            (-> my-vl (.y) (.fieldN "a")))
-          (.render)
-          ))
-    )
-  )
 
-(comment
-
-  (def my-vl (.register vega-lite-api vega vega-lite  #js {:view {:renderer "canvas"}}))
+(defonce my-vl (.register vega-lite-api vega vega-lite #js {:view {:renderer "canvas"}}))
 
 
-  (let [my-vl (.register vega-lite-api vega vega-lite #js {:view {:renderer "canvas"}})]
-    (-> my-vl
-        (.markBar)
-        (.data (clj->js [{:a "A", :b 28}, {:a "B", :b 55}, {:a "C", :b 43},
-                         {:a "D", :b 91}, {:a "E", :b 81}, {:a "F", :b 53},
-                         {:a "G", :b 19}, {:a "H", :b 87}, {:a "I", :b 52},
-                         ]))
-        (.encode
-          (-> my-vl (.x) (.fieldQ "b"))
-          (-> my-vl (.y) (.fieldN "a")))
-        (.toSpec)
-        ))
+(defn render-it [dom-node spec]
+  (js/console.log dom-node) ; See the div in browser console.
+  [(-> spec
+       (.render)
+       (.then
+         (fn [viewElement]
+           (-> dom-node
+               (.appendChild viewElement)))))])
 
-
-
-  )
-
-;(comment
-;  my-vega
-;  my-vega-lite
-;  vega
-;  vega-lite
-;  (sort (keys (js->clj vega-lite-api)))
-;  (def my-vl-tmp (. vega-lite-api (register vega vega-lite #js {:view {:renderer "canvas"}})))
-;  (def my-vl (.register vega-lite-api vega vega-lite  #js {:view {:renderer "canvas"}}))
-;
-;
-;  (let [my-vl (.register vega-lite-api vega vega-lite #js {:view {:renderer "canvas"}})]
-;    (-> my-vl
-;        (.markBar)
-;        (.data (clj->js [{:a "A", :b 28}, {:a "B", :b 55}, {:a "C", :b 43},
-;                         {:a "D", :b 91}, {:a "E", :b 81}, {:a "F", :b 53},
-;                         {:a "G", :b 19}, {:a "H", :b 87}, {:a "I", :b 52},
-;                         ]))
-;        (.encode
-;          (-> my-vl (.x) (.fieldQ "b"))
-;          (-> my-vl (.y) (.fieldN "a")))
-;        (.render)
-;        (.then
-;          (fn [viewElement]
-;            (-> js/document
-;                (.getElementById "app")
-;                (.appendChild viewElement)
-;                )))))
-;
-;(-> js/document
-;      (.getElementById "app")
-;      (.-innerHTML)
-;      (set! "clojure")
-;      )
-;
-;
-;(def my-vl (.register vega-lite-api vega vega-lite  #js {:view {:renderer "canvas"}}))
-;  (-> my-vl
-;      (.markBar)
-;      (.data (clj->js [{:a "A", :b 28}, {:a "B", :b 55}, {:a "C", :b 43},
-;                       {:a "D", :b 91}, {:a "E", :b 81}, {:a "F", :b 53},
-;                       {:a "G", :b 19}, {:a "H", :b 87}, {:a "I", :b 52},
-;                       ]))
-;      (.encode
-;        (-> my-vl (.x) (.fieldQ "b"))
-;        (-> my-vl (.y) (.fieldN "a")))
-;      #_(.render)
-;      )
-;
-;  my-vl
-;  )
-;
+(defn vega-lite-api-render
+  "Reagent component that renders vega"
+  [func data]
+  (let [spec (func data)]
+    (r/create-class
+      {:display-name "vega"
+       :component-did-mount (fn [this]
+                              (render-it (rd/dom-node this) spec))
+       :reagent-render (fn [this]
+                         [:div.viz])})))
 
 
 
