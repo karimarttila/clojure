@@ -20,6 +20,18 @@
             )
   )
 
+;; NOTE: If mystic failures, do:
+;; Stop frontend watch and backend repl
+;; rm -rf node_modules
+;; just clean
+;; just init
+;; start frontend watch and backend repl
+;; connect cursive to backend repl and (reset)
+
+;; If Clojure namespaces do not show:
+;; Check in Cursive => Clojure Deps => you have the right aliases checked.
+;; Try: Refresh Clojure Deps Project.
+
 
 (re-frame/reg-sub
   ::current-route
@@ -30,9 +42,7 @@
   ::initialize-db
   (fn [_ _]
     (v-util/clog "reg-event-db - ::initialize-db")
-    {:current-route nil
-     }))
-
+    {:current-route nil}))
 
 (re-frame/reg-event-db
   ::navigated
@@ -67,7 +77,6 @@
    {:a "G", :b 99}, {:a "H", :b 187}, {:a "I", :b 52},
    ])
 
-
 (defn bar-experiment-raw-spec
   [data]
   {:mark {:type "bar"},
@@ -75,13 +84,12 @@
    :encoding {:x {:field "b", :type "quantitative"},
               :y {:field "a", :type "nominal"}}})
 
-(defn bar-experiment [data]
+(defn bar-experiment-vega-lite-api [data]
   (-> v-c/my-vl (.markBar)
       (.data (clj->js data))
       (.encode
         (-> v-c/my-vl (.x) (.fieldQ "b"))
         (-> v-c/my-vl (.y) (.fieldN "a")))))
-
 
 (defn draw-it [graph title func-name data-name method]
   [:div.box.mr-2.mb-2 {:id "draw-it-box"}
@@ -92,54 +100,48 @@
      [:li (str "data: " data-name)]
      [:li (str "method: " method)]]
     [:div.mt-4
-     graph]
-    ]]
-  )
+     graph]]])
 
-(defn render-it
+(defn vega-lite-api-render-it
   "This function uses vega-lite-api both to create the spec and also to render the spec to graph."
   [func data {:keys [title func-name data-name]}]
   (let [graph [v-c/vega-lite-api-render func data]]
-    [draw-it graph title func-name data-name "vega-lite-api render"]
-    ))
+    [draw-it graph title func-name data-name "vega-lite-api render"]))
 
-(defn vega-it
-  "This function uses vega-lite-api to create the spec but uses plain vega to create the graph."
+(defn vega-lite-api-spec-and-vega-react-it
+  "This function uses vega-lite-api to create the spec but uses vega-lite-wrapper to create the graph."
   [func data {:keys [title func-name data-name]}]
   (let [spec-obj (func data)
-        spec #p (.toSpec spec-obj)
-        graph [v-c/r-vega-lite spec (v-c/vega-debug)]]
-    [draw-it graph title func-name data-name "vega with spec"]
-    ))
+        spec (.toSpec spec-obj)
+        graph [v-c/vega-lite-react-wrapper spec]]
+    [draw-it graph title func-name data-name "vega-lite-react-wrapper"]))
 
-(defn vega-it-with-raw-spec
-  "This function uses raw vega specification and injects it to plain vega to create the graph."
+(defn vega-react-it
+  "This function uses raw vega specification (without data) and injects it with data to vega-react wrapper to create the graph."
   [raw-spec-func data {:keys [title func-name data-name]}]
-  (let [graph [v-c/r-vega-lite (raw-spec-func data) (v-c/vega-debug)]]
-    [draw-it graph title func-name data-name "vega with raw spec"]
-    ))
-
-
+  (let [graph [v-c/vega-lite-react-wrapper (raw-spec-func data)]]
+    [draw-it graph title func-name data-name "vega-lite-react-wrapper"]))
 
 (defn home-page []
   (v-util/clog "home-page")
   [:div.container {:id "home-page-container"}
    [:div.columns.is-multiline.is-mobile.m-2.p-2 {:id "home-page-columns"}
-    [render-it bar-experiment simple-data {:title "Bar with vega-lite-api render"
-                                           :func-name "bar-experiment"
-                                           :data-name "simple-data"}]
-    [render-it bar-experiment simple-data2 {:title "Same Bar, different data"
-                                            :func-name "bar-experiment"
-                                            :data-name "simple-data2"}]
-    [vega-it bar-experiment simple-data {:title "Bar, using vega"
-                                           :func-name "bar-experiment"
-                                           :data-name "simple-data"}]
-    [vega-it-with-raw-spec bar-experiment-raw-spec simple-data {:title "Bar, injecting raw spec to vega"
-                                                                :func-name "bar-experiment-raw-spec"
-                                                                :data-name "simple-data"}]
-
-    ]])
-
+    [vega-lite-api-render-it bar-experiment-vega-lite-api simple-data
+     {:title "Bar with vega-lite-api render"
+      :func-name "bar-experiment-vega-lite-api"
+      :data-name "simple-data"}]
+    [vega-lite-api-render-it bar-experiment-vega-lite-api simple-data2
+     {:title "Same Bar, different data"
+      :func-name "bar-experiment-vega-lite-api"
+      :data-name "simple-data2"}]
+    [vega-react-it bar-experiment-raw-spec simple-data
+     {:title "Bar, vega-lite-react-wrapper"
+      :func-name "bar-experiment-raw-spec"
+      :data-name "simple-data"}]
+    [vega-lite-api-spec-and-vega-react-it bar-experiment-vega-lite-api simple-data
+     {:title "Bar, vega-lite-react wrapper"
+      :func-name "bar-experiment-vega-lite-api"
+      :data-name "simple-data"}]]])
 
 ;;; Effects ;;;
 
@@ -160,7 +162,6 @@
   ([k params query]
    (rfe/href k params query)))
 
-
 (def routes-dev
   ["/"
    [""
@@ -169,8 +170,7 @@
      :link-text "Home"
      :controllers
      [{:start (fn [& params] (js/console.log (str "Entering home page, params: " params)))
-       :stop (fn [& params] (js/console.log (str "Leaving home page, params: " params)))}]}]
-   ])
+       :stop (fn [& params] (js/console.log (str "Leaving home page, params: " params)))}]}]])
 
 (def routes routes-dev)
 
@@ -227,10 +227,8 @@
   (init-routes!)
   (rd/render [router-component {:router router}
                  (if (:open? @dev-tools/dev-state)
-                   {:style {:padding-bottom (str (:height @dev-tools/dev-state) "px")}})
-                 ]
+                   {:style {:padding-bottom (str (:height @dev-tools/dev-state) "px")}})]
                 (.getElementById js/document "app")))
-
 
 (defn ^:export init []
   (js/console.log "ENTER main init")
