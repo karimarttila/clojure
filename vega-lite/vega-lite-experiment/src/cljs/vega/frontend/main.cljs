@@ -96,19 +96,25 @@
     ]]
   )
 
-(defn render-it [func data {:keys [title func-name data-name]}]
+(defn render-it
+  "This function uses vega-lite-api both to create the spec and also to render the spec to graph."
+  [func data {:keys [title func-name data-name]}]
   (let [graph [v-c/vega-lite-api-render func data]]
     [draw-it graph title func-name data-name "vega-lite-api render"]
     ))
 
-(defn vega-it [func data {:keys [title func-name data-name]}]
+(defn vega-it
+  "This function uses vega-lite-api to create the spec but uses plain vega to create the graph."
+  [func data {:keys [title func-name data-name]}]
   (let [spec-obj (func data)
         spec #p (.toSpec spec-obj)
         graph [v-c/r-vega-lite spec (v-c/vega-debug)]]
     [draw-it graph title func-name data-name "vega with spec"]
     ))
 
-(defn vega-it-with-raw-spec [raw-spec-func data {:keys [title func-name data-name]}]
+(defn vega-it-with-raw-spec
+  "This function uses raw vega specification and injects it to plain vega to create the graph."
+  [raw-spec-func data {:keys [title func-name data-name]}]
   (let [graph [v-c/r-vega-lite (raw-spec-func data) (v-c/vega-debug)]]
     [draw-it graph title func-name data-name "vega with raw spec"]
     ))
@@ -117,7 +123,6 @@
 
 (defn home-page []
   (v-util/clog "home-page")
-  ;(let [_ #p "DEBUG!!!"])
   [:div.container {:id "home-page-container"}
    [:div.columns.is-multiline.is-mobile.m-2.p-2 {:id "home-page-columns"}
     [render-it bar-experiment simple-data {:title "Bar with vega-lite-api render"
@@ -132,6 +137,7 @@
     [vega-it-with-raw-spec bar-experiment-raw-spec simple-data {:title "Bar, injecting raw spec to vega"
                                                                 :func-name "bar-experiment-raw-spec"
                                                                 :data-name "simple-data"}]
+
     ]])
 
 
