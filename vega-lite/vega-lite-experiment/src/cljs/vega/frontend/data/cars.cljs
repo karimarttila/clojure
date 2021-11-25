@@ -45,7 +45,10 @@
    :width width,
    :height height,
    :encoding {:x {:field "Horsepower", :type "quantitative"},
-              :y {:field "Miles_per_Gallon", :type "quantitative", :sort "ascending"}}})
+              :y {:field "Miles_per_Gallon", :type "quantitative", :sort "ascending"}
+              :color {:field "Origin"}
+              }
+   })
 
 ;; From: https://vega.github.io/vega/examples/scatter-plot/ (+ tooltip added)
 (defn complex-scatter1 [{:keys [data width height]}]

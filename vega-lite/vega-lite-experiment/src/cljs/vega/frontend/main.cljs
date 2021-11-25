@@ -130,7 +130,8 @@
   (v-util/clog "home-page")
   (let [data-cars (-> @(re-frame/subscribe [::v-cars/data-cars]))
         _ (when-not data-cars (re-frame/dispatch [::v-cars/get-data-cars]))]
-    [:div.container {:id "home-page-container"}
+    [:section.section
+     ;[:div.container {:id "home-page-container"}]
      [:div.columns.is-multiline.is-mobile {:id "home-page-columns"}
 
       [vega-react-it v-cars/simple-scatter {:data data-cars :width 300 :height 300}
@@ -142,12 +143,11 @@
         :func-name "v-cars/complex-scatter1"
         :data-name "data-cars"}]
 
-
-      #_[vega-lite-api-render-it bar-experiment-vega-lite-api {:data simple-data}
+      [vega-lite-api-render-it bar-experiment-vega-lite-api {:data simple-data}
        {:title "Bar, vega-lite-api render"
         :func-name "bar-experiment-vega-lite-api"
         :data-name "simple-data"}]
-      #_[vega-lite-api-render-it bar-experiment-vega-lite-api {:data simple-data2}
+      [vega-lite-api-render-it bar-experiment-vega-lite-api {:data simple-data2}
        {:title "Same Bar, different data"
         :func-name "bar-experiment-vega-lite-api"
         :data-name "simple-data2"}]
@@ -155,7 +155,7 @@
        {:title "Bar, vega-lite-react-wrapper"
         :func-name "bar-experiment-raw-spec"
         :data-name "simple-data"}]
-      #_[vega-lite-api-spec-and-vega-react-it bar-experiment-vega-lite-api {:data simple-data}
+      [vega-lite-api-spec-and-vega-react-it bar-experiment-vega-lite-api {:data simple-data}
        {:title "Bar, vega-lite-react wrapper"
         :func-name "bar-experiment-vega-lite-api"
         :data-name "simple-data"}]
@@ -214,8 +214,10 @@
   (let [current-route @(re-frame/subscribe [::current-route])
         path-params (:path-params current-route)
         _ (v-util/clog "router-component, path-params" path-params)]
-    [:div.container.is-max-desktop
-     [:h1.title.is-centered "Vega Experimentation"]
+    [:div
+     [:section.hero.is-small
+      [:div.hero-body
+       [:h1.title.has-text-centered	 "Vega Experimentation"]]]
      ; NOTE: when you supply the current-route to the view it can parse path-params there (from path)
      (when current-route
        [(-> current-route :data :view) current-route])]))
