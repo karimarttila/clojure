@@ -14,6 +14,7 @@
     [clojure.tools.logging :as log]
     [ring.util.http-response :as r]
     [vega.backend.data.cars :as cars]
+    [vega.backend.data.seattle-weather :as seattle-weather]
 
     ))
 
@@ -89,9 +90,15 @@
                  :responses {200 {:description "version info"}}
                  :handler (constantly {:status 200, :body my-version})}}]]
      ["/data" {:swagger {:tags ["data"]}}
-       ["/cars" {:get {:summary "Cars"
+      ["/cars" {:get {:summary "Cars"
                        :responses {200 {:description "get cars data"}}
                        :parameters {:body any?}
                        :handler (fn [req]
                                   (let [data (cars/get-cars-data)]
+                                    (r/ok {:ret :ok :data data})))}}]
+      ["/seattle-weather" {:get {:summary "Seattle weather"
+                       :responses {200 {:description "get seattle weather data"}}
+                       :parameters {:body any?}
+                       :handler (fn [req]
+                                  (let [data (seattle-weather/get-seattle-weather-data)]
                                     (r/ok {:ret :ok :data data})))}}]]]]])

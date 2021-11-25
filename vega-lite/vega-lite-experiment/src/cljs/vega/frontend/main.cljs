@@ -12,6 +12,7 @@
             [vega.frontend.util :as v-util]
             [vega.frontend.components :as v-c]
             [vega.frontend.data.cars :as v-cars]
+            [vega.frontend.data.seattle-weather :as v-s-w]
             ["react" :as react]
             ["vega-embed" :as vegaEmbed]
             ["vega" :as vega]
@@ -91,7 +92,32 @@
         (-> v-c/my-vl (.x) (.fieldQ "b"))
         (-> v-c/my-vl (.y) (.fieldN "a")))))
 
+(defn cars-columns-vega-lite-api [{:keys [data]}]
+  (-> v-c/my-vl
+      (.markCircle)
+      (.data (clj->js data))
+      (.encode
+        (-> v-c/my-vl (.x) (.fieldQ "Horsepower"))
+        (-> v-c/my-vl (.y) (.fieldQ "Miles_per_Gallon"))
+        (-> v-c/my-vl (.column) (.field "Origin")))))
 
+(defn cars-counts-vega-lite-api [{:keys [data]}]
+  (-> v-c/my-vl
+      (.markBar)
+      (.data (clj->js data))
+      (.encode
+        (-> v-c/my-vl (.y) (.fieldN "Origin"))
+        (-> v-c/my-vl (.x) (.count))
+        )))
+
+(defn cars-avg-miles-per-gallon-vega-lite-api [{:keys [data]}]
+  (-> v-c/my-vl
+      (.markBar)
+      (.data (clj->js data))
+      (.encode
+        (-> v-c/my-vl (.y) (.fieldN "Origin"))
+        (-> v-c/my-vl (.x) (.average "Miles_per_Gallon"))
+        )))
 
 (defn draw-it [graph title func-name data-name method]
   [:div.box.mr-2.mb-2 {:id "draw-it-box"}
@@ -129,37 +155,54 @@
 (defn home-page []
   (v-util/clog "home-page")
   (let [data-cars (-> @(re-frame/subscribe [::v-cars/data-cars]))
-        _ (when-not data-cars (re-frame/dispatch [::v-cars/get-data-cars]))]
-    [:section.section
-     ;[:div.container {:id "home-page-container"}]
-     [:div.columns.is-multiline.is-mobile {:id "home-page-columns"}
+        _ (when-not data-cars (re-frame/dispatch [::v-cars/get-data-cars]))
+        data-seattle-weather (-> @(re-frame/subscribe [::v-s-w/data-seattle-weather]))
+        _ (when-not data-cars (re-frame/dispatch [::v-s-w/get-data-seattle-weather]))]
+    ;; when: if we do not yet have cars do not show diagrams (Vega error)
+    (when (and data-cars data-seattle-weather)
+      [:section.section
+       [:div.columns.is-multiline.is-mobile {:id "home-page-columns"}
+        ;; Cars
+        [vega-react-it v-cars/simple-scatter {:data data-cars :width 300 :height 300}
+         {:title "Scatter chart, vega-lite react-wrapper"
+          :func-name "v-cars/simple-scatter"
+          :data-name "data-cars"}]
+        [vega-react-it v-cars/complex-scatter1 {:data data-cars :width 300 :height 300}
+         {:title "Complex Scatter chart, vega-lite react-wrapper"
+          :func-name "v-cars/complex-scatter1"
+          :data-name "data-cars"}]
+        [vega-lite-api-render-it cars-columns-vega-lite-api {:data data-cars}
+         {:title "Cars, columns, vega-lite-api render"
+          :func-name "cars-columns-vega-lite-api"
+          :data-name "data-cars"}]
+        [vega-lite-api-render-it cars-counts-vega-lite-api {:data data-cars}
+         {:title "Cars, counts, vega-lite-api render"
+          :func-name "cars-counts-vega-lite-api"
+          :data-name "data-cars"}]
+        [vega-lite-api-render-it cars-avg-miles-per-gallon-vega-lite-api {:data data-cars}
+         {:title "Cars, averages, vega-lite-api render"
+          :func-name "cars-avg-miles-per-gallon-vega-lite-api"
+          :data-name "data-cars"}]
 
-      [vega-react-it v-cars/simple-scatter {:data data-cars :width 300 :height 300}
-       {:title "Scatter chart, vega-lite react-wrapper"
-        :func-name "v-cars/simple-scatter"
-        :data-name "data-cars"}]
-      [vega-react-it v-cars/complex-scatter1 {:data data-cars :width 300 :height 300}
-       {:title "Complex Scatter chart, vega-lite react-wrapper"
-        :func-name "v-cars/complex-scatter1"
-        :data-name "data-cars"}]
 
-      [vega-lite-api-render-it bar-experiment-vega-lite-api {:data simple-data}
-       {:title "Bar, vega-lite-api render"
-        :func-name "bar-experiment-vega-lite-api"
-        :data-name "simple-data"}]
-      [vega-lite-api-render-it bar-experiment-vega-lite-api {:data simple-data2}
-       {:title "Same Bar, different data"
-        :func-name "bar-experiment-vega-lite-api"
-        :data-name "simple-data2"}]
-      [vega-react-it bar-experiment-raw-spec {:data simple-data}
-       {:title "Bar, vega-lite-react-wrapper"
-        :func-name "bar-experiment-raw-spec"
-        :data-name "simple-data"}]
-      [vega-lite-api-spec-and-vega-react-it bar-experiment-vega-lite-api {:data simple-data}
-       {:title "Bar, vega-lite-react wrapper"
-        :func-name "bar-experiment-vega-lite-api"
-        :data-name "simple-data"}]
-      ]]))
+        ;; Bars
+        #_[vega-lite-api-render-it bar-experiment-vega-lite-api {:data simple-data}
+           {:title "Bar, vega-lite-api render"
+            :func-name "bar-experiment-vega-lite-api"
+            :data-name "simple-data"}]
+        #_[vega-lite-api-render-it bar-experiment-vega-lite-api {:data simple-data2}
+           {:title "Same Bar, different data"
+            :func-name "bar-experiment-vega-lite-api"
+            :data-name "simple-data2"}]
+        #_[vega-react-it bar-experiment-raw-spec {:data simple-data}
+           {:title "Bar, vega-lite-react-wrapper"
+            :func-name "bar-experiment-raw-spec"
+            :data-name "simple-data"}]
+        #_[vega-lite-api-spec-and-vega-react-it bar-experiment-vega-lite-api {:data simple-data}
+           {:title "Bar, vega-lite-react wrapper"
+            :func-name "bar-experiment-vega-lite-api"
+            :data-name "simple-data"}]
+        ]])))
 
 ;;; Effects ;;;
 

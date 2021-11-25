@@ -1,7 +1,7 @@
 (ns vega.backend.data.cars
-  (:require [clj-http.client :as http-client]
-            [clojure.data.json :as json]
-            [clojure.walk :as walk]))
+  (:require [clojure.data.json :as json]
+            [clojure.walk :as walk]
+            [clj-http.client :as http-client]))
 
 ;; Cache it.
 (defonce data-cars (atom nil))
@@ -22,6 +22,8 @@
 
   @data-cars
   (count (get-cars-data))
+
+  (take 5 (get-cars-data))
 
   (require '[clj-http.client])
   (clj-http.client/get cars-url)

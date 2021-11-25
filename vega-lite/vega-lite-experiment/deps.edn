@@ -15,6 +15,7 @@
            :backend {:extra-paths ["src/clj"]
                      :extra-deps {integrant/integrant {:mvn/version "0.8.0"}
                                   org.clojure/data.json {:mvn/version "1.0.0"}
+                                  org.clojure/data.csv {:mvn/version "1.0.0"}
                                   org.clojure/tools.logging {:mvn/version "1.0.0"}
                                   commons-logging/commons-logging {:mvn/version "1.2"}
                                   ch.qos.logback/logback-classic {:mvn/version "1.2.3"}
@@ -26,7 +27,7 @@
                                   ring/ring-defaults {:mvn/version "0.3.2"}
                                   org.eclipse.jetty/jetty-client {:mvn/version "9.4.26.v20200117"}
                                   clj-http/clj-http {:mvn/version "3.10.1"}
-
+                                  hashp/hashp {:mvn/version "0.2.1"}
                                   nrepl/nrepl {:mvn/version "0.8.2"}}}
            :frontend {:extra-paths ["src/cljs"]
                       :extra-deps {org.clojure/clojurescript {:mvn/version "1.10.764"}
