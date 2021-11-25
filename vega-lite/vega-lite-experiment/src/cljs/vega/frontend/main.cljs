@@ -131,12 +131,17 @@
   (let [data-cars (-> @(re-frame/subscribe [::v-cars/data-cars]))
         _ (when-not data-cars (re-frame/dispatch [::v-cars/get-data-cars]))]
     [:div.container {:id "home-page-container"}
-     [:div.columns.is-multiline.is-mobile.m-2.p-2 {:id "home-page-columns"}
+     [:div.columns.is-multiline.is-mobile {:id "home-page-columns"}
 
       [vega-react-it v-cars/simple-scatter {:data data-cars :width 300 :height 300}
        {:title "Scatter chart, vega-lite react-wrapper"
         :func-name "v-cars/simple-scatter"
         :data-name "data-cars"}]
+      [vega-react-it v-cars/complex-scatter1 {:data data-cars :width 300 :height 300}
+       {:title "Complex Scatter chart, vega-lite react-wrapper"
+        :func-name "v-cars/complex-scatter1"
+        :data-name "data-cars"}]
+
 
       #_[vega-lite-api-render-it bar-experiment-vega-lite-api {:data simple-data}
        {:title "Bar, vega-lite-api render"

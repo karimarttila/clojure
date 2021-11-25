@@ -11,8 +11,11 @@
 (defn get-cars-data []
   (or @data-cars
       (let [reply (clj-http.client/get cars-url)
-            cars (walk/keywordize-keys (json/read-str (:body reply)))]
-        (reset! data-cars cars))))
+            cars (walk/keywordize-keys (json/read-str (:body reply)))
+            ; Remove any car if some field is nil.
+            not-nil-cars (remove #(some nil? (vals %)) cars)
+            ]
+        (reset! data-cars not-nil-cars))))
 
 
 (comment
@@ -23,6 +26,14 @@
   (require '[clj-http.client])
   (clj-http.client/get cars-url)
 
-  (filter #(not (some? (vals %))) @data-cars)
+  (first @data-cars)
+  (def not-nil? (complement nil?))
+  (count (filter #(every? not-nil? (vals %)) @data-cars))
+  (count (remove #(some nil? (vals %)) @data-cars))
+  (filter (fn [item]
+            (nil? (:Miles_per_Gallon item)))
+          @data-cars)
+
+  (sort #(compare %2 %1) (map #(:Miles_per_Gallon %) @data-cars))
 
   )
