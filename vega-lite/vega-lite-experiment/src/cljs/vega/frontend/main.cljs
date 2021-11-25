@@ -11,6 +11,7 @@
             [reitit.frontend.controllers :as rfc]
             [vega.frontend.util :as v-util]
             [vega.frontend.components :as v-c]
+            [vega.frontend.data.cars :as v-cars]
             ["react" :as react]
             ["vega-embed" :as vegaEmbed]
             ["vega" :as vega]
@@ -53,8 +54,7 @@
           controllers (rfc/apply-controllers (:controllers old-match) new-match)]
       (js/console.log (str "new-path: " new-path))
       (cond-> (assoc db :current-route (assoc new-match :controllers controllers))
-              (= "/" new-path) (-> (assoc :signin nil)
-                                   (assoc :login nil))))))
+              (= "/" new-path) (-> (assoc :login nil))))))
 
 (re-frame/reg-event-fx
   ::navigate
@@ -77,19 +77,21 @@
    {:a "G", :b 99}, {:a "H", :b 187}, {:a "I", :b 52},
    ])
 
-(defn bar-experiment-raw-spec
-  [data]
+(defn bar-experiment-raw-spec [{:keys [data]}]
   {:mark {:type "bar"},
    :data {:values data}
    :encoding {:x {:field "b", :type "quantitative"},
               :y {:field "a", :type "nominal"}}})
 
-(defn bar-experiment-vega-lite-api [data]
-  (-> v-c/my-vl (.markBar)
+(defn bar-experiment-vega-lite-api [{:keys [data]}]
+  (-> v-c/my-vl
+      (.markBar)
       (.data (clj->js data))
       (.encode
         (-> v-c/my-vl (.x) (.fieldQ "b"))
         (-> v-c/my-vl (.y) (.fieldN "a")))))
+
+
 
 (defn draw-it [graph title func-name data-name method]
   [:div.box.mr-2.mb-2 {:id "draw-it-box"}
@@ -113,35 +115,46 @@
   [func data {:keys [title func-name data-name]}]
   (let [spec-obj (func data)
         spec (.toSpec spec-obj)
-        graph [v-c/vega-lite-react-wrapper spec]]
+        graph (v-c/vega-lite-react-wrapper spec)]
     [draw-it graph title func-name data-name "vega-lite-react-wrapper"]))
 
 (defn vega-react-it
   "This function uses raw vega specification (without data) and injects it with data to vega-react wrapper to create the graph."
   [raw-spec-func data {:keys [title func-name data-name]}]
-  (let [graph [v-c/vega-lite-react-wrapper (raw-spec-func data)]]
+  (let [spec (raw-spec-func data)
+        graph (v-c/vega-lite-react-wrapper spec)]
     [draw-it graph title func-name data-name "vega-lite-react-wrapper"]))
+
 
 (defn home-page []
   (v-util/clog "home-page")
-  [:div.container {:id "home-page-container"}
-   [:div.columns.is-multiline.is-mobile.m-2.p-2 {:id "home-page-columns"}
-    [vega-lite-api-render-it bar-experiment-vega-lite-api simple-data
-     {:title "Bar with vega-lite-api render"
-      :func-name "bar-experiment-vega-lite-api"
-      :data-name "simple-data"}]
-    [vega-lite-api-render-it bar-experiment-vega-lite-api simple-data2
-     {:title "Same Bar, different data"
-      :func-name "bar-experiment-vega-lite-api"
-      :data-name "simple-data2"}]
-    [vega-react-it bar-experiment-raw-spec simple-data
-     {:title "Bar, vega-lite-react-wrapper"
-      :func-name "bar-experiment-raw-spec"
-      :data-name "simple-data"}]
-    [vega-lite-api-spec-and-vega-react-it bar-experiment-vega-lite-api simple-data
-     {:title "Bar, vega-lite-react wrapper"
-      :func-name "bar-experiment-vega-lite-api"
-      :data-name "simple-data"}]]])
+  (let [data-cars (-> @(re-frame/subscribe [::v-cars/data-cars]))
+        _ (when-not data-cars (re-frame/dispatch [::v-cars/get-data-cars]))]
+    [:div.container {:id "home-page-container"}
+     [:div.columns.is-multiline.is-mobile.m-2.p-2 {:id "home-page-columns"}
+
+      [vega-react-it v-cars/simple-scatter {:data data-cars :width 300 :height 300}
+       {:title "Scatter chart, vega-lite react-wrapper"
+        :func-name "v-cars/simple-scatter"
+        :data-name "data-cars"}]
+
+      #_[vega-lite-api-render-it bar-experiment-vega-lite-api {:data simple-data}
+       {:title "Bar, vega-lite-api render"
+        :func-name "bar-experiment-vega-lite-api"
+        :data-name "simple-data"}]
+      #_[vega-lite-api-render-it bar-experiment-vega-lite-api {:data simple-data2}
+       {:title "Same Bar, different data"
+        :func-name "bar-experiment-vega-lite-api"
+        :data-name "simple-data2"}]
+      [vega-react-it bar-experiment-raw-spec {:data simple-data}
+       {:title "Bar, vega-lite-react-wrapper"
+        :func-name "bar-experiment-raw-spec"
+        :data-name "simple-data"}]
+      #_[vega-lite-api-spec-and-vega-react-it bar-experiment-vega-lite-api {:data simple-data}
+       {:title "Bar, vega-lite-react wrapper"
+        :func-name "bar-experiment-vega-lite-api"
+        :data-name "simple-data"}]
+      ]]))
 
 ;;; Effects ;;;
 

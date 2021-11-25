@@ -10,11 +10,12 @@
     [reitit.ring.middleware.exception :as reitit-exception]
     [reitit.ring.middleware.parameters :as reitit-parameters]
     [reitit.ring.middleware.dev]
-                [muuntaja.core :as mu-core]
-                            [clojure.tools.logging :as log]
-            [ring.util.http-response :as r]
+    [muuntaja.core :as mu-core]
+    [clojure.tools.logging :as log]
+    [ring.util.http-response :as r]
+    [vega.backend.data.cars :as cars]
 
-))
+    ))
 
 (def my-version {:version 0.1 :date "2021-11-21"})
 
@@ -69,7 +70,6 @@
 
 (defn routes [env]
   ["/vega"
-
    [["/swagger.json"
      {:get {:no-doc true
             :swagger {:info {:title "vega-api"
@@ -87,4 +87,11 @@
      ["/version" {:swagger {:tags ["version"]}}
       ["" {:get {:summary "get version info"
                  :responses {200 {:description "version info"}}
-                 :handler (constantly {:status 200, :body my-version})}}]]]]])
+                 :handler (constantly {:status 200, :body my-version})}}]]
+     ["/data" {:swagger {:tags ["data"]}}
+       ["/cars" {:get {:summary "Cars"
+                       :responses {200 {:description "get cars data"}}
+                       :parameters {:body any?}
+                       :handler (fn [req]
+                                  (let [data (cars/get-cars-data)]
+                                    (r/ok {:ret :ok :data data})))}}]]]]])
