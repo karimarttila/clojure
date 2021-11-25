@@ -40,7 +40,8 @@
 
 (comment
 
-  (get-seattle-weather-data)
+  (def jee (get-seattle-weather-data))
+  (spit "personal/seattle-weather.edn" (pr-str jee))
   (require '[clj-http.client])
   (def yksi-str (:body (clj-http.client/get seattle-weather-url)))
   (def jee (csv/read-csv (io/reader (char-array yksi-str))))
