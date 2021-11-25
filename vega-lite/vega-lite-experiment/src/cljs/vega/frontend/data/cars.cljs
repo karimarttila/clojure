@@ -40,7 +40,7 @@
         :data)))
 
 (defn simple-scatter [{:keys [data width height]}]
-  {:mark {:type "circle"},
+  {:mark {:type "circle" :tooltip {:content "data"}},
    :data {:values data} ; TODO: remove take
    :width width,
    :height height,
