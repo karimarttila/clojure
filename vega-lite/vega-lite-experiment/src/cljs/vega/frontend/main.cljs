@@ -118,14 +118,66 @@
         (-> v-c/my-vl (.x) (.average "Miles_per_Gallon"))
         )))
 
+(def weather-colors {:range ["darkgray" "paleturquoise" "steelblue" "gold" "red"]})
+
 (defn weather-bars-vega-lite-api [{:keys [data]}]
   (-> v-c/my-vl
       (.markBar)
       (.data (clj->js data))
       (.encode
-        (-> v-c/my-vl (.x) (.fieldO "date") (.timeUnit "month"))
+        (-> v-c/my-vl (.x) (.fieldO "date") (.timeUnit "month") (.axis (clj->js {:labelAngle -45 :formatType "time" :format "%m"})))
         (-> v-c/my-vl (.y) (.count))
-        (-> v-c/my-vl (.color) (.fieldN "weather")))))
+        (-> v-c/my-vl (.color) (.fieldN "weather") (.scale (clj->js weather-colors))  ))))
+
+(defn weather-bars-%-vega-lite-api [{:keys [data]}]
+  (-> v-c/my-vl
+      (.markBar)
+      (.data (clj->js data))
+      (.encode
+        (-> v-c/my-vl (.x) (.fieldO "date") (.timeUnit "month") (.axis (clj->js {:labelAngle -45 :formatType "time" :format "%m"})))
+        (-> v-c/my-vl (.y) (.count) (.stack "normalize") )
+        (-> v-c/my-vl (.color) (.fieldN "weather") (.scale (clj->js weather-colors))  ))))
+
+(defn weather-temp-circles-vega-lite-api-1 [{:keys [data width height]}]
+  (-> v-c/my-vl
+      (.markCircle)
+      (.width width)
+      (.height height)
+      (.data (clj->js data))
+      (.encode
+        (-> v-c/my-vl (.x) (.fieldT "date") (.timeUnit "monthdate") (.axis (clj->js {:labelAngle -45 :formatType "time" :format "%m"})))
+        (-> v-c/my-vl (.y) (.fieldQ "temp_max"))
+        (-> v-c/my-vl (.color) (.fieldN "weather") (.scale (clj->js weather-colors))  ))))
+
+(defn weather-temp-circles-vega-lite-api-2 [{:keys [data width height]}]
+  (-> v-c/my-vl
+      (.markCircle)
+      (.width width)
+      (.height height)
+      (.data (clj->js data))
+      (.encode
+        (-> v-c/my-vl (.x) (.fieldT "date") (.timeUnit "monthdate") (.axis (clj->js {:labelAngle -45 :formatType "time" :format "%m"})))
+        (-> v-c/my-vl (.y) (.fieldQ "temp_max"))
+        (-> v-c/my-vl (.size) (.fieldQ "precipitation") (.scale (clj->js {:range [20, 300]})))
+        (-> v-c/my-vl (.color) (.fieldN "weather") (.scale (clj->js weather-colors))  ))))
+
+(defn weather-temp-circles-vega-lite-api-3 [{:keys [data]}]
+  (-> v-c/my-vl
+      (.markCircle)
+      (.data (clj->js data))
+      (.encode
+        (-> v-c/my-vl (.x) (.fieldO "date") (.timeUnit "monthyear") (.axis (clj->js {:labelAngle -45 :formatType "time" :format "%Y-%m"})))
+        (-> v-c/my-vl (.y) (.fieldQ "temp_max"))
+        (-> v-c/my-vl (.color) (.fieldN "weather") (.scale (clj->js weather-colors))  ))))
+
+(defn weather-condition-counts-vega-lite-api [{:keys [data]}]
+  (-> v-c/my-vl
+      (.markBar)
+      (.data (clj->js data))
+      (.encode
+        (-> v-c/my-vl (.x) (.count))
+        (-> v-c/my-vl (.y) (.fieldN "weather"))
+        (-> v-c/my-vl (.color) (.fieldN "weather") (.scale (clj->js weather-colors))))))
 
 (defn draw-it [graph title func-name data-name method]
   [:div.box.mr-2.mb-2 {:id "draw-it-box"}
@@ -174,6 +226,29 @@
          {:title "Weather, bars by month, vega-lite-api render"
           :func-name "weather-bars-vega-lite-api"
           :data-name "data-seattle-weather"}]
+        [vega-lite-api-render-it weather-bars-%-vega-lite-api {:data data-seattle-weather}
+         {:title "Weather, bars by month-%, vega-lite-api render"
+          :func-name "weather-bars-%-vega-lite-api"
+          :data-name "data-seattle-weather"}]
+        [vega-lite-api-render-it weather-temp-circles-vega-lite-api-1 {:data data-seattle-weather :width 300 :height 300}
+         {:title "Weather, temperatures, vega-lite-api render"
+          :func-name "weather-temp-circles-vega-lite-api-1"
+          :data-name "data-seattle-weather"}]
+        [vega-lite-api-render-it weather-temp-circles-vega-lite-api-2 {:data data-seattle-weather :width 300 :height 300}
+         {:title "Weather, temperatures, vega-lite-api render"
+          :func-name "weather-temp-circles-vega-lite-api-2"
+          :data-name "data-seattle-weather"}]
+        [vega-lite-api-render-it weather-condition-counts-vega-lite-api {:data data-seattle-weather}
+         {:title "Condition, counts, vega-lite-api render"
+          :func-name "weather-condition-counts-vega-lite-api"
+          :data-name "data-seattle-weather"}]
+        [vega-lite-api-render-it weather-temp-circles-vega-lite-api-3 {:data data-seattle-weather}
+         {:title "Weather, temperatures, vega-lite-api render"
+          :func-name "weather-temp-circles-vega-lite-api-3"
+          :data-name "data-seattle-weather"}]
+
+
+
         ;; Cars
         [vega-react-it v-cars/simple-scatter {:data data-cars :width 300 :height 300}
          {:title "Scatter chart, vega-lite react-wrapper"

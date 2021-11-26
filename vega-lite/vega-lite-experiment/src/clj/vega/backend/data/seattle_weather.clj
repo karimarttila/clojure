@@ -43,6 +43,7 @@
 
   *ns*
   (in-ns 'user)
+  {:date "2015-12-29", :precipitation 0.0, :temp_max 7.2, :temp_min 0.6, :wind 2.6, :weather "fog"}
 
   (def jee (get-seattle-weather-data))
   ;(spit "personal/seattle-weather.edn" (pr-str jee))
