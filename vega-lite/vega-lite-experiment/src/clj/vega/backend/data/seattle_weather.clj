@@ -13,6 +13,7 @@
 
 (def seattle-weather-url "https://raw.githubusercontent.com/vega/vega/master/docs/data/seattle-weather.csv")
 
+; From: https://github.com/clojure/data.csv
 (defn csv-data->maps [csv-data]
   (map zipmap
        (->> (first csv-data) ;; First row is the header
@@ -40,10 +41,14 @@
 
 (comment
 
+  *ns*
+  (in-ns 'user)
+
   (def jee (get-seattle-weather-data))
-  (spit "personal/seattle-weather.edn" (pr-str jee))
+  ;(spit "personal/seattle-weather.edn" (pr-str jee))
   (require '[clj-http.client])
   (def yksi-str (:body (clj-http.client/get seattle-weather-url)))
+  (csv/read-csv (io/reader (char-array yksi-str)))
   (def jee (csv/read-csv (io/reader (char-array yksi-str))))
   (csv-data->maps jee)
 

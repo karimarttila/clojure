@@ -20,9 +20,10 @@
 
 (comment
 
+  *ns*
   @data-cars
   (count (get-cars-data))
-  (spit "personal/cars.edn" (pr-str (get-cars-data)))
+  ;(spit "personal/cars.edn" (pr-str (get-cars-data)))
 
   (take 5 (get-cars-data))
 

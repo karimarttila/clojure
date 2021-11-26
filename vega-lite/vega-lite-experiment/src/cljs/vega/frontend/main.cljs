@@ -107,8 +107,7 @@
       (.data (clj->js data))
       (.encode
         (-> v-c/my-vl (.y) (.fieldN "Origin"))
-        (-> v-c/my-vl (.x) (.count))
-        )))
+        (-> v-c/my-vl (.x) (.count)))))
 
 (defn cars-avg-miles-per-gallon-vega-lite-api [{:keys [data]}]
   (-> v-c/my-vl
@@ -118,6 +117,15 @@
         (-> v-c/my-vl (.y) (.fieldN "Origin"))
         (-> v-c/my-vl (.x) (.average "Miles_per_Gallon"))
         )))
+
+(defn weather-bars-vega-lite-api [{:keys [data]}]
+  (-> v-c/my-vl
+      (.markBar)
+      (.data (clj->js data))
+      (.encode
+        (-> v-c/my-vl (.x) (.fieldO "date") (.timeUnit "month"))
+        (-> v-c/my-vl (.y) (.count))
+        (-> v-c/my-vl (.color) (.fieldN "weather")))))
 
 (defn draw-it [graph title func-name data-name method]
   [:div.box.mr-2.mb-2 {:id "draw-it-box"}
@@ -151,7 +159,6 @@
         graph (v-c/vega-lite-react-wrapper spec)]
     [draw-it graph title func-name data-name "vega-lite-react-wrapper"]))
 
-
 (defn home-page []
   (v-util/clog "home-page")
   (let [data-cars (-> @(re-frame/subscribe [::v-cars/data-cars]))
@@ -162,6 +169,11 @@
     (when (and data-cars data-seattle-weather)
       [:section.section
        [:div.columns.is-multiline.is-mobile {:id "home-page-columns"}
+        ;; Weather
+        [vega-lite-api-render-it weather-bars-vega-lite-api {:data data-seattle-weather}
+         {:title "Weather, bars by month, vega-lite-api render"
+          :func-name "weather-bars-vega-lite-api"
+          :data-name "data-seattle-weather"}]
         ;; Cars
         [vega-react-it v-cars/simple-scatter {:data data-cars :width 300 :height 300}
          {:title "Scatter chart, vega-lite react-wrapper"
