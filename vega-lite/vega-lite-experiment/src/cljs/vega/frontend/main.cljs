@@ -200,15 +200,22 @@
   "This function uses vega-lite-api to create the spec but uses vega-lite-wrapper to create the graph."
   [func data {:keys [title func-name data-name]}]
   (let [spec-obj (func data)
-        spec (.toSpec spec-obj)
-        graph (v-c/vega-lite-react-wrapper spec)]
+        spec (js->clj (.toSpec spec-obj))
+        graph [:> v-c/vega-lite-react-wrapper-old-style spec]]
+    [draw-it graph title func-name data-name "vega-lite-react-wrapper"]))
+
+(defn vega-react-it-old-style
+  "This function uses raw vega specification (without data) and injects it with data to vega-react wrapper to create the graph."
+  [raw-spec-func data {:keys [title func-name data-name]}]
+  (let [spec (raw-spec-func data)
+        graph (v-c/vega-lite-react-wrapper-old-style spec)]
     [draw-it graph title func-name data-name "vega-lite-react-wrapper"]))
 
 (defn vega-react-it
   "This function uses raw vega specification (without data) and injects it with data to vega-react wrapper to create the graph."
   [raw-spec-func data {:keys [title func-name data-name]}]
   (let [spec (raw-spec-func data)
-        graph (v-c/vega-lite-react-wrapper spec)]
+        graph [:> v-c/vega-lite-react-wrapper spec]]
     [draw-it graph title func-name data-name "vega-lite-react-wrapper"]))
 
 (defn home-page []
@@ -247,8 +254,6 @@
           :func-name "weather-temp-circles-vega-lite-api-3"
           :data-name "data-seattle-weather"}]
 
-
-
         ;; Cars
         [vega-react-it v-cars/simple-scatter {:data data-cars :width 300 :height 300}
          {:title "Scatter chart, vega-lite react-wrapper"
@@ -271,21 +276,24 @@
           :func-name "cars-avg-miles-per-gallon-vega-lite-api"
           :data-name "data-cars"}]
 
-
         ;; Bars
-        #_[vega-lite-api-render-it bar-experiment-vega-lite-api {:data simple-data}
+        [vega-lite-api-render-it bar-experiment-vega-lite-api {:data simple-data}
            {:title "Bar, vega-lite-api render"
             :func-name "bar-experiment-vega-lite-api"
             :data-name "simple-data"}]
-        #_[vega-lite-api-render-it bar-experiment-vega-lite-api {:data simple-data2}
+        [vega-lite-api-render-it bar-experiment-vega-lite-api {:data simple-data2}
            {:title "Same Bar, different data"
             :func-name "bar-experiment-vega-lite-api"
             :data-name "simple-data2"}]
-        #_[vega-react-it bar-experiment-raw-spec {:data simple-data}
+        [vega-react-it-old-style bar-experiment-raw-spec {:data simple-data}
+           {:title "Bar, vega-lite-react-wrapper, old style"
+            :func-name "bar-experiment-raw-spec"
+            :data-name "simple-data"}]
+        [vega-react-it bar-experiment-raw-spec {:data simple-data}
            {:title "Bar, vega-lite-react-wrapper"
             :func-name "bar-experiment-raw-spec"
             :data-name "simple-data"}]
-        #_[vega-lite-api-spec-and-vega-react-it bar-experiment-vega-lite-api {:data simple-data}
+        [vega-lite-api-spec-and-vega-react-it bar-experiment-vega-lite-api {:data simple-data}
            {:title "Bar, vega-lite-react wrapper"
             :func-name "bar-experiment-vega-lite-api"
             :data-name "simple-data"}]

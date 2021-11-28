@@ -47,9 +47,11 @@
 (defn vega-lite-react-wrapper [spec]
   (r/create-element
    VegaLite
-   #js
-       {:spec (clj->js spec)}))
+   #js {:spec spec}))
 
-
+(defn vega-lite-react-wrapper-old-style [spec]
+  (r/create-element
+   VegaLite
+   #js {:spec (clj->js spec)}))
 
 
