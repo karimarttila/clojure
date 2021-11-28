@@ -43,7 +43,7 @@
 
 ;; *****************************************************************
 ;; Vega-Lite React wrapper
-
+; See: https://github.com/reagent-project/reagent/blob/master/examples/react-context/src/example/core.cljs
 (defn vega-lite-react-wrapper [spec]
   (r/create-element
    VegaLite
