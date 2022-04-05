@@ -2,9 +2,8 @@
  :builds {:app {:target :browser
                 :output-dir "dev-resources/public/js"
                 :asset-path "/js"
-                :devtools {:watch-dir "dev-resources/public/css"
-                           :watch-path "/css"
-                            :preloads [hashp.core]
+                :devtools {:watch-dir "dev-resources/public"
+                           :preloads [hashp.core]
                            ;:preloads [devtools.preload
                            ;           reagent-dev-tools.preload
                            ;           day8.re-frame-10x.preload
