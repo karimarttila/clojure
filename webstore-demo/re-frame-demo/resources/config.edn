@@ -5,9 +5,9 @@
                             :test :test}
 
  ; csv, ddb, postgres
- :backend/active-db #or [#env SS_DB :csv]
+ ;:backend/active-db #or [#env SS_DB :csv]
  ;:backend/active-db #or [#env SS_DB :ddb]
- ;:backend/active-db #or [#env SS_DB :postgres]
+ :backend/active-db #or [#env SS_DB :postgres]
  ;:backend/active-db #or [#env SS_DB :datomic]
 
  :backend/csv {:profile #ig/ref :backend/profile
