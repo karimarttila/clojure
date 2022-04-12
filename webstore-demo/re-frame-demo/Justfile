@@ -71,12 +71,15 @@
 # Create uberjar.
 @uberjar:
     npm run build:sass
-    shadow-cljs release app
     mkdir -p prod-resources/public/js
     mkdir -p prod-resources/public/css
     cp dev-resources/public/js/main.js prod-resources/public/js/main.js
     cp dev-resources/public/css/style.css prod-resources/public/css/style.css
-    clj -Adev:common:backend:uberjar
+    clj -M:uberjar:dev:common:backend:frontend
+
+# Run uberjar.
+@run-uberjar:
+    SS_DB=csv PROFILE=prod java -cp target/simpleserver.jar clojure.main -m simpleserver.core
 
 # Lint.
 @lint:

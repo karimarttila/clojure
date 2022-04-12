@@ -2,6 +2,7 @@
   (:require
     [clojure.tools.logging :as log]
     [clojure.pprint]
+    [clojure.java.io :as io]
     [ring.adapter.jetty :as jetty]
     [nrepl.server :as nrepl]
     [integrant.repl :as ig-repl]
@@ -13,7 +14,6 @@
     [simpleserver.webserver.server :as ss-webserver]
     [simpleserver.service.dynamodb-config :as ddb-config]
     [simpleserver.service.domain.domain-csv-db-loader :as csv-db-loader]
-    [clojure.java.io :as io]
     [clojure.tools.reader.edn :as edn]
     [potpuri.core :as p]))
 
@@ -127,9 +127,10 @@
 
 (defn -main []
   (log/info "System starting...")
-  (log/info "Config: " (system-config-start))
-  (ig-repl/set-prep! (system-config-start))
-  (ig-repl/go))
+  (let [config (system-config-start)
+        _ (log/info "Config: " config)]
+    (ig-repl/set-prep! (constantly config))
+    (ig-repl/go)))
 
 (comment 
   (ig-repl/reset)

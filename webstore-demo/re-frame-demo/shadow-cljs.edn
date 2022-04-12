@@ -1,4 +1,4 @@
-{:deps {:aliases [:dev :common :frontend :kari]}
+{:deps {:aliases [:dev :common :backend :frontend :kari]}
  :builds {:app {:target :browser
                 :output-dir "dev-resources/public/js"
                 :asset-path "/js"
@@ -10,6 +10,9 @@
                            ;           ]
                            }
                 :modules {:main {:entries [simplefrontend.main]}}
+                :release {:output-dir "prod-resources/public/js"
+                          :compiler-options {:source-map "prod-resources/public/js/main.js.map"
+                                             :optimizations :advanced}}
                 ;:compiler-options {:infer-externs :auto
                 ;                   :closure-defines {"re_frame.trace.trace_enabled_QMARK_" true}
                 ;                   :external-config {:reagent-dev-tools {:state-atom re-frame.db.app-db}}

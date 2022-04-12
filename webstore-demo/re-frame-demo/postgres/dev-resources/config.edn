@@ -51,13 +51,16 @@
                :service #ig/ref :backend/service
                :options #ig/ref :backend/options}
 
- :backend/jetty {:port 6161
+ :backend/jetty {:port #profile {:dev #long #or [#env PORT 6161]
+                                 :prod #long #or [#env PORT 6162]}
                  :join? false
-                 :env #ig/ref :backend/env}
+                 :env #ig/ref :backend/env
+                 }
 
  :backend/nrepl {:bind #profile {:prod "0.0.0.0"
                                  :dev "localhost"}
-                 :port 3131}
+                 :port #profile {:dev #long #or [#env PORT 3131]
+                                 :prod #long #or [#env PORT 3132]}}
  }
 
 

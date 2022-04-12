@@ -2,8 +2,8 @@
  :paths ["resources"]
 
  :aliases {:dev {:extra-paths ["dev-resources" "classes"]
-                 :extra-deps {org.clojure/clojure {:mvn/version "1.10.1"}
-                              thheller/shadow-cljs {:mvn/version "2.11.4"}
+                 :extra-deps {org.clojure/clojure {:mvn/version "1.10.3"}
+                              thheller/shadow-cljs {:mvn/version "2.18.0"}
                               clj-kondo/clj-kondo {:mvn/version "2020.10.10"}
                               day8.re-frame/re-frame-10x {:mvn/version "0.7.0"}
                               metosin/reagent-dev-tools {:mvn/version "0.2.1"}
@@ -47,7 +47,7 @@
                                   }}
 
            :frontend {:extra-paths ["src/cljs"]
-                      :extra-deps {org.clojure/clojurescript {:mvn/version "1.10.764"}
+                      :extra-deps {org.clojure/clojurescript {:mvn/version "1.11.4"}
                                    fipp/fipp {:mvn/version "0.6.23"
                                               :exclusions [org.clojure/core.rrb-vector]}
                                    reagent/reagent {:mvn/version "0.10.0"
@@ -62,6 +62,7 @@
                              "--source-paths" "src/cljs/simplefrontend"
                              "--inputs" "main.scss"
                              "--target-path" "target/shadow/dev/resources/public/css"]}
+           :shadow-cljs {:main-opts ["-m" "shadow.cljs.devtools.cli"]}
            :postgres {:extra-paths ["postgres"]}
 
            ;; Test runner in console.
@@ -70,10 +71,7 @@
                                                                  :sha "209b64504cb3bd3b99ecfec7937b358a879f55c1"}}
                          :main-opts ["-m" "cognitect.test-runner"]}
 
-           ;; Depstar for building fat jar.
-           :uberjar {:extra-deps {seancorfield/depstar {:mvn/version "0.5.1"}}
-                     :extra-paths ["prod-resources" "target/shadow/prod/resources"]
-                     :main-opts ["-m" "hf.depstar.uberjar" "target/simpleserver.jar"]}
+
            :outdated {:extra-deps {olical/depot {:mvn/version "RELEASE"}}
                       :main-opts ["-m" "depot.outdated.main" "-a" "outdated"]}
            :clj-kondo {:extra-deps {clj-kondo/clj-kondo {:mvn/version "2020.10.10"}}
@@ -81,5 +79,12 @@
            ;; Cider specific.
            :cider-clj {:extra-deps {org.clojure/clojure {:mvn/version "1.10.1"}
                                     cider/cider-nrepl {:mvn/version "0.22.4"}}
-                       :main-opts ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]}}
+                       :main-opts ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]}
+
+           ;; Depstar for building fat jar.
+           :uberjar {:extra-deps {seancorfield/depstar {:mvn/version "1.1.136"}}
+                       :extra-paths ["prod-resources"]
+                       :main-opts ["-m" "hf.depstar.uberjar" "target/simpleserver.jar"]}
+           }
  }
+
