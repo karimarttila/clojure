@@ -54,8 +54,8 @@
 
 (defn make-response [response-value]
   (if (= (:ret response-value) :ok)
-      (ring-response/ok response-value)
-      (ring-response/bad-request response-value)))
+    (ring-response/ok response-value)
+    (ring-response/bad-request response-value)))
 
 (defn -signin
   "Provides API for sign-in page."
@@ -135,8 +135,8 @@
    ["/api-docs/*"
     {:get {:no-doc true
            :handler (reitit-swagger-ui/create-swagger-ui-handler
-                      {:config {:validatorUrl nil}
-                       :url "/swagger.json"})}}]
+                     {:config {:validatorUrl nil}
+                      :url "/swagger.json"})}}]
    ["/api"
     {:swagger {:tags ["api"]}}
     ; For development purposes. Try curl http://localhost:6161/api/ping
@@ -210,65 +210,66 @@
   "Handler."
   [routes]
   (->
-    (reitit-ring/ring-handler
-      (reitit-ring/router routes {
-                                  ; Use this to debug middleware handling:
+   (reitit-ring/ring-handler
+    (reitit-ring/router routes {; Use this to debug middleware handling:
                                   ;:reitit.middleware/transform reitit.ring.middleware.dev/print-request-diffs
-                                  :data {:muuntaja mu-core/instance
-                                         :coercion (reitit.coercion.malli/create
-                                                     {;; set of keys to include in error messages
-                                                      :error-keys #{:type :coercion :in #_:schema #_:value #_:errors :humanized #_:transformed}
+                                :data {:muuntaja mu-core/instance
+                                       :coercion (reitit.coercion.malli/create
+                                                  {;; set of keys to include in error messages
+                                                   :error-keys #{:type :coercion :in #_:schema #_:value #_:errors :humanized #_:transformed}
                                                       ;; validate request & response
-                                                      :validate true
+                                                   :validate true
                                                       ;; top-level short-circuit to disable request & response coercion
-                                                      :enabled true
+                                                   :enabled true
                                                       ;; strip-extra-keys (effects only predefined transformers)
-                                                      :strip-extra-keys true
+                                                   :strip-extra-keys true
                                                       ;; add/set default values
-                                                      :default-values true
+                                                   :default-values true
                                                       ;; malli options
-                                                      :options nil}) ;; malli
-                                         :middleware [;; swagger feature
-                                                      reitit-swagger/swagger-feature
+                                                   :options nil}) ;; malli
+                                       :middleware [;; swagger feature
+                                                    reitit-swagger/swagger-feature
                                                       ;; query-params & form-params
-                                                      reitit-parameters/parameters-middleware
+                                                    reitit-parameters/parameters-middleware
                                                       ;; content-negotiation
-                                                      reitit-muuntaja/format-negotiate-middleware
+                                                    reitit-muuntaja/format-negotiate-middleware
                                                       ;; encoding response body
-                                                      reitit-muuntaja/format-response-middleware
+                                                    reitit-muuntaja/format-response-middleware
                                                       ;; exception handling
-                                                      (reitit-exception/create-exception-middleware
-                                                        (merge
-                                                          reitit-exception/default-handlers
-                                                          {::reitit-exception/wrap (fn [handler ^Exception e request]
-                                                                                     (log/error e (.getMessage e))
-                                                                                     (handler e request))}))
+                                                    (reitit-exception/create-exception-middleware
+                                                     (merge
+                                                      reitit-exception/default-handlers
+                                                      {::reitit-exception/wrap (fn [handler ^Exception e request]
+                                                                                 (log/error e (.getMessage e))
+                                                                                 (handler e request))}))
                                                       ;; decoding request body
-                                                      reitit-muuntaja/format-request-middleware
+                                                    reitit-muuntaja/format-request-middleware
                                                       ;; coercing response bodys
-                                                      reitit-coercion/coerce-response-middleware
+                                                    reitit-coercion/coerce-response-middleware
                                                       ;; coercing request parameters
-                                                      reitit-coercion/coerce-request-middleware]}})
-      (reitit-ring/routes
-        (reitit-ring/redirect-trailing-slash-handler)
-        (reitit-ring/create-file-handler {:path "/", :root "target/shadow/dev/resources/public"})
-        (reitit-ring/create-resource-handler {:path "/"})
-        (reitit-ring/create-default-handler)))))
+                                                    reitit-coercion/coerce-request-middleware]}})
+    (reitit-ring/routes
+     (reitit-ring/redirect-trailing-slash-handler)
+     (reitit-ring/create-file-handler {:path "/", :root "target/shadow/dev/resources/public"})
+     (reitit-ring/create-resource-handler {:path "/"})
+     (reitit-ring/create-default-handler)))))
 
 ; Rich comment.
 (comment
 
-  (clj-http.client/get
-    (str "http://localhost:6161/api/info") {:debug true :accept "application/json"})
+  (require '[clj-http.client])
 
   (clj-http.client/get
-    (str "http://localhost:6161/index.html") {:debug true})
+   (str "http://localhost:6161/api/info") {:debug true :accept "application/json"})
 
   (clj-http.client/get
-    (str "http://localhost:6161") {:debug true})
+   (str "http://localhost:6161/index.html") {:debug true})
 
   (clj-http.client/get
-    (str "http://localhost:6161/index.html") {:debug true})
+   (str "http://localhost:6161") {:debug true})
+
+  (clj-http.client/get
+   (str "http://localhost:6161/index.html") {:debug true})
 
   (user/system)
   (ss-domain-s/get-product-groups (user/env))
@@ -278,9 +279,7 @@
   (handler {:routes (routes (user/env))})
 
   (clj-http.client/get
-    (str "https://reqres.in/api/users/2") {:debug true :accept "application/json"})
+   (str "https://reqres.in/api/users/2") {:debug true :accept "application/json"})
 
   (clj-http.client/get
-    (str "http://localhost:6161/info") {:debug true :accept "application/edn"})
-
-  )
+   (str "http://localhost:6161/info") {:debug true :accept "application/edn"}))

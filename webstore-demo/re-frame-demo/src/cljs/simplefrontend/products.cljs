@@ -93,3 +93,8 @@
          (sf-util/debug-panel {:products-data products-data})]))))
 
 
+(comment
+  "asdf"
+  (products-table nil)
+
+  )

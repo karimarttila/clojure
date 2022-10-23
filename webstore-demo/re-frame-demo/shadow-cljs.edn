@@ -1,4 +1,4 @@
-{:deps {:aliases [:dev :common :backend :frontend :kari]}
+{:deps {:aliases [:dev :common :backend :frontend :kari :calva]}
  :builds {:app {:target :browser
                 :output-dir "dev-resources/public/js"
                 :asset-path "/js"

@@ -19,8 +19,16 @@
 ;; M-j: reset
 ;; M-k: halt
 
+; In Calva the Integrant hot keys are:
+;; ctlr+T alt+h: go
+;; M-j: reset
+;; ctlr+T alt+k: halt
+
+
 (comment
   (user/system)
   (user/env)
+   ; alt+j hotkey in Cursive
+  (integrant.repl/reset)
   )
 

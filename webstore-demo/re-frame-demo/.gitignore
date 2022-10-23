@@ -8,3 +8,4 @@ package-lock.json
 .shadow-cljs/
 dynamodb/dev-resources/
 prod-resources/
+.clj-kondo/
