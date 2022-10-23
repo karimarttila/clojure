@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-			<Pattern>
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <Pattern>
 				%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
-			</Pattern>
-		</encoder>
-	</appender>
+      </Pattern>
+    </encoder>
+  </appender>
 
-	<appender name="FILE"
-		class="ch.qos.logback.core.rolling.RollingFileAppender">
+  <!--
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>
 				%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n
@@ -18,7 +18,6 @@
 		</encoder>
 
 		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-			<!-- rollover daily -->
 			<fileNamePattern>logs/ss.%d{yyyy-MM-dd}.%i.log
             </fileNamePattern>
 			<maxFileSize>1MB</maxFileSize>
@@ -26,47 +25,70 @@
             <maxHistory>30</maxHistory>
 		</rollingPolicy>
 	</appender>
+-->
 
-	<!-- Send logs to both console and file audit -->
-	<logger name="simpleserver" level="trace"
-		additivity="false">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FILE" />
-	</logger>
-	<logger name="ch.qos.logback" level="error"
-		additivity="false">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FILE" />
-	</logger>
-	<logger name="org.eclipse.jetty" level="error"
-		additivity="false">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FILE" />
-	</logger>
-	<logger name="com.zaxxer.hikari" level="warn"
-		additivity="false">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FILE" />
-	</logger>
-	<logger name="com.datomic" level="warn"
-		additivity="false">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FILE" />
-	</logger>
-	<logger name="datomic" level="warn"
-		additivity="false">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FILE" />
-	</logger>
-	<logger name="org.apache" level="warn"
-		additivity="false">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FILE" />
-	</logger>
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>logs/ss.log</file>
 
-	<root level="trace">
-		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FILE" />
-	</root>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>logs/archived/app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+      <!-- each archived file, size max 10MB -->
+      <maxFileSize>10MB</maxFileSize>
+      <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
+      <totalSizeCap>20MB</totalSizeCap>
+      <!-- 30 days to keep -->
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+
+    <encoder>
+      <pattern>%d %p %c{1.} [%t] %m%n</pattern>
+    </encoder>
+  </appender>
+
+  <!--
+  <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
+    <param name="file" value="logs/ss.log" />
+    <param name="MaxFileSize" value="5KB" />
+    <param name="MaxBackupIndex" value="2" />
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n" />
+    </layout>
+  </appender>
+-->
+
+  <!-- Send logs to both console and file audit -->
+  <logger name="simpleserver" level="trace" additivity="false">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
+  </logger>
+  <logger name="ch.qos.logback" level="error" additivity="false">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
+  </logger>
+  <logger name="org.eclipse.jetty" level="error" additivity="false">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
+  </logger>
+  <logger name="com.zaxxer.hikari" level="warn" additivity="false">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
+  </logger>
+  <logger name="com.datomic" level="warn" additivity="false">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
+  </logger>
+  <logger name="datomic" level="warn" additivity="false">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
+  </logger>
+  <logger name="org.apache" level="warn" additivity="false">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
+  </logger>
+
+  <root level="trace">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
+  </root>
 
 </configuration>
