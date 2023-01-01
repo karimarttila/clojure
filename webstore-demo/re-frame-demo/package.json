@@ -10,7 +10,7 @@
     "react-highlight.js": "^1.0.7",
     "sass": "^1.26.12",
     "rollup": "^2.23.1",
-    "rollup-plugin-postcss": "^3.1.4",
+    "rollup-plugin-postcss": "^4.0.2",
     "shadow-cljs": "^2.18.0",
     "stylelint": "^13.7.1"
   },
