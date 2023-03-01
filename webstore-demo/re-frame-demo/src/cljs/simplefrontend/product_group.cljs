@@ -58,16 +58,15 @@
     (fn []
       (let [product-groups-data @(re-frame/subscribe [::product-groups-data])
             _ (if-not product-groups-data (re-frame/dispatch [::get-product-groups]))]
+       [:div
+        [:h3 "Product Groups"]
+        [:div.sf-pg-container
+         (product-groups-table product-groups-data)]
         [:div
-         [:h3 "Product Groups"]
-         [:div.sf-pg-container
-          (product-groups-table product-groups-data)]
-         [:div
-          [:button.sf-basic-button
-           {:on-click (fn [e]
-                        (.preventDefault e)
-                        (re-frame/dispatch [::sf-state/navigate ::sf-state/home]))}
-           "Go to home"]
-          ]
-         (sf-util/debug-panel {:product-groups-data product-groups-data})]))))
+         [:button.sf-basic-button
+          {:on-click (fn [e]
+                       (.preventDefault e)
+                       (re-frame/dispatch [::sf-state/navigate ::sf-state/home]))}
+          "Go to home"]]
+        (sf-util/debug-panel {:product-groups-data product-groups-data})]))))
 

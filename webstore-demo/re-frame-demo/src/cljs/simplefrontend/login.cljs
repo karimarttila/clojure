@@ -74,18 +74,15 @@
                 {;:type :primary
                  :on-click (fn [e]
                              (.preventDefault e)
-                             (re-frame/dispatch [::login-user @login-data]))
-                 }
+                             (re-frame/dispatch [::login-user @login-data]))}
                 "Submit"]])]
            (if-not ret
              [:div
               [:button.sf-basic-button
-               {:on-click(fn [e]
+               {:on-click (fn [e]
                             (.preventDefault e)
                             (re-frame/dispatch [::sf-state/navigate ::sf-state/home]))}
-               "Go to home"]
-              ])
-           ]
+               "Go to home"]])]
           (if ret
             [:div.sf-page-inner-notification
              [notify-div
@@ -93,9 +90,7 @@
                                               (.preventDefault e)
                                               (re-frame/dispatch [::close-notification]))}
                "×"]
-              msg
-              ]])
-          ]
+              msg]])]
 
          (sf-util/debug-panel {:login-data login-data
                                :ret ret

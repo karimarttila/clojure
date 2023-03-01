@@ -52,7 +52,7 @@
       (is (= no-product nil)))))
 
 ; Rich comment.
-#_(comment
+(comment
     (clojure.test/run-all-tests)
     *ns*
     (ss-tc/go)

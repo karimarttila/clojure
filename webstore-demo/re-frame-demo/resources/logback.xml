@@ -85,6 +85,14 @@
     <appender-ref ref="STDOUT" />
     <appender-ref ref="FILE" />
   </logger>
+  <logger name="io.undertow" level="warn" additivity="false">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
+  </logger>
+  <logger name="org.xnio" level="warn" additivity="false">
+    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
+  </logger>
 
   <root level="trace">
     <appender-ref ref="STDOUT" />
