@@ -1,2 +1,0 @@
-{:skip-comments true
- :linters {:missing-else-branch {:level :off}}}

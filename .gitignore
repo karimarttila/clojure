@@ -25,6 +25,7 @@ tmp/
 
 # Personal information
 personal-info/
+personal/
 
 # Cache directory
 .cpcache/
@@ -73,3 +74,5 @@ personal/
 .calva/
 
 logs/
+
+.clj-kondo/

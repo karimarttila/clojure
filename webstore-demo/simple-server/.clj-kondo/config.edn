@@ -1,9 +1,0 @@
-{
-
-
-    :skip-comments true ;; Allow rich comments. TODO: It would be nice to allow rich comments only at the end of the file.
- 
-
-    :lint-as {simpleserver.core/->= clojure.core/->
-              }
-}
