@@ -1,0 +1,4 @@
+{;; Example .user.edn file to configure :repl-command for bb.edn
+ ;; Change USERPROFILE to your user profile (e.g. "kari"), if you have one.
+ ;; Calva
+ :repl-command ["clj -M:dev:test:backend:calva:USERPROFILE -i -C"]}

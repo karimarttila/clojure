@@ -1,0 +1,69 @@
+{:deps {org.clojure/clojure {:mvn/version "1.12.0"}
+        metosin/reitit-core {:mvn/version "0.7.2"}
+        metosin/malli {:mvn/version "0.16.4"}}
+ 
+ :paths ["src/cljc" "resources"]
+ 
+ :aliases {
+           :backend 
+           {:extra-paths ["src/clj"]
+            :extra-deps {metosin/reitit-ring {:mvn/version "0.7.2"}
+                         metosin/reitit-malli {:mvn/version "0.7.2"}
+                         metosin/reitit-middleware {:mvn/version "0.7.2"}
+                         metosin/reitit-swagger {:mvn/version "0.7.2"}
+                         metosin/reitit-swagger-ui {:mvn/version "0.7.2"}
+                         aero/aero {:mvn/version "1.1.6"}
+                         integrant/integrant {:mvn/version "0.12.0"}
+                         integrant/repl {:mvn/version "0.3.3"}
+                         ring/ring-jetty-adapter {:mvn/version "1.12.2"}
+                         metosin/ring-swagger-ui {:mvn/version "5.17.14"}
+                         metosin/ring-http-response {:mvn/version "0.9.4"}
+                         metosin/muuntaja {:mvn/version "0.6.10"}
+                         ch.qos.logback/logback-classic {:mvn/version "1.5.8"}
+                         org.clojure/tools.logging {:mvn/version "1.3.0"}}}
+
+           :dev
+           {:extra-paths ["dev/clj" "target/dev" "test/clj"]}
+
+           :repl
+           {:extra-deps {nrepl/nrepl {:mvn/version "1.3.0"}}
+            :jvm-opts [;; https://www.metosin.fi/blog/missing-stacktraces
+                       "-XX:-OmitStackTraceInFastThrow"
+                       ;; To allow nrepl interrupt threads on Java 20+
+                       "-Djdk.attach.allowAttachSelf"
+                       "-XX:+EnableDynamicAgentLoading"]}
+
+           :test
+           {:extra-paths ["test/clj"]
+            :extra-deps {lambdaisland/kaocha {:mvn/version "1.91.1392"}}
+            :main-opts ["-m" "kaocha.runner"]}
+
+           :frontend
+           {:extra-paths ["src/cljs" "src/js" "test/cljs"]
+            :extra-deps {org.clojure/clojurescript {:mvn/version "1.11.132"}
+                         metosin/reitit-frontend {:mvn/version "0.7.2"}
+                         com.pitch/uix.core {:mvn/version "1.1.1"}
+                         com.pitch/uix.dom {:mvn/version "1.1.1"}
+                         re-frame/re-frame {:mvn/version "1.4.3"}
+                         superstructor/re-frame-fetch-fx {:mvn/version "0.4.0"}
+                         metosin/reagent-dev-tools {:mvn/version "1.0.3"}
+                         com.cognitect/transit-cljs {:mvn/version "0.8.280"}}}
+           
+           :calva 
+           {:extra-deps {cider/cider-nrepl {:mvn/version,"0.52.0"}}
+            :main-opts ["-m" "nrepl.cmdline" "--middleware" "[cider.nrepl/cider-middleware]"]}
+
+           :shadow-cljs
+           {:extra-paths ["dev/cljs"]
+            :extra-deps {thheller/shadow-cljs {:mvn/version "2.28.15"}
+                         binaryage/devtools {:mvn/version "1.0.7"}
+                         org.slf4j/slf4j-simple {:mvn/version "2.0.16"}}}
+
+           :build
+           {:deps {io.github.clojure/tools.build {:mvn/version "0.10.5"}}
+            :ns-default build}
+
+           :outdated
+           {:deps {com.github.liquidz/antq {:mvn/version "RELEASE"}
+                   org.slf4j/slf4j-simple {:mvn/version "2.0.16"}}
+            :main-opts ["-m" "antq.core"]}}}

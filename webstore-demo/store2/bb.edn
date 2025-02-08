@@ -1,0 +1,16 @@
+{:tasks {build {:doc "Build uberjar"
+                ;; FIXME: Consider if it would be better to handle Cljs build in separate classpath
+                :task (clojure "-T:shadow-cljs:frontend:backend:build uberjar")}
+         user-repl {:doc "Start user configured nREPL process"
+                    :task (if-let [cmd (:repl-command (read-string (slurp ".user.edn")))]
+                            (apply shell cmd)
+                            (do (println "Missing :repl-command in .user.edn")
+                                (System/exit 1)))}
+         outdated {:doc "Check depdendencies"
+                   :task (clojure "-M:outdated")}
+         lint {:doc "Lint"
+               :task (shell "clj-kondo --lint src")}
+         init-lint {:doc "Initialize clj-kondo cache and copy lib configs"
+                    :task (shell "sh -c" "clj-kondo --copy-configs --lint $(clj -Spath -A:backend:frontend)")}
+         }
+ }
