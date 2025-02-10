@@ -1,2 +1,7 @@
 # User specific configuration.
 .user.edn
+
+.clj-kondo/
+.cpcache/
+.lsp/
+

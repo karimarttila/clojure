@@ -1,4 +1,8 @@
-{;; Example .user.edn file to configure :repl-command for bb.edn
- ;; Change USERPROFILE to your user profile (e.g. "kari"), if you have one.
- ;; Calva
- :repl-command ["clj -M:dev:test:backend:calva:USERPROFILE -i -C"]}
+{; Example .user.edn file to configure :repl-command for bb.edn
+ ; Change USERPROFILE to your user profile (e.g. "kari"), if you have one.
+ ; Calva REPL.
+ :repl-command ["clj -M:dev:test:backend:calva:USERPROFILE -i -C"]
+ ; Shadow-cljs frontend dev build process.
+ :shadow-run-dev-command ["npm run dev"]
+ }
+
