@@ -1,0 +1,21 @@
+{:deps {:aliases [:shadow-cljs :frontend]}
+ :dev-http {9080 "public"
+            9081 "target/browser-test"}
+ :builds {:app
+          {:target :browser
+           :module-hash-names true
+           :output-dir "target/dev/public/js"
+           :modules {:main {:entries [frontend.core]
+                            :init-fn frontend.core/init}}
+           :devtools {:preloads [uix.preload preload devtools.preload dev]}
+           :release {:output-dir "target/release/public/js"}}
+
+          :test-browser
+          {:target :browser-test
+           :test-dir "target/browser-test/"
+           :ns-regexp "-test$"}
+
+          :test-karma
+          {:target :karma
+           :output-to "target/karma/test.js"
+           :ns-regexp "-test$"}}}
