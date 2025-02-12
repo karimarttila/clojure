@@ -8,6 +8,7 @@
   - [Starting the Clojure REPL](#starting-the-clojure-repl)
   - [The Backend Configuration: Aero](#the-backend-configuration-aero)
   - [The Backend Clojure State Management: Integrant](#the-backend-clojure-state-management-integrant)
+  - [Starting the Frontend Build](#starting-the-frontend-build)
 
 
 ## Introduction
@@ -154,5 +155,12 @@ I have in my VSCode/Calva configurations keybindings for Integrant:
 
 So, in my VSCode/Calva editor, I mostly use `alt-l` to evaluate current Sexpr (S-expression), and `alt-j` to reload all namespaces using Integrant.
 
+## Starting the Frontend Build
 
+```bash
+npm i
+bb frontend-dev
+```
+
+**NOTE:** Shadow-cljs says: `HTTP server available at http://localhost:9080`. But you should not use this development server port, since the backend servers the frontend. Use the backend development port instead: `http://localhost:9333`.
 

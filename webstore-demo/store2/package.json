@@ -1,14 +1,16 @@
 {
   "name": "store2-frontend",
   "scripts": {
-    "dev": "shadow-cljs -A:dev watch app",
-    "release": "shadow-cljs -A:dev release app"
+    "dev": "shadow-cljs watch app",
+    "release": "shadow-cljs release app"
   },
   "devDependencies": {
     "onchange": "^7.1.0",
+    "shadow-cljs": "2.28.19",
+    "react-refresh": "^0.14.0"    
+  },
+  "dependencies": {
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "react-refresh": "^0.14.0",
-    "shadow-cljs": "2.28.19"
-  }
+    "react-dom": "^19.0.0"
+  }  
 }

@@ -12,4 +12,12 @@
 
 (defn env [] (system))
 
+(comment
+  
+  (env)
+  (system)
+  (halt)
+  (go)
+  )
+
 
