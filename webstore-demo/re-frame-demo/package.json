@@ -15,7 +15,7 @@
     "stylelint": "^13.7.1"
   },
   "dependencies": {
-    "create-react-class": "^15.6.3",
+    "create-react-class": "^15.7.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0"
   },
