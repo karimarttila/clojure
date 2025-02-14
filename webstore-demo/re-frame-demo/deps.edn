@@ -18,7 +18,8 @@
                                  metosin/potpuri {:mvn/version "0.5.2"}
                                  integrant/repl {:mvn/version "0.3.1"}}}
            :backend {:extra-paths ["src/clj"]
-                     :extra-deps {metosin/ring-http-response {:mvn/version "0.9.1"}
+                     :extra-deps {org.clojure/data.codec {:mvn/version "0.1.1"}
+                                  metosin/ring-http-response {:mvn/version "0.9.1"}
                                   integrant/integrant {:mvn/version "0.8.0"}
                                   clj-time/clj-time {:mvn/version "0.15.2"}
                                   org.clojure/data.json {:mvn/version "1.0.0"}
@@ -38,7 +39,7 @@
                                   com.cognitect.aws/endpoints {:mvn/version "1.1.11.726"}
                                   com.cognitect.aws/dynamodb {:mvn/version "792.2.620.0"}
                                   com.datomic/datomic-free {:mvn/version "0.9.5697"
-                                                           :exclusions [org.slf4j/slf4j-nop org.slf4j/slf4j-log4j12]}
+                                                            :exclusions [org.slf4j/slf4j-nop org.slf4j/slf4j-log4j12]}
                                   org.eclipse.jetty/jetty-client {:mvn/version "9.4.26.v20200117"}
                                   clj-http/clj-http {:mvn/version "3.10.1"}
                                   nrepl/nrepl {:mvn/version "0.8.2"}}}
