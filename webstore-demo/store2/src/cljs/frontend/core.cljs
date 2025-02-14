@@ -7,8 +7,8 @@
   ($ :h1 "Hello, UIx!"))
 
 (defonce root
-  ; NOTE: This is the same as in routes.clj => index => [:div#app
-  (uix.dom/create-root (js/document.getElementById "app")))
+  ; NOTE: This id needs to be the same as in routes.clj => index => [:div#store2app
+  (uix.dom/create-root (js/document.getElementById "store2app")))
 
 (defn render []
   (uix.dom/render-root ($ app) root))

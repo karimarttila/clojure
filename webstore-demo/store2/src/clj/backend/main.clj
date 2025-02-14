@@ -1,6 +1,6 @@
 (ns backend.main
   (:require [aero.core :as aero]
-            ;[backend.routes]
+            [backend.routes]
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [cognitect.transit]
