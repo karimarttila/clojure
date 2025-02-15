@@ -7,7 +7,7 @@
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
     "prettier": "^2.0.5",
-    "rollup": "^2.23.1",
+    "rollup": "^2.79.2",
     "rollup-plugin-postcss": "^4.0.1",
     "sass": "^1.26.12",
     "shadow-cljs": "2.16.5",
