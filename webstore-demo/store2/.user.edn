@@ -1,0 +1,9 @@
+{; Example .user.edn file to configure :repl-command for bb.edn
+ ; Calva REPL.
+ :repl-command ["clj -M:dev:test:backend:calva:kari -i -C"]
+ ; Shadow-cljs frontend dev build process.
+ :shadow-run-dev-command ["npm run dev"]
+ }
+
+
+
