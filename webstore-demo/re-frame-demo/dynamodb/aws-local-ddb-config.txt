@@ -1,3 +1,0 @@
-[profile local-dynamodb]
-region = eu-west-1
-output = json
