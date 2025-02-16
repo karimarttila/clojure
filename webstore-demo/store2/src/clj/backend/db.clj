@@ -20,7 +20,7 @@
        (io/resource)
        (slurp)
        (s/split-lines)
-       (map #(clojure.string/split % #"\t"))
+       (map #(s/split % #"\t"))
        (map f)))
 
 
