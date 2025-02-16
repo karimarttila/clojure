@@ -1,4 +1,7 @@
 {:adapter/jetty {:port #long #or [#env "HTTP_PORT" 9333]
                  :routes #ig/ref :web/routes}
- :web/routes {:dummy "dummy"}
+ :web/routes {:db #ig/ref :db/tsv}
+ :db/tsv {:path "data"
+          :data {:books "books.tsv"
+                 :movies "movies.tsv"}}
  }
