@@ -21,22 +21,19 @@
        (slurp)
        (s/split-lines)
        (map #(clojure.string/split % #"\t"))
-       (map f))
-  )
+       (map f)))
 
 
 (defmethod ig/init-key :db/tsv [_ {:keys [path data] :as db-opts}]
   (log/infof "Reading tsv data, config is %s" (pr-str db-opts))
-  ; TODO: Implement: Read books and movies and add them to db atom.
   (let [books (read-datafile (str path "/" (:books data)) books-fn)
         movies (read-datafile (str path "/" (:movies data)) movies-fn)]
     (atom {:db {:books books
-                :movies movies}}))
-  )
+                :movies movies}})))
 
 
 (comment
-  
+
   ;; Let's leave the rich comment here,
   ;; readers can see how I developed the functionality.
 
@@ -66,7 +63,7 @@
 ;;    :year "1937",
 ;;    :country "Finland",
 ;;    :genre "Drama"}
-  
+
 
   (->> "data/books.tsv"
        (clojure.java.io/resource)
@@ -80,8 +77,4 @@
        (slurp)
        (clojure.string/split-lines)
        (map #(clojure.string/split % #"\t"))
-       (map movies-fn))
-
-
-
-  )
+       (map movies-fn)))
