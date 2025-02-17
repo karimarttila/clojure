@@ -21,3 +21,23 @@
   )
 
 
+(comment
+  
+  (-> (env)
+      :db/tsv
+      deref
+      :books
+      first
+      )
+  ;;=> {:id 2001,
+  ;;    :product-group 1,
+  ;;    :title "Kalevala",
+  ;;    :price 3.95,
+  ;;    :author "Elias Lönnrot",
+  ;;    :year 1835,
+  ;;    :country "Finland",
+  ;;    :language "Finnish"}
+  
+  )
+
+

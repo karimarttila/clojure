@@ -1,10 +1,9 @@
 (ns backend.routes
-  (:require 
+  (:require
    [clojure.edn :as edn]
    [clojure.java.io :as io]
    [clojure.tools.logging :as log]
    [cognitect.transit :as transit]
-   ;[common.schema :as schema]
    [hiccup2.core :as hiccup]
    [integrant.core :as ig]
    [muuntaja.core :as m]
@@ -15,7 +14,10 @@
    [reitit.ring.middleware.muuntaja :as muuntaja]
    [reitit.swagger :as swagger]
    [reitit.swagger-ui :as swagger-ui]
-   [ring.util.http-response :as resp]))
+   [ring.util.http-response :as resp]
+   [common.schema :as schema]
+   [backend.api.products :as products]))
+
 
 (def muuntaja-instance
   (m/create (-> m/default-options
@@ -23,6 +25,28 @@
                           (transit/write-handler (constantly "Instant") #(.toString %)))
                 (assoc-in [:formats "application/transit+json" :decoder-opts :handlers "Instant"]
                           (transit/read-handler #(java.time.Instant/parse %))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; TODO ;; TODO ;; TODO ;; TODO ;; TODO ;; TODO 
+;; TODO: For some reason does not work. 
+;; In the handler the :db is null in request ???
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn wrap-database-middleware
+  "Return a middleware that associates our database instance to the request map.
+   Key :db holds an atom which simulates our database."
+  [handler database]
+  (let [_ (def my-database database)]
+    (fn
+      ([request]
+       (handler (assoc request :db @database))
+       )
+      
+      ([request respond raise]
+       (handler (assoc request :db @database)
+                respond
+                raise)))))
+
 
 (defn default-error-handler
   "Default safe handler for any exception."
@@ -32,6 +56,7 @@
    :body {:type "exception"
           :class (.getName (.getClass e))}})
 
+
 (defn main-js-file []
   (-> (or (io/resource "public/js/manifest.edn")
           (io/file "target/dev/public/js/manifest.edn"))
@@ -39,6 +64,7 @@
       edn/read-string
       first
       :output-name))
+
 
 (defn index []
   (hiccup/html {:mode :html}
@@ -58,36 +84,57 @@
 
 
 (defn app [env]
-  (ring/ring-handler
-   (ring/router
-    ["/api" 
-     ["/swagger.json" {:no-doc true
-                       :get (swagger/create-swagger-handler)}]
-     ["/docs/*" {:no-doc true
-                 :get (swagger-ui/create-swagger-ui-handler {:url "/api/swagger.json"})}]]
-    {:data {:muuntaja muuntaja-instance
-            :coercion malli.coercion/coercion
-            :middleware [muuntaja/format-middleware
-                         (reitit.ring.middleware.exception/create-exception-middleware {:reitit.ring.middleware.exception/default default-error-handler})
-                         ring.coercion/coerce-exceptions-middleware
-                         ring.coercion/coerce-request-middleware
-                         ring.coercion/coerce-response-middleware
-                         ]}})
-    ;; Default handler - handle resources (js files), index.html and 404 for API endpoints
-   (ring/routes
-    (ring/create-resource-handler {:path ""
-                                   :root "public"})
+  (let [_ (def my-env env)]
     (ring/ring-handler
      (ring/router
-      [""
-       ["/api/*" {:handler (fn [_req]
-                             (resp/not-found))}]
+      ["/api"
+       ["/products"
+        ["/books"
+         [""
+          {:summary "Return books"
+           :get {:handler #'products/get-books
+                 :responses {200 {:body [:sequential schema/book]}}}}]]
+        ["/movies"
+         [""
+          {:summary "Return movies"
+           :get {:handler #'products/get-movies
+                 :responses {200 {:body [:sequential schema/movie]}}}}]
+         ]
+        ]
+       ["/swagger.json" {:no-doc true
+                         :get (swagger/create-swagger-handler)}]
+       ["/docs/*" {:no-doc true
+                   :get (swagger-ui/create-swagger-ui-handler {:url "/api/swagger.json"})}]]
+      {:data {:muuntaja muuntaja-instance
+              :coercion malli.coercion/coercion
+              :middleware [muuntaja/format-middleware
+                           (reitit.ring.middleware.exception/create-exception-middleware {:reitit.ring.middleware.exception/default default-error-handler})
+                           ring.coercion/coerce-exceptions-middleware
+                           ring.coercion/coerce-request-middleware
+                           ring.coercion/coerce-response-middleware
+                           [wrap-database-middleware (let [datab (:db env)
+                                                           _ (def my-datab datab)]
+                                                       datab)]
+                           ]}})
+
+     
+    ;; Default handler - handle resources (js files), index.html and 404 for API endpoints
+     (ring/routes
+      (ring/create-resource-handler {:path ""
+                                     :root "public"})
+      (ring/ring-handler
+       (ring/router
+        [""
+         ["/api/*" {:handler (fn [_req]
+                               (resp/not-found))}]
            ;; Return index.html for any non-API routes for History API routing
-       ["/*" {:get {:handler (fn [_req] (resp/ok (str (index))))}}]]
-      {:conflicts nil})))))
+         ["/*" {:get {:handler (fn [_req] (resp/ok (str (index))))}}]]
+        {:conflicts nil}))))))
+
 
 (defmethod ig/init-key :web/routes [_ env]
-  (app env))
+  (let [_ ( def env3 env)]
+    (app env)))
 
 (defmethod ig/halt-key! :web/routes [_ _routes]
   (log/info "Shutting down web routes"))
@@ -100,5 +147,80 @@
   (main-js-file)
   ;;=> "main.js"
   
+  (->> (user/env)
+       :db/tsv
+       )
   
+  (->> (user/env)
+       :db/tsv
+       deref
+       keys
+       :db
+       )
+  
+  (-> env3
+      :db)
+  
+  (-> my-env
+      :db)
+  
+  (-> my-env2
+      :db)
+  
+  my-datab
+  my-database
+  
+  (do (require '[clj-http.client :as client])
+      (client/get "http://localhost:9333/api/products/books"))
+  ;;=> {:cached nil,
+  ;;    :request-time 7,
+  ;;    :repeatable? false,
+  ;;    :protocol-version {:name "HTTP", :major 1, :minor 1},
+  ;;    :streaming? true,
+  ;;    :http-client
+  ;;    #object[org.apache.http.impl.client.InternalHttpClient 0x256466b2 "org.apache.http.impl.client.InternalHttpClient@256466b2"],
+  ;;    :chunked? false,
+  ;;    :reason-phrase "OK",
+  ;;    :headers
+  ;;    {"Date" "Mon, 17 Feb 2025 10:19:36 GMT",
+  ;;     "Connection" "close",
+  ;;     "Content-Type" "application/json;charset=utf-8",
+  ;;     "Content-Length" "142",
+  ;;     "Server" "Jetty(11.0.21)"},
+  ;;    :orig-content-encoding nil,
+  ;;    :status 200,
+  ;;    :length 142,
+  ;;    :body
+  ;;    "[{\"id\":2001,\"product-group\":1,\"title\":\"Kalevala\",\"price\":3.95,\"author\":\"Elias Lönnrot\",\"year\":1835,\"country\":\"Finland\",\"language\":\"Finnish\"}]",
+  ;;    :trace-redirects []}
+  
+  ;; If error, see it using *e:
+  *e
+  
+  (do (require '[clj-http.client :as client])
+      (client/get "http://localhost:9333/api/products/books"))
+  
+  (-> my-env2
+      keys
+      :db)
+  
+  my-datab
+  
+  my-database
+  
+  (-> my-env
+      :db
+      deref
+      :books
+      first)
+  
+  
+  (-> (user/env)
+      :db/tsv
+      deref
+      :books
+      first)
+
+
+
   )

@@ -20,7 +20,7 @@ I have implemented various webstore exercises (e.g. [Clojure Re-Frame Exercise](
 
 I used mostly two example projects in my exercise:
 
-- [metosin-example-project](https://github.com/metosin/example-project). This example project shows how to use [babashka](https://github.com/babashka/babashka) as a command runner (I have previously used mostly [just](https://github.com/casey/just)). I also used a lot of configurations of this example as a basis for my exercise.
+- [metosin-example-project](https://github.com/metosin/example-project). This example project shows how to use [babashka](https://github.com/babashka/babashka) as a command runner (I have previously used mostly [just](https://github.com/casey/just)). I also used a lot of configurations of this example as a basis for my exercise. This example project provides also a good example on how to use [reitit](https://github.com/metosin/reitit), middleware, [malli](https://github.com/metosin/malli), etc.
 - [uix-starter](https://github.com/pitch-io/uix-starter). This is the "official UIx starter project."
 
 ## What Does This Demo Do and What is the Purpose of this Exercise?
