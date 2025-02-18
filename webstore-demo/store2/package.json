@@ -6,11 +6,11 @@
   },
   "devDependencies": {
     "onchange": "^7.1.0",
-    "shadow-cljs": "2.28.19",
-    "react-refresh": "^0.14.0"    
+    "react-refresh": "^0.14.0",
+    "shadow-cljs": "2.28.19"
   },
   "dependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
-  }  
+  }
 }
