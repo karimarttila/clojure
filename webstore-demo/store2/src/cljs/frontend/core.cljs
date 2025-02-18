@@ -48,4 +48,8 @@
 
 (comment
   
+  (shadow.cljs.devtools.server/start!)
+  (+ 1 1)
+  (js/console.log "TESTING...")
+
   )

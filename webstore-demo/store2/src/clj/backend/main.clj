@@ -36,3 +36,9 @@
 
 (defn -main []
   (run-system (system-config)))
+
+
+(comment 
+  (+ 1 1)
+  
+  )
