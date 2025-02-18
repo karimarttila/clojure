@@ -1,10 +1,18 @@
 /* src/css/tailwind.css */
 
+/* NOTE: You have refresh the browser view if you make changes in this file!!! */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 
+
+ @layer utilities {
+    h1 {
+        font-size: 2.25rem;
+    }
+}
 
 
 .dummy {
