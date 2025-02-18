@@ -1,20 +1,20 @@
 /* src/css/tailwind.css */
 
-/* NOTE: You have refresh the browser view if you make changes in this file!!! */
+/* NOTE: You have to refresh the browser view if you make changes in this file!!! */
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
-
- @layer utilities {
-    h1 {
-        font-size: 2.25rem;
+@layer utilities {
+    .debugborder {
+        border: solid 1px blue;
     }
+    
+    /* Basic text color */
+    .btc {
+        @apply text-blue-600;
+    }
+
 }
 
-
-.dummy {
-    border: solid 1px blue;
-}
