@@ -190,16 +190,16 @@ java -cp target/app.jar clojure.main -m backend.main
 
 Start the `bb frontend-dev` as explained earlier. But do not start the Clojure backend REPL from the terminal.
 
-In VSCode, look for command `Calva: Start a Project REPL and Connect (a.k.a. Jack-in)`.
-Calva shows project types, choose: `deps.edn + shadow-cljs`.
-Choose aliases: `:backend`, `:dev`, `:frontend` and `:shadow-cljs`.
-Jacking process starts, wait...
-Go to some clj file and `alt+j` (`(integrant.repl/reset)`).
-In browser, refresh: `http://localhost:9333/#`
-If you see `No build connected` near the REPL (VSCode bottom info area): click it, it should say: `:app`.
-Now you should have both backend clj REPL and frontend cljs REPL.
-Open some clj file (e.g. `main.clj`), in a rich comment: `(+ 1 1)` => You should see: `clj backend.main (+ 1 1) and 2` in the terminal output.
-Open some cljs file (e.g. `core.cljs`), in a rich comment: `(+ 1 1)` => You should see: `cljs frontend.core (+ 1 1) and 2` in the terminal output. You can also try: `(js/console.log "TESTING...")` => you should see `TESTING...` in the browser developer tool / Console.
+- In VSCode, look for command `Calva: Start a Project REPL and Connect (a.k.a. Jack-in)`.
+- Calva shows project types, choose: `deps.edn + shadow-cljs`.
+- Choose aliases: `:backend`, `:dev`, `:frontend` and `:shadow-cljs`.
+- Jacking process starts, wait...
+- Go to some clj file and `alt+j` (`(integrant.repl/reset)`).
+- In browser, refresh: `http://localhost:9333/#`
+- If you see `No build connected` near the REPL (VSCode bottom info area): click it, it should say: `:app`.
+- Now you should have both backend clj REPL and frontend cljs REPL.
+- Open some clj file (e.g. `main.clj`), in a rich comment: `(+ 1 1)` => You should see: `clj backend.main (+ 1 1) and 2` in the terminal output.
+- Open some cljs file (e.g. `core.cljs`), in a rich comment: `(+ 1 1)` => You should see: `cljs frontend.core (+ 1 1) and 2` in the terminal output. You can also try: `(js/console.log "TESTING...")` => you should see `TESTING...` in the browser developer tool / Console.
 
 
 
