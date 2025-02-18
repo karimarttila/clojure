@@ -1,0 +1,12 @@
+/* src/css/tailwind.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+
+.dummy {
+    border: solid 1px blue;
+}

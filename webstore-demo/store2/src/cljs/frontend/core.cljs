@@ -4,7 +4,7 @@
 
 
 (defui app []
-  ($ :h1 "Hello, UIx!!"))
+  ($ :h1.text-blue-700.dummy "Hello, UIx!!"))
 
 (defonce root
   ; NOTE: This id needs to be the same as in routes.clj => index => [:div#store2app
