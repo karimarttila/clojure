@@ -11,6 +11,9 @@
   - [Starting the Frontend Dev Build](#starting-the-frontend-dev-build)
   - [Building the Fullstack Application](#building-the-fullstack-application)
   - [Connecting both Clojure Backend REPL and Clojurescript Frontend REPL](#connecting-both-clojure-backend-repl-and-clojurescript-frontend-repl)
+  - [TODO](#todo)
+    - [External REPL](#external-repl)
+    - [React](#react)
 
 
 ## Introduction
@@ -159,8 +162,16 @@ So, in my VSCode/Calva editor, I mostly use `alt-l` to evaluate current Sexpr (S
 
 ## Starting the Frontend Dev Build
 
+The frontend uses [UIx](https://github.com/pitch-io/uix) library. 
+
+See: 
+
+- https://cljdoc.org/d/com.pitch/uix.core/1.0.1/doc/what-is-uix-
+- https://uix-cljs.dev/recipes/routing
+- https://github.com/pitch-io/uix/blob/master/docs/interop-with-reagent.md#syncing-with-ratoms-and-re-frame
+
 ```bash
-npm i
+npm install
 bb frontend-dev
 ```
 
@@ -188,11 +199,11 @@ java -cp target/app.jar clojure.main -m backend.main
 
 ## Connecting both Clojure Backend REPL and Clojurescript Frontend REPL
 
-Start the `bb frontend-dev` as explained earlier. But do not start the Clojure backend REPL from the terminal.
+Start the just `npm run postcss:watch` since we use Calva to start shadow-cljs build and frontend REPL. Do not start the Clojure backend REPL from the terminal, since we use Calva to start the backend REPL.
 
 - In VSCode, look for command `Calva: Start a Project REPL and Connect (a.k.a. Jack-in)`.
 - Calva shows project types, choose: `deps.edn + shadow-cljs`.
-- Choose aliases: `:backend`, `:dev`, `:frontend` and `:shadow-cljs`.
+- Choose aliases: `:backend`, `:dev`, `:frontend` and `:shadow-cljs`. (**NOTE**: Do not choose the `calva` alias: that is for the terminal REPL!)
 - Jacking process starts, wait...
 - Go to some clj file and `alt+j` (`(integrant.repl/reset)`).
 - In browser, refresh: `http://localhost:9333/#`
@@ -201,6 +212,29 @@ Start the `bb frontend-dev` as explained earlier. But do not start the Clojure b
 - Open some clj file (e.g. `main.clj`), in a rich comment: `(+ 1 1)` => You should see: `clj backend.main (+ 1 1) and 2` in the terminal output.
 - Open some cljs file (e.g. `core.cljs`), in a rich comment: `(+ 1 1)` => You should see: `cljs frontend.core (+ 1 1) and 2` in the terminal output. You can also try: `(js/console.log "TESTING...")` => you should see `TESTING...` in the browser developer tool / Console.
 
+Move terminal tab into a new window so that you have more space in the main editor VSCode window:
+
+- VSCode command `Terminal: Move Terminal into Editor Area`.
+- Then grab the terminal tab in the editor area and move it outside of the current VSCode window => creates a new VSCode window for the terminal.
 
 
+## TODO
 
+### External REPL
+
+Create a .user-repl.edn with aliases:
+aliases: `:backend`, `:dev`, `:frontend` and `:shadow-cljs`.
+Start external REPL and connect to it using your own `backend + frontend` project type.
+Then the same procedure as above. Does it work also like that?
+
+### React 
+
+`npm i -D @tanstack/react-query@4` (vai: `npm i @tanstack/react-query@4`)
+=> Try replacing cljs-ajax with react-query 4.
+See: https://github.com/roman01la/uix-cloudflare-template/tree/master/src/app
+
+Perhaps also: 
+
+- https://medium.com/bina-nusantara-it-division/understanding-react-query-11e56960e90c
+- https://gist.github.com/jmlsf/f41b46c43a31224f46a41b361356f04d
+- https://www.ovistoica.com/blog/using-react-query-from-clojurescript
