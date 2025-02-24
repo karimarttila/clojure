@@ -1,9 +1,10 @@
 {; Example .user.edn file to configure :repl-command for bb.edn
  ; Calva REPL.
- :repl-command ["clj -M:dev:test:backend:frontend:calva:kari -i -C"]
- ; Shadow-cljs frontend dev build process.
- :shadow-run-dev-command ["npm run dev"]
- }
+ :backend-repl-command ["clojure -M:dev:backend:frontend:shadow-cljs:calva-external-repl:test:kari -i bb-scripts/backendinit.clj -m nrepl.cmdline --middleware \"[cider.nrepl/cider-middleware,shadow.cljs.devtools.server.nrepl/middleware]\""]
+ :frontend-repl-command ["clojure -M:dev:backend:frontend:shadow-cljs:calva-external-repl:test:kari -i bb-scripts/frontendinit.clj -m nrepl.cmdline -c --port"]
 
+ ; Shadow-cljs frontend dev build process.
+ ; NOTE: You do not need this since :frontend-repl-command does it.
+ :shadow-run-dev-command ["npm run dev"]}
 
 

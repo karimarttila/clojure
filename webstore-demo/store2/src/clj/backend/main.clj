@@ -6,7 +6,11 @@
             [cognitect.transit]
             [integrant.core :as ig]
             [reitit.ring.middleware.exception]
-            [ring.adapter.jetty :as jetty]))
+            [ring.adapter.jetty :as jetty]
+            ;; For Integrant.
+            [backend.routes]
+            [backend.db] 
+            ))
 
 (defmethod aero.core/reader 'ig/ref
   [_opts _tag value]
@@ -40,5 +44,6 @@
 
 (comment 
   (+ 1 1)
+  
   
   )

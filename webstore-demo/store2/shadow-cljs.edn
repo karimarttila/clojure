@@ -13,9 +13,8 @@
            :devtools {;:watch-dir "target/dev/public"
                        :preloads [preload devtools.preload dev]}
            :output-dir "target/dev/public/js"
-           :modules {:main {:entries [frontend.core]
-                            :init-fn frontend.core/init}}
-           ;;:devtools {:preloads [uix.preload preload devtools.preload dev]}
+           :modules {:main {:entries [frontend.app]
+                            :init-fn frontend.app/init!}}
            :release {:output-dir "target/release/public/js"}}
 
         ;;   :test-browser

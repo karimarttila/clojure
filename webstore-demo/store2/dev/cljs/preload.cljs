@@ -1,12 +1,8 @@
 (ns preload
   (:require
    [shadow.cljs.devtools.client.browser]
-   [uix.dev]))
+   ))
 
-(uix.dev/init-fast-refresh!)
-
-(defn ^:dev/after-load refresh []
-  (uix.dev/refresh!))
 
 (defonce init-repl!
   (let [eval-fn shadow.cljs.devtools.client.browser/global-eval]

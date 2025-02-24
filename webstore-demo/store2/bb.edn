@@ -1,12 +1,16 @@
+;; Babashka task runner.
+
 {:paths ["bb-scripts"]
 
  :tasks {:requires ([tasks :as t])
 
          build {:doc "Build uberjar"
                 :task (clojure "-T:shadow-cljs:frontend:backend:build uberjar")}
-         user-repl {:doc "Start user configured nREPL process"
-                    :task (t/run-command :repl-command ".user.edn")}
-         frontend-dev {:doc "Start shadow-cljs dev build process"
+         backend-repl {:doc "Start backend nREPL process"
+                       :task (t/run-command :backend-repl-command ".user.edn")}
+         frontend-repl {:doc "Start frontend REPL and connect to backend REPL"
+                       :task (t/run-frontend-command :frontend-repl-command ".user.edn")}
+         frontend-dev {:doc "NOTE: NOT NEEDED, USE frontend-repl insteace (Start shadow-cljs dev build process)"
                        :task (t/run-command :shadow-run-dev-command ".user.edn")}
          outdated {:doc "Check depdendencies"
                    :task (clojure "-M:outdated")}

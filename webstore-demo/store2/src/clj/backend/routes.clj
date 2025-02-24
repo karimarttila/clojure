@@ -50,6 +50,10 @@
           :class (.getName (.getClass e))}})
 
 
+(defn copy-favicon-ico []
+  (io/copy (io/file "public/favicon.ico") (io/file "target/dev/public/favicon.ico")))
+
+
 (defn main-js-file []
   (-> (or (io/resource "public/js/manifest.edn")
           (io/file "target/dev/public/js/manifest.edn"))
@@ -67,11 +71,15 @@
                 [:head
                  [:title "Store2"]
                  [:meta {:charset "utf-8"}]
-                [:link {:rel "stylesheet" :href "./css/main.css"}]
+                 ; TODO: REMOVE LATER todomvc related stuff!
+                 [:link {:rel "stylesheet" :href "node_modules/todomvc-common/base.css"}]
+                 [:link {:rel "stylesheet" :href "node_modules/todomvc-app-css/index.css"}]  
+                 
+                 [:link {:rel "stylesheet" :href "./css/main.css"}]
                  [:meta {:name "viewport" :content "width=device-width, initial-scale=1, shrink-to-fit=no"}]]
                 [:body
-                 ; This div id needs to be the same as in frontend core.cljs!
-                 [:div#store2app
+                 ; This div id needs to be the same as in frontend app.cljs!
+                 [:div#app
                   [:div.loading
                    [:h1 "Loading, please wait..."]]]
                  [:script {:type "text/javascript" :src (str "/js/" (main-js-file))}]]]))
@@ -129,6 +137,8 @@
 
 
 (defmethod ig/init-key :web/routes [_ env]
+  ; Side-effect: copy favicon.ico
+  (copy-favicon-ico)
   (app env))
 
 (defmethod ig/halt-key! :web/routes [_ _routes]
