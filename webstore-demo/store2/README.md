@@ -217,7 +217,8 @@ NOTE: `backend-repl` does also Interant reset!
 bb backend-repl
 ```
 
-Then in the app: `alt+j` => integrant reset (starts serving frontend).
+... wait till you see: `nREPL server started on port...`, and that there are no errors.
+
 
 **In the #2 terminal:**
 
@@ -227,8 +228,7 @@ NOTE: `frontend-repl` also starts shadow-cljs server and starts watching the bui
 bb frontend-repl
 ```
 
-In browser hard refresh `http://localhost:8333/struct/` 
-=> This connects the frontend repl to the browser javascript engine.
+... wait till you see: `[:app] Build completed. ...`, and that there are no errors.
 
 **In the #3 terminal / VSCode**:
 
@@ -236,8 +236,12 @@ In browser hard refresh `http://localhost:8333/struct/`
 - VSCode command:
 - `Calva: Connect to a Running REPL in the Project`
 - Project type: `backend + frontend`
-- In the `cljs` file try: `(js/console.log "I am connected to the browser!")`
-- In the `clj` file try: `(+ 1 1)
+- In browser hard refresh `http://localhost:8333/struct/` => This connects the frontend repl to the browser javascript engine (in the `frontendinit.clj` we already did the Integrant `(go)`, which started to serve the frontend).
+- You should be good to go now: You have both backend REPL and frontend REPL connected to your VSCode editor.
+- Test backend REPL: In the `clj` file try: `(+ 1 1- 
+- Test frontend REPL: In the `cljs` file try: `(js/console.log "I am connected to the browser!")`
+- Try to edit some frontend main page html element => the live reload should work and the browser view should be automatically updated.
+
 ... to verify both REPLs are connected!
 
 Try editing some cljs file to see live-reload works in the browser app.
@@ -258,10 +262,6 @@ Start the just `npm run postcss:watch` since we use Calva to start shadow-cljs b
 - Open some clj file (e.g. `main.clj`), in a rich comment: `(+ 1 1)` => You should see: `clj backend.main (+ 1 1) and 2` in the terminal output.
 - Open some cljs file (e.g. `app.cljs`), in a rich comment: `(+ 1 1)` => You should see: `cljs frontend.app (+ 1 1) and 2` in the terminal output. You can also try: `(js/console.log "TESTING...")` => you should see `TESTING...` in the browser developer tool / Console.
 
-Move terminal tab into a new window so that you have more space in the main editor VSCode window:
-
-- VSCode command `Terminal: Move Terminal into Editor Area`.
-- Then grab the terminal tab in the editor area and move it outside of the current VSCode window => creates a new VSCode window for the terminal.
 
 ### Some Extra Utilities
 

@@ -42,8 +42,10 @@
   (run-system (system-config)))
 
 
-(comment 
-  (+ 1 1)
-  
-  
+(comment
+  (+ 1 1 )
+  (require '[portal.api :as p])
+  (def p (p/open))
+  (add-tap #'p/submit)
+  (tap> :hello)
   )

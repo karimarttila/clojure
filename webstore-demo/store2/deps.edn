@@ -69,6 +69,7 @@
                          org.clojure/core.match     {:mvn/version "1.1.0"}
                          no.cjohansen/replicant {:mvn/version "2025.02.02"}
                          no.cjohansen/lookup {:mvn/version "2024.12.23"}
+                         ;; NOT stable yet.
                          cjohansen/gadget-inspector {:mvn/version "0.2023.04.12"}
                          org.slf4j/slf4j-simple {:mvn/version "2.0.16"}}}
 
