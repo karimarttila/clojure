@@ -16,6 +16,8 @@
     - [Some Extra Utilities](#some-extra-utilities)
   - [Building the Fullstack Application](#building-the-fullstack-application)
   - [Tapping to the data](#tapping-to-the-data)
+    - [Gadget](#gadget)
+    - [Portal](#portal)
   - [TODO](#todo-1)
 
 
@@ -293,6 +295,18 @@ java -cp target/app.jar clojure.main -m backend.main
 
 
 ## Tapping to the data
+
+### Gadget
+
+You can use [gadget](https://github.com/cjohansen/gadget-inspector) to view your app state in the browser. Just follow the instructions (and remember to build and install the extension).
+
+See in [app.cljs](./src/cljs/frontend/app.cljs) on how to start the inspector showing your app state in browser developer tools, in tab `Gadget`:
+
+```clojure
+(inspector/inspect "App state" !state)
+```
+
+### Portal
 
 You can use [portal](https://github.com/djblue/portal) in development to tap to various data. I have added a couple of examples how to tap to the data in files.
 
