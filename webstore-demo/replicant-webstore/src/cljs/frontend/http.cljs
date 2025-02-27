@@ -14,8 +14,8 @@
         url (str "/api" (get-in action [:query :api]))]
     (go (let [response (<! (http/get url))]
           (if (= 200 (:status response))
-            (swap! state assoc-in [:data id] (:body response))
-            (swap! state assoc-in [:data id] (:status response)))))))
+            (swap! state assoc-in [:db/data id] (:body response))
+            (swap! state assoc-in [:db/data id] (:status response)))))))
 
 
 

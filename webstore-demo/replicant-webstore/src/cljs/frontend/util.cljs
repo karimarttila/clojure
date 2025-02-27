@@ -19,9 +19,7 @@
 
 (comment
 
-  
   (js/console.log "I am connected to the browser!")
   (+ 1 1)
   ;(js/alert "I am connected to the browser!")
-  
   )
