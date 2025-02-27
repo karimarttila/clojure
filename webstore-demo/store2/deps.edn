@@ -71,6 +71,8 @@
                          no.cjohansen/lookup {:mvn/version "2024.12.23"}
                          ;; NOT stable yet.
                          cjohansen/gadget-inspector {:mvn/version "0.2023.04.12"}
+                         cljs-http/cljs-http {:mvn/version "0.1.48"}
+                         org.clojure/core.async {:mvn/version "1.7.701"}
                          org.slf4j/slf4j-simple {:mvn/version "2.0.16"}}}
 
            :babashka

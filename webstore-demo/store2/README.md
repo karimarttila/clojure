@@ -15,6 +15,7 @@
     - [Using Calva: Jack-in](#using-calva-jack-in)
     - [Some Extra Utilities](#some-extra-utilities)
   - [Building the Fullstack Application](#building-the-fullstack-application)
+  - [Tapping to the data](#tapping-to-the-data)
   - [TODO](#todo-1)
 
 
@@ -35,7 +36,10 @@ I have implemented various webstore exercises (e.g. [Clojure Re-Frame Exercise](
 I used mostly two example projects in my exercise:
 
 - [metosin-example-project](https://github.com/metosin/example-project). This example project shows how to use [babashka](https://github.com/babashka/babashka) as a command runner (I have previously used mostly [just](https://github.com/casey/just)). I also used a lot of configurations of this example as a basis for my exercise. This example project provides also a good example on how to use [reitit](https://github.com/metosin/reitit), middleware, [malli](https://github.com/metosin/malli), etc.
-- [todomvc](https://github.com/anteoas/replicant-todomvc). 
+- [replicant-todomvc](https://github.com/anteoas/replicant-todomvc): Interesting repo to study the event handling in replicant.
+- [replicant-mini-app](https://github.com/anteoas/replicant-mini-app): I took from this solution the basic setup on how to do the replicant event processing.
+- [replicant-networking](https://github.com/cjohansen/replicant): How to do networking with replicant.
+- 
 
 ## What Does This Demo Do and What is the Purpose of this Exercise?
 
@@ -286,6 +290,53 @@ java -cp target/app.jar clojure.main -m backend.main
 ```
 
 ... and open browser in `http://localhost:9333`.
+
+
+## Tapping to the data
+
+You can use [portal](https://github.com/djblue/portal) in development to tap to various data. I have added a couple of examples how to tap to the data in files.
+
+In the Clojure side, in [routes.clj](./src/clj/backend/routes.clj):
+
+```clojure
+  ;; Example how to tap to the data using djblue Portal:
+  (require '[clj-http.client :as client])
+  (require '[jsonista.core :as json])
+  (defn json-to-edn [json-str]
+    (json/read-value json-str (json/object-mapper {:decode-key-fn keyword}))) 
+  (json-to-edn "{\"name\": \"Book\", \"price\": 29.99}") 
+  
+  (:body (client/get "http://localhost:9333/api/products/books"))
+  ;; Tap to the data:
+  ; https://github.com/djblue/portal
+  (require '[portal.api :as p])
+  ; This should open the Portal window.
+  (def p (p/open))
+  (add-tap #'p/submit) 
+  (tap> :hello)
+  (tap> (json-to-edn (:body (client/get "http://localhost:9333/api/products/books"))))
+  ;; You should now see a vector of book maps in the portal window.
+```
+
+In the Clojurescript side, in [http.cljs](./src/cljs/frontend/http.cljs):
+
+```clojure
+  (def my-state (atom {}))
+
+  (fetch my-state {:jee "jee"})
+  (count (:books @my-state))
+
+  ;; Example how to tap to the data using djblue Portal: 
+  (require '[portal.web :as p])
+  ; NOTE: This asks a popup window, you have to accept it in the browser!!!
+  (def p (p/open))
+  ; Now you should have a new pop-up browser window...
+  (add-tap #'p/submit)
+  (tap> :hello)
+  (tap> (:books @my-state))
+  ;; You should now see a vector of book maps in the portal window.
+```
+
 
 
 ## TODO

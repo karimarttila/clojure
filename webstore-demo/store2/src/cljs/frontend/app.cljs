@@ -3,23 +3,27 @@
             [clojure.walk :as walk]
             [replicant.dom :as r]
             [gadget.inspector :as inspector]
-            [frontend.util :as f-util]))
+            [frontend.util :as f-util]
+            [frontend.http :as f-http]))
+
 
 (defonce ^:private !state (atom {:db/product-groups [{:id :books
+                                                      :query {:id :books
+                                                              :api "/products/books"}
                                                       :name "Books"}
                                                      {:id :movies
+                                                      :query {:id :movies
+                                                              :api "/products/movies"}
                                                       :name "Movies"}]}))
-
 
 
 (defn- product-box [product]
   [:button.rounded-lg.border-2.border-gray-300.p-4.m-2.hover:bg-gray-200.cursor-pointer
-   {:on {:click [[:product-group-selected (:id product)]]}}
+   {:on {:click [[:backend/fetch {:query (:query product)}][:db/assoc :ui/selected-product-group (:id product)]]}}
+   #_{:on {:click [[:product-group-selected (:id product)]]}}
    [:p.text-center.text-xl.font-semibold
     (:name product)]])
 
-
-; [:button {:on {:click [[:db/dissoc :ui/banner-text]]}} "Dismiss"]]
 
 (defn- product-groups-view []
   (let [product-groups (:db/product-groups @!state)
@@ -31,7 +35,7 @@
         ^{:key (:id product)} (product-box product))]]))
 
 
-(defn- header-view [{:something/keys [todo]}]
+(defn- header-view [{:something/keys [_]}]
   [:div.flex.h-screen
    [:div.flex-grow.p-4
     [:div.flex.flex-col.items-center.min-h-screen.mt-10
@@ -40,8 +44,10 @@
      [:div.mt-10
       (product-groups-view)]]]])
 
+
 (defn- main-view [state]
   (header-view state))
+
 
 (defn- enrich-action-from-event [{:replicant/keys [js-event node]} actions]
   (walk/postwalk
@@ -55,6 +61,7 @@
        :else x))
    actions))
 
+
 (defn- enrich-action-from-state [state action]
   (walk/postwalk
    (fn [x]
@@ -63,6 +70,7 @@
             (= :db/get (first x))) (get state (second x))
        :else x))
    action))
+
 
 (defn- render! [state]
   (r/render
@@ -78,6 +86,7 @@
      (println "Event:" (:replicant/dom-event event-data))
      (println "Node:" (:replicant/node event-data))
      (println "Handler data:" handler-data))))
+
 
 (defn- event-handler [{:replicant/keys [^js js-event] :as replicant-data} actions]
   (f-util/clog "** event-handler **:")
@@ -101,17 +110,21 @@
         :db/dissoc (apply swap! !state dissoc args)
         :dom/set-input-text (set! (.-value (first args)) (second args))
         :dom/focus-element (.focus (first args))
+        :backend/fetch (f-http/fetch !state (second enriched-action))
         (f-util/clog "Unknown action" action)
         #_(prn "Unknown action" action))))
   (render! @!state))
 
+
 (defn ^{:dev/after-load true :export true} start! []
   (render! @!state))
+
 
 (defn ^:export init! []
   (inspector/inspect "App state" !state)
   (r/set-dispatch! event-handler)
   (start!))
+
 
 (comment
 

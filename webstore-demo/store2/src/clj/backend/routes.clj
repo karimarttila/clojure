@@ -143,32 +143,38 @@
   ;;=> "<!DOCTYPE html><html lang=\"en\"><head><title>Example</title><meta charset=\"utf-8\"><meta content=\"width=device-width, initial-scale=1, shrink-to-fit=no\" name=\"viewport\"></head><body><div id=\"app\"><div class=\"loading\"><h1>Loading, please wait...</h1></div></div><script src=\"/js/main.js\" type=\"text/javascript\"></script></body></html>"
   (main-js-file)
   ;;=> "main.js"
-
-
-
+  
   (do (require '[clj-http.client :as client])
       (client/get "http://localhost:9333/api/products/books"))
   ;;=> {:cached nil,
-  ;;    :request-time 7,
-  ;;    :repeatable? false,
-  ;;    :protocol-version {:name "HTTP", :major 1, :minor 1},
-  ;;    :streaming? true,
-  ;;    :http-client
-  ;;    #object[org.apache.http.impl.client.InternalHttpClient 0x256466b2 "org.apache.http.impl.client.InternalHttpClient@256466b2"],
-  ;;    :chunked? false,
-  ;;    :reason-phrase "OK",
-  ;;    :headers
-  ;;    {"Date" "Mon, 17 Feb 2025 10:19:36 GMT",
-  ;;     "Connection" "close",
-  ;;     "Content-Type" "application/json;charset=utf-8",
-  ;;     "Content-Length" "142",
-  ;;     "Server" "Jetty(11.0.21)"},
-  ;;    :orig-content-encoding nil,
+  ;;...
   ;;    :status 200,
-  ;;    :length 142,
   ;;    :body
   ;;    "[{\"id\":2001,\"product-group\":1,\"title\":\"Kalevala\",\"price\":3.95,\"author\":\"Elias Lönnrot\",\"year\":1835,\"country\":\"Finland\",\"language\":\"Finnish\"}]",
-  ;;    :trace-redirects []}
-
+  
   ;; If error, see it using *e:
-  *e)
+  *e
+  
+  ;; Example how to tap to the data using djblue Portal:
+  (require '[clj-http.client :as client])
+  (require '[jsonista.core :as json])
+  (defn json-to-edn [json-str]
+    (json/read-value json-str (json/object-mapper {:decode-key-fn keyword}))) 
+  (json-to-edn "{\"name\": \"Book\", \"price\": 29.99}") 
+  
+  (:body (client/get "http://localhost:9333/api/products/books"))
+  ;; Tap to the data:
+  ; https://github.com/djblue/portal
+  (require '[portal.api :as p])
+  ; This should open the Portal window.
+  (def p (p/open))
+  (add-tap #'p/submit) 
+  (tap> :hello)
+  (tap> (json-to-edn (:body (client/get "http://localhost:9333/api/products/books"))))
+  ;; You should now see a vector of book maps in the portal window.
+  
+  
+  
+  
+  
+  )
