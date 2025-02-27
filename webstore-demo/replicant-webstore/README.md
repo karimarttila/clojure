@@ -1,6 +1,6 @@
-# Store2 Clojure Fullstack Exercise
+# Clojure Fullstack Exercise Using Replicant
 
-- [Store2 Clojure Fullstack Exercise](#store2-clojure-fullstack-exercise)
+- [Clojure Fullstack Exercise Using Replicant](#clojure-fullstack-exercise-using-replicant)
   - [TODO](#todo)
   - [Introduction](#introduction)
   - [Example Projects](#example-projects)
@@ -39,7 +39,7 @@ I used mostly two example projects in my exercise:
 - [replicant-todomvc](https://github.com/anteoas/replicant-todomvc): Interesting repo to study the event handling in replicant.
 - [replicant-mini-app](https://github.com/anteoas/replicant-mini-app): I took from this solution the basic setup on how to do the replicant event processing.
 - [replicant-networking](https://github.com/cjohansen/replicant): How to do networking with replicant.
-- 
+
 
 ## What Does This Demo Do and What is the Purpose of this Exercise?
 
