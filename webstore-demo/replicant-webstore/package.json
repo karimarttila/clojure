@@ -1,5 +1,5 @@
 {
-  "name": "store2-frontend",
+  "name": "replicant-webstore-frontend",
   "scripts": {
     "shadow:watch": "shadow-cljs watch app",
     "shadow:release": "shadow-cljs release app",

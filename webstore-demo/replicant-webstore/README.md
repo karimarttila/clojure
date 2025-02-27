@@ -45,7 +45,7 @@ I used mostly two example projects in my exercise:
 
 ## What Does This Demo Do and What is the Purpose of this Exercise?
 
-This `store2` is a simple webstore that implements a backend and frontend. The backend uses a file based "database" of products, and exposes an API for logging in, and browsing the products. The frontend implements the web app for browsing the products. The exercise is simple in that sense that you don't need to set up e.g. any database to examine how this exercise runs. I wanted to keep the exercise minimal so, that I can learn to use `replicant` and also refresh my memory regarding the Clojure/script tooling, and also learn new ways to configure things (like using `babashka`). I also wanted to see how I can use [Calva](https://calva.io/) in both backend Clojure and frontend Clojurescript programming.
+This `replicant-webstore` is a simple webstore that implements a backend and frontend. The backend uses a file based "database" of products, and exposes an API for logging in, and browsing the products. The frontend implements the web app for browsing the products. The exercise is simple in that sense that you don't need to set up e.g. any database to examine how this exercise runs. I wanted to keep the exercise minimal so, that I can learn to use `replicant` and also refresh my memory regarding the Clojure/script tooling, and also learn new ways to configure things (like using `babashka`). I also wanted to see how I can use [Calva](https://calva.io/) in both backend Clojure and frontend Clojurescript programming.
 
 So, the point of this exercise is not to implement everything from scratch but to learn to use new technologies (`replicant`) and how to use new tooling ideas. Therefore, I have used existing code from previously mentioned examples as much as I could.
 
@@ -332,14 +332,9 @@ In the Clojure side, in [routes.clj](./src/clj/backend/routes.clj):
   ;; You should now see a vector of book maps in the portal window.
 ```
 
-In the Clojurescript side, in [http.cljs](./src/cljs/frontend/http.cljs):
+In the Clojurescript side, in [app.cljs](./src/cljs/frontend/app.cljs):
 
 ```clojure
-  (def my-state (atom {}))
-
-  (fetch my-state {:jee "jee"})
-  (count (:books @my-state))
-
   ;; Example how to tap to the data using djblue Portal: 
   (require '[portal.web :as p])
   ; NOTE: This asks a popup window, you have to accept it in the browser!!!
@@ -347,11 +342,11 @@ In the Clojurescript side, in [http.cljs](./src/cljs/frontend/http.cljs):
   ; Now you should have a new pop-up browser window...
   (add-tap #'p/submit)
   (tap> :hello)
-  (tap> (:books @my-state))
+  (tap> (get-in @!state [:db/data :books]))
   ;; You should now see a vector of book maps in the portal window.
 ```
 
 
-
 ## TODO
 
+- Where to find some off-the-self table component, with filterable / sortable headers, and page-buttons (e.g. `<- page 1/3 ->`, i.e. buttons `<-` and `->` move table view one page previous/next)?

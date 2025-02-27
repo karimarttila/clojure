@@ -41,6 +41,7 @@
 
 
 (defn books-table [books]
+  (f-util/clog "books-table, books: " books)
   [:table.table-auto.w-full
    [:thead
     [:tr
@@ -89,7 +90,9 @@
 
 (defn- page-content [state]
   (let [page (:page/navigated state)]
-    (if (= (:page page) :products)
+    (f-util/clog "page-content, page: " page)
+    (f-util/clog "page-content, state: " state)
+    (when (= (:page page) :products)
       (let [table (case (:pg page)
                     :books (books-table (get-in state [:db/data :books]))
                     :movies (movies-table (get-in state [:db/data :movies]))
@@ -179,17 +182,17 @@
       (case action-name
         :dom/prevent-default (.preventDefault js-event)
         :db/assoc (apply swap! !state assoc args)
+        :db/assoc-in (apply swap! !state assoc-in args)
         :db/dissoc (apply swap! !state dissoc args)
         :dom/set-input-text (set! (.-value (first args)) (second args))
         :dom/focus-element (.focus (first args))
-        :backend/fetch (f-http/fetch !state (second enriched-action))
+        :backend/fetch (f-http/fetch (get-dispatcher) (second enriched-action))
         :route/home (navigated-home-page)
         :route/products (navigated-products-page (second enriched-action))
         #_#_:routes/navigate (f-routes/navigate !state (second enriched-action))
         (f-util/clog "Unknown action" action)
         #_(prn "Unknown action" action))))
   (render! @!state))
-
 
 
 (defn ^{:dev/after-load true :export true} start! []
@@ -206,10 +209,17 @@
 
 (comment
 
-
   (+ 1 1)
 
+  ;; Example how to tap to the data using djblue Portal: 
   (require '[portal.web :as p])
+  ; NOTE: This asks a popup window, you have to accept it in the browser!!!
   (def p (p/open))
+  ; Now you should have a new pop-up browser window...
   (add-tap #'p/submit)
-  (tap> :hello))
+  (tap> :hello)
+  (tap> (get-in @!state [:db/data :books]))
+  ;; You should now see a vector of book maps in the portal window.
+  
+  
+  )

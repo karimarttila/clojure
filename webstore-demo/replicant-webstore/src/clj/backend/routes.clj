@@ -65,7 +65,7 @@
                [:html
                 {:lang "en"}
                 [:head
-                 [:title "Store2"]
+                 [:title "Replicant-webstore"]
                  [:meta {:charset "utf-8"}]
                  ; TODO: REMOVE LATER todomvc related stuff!
                  [:link {:rel "stylesheet" :href "/css/main.css"}]
