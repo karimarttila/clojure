@@ -164,7 +164,7 @@
 
 
 (defn- event-handler [{:replicant/keys [^js js-event] :as replicant-data} actions]
-  (f-util/clog "** event-handler **:")
+  (f-util/clog "** event-handler **")
   (f-util/clog "replicant-data:" replicant-data)
   (f-util/clog "actions:" actions)
   (doseq [action actions]
