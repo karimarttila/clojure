@@ -29,9 +29,8 @@
   (and (= (:page page) :products) (= (:pg page) (:id product))))
 
 
-(defn- product-button [product]
-  (let [page (:page/navigated @!state)
-        button-tag (if (products-page? page product)
+(defn- product-button [product page]
+  (let [button-tag (if (products-page? page product)
                      :button.rounded-lg.border-2.border-gray-500.bg-blue-100.p-4.m-2.hover:bg-gray-200.cursor-pointer
                      :button.rounded-lg.border-2.border-gray-300.p-4.m-2.hover:bg-gray-200.cursor-pointer)]
     [:a {:href (str "#/products/" (name (:id product)))}
@@ -69,23 +68,21 @@
          [:td.border.px-4.py-2 value])])]])
 
 
-(defn- product-groups-buttons []
-  (let [product-groups (:db/product-groups @!state)
-        _ (f-util/clog "Product-groups: " product-groups)]
-    [:div
-     [:div.flex.flex-wrap.justify-center
-      (for [product product-groups]
-        ^{:key (:id product)} (product-button product))]]))
+(defn- product-groups-buttons [product-groups page]
+  [:div
+   [:div.flex.flex-wrap.justify-center
+    (for [product product-groups]
+      ^{:key (:id product)} (product-button product page))]])
 
 
-(defn- header-view [_]
+(defn- header-view [state]
   [:div.flex ;.h-screen
    [:div.flex-grow.p-4
     ;[:div.flex.flex-col.items-center.min-h-screen.mt-1]
     [:h1.text-3xl.font-bold.text-center.mt-5 "WEB STORE with REPLICANT"]
     [:h2.text-xl.font-bold.text-center.mt-10 "Choose product group:"]
     [:div.mt-10
-     (product-groups-buttons)]]])
+     (product-groups-buttons (:db/product-groups state) (:page/navigated state))]]])
 
 
 (defn- page-content [state]
@@ -220,6 +217,4 @@
   (tap> :hello)
   (tap> (get-in @!state [:db/data :books]))
   ;; You should now see a vector of book maps in the portal window.
-  
-  
   )
