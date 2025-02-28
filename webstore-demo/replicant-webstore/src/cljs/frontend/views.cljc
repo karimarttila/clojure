@@ -1,4 +1,7 @@
 (ns frontend.views
+  #_{:clj-kondo/ignore [:unused-namespace]}
+  ; We may occasionally turn logging on for some function
+  ; for debugging purposes.
   (:require [frontend.util :as f-util]))
 
 
@@ -17,7 +20,6 @@
 
 
 (defn books-table [books]
-  (f-util/clog "books-table, books: " books)
   [:table.table-auto.w-full
    [:thead
     [:tr
@@ -64,8 +66,8 @@
 
 (defn- page-content [state]
   (let [page (:page/navigated state)]
-    (f-util/clog "page-content, page: " page)
-    (f-util/clog "page-content, state: " state)
+    ;(f-util/clog "page-content, page: " page)
+    ;(f-util/clog "page-content, state: " state)
     (when (= (:page page) :products)
       (let [table (case (:pg page)
                     :books (books-table (get-in state [:db/data :books]))
@@ -75,7 +77,7 @@
 
 
 (defn view [state]
-  (f-util/clog "view, state: " state)
+  ;(f-util/clog "view, state: " state)
   [:div.flex.h-screen
    [:div.flex-grow.p-4
     [:div.flex.flex-col.items-center.min-h-screen.mt-10

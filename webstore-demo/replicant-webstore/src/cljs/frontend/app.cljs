@@ -5,17 +5,23 @@
             [frontend.util :as f-util]
             [frontend.http :as f-http]
             [frontend.views :as f-views]
+            [frontend.config :as f-config]
             [frontend.routes :as f-routes]))
 
+;; Define a debug flag that can be set at runtime
+(def ^:dynamic *debug* ^boolean goog.DEBUG)
 
-(defonce ^:private !state (atom {:db/product-groups [{:id :books
-                                                      :query {:id :books
-                                                              :api "/products/books"}
-                                                      :name "Books"}
-                                                     {:id :movies
-                                                      :query {:id :movies
-                                                              :api "/products/movies"}
-                                                      :name "Movies"}]}))
+(defonce ^:private !state (atom {; Let's make product-groups fixed in this demo.
+                                 :db/product-groups
+                                 [{:id :books
+                                   :query {:id :books
+                                           :api "/products/books"}
+                                   :name "Books"}
+                                  {:id :movies
+                                   :query {:id :movies
+                                           :api "/products/movies"}
+                                   :name "Movies"}]}))
+
 
 ;; Provides an easy way to programmatically dispatch.
 (defonce ^:private !dispatcher (atom {}))
@@ -23,9 +29,8 @@
 (defn- get-dispatcher [] (:dispatcher @!dispatcher))
 
 
-
 (defn navigated-products-page [{:keys [id]} product-groups]
-  (f-util/clog "navigated-products-page, data: " id)
+  (when *debug* (f-util/clog "navigated-products-page, data: " id))
   (let [pg (f-util/get-product-group-by-id id product-groups)
         dispatcher (get-dispatcher)]
     (dispatcher nil [[:backend/fetch {:query (:query pg)}]
@@ -34,7 +39,7 @@
 
 
 (defn navigated-home-page []
-  (f-util/clog "navigated-home-page")
+  (when *debug* (f-util/clog "navigated-home-page"))
   (let [dispatcher (get-dispatcher)]
     (dispatcher nil [[:db/assoc :page/navigated {:page :home}]])))
 
@@ -72,28 +77,29 @@
  (fn [event-data handler-data]
    (when (= :replicant.trigger/dom-event
             (:replicant/trigger event-data))
-     (println "Event triggered!")
-     (println "Event:" (:replicant/dom-event event-data))
-     (println "Node:" (:replicant/node event-data))
-     (println "Handler data:" handler-data))))
+     (when *debug*
+       (f-util/clog "** set-dispatch! **")
+       (f-util/clog "dom-event:" (:replicant/dom-event event-data))
+       (f-util/clog "node:" (:replicant/node event-data))
+       (f-util/clog "handler-data:" handler-data)))))
 
 
 (defn- event-handler [{:replicant/keys [^js js-event] :as replicant-data} actions]
-  (f-util/clog "** event-handler **")
-  (f-util/clog "replicant-data:" replicant-data)
-  (f-util/clog "actions:" actions)
+  (when *debug* 
+    (f-util/clog "** event-handler **")
+    (f-util/clog "replicant-data:" replicant-data)
+    (f-util/clog "actions:" actions))
   (doseq [action actions]
-    (f-util/clog "**** event ****:")
-    (f-util/clog "action:" action)
-    (f-util/clog "event:" (:replicant/dom-event replicant-data))
-    (f-util/clog "node:" (:replicant/node replicant-data))
-    #_(prn "Triggered action" action)
+    (when *debug*
+      (f-util/clog "**** event ****:")
+      (f-util/clog "action:" action)
+      (f-util/clog "event:" (:replicant/dom-event replicant-data))
+      (f-util/clog "node:" (:replicant/node replicant-data)))
     (let [enriched-action (->> action
                                (enrich-action-from-event replicant-data)
                                (enrich-action-from-state @!state))
           [action-name & args] enriched-action]
-      (f-util/clog "Enriched action:" enriched-action)
-      #_(prn "Enriched action" enriched-action)
+      (when *debug* (f-util/clog "Enriched action:" enriched-action))
       (case action-name
         :dom/prevent-default (.preventDefault js-event)
         :db/assoc (apply swap! !state assoc args)
@@ -104,9 +110,7 @@
         :backend/fetch (f-http/fetch (get-dispatcher) (second enriched-action))
         :route/home (navigated-home-page)
         :route/products (navigated-products-page (second enriched-action) (:db/product-groups @!state))
-        #_#_:routes/navigate (f-routes/navigate !state (second enriched-action))
-        (f-util/clog "Unknown action" action)
-        #_(prn "Unknown action" action))))
+        (when *debug* (f-util/clog "Unknown action" action)))))
   (render! @!state))
 
 
@@ -123,9 +127,13 @@
 
 
 (comment
+  
+  (prn "*dev*" f-config/*dev*)
 
   (+ 1 1)
-
+  (js/console.log "I am connected to the browser!")
+  ;(js/alert "I am connected to the browser!")
+  
   ;; Example how to tap to the data using djblue Portal: 
   (require '[portal.web :as p])
   ; NOTE: This asks a popup window, you have to accept it in the browser!!!
