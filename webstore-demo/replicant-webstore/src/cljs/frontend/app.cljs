@@ -22,8 +22,8 @@
 
 (defn- get-dispatcher [] (:dispatcher @!dispatcher))
 
-(defn get-product-group-by-id [id]
-  (some #(when (= (:id %) id) %) (:db/product-groups @!state)))
+(defn get-product-group-by-id [id product-groups]
+  (some #(when (= (:id %) id) %) product-groups))
 
 (defn products-page? [page product]
   (and (= (:page page) :products) (= (:pg page) (:id product))))
@@ -106,9 +106,9 @@
      (page-content state)]]])
 
 
-(defn navigated-products-page [{:keys [id]}]
+(defn navigated-products-page [{:keys [id]} product-groups]
   (f-util/clog "navigated-products-page, data: " id)
-  (let [pg (get-product-group-by-id id)
+  (let [pg (get-product-group-by-id id product-groups)
         dispatcher (get-dispatcher)]
     (dispatcher nil [[:backend/fetch {:query (:query pg)}]
                      [:db/assoc :page/navigated {:page :products
@@ -185,7 +185,7 @@
         :dom/focus-element (.focus (first args))
         :backend/fetch (f-http/fetch (get-dispatcher) (second enriched-action))
         :route/home (navigated-home-page)
-        :route/products (navigated-products-page (second enriched-action))
+        :route/products (navigated-products-page (second enriched-action) (:db/product-groups @!state))
         #_#_:routes/navigate (f-routes/navigate !state (second enriched-action))
         (f-util/clog "Unknown action" action)
         #_(prn "Unknown action" action))))
