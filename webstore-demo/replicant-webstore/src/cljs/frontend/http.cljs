@@ -5,7 +5,6 @@
                [frontend.util :as f-util]))
 
 
-
 (defn fetch [dispatcher action]
   ;(f-util/clog "fetch, state: " @state)
   (f-util/clog "fetch, action: " action)

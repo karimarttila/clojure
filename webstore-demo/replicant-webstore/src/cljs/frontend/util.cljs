@@ -4,6 +4,10 @@
 (def debug? ^boolean goog.DEBUG)
 
 
+(defn get-product-group-by-id [id product-groups]
+  (some #(when (= (:id %) id) %) product-groups))
+
+
 (defn clog
   "Javascript console logger helper."
   ([msg] (clog msg nil))
