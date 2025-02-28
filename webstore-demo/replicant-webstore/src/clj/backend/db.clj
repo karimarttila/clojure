@@ -58,6 +58,7 @@
 
 
 (comment
+  (require 'user)
 
   (first (read-datafile "data/books.tsv" book-line book-str))
 
@@ -102,11 +103,11 @@
        (slurp)
        (clojure.string/split-lines)
        (map #(clojure.string/split % #"\t"))
-       (map books-fn))
+       )
 
   (->> "data/movies.tsv"
        (clojure.java.io/resource)
        (slurp)
        (clojure.string/split-lines)
        (map #(clojure.string/split % #"\t"))
-       (map movies-fn)))
+       ))

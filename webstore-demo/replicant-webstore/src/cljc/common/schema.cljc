@@ -1,6 +1,5 @@
 (ns common.schema
   (:require [malli.core :as m]
-            [malli.util :as mu]
             [malli.transform :as mt]
             [malli.experimental.time :as malli.time]
             [malli.registry :as malli.registry]))
@@ -38,6 +37,7 @@
 
 (comment
 
+  (require '[user])
 
   ;; Let's leave the rich comment here,
   ;; readers can see how I developed the functionality.
@@ -65,12 +65,12 @@
   
 
   (m/decode book (->> (user/env)
-                 :db/tsv
-                 deref
-                 :db
-                 :books
-                 first)
-             mt/string-transformer)
+                      :db/tsv
+                      deref
+                      :db
+                      :books
+                      first)
+            mt/string-transformer)
   ;;=> {:id 2001,
   ;;    :product-group 1,
   ;;    :title "Kalevala",

@@ -1,7 +1,5 @@
 (ns backendinit
-  (:require [integrant.repl :refer [clear go halt prep init reset reset-all]]
-            [integrant.repl.state :as state]
-            [clojure.java.io :as io]))
+  (:require [clojure.java.io :as io]))
 
 (def target-dev-public-dir "target/dev/public/assets")
 

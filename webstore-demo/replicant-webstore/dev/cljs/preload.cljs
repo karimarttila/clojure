@@ -1,7 +1,6 @@
 (ns preload
   (:require
-   [shadow.cljs.devtools.client.browser]
-   ))
+   [shadow.cljs.devtools.client.browser]))
 
 
 (defonce init-repl!
@@ -12,3 +11,8 @@
                   ret (eval-fn s)
                   _ (set! (.-eval-in-repl? js/globalThis) false)]
               ret)))))
+
+
+(comment
+
+  (init-repl!))

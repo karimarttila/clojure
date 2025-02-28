@@ -11,6 +11,7 @@
             (println "Error reading nREPL port from file:" (.getMessage e))
             (System/exit 1))))
 
+
 (defn run-frontend-command [key user-file]
   (if-let [cmd (key (read-string (slurp user-file)))]
     (let [_  (println "original cmd: " cmd)
@@ -24,6 +25,7 @@
     (do (println "Missing key: " key " in file: " user-file)
         (System/exit 1))))
 
+
 (defn run-command [key user-file]
   (if-let [cmd (key (read-string (slurp user-file)))]
     (let [_  (println "cmd: " cmd)]
@@ -32,13 +34,9 @@
         (System/exit 1))))
 
 (comment 
-
-  (let [[cmd-str] old-cmd
-        new-cmd (str cmd-str " " 9)]
-    [new-cmd])
   
-    
-  (run-command :shadow-run-dev-command ".user.edn")
+  (run-frontend-command :not-found ".user.edn")
+  (run-command :not-found ".user.edn")
 
  ; (add-lib 'babashka/process)
   

@@ -156,7 +156,6 @@
   *e
   
   ;; Example how to tap to the data using djblue Portal:
-  (require '[clj-http.client :as client])
   (require '[jsonista.core :as json])
   (defn json-to-edn [json-str]
     (json/read-value json-str (json/object-mapper {:decode-key-fn keyword}))) 

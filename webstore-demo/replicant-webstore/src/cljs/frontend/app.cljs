@@ -5,10 +5,9 @@
             [frontend.util :as f-util]
             [frontend.http :as f-http]
             [frontend.views :as f-views]
-            [frontend.config :as f-config]
             [frontend.routes :as f-routes]))
 
-;; Define a debug flag that can be set at runtime
+
 (def ^:dynamic *debug* ^boolean goog.DEBUG)
 
 (defonce ^:private !state (atom {; Let's make product-groups fixed in this demo.
@@ -128,16 +127,14 @@
 
 (comment
   
-  (prn "*dev*" f-config/*dev*)
-
   (+ 1 1)
   (js/console.log "I am connected to the browser!")
   ;(js/alert "I am connected to the browser!")
   
   ;; Example how to tap to the data using djblue Portal: 
   (require '[portal.web :as p])
-  ; NOTE: This asks a popup window, you have to accept it in the browser!!!
-  (def p (p/open))
+  ; NOTE: This asks a popup window, you have to accept it in the browser!!! 
+  (p/open)
   ; Now you should have a new pop-up browser window...
   (add-tap #'p/submit)
   (tap> :hello)

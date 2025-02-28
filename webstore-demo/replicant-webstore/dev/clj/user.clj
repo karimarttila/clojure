@@ -13,16 +13,23 @@
 (defn env [] (system))
 
 (comment
-  
+
   (env)
   (system)
   (halt)
   (go)
+  (clear)
+  (halt)
+  (prep)
+  (init)
+  (reset)
+  (reset-all)
+
   )
 
 
 (comment
-  
+
   (-> (env)
       :db/tsv
       deref

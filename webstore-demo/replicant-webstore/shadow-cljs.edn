@@ -15,7 +15,6 @@
            :output-dir "target/dev/public/js"
            :modules {:main {:entries [frontend.app]
                             :init-fn frontend.app/init!}}
-           :build-hooks [(frontend.config/set-mode!)]
            :release {:output-dir "target/release/public/js"}}
 
         ;;   :test-browser
