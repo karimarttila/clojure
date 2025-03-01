@@ -1,7 +1,4 @@
 (ns frontend.views
-  #_{:clj-kondo/ignore [:unused-namespace]}
-  ; We may occasionally turn logging on for some function
-  ; for debugging purposes.
   (:require [frontend.util :as f-util]))
 
 

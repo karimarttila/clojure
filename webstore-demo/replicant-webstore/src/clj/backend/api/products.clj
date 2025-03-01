@@ -71,6 +71,7 @@
 
 (comment
 
+  (require '[user])
   (let [id 2002
         books (-> (user/env)
                   :db/tsv
@@ -79,7 +80,6 @@
     (first (filter (fn [book]
                      (= (:id book) id))
                    books)))
-
 
   (let [dummy-req {:db (-> (user/env) :db/tsv)}
         dummy-req (assoc dummy-req :parameters {:path {:id 2009}})]
@@ -95,82 +95,19 @@
   ;;     :year 1884,
   ;;     :country "United States",
   ;;     :language "English"}}
-
+  
   (let [dummy-req {:db (-> (user/env) :db/tsv)}
         dummy-req (assoc dummy-req :parameters {:path {:id 9002}})]
     (get-book dummy-req))
   ;;=> {:status 404, :headers {}, :body {:message "Not found", :id 9002}}
-
-  (do (require '[clj-http.client :as client])
-      (client/get "http://localhost:9333/api/products/books/2002"))
-  (do (require '[clj-http.client :as client])
-      (client/get "http://localhost:9333/api/products/books/9002"))
-  *e)
-
-(comment
-
-  {:parameters {:path {:id 2002}}}
-
-  (do (require '[clj-http.client :as client])
-      (client/get "http://localhost:9333/api/products/books/2002"))
-
+  
+  ; (require '[clj-http.client :as client])
+  (client/get "http://localhost:9333/api/products/books/2002")
+  (client/get "http://localhost:9333/api/products/books/9002")
   *e
-
-  (do (require '[clj-http.client :as client])
-      (client/get "http://localhost:9333/api/products/movies"))
-
-  (-> (user/env)
-      :db/tsv
-      deref
-      :books
-      first)
-  ;;=> {:id 2001,
-  ;;    :product-group 1,
-  ;;    :title "Kalevala",
-  ;;    :price 3.95,
-  ;;    :author "Elias Lönnrot",
-  ;;    :year 1835,
-  ;;    :country "Finland",
-  ;;    :language "Finnish"}
-
-  ; Some examples how to test the functionality without using http.
-  ; This is how we get the atom database from the environment:
-  (-> (user/env)
-      :db/tsv)
-  ; This is how we can test our handler just using the env:
-  (let [dummy-req {:db (-> (user/env) :db/tsv)}]
-    (get-books dummy-req))
-
-  (let [json-str (-> (do
-                       (require '[jsonista.core :as json])
-                       (require '[clojure.edn])
-                       (require '[clj-http.client :as client])
-                       (client/get "http://localhost:9333/api/products/books"))
-                     :body)]
-    (-> (json/read-value json-str json/keyword-keys-object-mapper)
-        first))
-  ;;=> {:title "Kalevala",
-  ;;    :author "Elias Lönnrot",
-  ;;    :year 1835,
-  ;;    :language "Finnish",
-  ;;    :id 2001,
-  ;;    :product-group 1,
-  ;;    :price 3.95,
-  ;;    :country "Finland"}
-
-  (-> (do
-        (require '[jsonista.core :as json])
-        (require '[clojure.edn])
-        (require '[clj-http.client :as client])
-        (client/get "http://localhost:9333/api/products/books/2002"))
-      keys)
-
-  (->
-   @my-atom
-   :req
-   :parameters)
-  ;;=> {:path {:id 2002}}
   )
+
+
 
 
 
