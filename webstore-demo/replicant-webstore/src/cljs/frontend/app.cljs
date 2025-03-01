@@ -75,7 +75,7 @@
  (fn [event-data handler-data]
    (when (= :replicant.trigger/dom-event
             (:replicant/trigger event-data))
-     (when goog.DEBUG
+     (when goog.DEBUG 
        (f-util/clog "** set-dispatch! **")
        (f-util/clog "dom-event:" (:replicant/dom-event event-data))
        (f-util/clog "node:" (:replicant/node event-data))
@@ -83,7 +83,7 @@
 
 
 (defn- event-handler [{:replicant/keys [^js js-event] :as replicant-data} actions]
-  (when goog.DEBUG 
+  (when goog.DEBUG
     (f-util/clog "** event-handler **")
     (f-util/clog "replicant-data:" replicant-data)
     (f-util/clog "actions:" actions))
@@ -125,11 +125,11 @@
 
 
 (comment
-  
+
   (+ 1 1)
   (js/console.log "I am connected to the browser!")
   ;(js/alert "I am connected to the browser!")
-  
+
   ;; Example how to tap to the data using djblue Portal: 
   (require '[portal.web :as p])
   ; NOTE: This asks a popup window, you have to accept it in the browser!!! 
