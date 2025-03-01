@@ -27,26 +27,32 @@
 (defn- get-dispatcher [] (:dispatcher @!dispatcher))
 
 
-(defn navigated-products-page [{:keys [pg pg-config]}]
+(defn navigated-products-page [{:keys [pg state]}]
   (when goog.DEBUG (f-util/clog "navigated-products-page, data: " pg))
-  (let [pg-c (f-util/get-pg-config-by-id pg pg-config)
+  (let [pg-c (f-util/get-pg-config-by-id pg (:db/pg-config state))
+        products (get-in state [:db/data pg])
         dispatcher (get-dispatcher)]
-    (dispatcher nil [[:backend/fetch {:query (:query pg-c)}]
-                     [:db/assoc :page/navigated {:page :products
-                                                 :pg pg}]])))
+    (if products
+      (dispatcher nil [[:db/assoc :page/navigated {:page :products
+                                                   :pg pg}]])
+      (dispatcher nil [[:backend/fetch {:query (:query pg-c)}]
+                       [:db/assoc :page/navigated {:page :products
+                                                   :pg pg}]]))))
 
 
-(defn navigated-product-page [{:keys [id]} page products product-groups]
-  (when goog.DEBUG (f-util/clog "navigated-books-page, data: " id))
-  (let [pg (f-util/get-pg-config-by-id page product-groups)
+(defn navigated-product-page [{:keys [id pg state]}]
+  (when goog.DEBUG (f-util/clog "navigated-product-page, id: " id))
+  (when goog.DEBUG (f-util/clog "navigated-product-page, pg: " pg))
+  (let [pg-c (f-util/get-pg-config-by-id pg (:db/pg-config state))
+        products (get-in state [:db/data pg])
         dispatcher (get-dispatcher)]
     (if products
       (dispatcher nil [[:db/assoc :page/navigated {:page :product
-                                                   :pg page
+                                                   :pg pg
                                                    :id id}]])
-      (dispatcher nil [[:backend/fetch {:query (:query pg)}]
+      (dispatcher nil [[:backend/fetch {:query (:query pg-c)}]
                        [:db/assoc :page/navigated {:page :product
-                                                   :pg page
+                                                   :pg pg
                                                    :id id}]]))))
 
 
@@ -111,7 +117,7 @@
                                (enrich-action-from-event replicant-data)
                                (enrich-action-from-state @!state))
           [action-name & args] enriched-action]
-      (when goog.DEBUG (f-util/clog "Enriched action:" enriched-action))
+      #_(when goog.DEBUG (f-util/clog "Enriched action:" enriched-action))
       (case action-name
         :dom/prevent-default (.preventDefault js-event)
         :db/assoc (apply swap! !state assoc args)
@@ -121,15 +127,10 @@
         :dom/focus-element (.focus (first args))
         :backend/fetch (f-http/fetch (get-dispatcher) (second enriched-action))
         :route/home (navigated-home-page)
-        :route/products (navigated-products-page (assoc (second enriched-action) :pg-config (:db/pg-config @!state)))
-        :route/books (navigated-product-page (second enriched-action)
-                                             :books
-                                             (get-in @!state [:db/data :books])
-                                             (:db/pg-config @!state))
-        :route/movies (navigated-product-page (second enriched-action)
-                                              :movies
-                                              (get-in @!state [:db/data :movies])
-                                              (:db/pg-config @!state))
+        :route/products (navigated-products-page (assoc (second enriched-action) :state @!state)) 
+        :route/product (navigated-product-page (assoc (second enriched-action) :state @!state))
+        
+        
 
         (when goog.DEBUG (f-util/clog "Unknown action" action)))))
   (render! @!state))

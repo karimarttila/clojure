@@ -5,13 +5,17 @@
             [frontend.util :as f-util]))
 
 
+;; ************************************************************************
+;; NOTE: If you change the routes, you have to hard refresh the app in browser !!!
+;; ************************************************************************
+
+
 (def routes [["/" {:name :route/home}]
              ["/products/:pg" {:name :route/products
-                               :path [:pg string?]}]
-             ["/books/:id" {:name :route/books
-                            :path [:id string?]}]
-             ["/movies/:id" {:name :route/movies
-                             :path [:id string?]}]])
+                               :path [:pg string?]}] 
+             ["/product/:pg/:id" {:name :route/product
+                                  :path [:pg string?
+                                         :id string?]}]])
 
 
 #_{:clj-kondo/ignore [:unused-binding]}
@@ -23,11 +27,10 @@
   (case (:name data)
     :route/home [[:route/home]]
     :route/products (let [pg (keyword (:pg path-params))]
-                      [[:route/products {:pg pg}]])
-    :route/books (let [id (int (:id path-params))]
-                   [[:route/books {:id id :pg :books}]])
-    :route/movies (let [id (int (:id path-params))]
-                    [[:route/movies {:id id :pg :movies}]])))
+                      [[:route/products {:pg pg}]]) 
+    :route/product (let [id (int (:id path-params))
+                         pg (keyword (:pg path-params))]
+                     [[:route/product {:id id :pg pg}]])))
 
 
 (defn start! [routes dispatch!]

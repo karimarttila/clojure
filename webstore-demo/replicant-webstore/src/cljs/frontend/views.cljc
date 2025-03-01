@@ -58,7 +58,7 @@
      [:tbody
       (for [{:keys [id title]} products]
         [:tr
-         [:td.border.px-4.py-2 [:a {:href (str "#/" pg "/" id)} id]]
+         [:td.border.px-4.py-2 [:a {:href (str "#/product/" pg "/" id)} id]]
          (for [value [title]]
            [:td.border.px-4.py-2 value])])]]))
 
