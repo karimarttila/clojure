@@ -127,11 +127,8 @@
         :dom/focus-element (.focus (first args))
         :backend/fetch (f-http/fetch (get-dispatcher) (second enriched-action))
         :route/home (navigated-home-page)
-        :route/products (navigated-products-page (assoc (second enriched-action) :state @!state)) 
+        :route/products (navigated-products-page (assoc (second enriched-action) :state @!state))
         :route/product (navigated-product-page (assoc (second enriched-action) :state @!state))
-        
-        
-
         (when goog.DEBUG (f-util/clog "Unknown action" action)))))
   (render! @!state))
 

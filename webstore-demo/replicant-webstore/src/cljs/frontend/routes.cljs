@@ -27,7 +27,7 @@
   (case (:name data)
     :route/home [[:route/home]]
     :route/products (let [pg (keyword (:pg path-params))]
-                      [[:route/products {:pg pg}]]) 
+                      [[:route/products {:pg pg}]])
     :route/product (let [id (int (:id path-params))
                          pg (keyword (:pg path-params))]
                      [[:route/product {:id id :pg pg}]])))
