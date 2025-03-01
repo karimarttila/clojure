@@ -10,7 +10,7 @@
 
 
 (defonce ^:private !state (atom {; Let's make product-groups fixed in this demo.
-                                 :db/product-groups
+                                 :db/pg-config
                                  [{:id :books
                                    :query {:id :books
                                            :api "/products/books"}
@@ -27,18 +27,18 @@
 (defn- get-dispatcher [] (:dispatcher @!dispatcher))
 
 
-(defn navigated-products-page [{:keys [id]} product-groups]
-  (when goog.DEBUG (f-util/clog "navigated-products-page, data: " id))
-  (let [pg (f-util/get-product-group-by-id id product-groups)
+(defn navigated-products-page [{:keys [pg pg-config]}]
+  (when goog.DEBUG (f-util/clog "navigated-products-page, data: " pg))
+  (let [pg-c (f-util/get-pg-config-by-id pg pg-config)
         dispatcher (get-dispatcher)]
-    (dispatcher nil [[:backend/fetch {:query (:query pg)}]
+    (dispatcher nil [[:backend/fetch {:query (:query pg-c)}]
                      [:db/assoc :page/navigated {:page :products
-                                                 :pg id}]])))
+                                                 :pg pg}]])))
 
 
 (defn navigated-product-page [{:keys [id]} page products product-groups]
   (when goog.DEBUG (f-util/clog "navigated-books-page, data: " id))
-  (let [pg (f-util/get-product-group-by-id page product-groups)
+  (let [pg (f-util/get-pg-config-by-id page product-groups)
         dispatcher (get-dispatcher)]
     (if products
       (dispatcher nil [[:db/assoc :page/navigated {:page :product
@@ -121,15 +121,15 @@
         :dom/focus-element (.focus (first args))
         :backend/fetch (f-http/fetch (get-dispatcher) (second enriched-action))
         :route/home (navigated-home-page)
-        :route/products (navigated-products-page (second enriched-action) (:db/product-groups @!state))
+        :route/products (navigated-products-page (assoc (second enriched-action) :pg-config (:db/pg-config @!state)))
         :route/books (navigated-product-page (second enriched-action)
                                              :books
                                              (get-in @!state [:db/data :books])
-                                             (:db/product-groups @!state))
+                                             (:db/pg-config @!state))
         :route/movies (navigated-product-page (second enriched-action)
                                               :movies
                                               (get-in @!state [:db/data :movies])
-                                              (:db/product-groups @!state))
+                                              (:db/pg-config @!state))
 
         (when goog.DEBUG (f-util/clog "Unknown action" action)))))
   (render! @!state))

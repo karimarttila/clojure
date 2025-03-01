@@ -1,7 +1,8 @@
 (ns frontend.util)
 
-(defn get-product-group-by-id [id product-groups]
-  (some #(when (= (:id %) id) %) product-groups))
+
+(defn get-pg-config-by-id [id pg-config]
+  (some #(when (= (:id %) id) %) pg-config))
 
 
 ; Keep this file as cljc.

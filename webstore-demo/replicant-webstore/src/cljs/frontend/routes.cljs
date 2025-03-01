@@ -6,8 +6,8 @@
 
 
 (def routes [["/" {:name :route/home}]
-             ["/products/:id" {:name :route/products
-                               :path [:id string?]}]
+             ["/products/:pg" {:name :route/products
+                               :path [:pg string?]}]
              ["/books/:id" {:name :route/books
                             :path [:id string?]}]
              ["/movies/:id" {:name :route/movies
@@ -22,8 +22,8 @@
   ;; We see app.cljs => event-handler.
   (case (:name data)
     :route/home [[:route/home]]
-    :route/products (let [id (keyword (:id path-params))]
-                      [[:route/products {:id id}]])
+    :route/products (let [pg (keyword (:pg path-params))]
+                      [[:route/products {:pg pg}]])
     :route/books (let [id (int (:id path-params))]
                    [[:route/books {:id id :pg :books}]])
     :route/movies (let [id (int (:id path-params))]
