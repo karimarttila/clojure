@@ -8,7 +8,6 @@
             [frontend.routes :as f-routes]))
 
 
-(def ^:dynamic *debug* ^boolean goog.DEBUG)
 
 (defonce ^:private !state (atom {; Let's make product-groups fixed in this demo.
                                  :db/product-groups
@@ -29,7 +28,7 @@
 
 
 (defn navigated-products-page [{:keys [id]} product-groups]
-  (when *debug* (f-util/clog "navigated-products-page, data: " id))
+  (when goog.DEBUG (f-util/clog "navigated-products-page, data: " id))
   (let [pg (f-util/get-product-group-by-id id product-groups)
         dispatcher (get-dispatcher)]
     (dispatcher nil [[:backend/fetch {:query (:query pg)}]
@@ -38,7 +37,7 @@
 
 
 (defn navigated-home-page []
-  (when *debug* (f-util/clog "navigated-home-page"))
+  (when goog.DEBUG (f-util/clog "navigated-home-page"))
   (let [dispatcher (get-dispatcher)]
     (dispatcher nil [[:db/assoc :page/navigated {:page :home}]])))
 
@@ -76,7 +75,7 @@
  (fn [event-data handler-data]
    (when (= :replicant.trigger/dom-event
             (:replicant/trigger event-data))
-     (when *debug*
+     (when goog.DEBUG
        (f-util/clog "** set-dispatch! **")
        (f-util/clog "dom-event:" (:replicant/dom-event event-data))
        (f-util/clog "node:" (:replicant/node event-data))
@@ -84,12 +83,12 @@
 
 
 (defn- event-handler [{:replicant/keys [^js js-event] :as replicant-data} actions]
-  (when *debug* 
+  (when goog.DEBUG 
     (f-util/clog "** event-handler **")
     (f-util/clog "replicant-data:" replicant-data)
     (f-util/clog "actions:" actions))
   (doseq [action actions]
-    (when *debug*
+    (when goog.DEBUG
       (f-util/clog "**** event ****:")
       (f-util/clog "action:" action)
       (f-util/clog "event:" (:replicant/dom-event replicant-data))
@@ -98,7 +97,7 @@
                                (enrich-action-from-event replicant-data)
                                (enrich-action-from-state @!state))
           [action-name & args] enriched-action]
-      (when *debug* (f-util/clog "Enriched action:" enriched-action))
+      (when goog.DEBUG (f-util/clog "Enriched action:" enriched-action))
       (case action-name
         :dom/prevent-default (.preventDefault js-event)
         :db/assoc (apply swap! !state assoc args)
@@ -109,7 +108,7 @@
         :backend/fetch (f-http/fetch (get-dispatcher) (second enriched-action))
         :route/home (navigated-home-page)
         :route/products (navigated-products-page (second enriched-action) (:db/product-groups @!state))
-        (when *debug* (f-util/clog "Unknown action" action)))))
+        (when goog.DEBUG (f-util/clog "Unknown action" action)))))
   (render! @!state))
 
 
