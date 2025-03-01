@@ -36,6 +36,20 @@
                                                  :pg id}]])))
 
 
+(defn navigated-product-page [{:keys [id]} page products product-groups]
+  (when goog.DEBUG (f-util/clog "navigated-books-page, data: " id))
+  (let [pg (f-util/get-product-group-by-id page product-groups)
+        dispatcher (get-dispatcher)]
+    (if products
+      (dispatcher nil [[:db/assoc :page/navigated {:page :product
+                                                   :pg page
+                                                   :id id}]])
+      (dispatcher nil [[:backend/fetch {:query (:query pg)}]
+                       [:db/assoc :page/navigated {:page :product
+                                                   :pg page
+                                                   :id id}]]))))
+
+
 (defn navigated-home-page []
   (when goog.DEBUG (f-util/clog "navigated-home-page"))
   (let [dispatcher (get-dispatcher)]
@@ -75,7 +89,7 @@
  (fn [event-data handler-data]
    (when (= :replicant.trigger/dom-event
             (:replicant/trigger event-data))
-     (when goog.DEBUG 
+     (when goog.DEBUG
        (f-util/clog "** set-dispatch! **")
        (f-util/clog "dom-event:" (:replicant/dom-event event-data))
        (f-util/clog "node:" (:replicant/node event-data))
@@ -108,6 +122,15 @@
         :backend/fetch (f-http/fetch (get-dispatcher) (second enriched-action))
         :route/home (navigated-home-page)
         :route/products (navigated-products-page (second enriched-action) (:db/product-groups @!state))
+        :route/books (navigated-product-page (second enriched-action)
+                                             :books
+                                             (get-in @!state [:db/data :books])
+                                             (:db/product-groups @!state))
+        :route/movies (navigated-product-page (second enriched-action)
+                                              :movies
+                                              (get-in @!state [:db/data :movies])
+                                              (:db/product-groups @!state))
+
         (when goog.DEBUG (f-util/clog "Unknown action" action)))))
   (render! @!state))
 

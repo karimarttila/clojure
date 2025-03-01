@@ -15,6 +15,9 @@
     .btc {
         @apply text-blue-600;
     }
+    a {
+        @apply text-blue-500 underline;
+    }
 
 }
 

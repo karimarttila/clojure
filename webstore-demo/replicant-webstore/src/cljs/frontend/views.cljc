@@ -19,39 +19,55 @@
        (:name product)]]]))
 
 
-(defn books-table [books]
+(defn book-details [book]
   [:table.table-auto.w-full
-   [:thead
-    [:tr
-     (for [header ["ID" "Title" "Author" "Year" "Country" "Language" "Price"]]
-       [:th.px-4.py-2 header])]]
    [:tbody
-    (for [{:keys [id title author year country language price]} books]
-      ^{:key id}
+    (for [[header value] [["Id" (:id book)]
+                          ["Title" (:title book)]
+                          ["Author" (:author book)]
+                          ["Year" (:year book)]
+                          ["Country" (:country book)]
+                          ["Language" (:language book)]
+                          ["Price" (:price book)]]]
       [:tr
-       (for [value [id title author year country language price]]
-         [:td.border.px-4.py-2 value])])]])
+       [:td.border.px-4.py-2 header]
+       [:td.border.px-4.py-2 value]])]])
+
+(defn movie-details [movie]
+  [:table.table-auto.w-full
+   [:tbody
+    (for [[header value] [["Id" (:id movie)]
+                          ["Title" (:title movie)]
+                          ["Director" (:director movie)]
+                          ["Year" (:year movie)]
+                          ["Country" (:country movie)]
+                          ["Genre" (:genre movie)]
+                          ["Price" (:price movie)]]]
+      [:tr
+       [:td.border.px-4.py-2 header]
+       [:td.border.px-4.py-2 value]])]])
 
 
-(defn movies-table [movies]
-  [:table.table-auto.w-full
-   [:thead
-    [:tr
-     (for [header ["ID" "Title" "Director" "Year" "Country" "Genre" "Price"]]
-       [:th.px-4.py-2 header])]]
-   [:tbody
-    (for [{:keys [id title director year country genre price]} movies]
-      ^{:key id}
+(defn products-table [products pg-key]
+  (let [pg (name pg-key)]
+    [:table.table-auto.w-full
+     [:thead
       [:tr
-       (for [value [id title director year country genre price]]
-         [:td.border.px-4.py-2 value])])]])
+       (for [header ["Id" "Title"]]
+         [:th.px-4.py-2 header])]]
+     [:tbody
+      (for [{:keys [id title]} products]
+        [:tr
+         [:td.border.px-4.py-2 [:a {:href (str "#/" pg "/" id)} id]]
+         (for [value [title]]
+           [:td.border.px-4.py-2 value])])]]))
 
 
 (defn- product-groups-buttons [product-groups page]
   [:div
    [:div.flex.flex-wrap.justify-center
     (for [product product-groups]
-      ^{:key (:id product)} (product-button product page))]])
+      (product-button product page))]])
 
 
 (defn- header-view [state]
@@ -64,16 +80,27 @@
      (product-groups-buttons (:db/product-groups state) (:page/navigated state))]]])
 
 
+(defn find-item-by-id [items id]
+  (some #(when (= (:id %) id) %) items))
+
 (defn- page-content [state]
   (let [page (:page/navigated state)]
-    ;(f-util/clog "page-content, page: " page)
+    (f-util/clog "page-content, page: " page)
     ;(f-util/clog "page-content, state: " state)
-    (when (= (:page page) :products)
-      (let [table (case (:pg page)
-                    :books (books-table (get-in state [:db/data :books]))
-                    :movies (movies-table (get-in state [:db/data :movies]))
+    (case (:page page)
+      :products
+      (let [table (products-table (get-in state [:db/data (:pg page)]) (:pg page))]
+        table)
+      :product
+      (let [id (:id page)
+            product (find-item-by-id (get-in state [:db/data (:pg page)]) id) 
+            table (case (:pg page)
+                    :books (book-details product)
+                    :movies (movie-details product)
                     [:div])]
-        table))))
+        table)
+      ; We need this for home page.
+      [:div])))
 
 
 (defn view [state]
@@ -83,3 +110,5 @@
     [:div.flex.flex-col.items-center.min-h-screen.mt-10
      (header-view state)
      (page-content state)]]])
+
+

@@ -7,7 +7,11 @@
 
 (def routes [["/" {:name :route/home}]
              ["/products/:id" {:name :route/products
-                               :path [:id string?]}]])
+                               :path [:id string?]}]
+             ["/books/:id" {:name :route/books
+                            :path [:id string?]}]
+             ["/movies/:id" {:name :route/movies
+                             :path [:id string?]}]])
 
 
 #_{:clj-kondo/ignore [:unused-binding]}
@@ -19,7 +23,11 @@
   (case (:name data)
     :route/home [[:route/home]]
     :route/products (let [id (keyword (:id path-params))]
-                      [[:route/products {:id id}]])))
+                      [[:route/products {:id id}]])
+    :route/books (let [id (int (:id path-params))]
+                   [[:route/books {:id id :pg :books}]])
+    :route/movies (let [id (int (:id path-params))]
+                    [[:route/movies {:id id :pg :movies}]])))
 
 
 (defn start! [routes dispatch!]
