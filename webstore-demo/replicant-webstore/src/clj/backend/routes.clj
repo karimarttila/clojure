@@ -172,8 +172,4 @@
   (tap> (json-to-edn (:body (client/get "http://localhost:9333/api/products/books"))))
   ;; You should now see a vector of book maps in the portal window.
   
-  
-  
-  
-  
-  )
+    )
