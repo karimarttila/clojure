@@ -67,7 +67,6 @@
                 [:head
                  [:title "Replicant-webstore"]
                  [:meta {:charset "utf-8"}]
-                 ; TODO: REMOVE LATER todomvc related stuff!
                  [:link {:rel "stylesheet" :href "/css/main.css"}]
                  [:link {:rel "icon" :href "/assets/favicon.ico" :type "image/x-icon"}]
                  [:meta {:name "viewport" :content "width=device-width, initial-scale=1, shrink-to-fit=no"}]]
@@ -86,18 +85,24 @@
      ["/products"
       ["/books"
        [""
-        {:summary "Return books"
+        {:summary "Books api"
          :get {:handler #'products/get-books
-               :responses {200 {:body [:sequential schema/book]}}}}]
+               :responses {200 {:body [:sequential schema/book]}}}
+         :post {:handler #'products/create-book
+                :responses {200 {:body schema/book}}
+                :parameters {:body schema/book-without-id}}}]
        ["/:id"
         {:parameters {:path [:map [:id :int]]}
          :get {:responses {200 {:body schema/book}}
                :handler #'products/get-book}}]]
       ["/movies"
        [""
-        {:summary "Return movies"
+        {:summary "Movies api"
          :get {:handler #'products/get-movies
-               :responses {200 {:body [:sequential schema/movie]}}}}]
+               :responses {200 {:body [:sequential schema/movie]}}}
+         :post {:handler #'products/create-movie
+                :responses {200 {:body schema/movie}}
+                :parameters {:body schema/movie-without-id}}}]
        ["/:id"
         {:parameters {:path [:map [:id :int]]}
          :get {:responses {200 {:body schema/movie}}
@@ -143,7 +148,7 @@
   ;;=> "<!DOCTYPE html><html lang=\"en\"><head><title>Example</title><meta charset=\"utf-8\"><meta content=\"width=device-width, initial-scale=1, shrink-to-fit=no\" name=\"viewport\"></head><body><div id=\"app\"><div class=\"loading\"><h1>Loading, please wait...</h1></div></div><script src=\"/js/main.js\" type=\"text/javascript\"></script></body></html>"
   (main-js-file)
   ;;=> "main.js"
-  
+
   (do (require '[clj-http.client :as client])
       (client/get "http://localhost:9333/api/products/books"))
   ;;=> {:cached nil,
@@ -151,25 +156,24 @@
   ;;    :status 200,
   ;;    :body
   ;;    "[{\"id\":2001,\"product-group\":1,\"title\":\"Kalevala\",\"price\":3.95,\"author\":\"Elias Lönnrot\",\"year\":1835,\"country\":\"Finland\",\"language\":\"Finnish\"}]",
-  
+
   ;; If error, see it using *e:
   *e
-  
+
   ;; Example how to tap to the data using djblue Portal:
   (require '[jsonista.core :as json])
   (defn json-to-edn [json-str]
-    (json/read-value json-str (json/object-mapper {:decode-key-fn keyword}))) 
-  (json-to-edn "{\"name\": \"Book\", \"price\": 29.99}") 
-  
+    (json/read-value json-str (json/object-mapper {:decode-key-fn keyword})))
+  (json-to-edn "{\"name\": \"Book\", \"price\": 29.99}")
+
   (:body (client/get "http://localhost:9333/api/products/books"))
   ;; Tap to the data:
   ; https://github.com/djblue/portal
   (require '[portal.api :as p])
   ; This should open the Portal window.
   (def p (p/open))
-  (add-tap #'p/submit) 
+  (add-tap #'p/submit)
   (tap> :hello)
   (tap> (json-to-edn (:body (client/get "http://localhost:9333/api/products/books"))))
   ;; You should now see a vector of book maps in the portal window.
-  
-    )
+  )

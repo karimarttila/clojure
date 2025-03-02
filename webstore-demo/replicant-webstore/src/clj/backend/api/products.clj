@@ -1,5 +1,6 @@
 (ns backend.api.products
-  (:require [ring.util.http-response :as resp]))
+  (:require [ring.util.http-response :as resp]
+            [clj-http.client :as client]))
 
 ;; NOTE: I intentionally left a lot of debugging config and rich comments for learning purposes in this file.
 
@@ -18,8 +19,7 @@
 (comment
   ;; NOTE (3/3): If you opened the comments above, you can then debug the db entity like this:
   ; First call the api:
-  (do (require '[clj-http.client :as client])
-      (client/get "http://localhost:9333/api/products/books"))
+  (client/get "http://localhost:9333/api/products/books")
   (-> @my-atom
       :db
       :books
@@ -68,8 +68,57 @@
       (resp/ok res))))
 
 
+(defn next-id [db key]
+  (let [products (key db)
+        max-id (apply max (map :id products))]
+    (inc max-id)))
+
+
+(defn add-product [db key product]
+  (swap! db update key conj product))
+
+
+(defn create-book [req]
+  (let [book (:body (:parameters req))
+        id (next-id @(:db req) :books)
+        book (assoc book :id id)]
+    (add-product (:db req) :books book)
+    (resp/ok book)))
+
+
+(defn create-movie [req]
+  (let [movie (:body (:parameters req))
+        id (next-id @(:db req) :movies)
+        movie (assoc movie :id id)]
+    (add-product (:db req) :movies movie)
+    (resp/ok movie)))
+
+
 
 (comment
+  (require '[jsonista.core :as json])
+
+  (defn post-book [book]
+    (client/post "http://localhost:9333/api/products/books"
+                 {:body (json/write-value-as-string book)
+                  :headers {"Content-Type" "application/json"}}))
+
+  (post-book {:product-group 1,
+              :title "Kalevala",
+              :price 3.95,
+              :author "Elias Lönnrot",
+              :year 1835,
+              :country "Finland",
+              :language "Finnish"})
+
+  ; new-book
+  
+
+  *e
+
+  ; (next-id @(:db my-req) :books)
+  ;;=> 2002
+  
 
   (require '[user])
   (let [id 2002

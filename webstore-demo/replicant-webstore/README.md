@@ -1,7 +1,6 @@
 # Clojure Fullstack Exercise Using Replicant
 
 - [Clojure Fullstack Exercise Using Replicant](#clojure-fullstack-exercise-using-replicant)
-  - [TODO](#todo)
   - [Introduction](#introduction)
   - [Example Projects](#example-projects)
   - [What Does This Demo Do and What is the Purpose of this Exercise?](#what-does-this-demo-do-and-what-is-the-purpose-of-this-exercise)
@@ -18,15 +17,7 @@
   - [Tapping to the data](#tapping-to-the-data)
     - [Gadget](#gadget)
     - [Portal](#portal)
-  - [TODO](#todo-1)
-
-
-## TODO
-
-Kun valmis, niin poista kaikki todomvc koodi.
-Esim. package.json:
-    "todomvc-app-css": "^2.4.3",
-    "todomvc-common": "^1.0.5"
+  - [TODO](#todo)
 
 
 ## Introduction

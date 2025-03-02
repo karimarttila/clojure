@@ -10,6 +10,7 @@
   (malli.time/schemas)))
 
 
+
 (def book
   [:map
    [:id :int]
@@ -20,6 +21,8 @@
    [:year :int]
    [:country :string]
    [:language :string]])
+
+(def book-without-id (into [:map] (remove #(= (first %) :id) (rest book))))
 
 
 (def movie
@@ -33,7 +36,7 @@
    [:country :string]
    [:genre :string]])
 
-
+(def movie-without-id (into [:map] (remove #(= (first %) :id) (rest movie))))
 
 (comment
 
