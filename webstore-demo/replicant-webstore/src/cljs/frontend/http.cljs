@@ -36,13 +36,6 @@
   )
 
 
-(comment
-  {:post {:id :books, :api "/products/books"},
-   :query {:id :books, :api "/products/books"},
-   :product {:title "9", :price 9, :author "9", :year 9, :country "9", :language "9", :product-group 1}, :pg :books}
-  
-  )
-
 ; "post, action: " {:post {:id :books, :api "/products/books"}, :product {:title "asdf", :price "4", :author "asdf", :year "4", :country "asdf", :language "asdf", :product-group 1}, :pg :books}
 (defn post [dispatcher action]
   (f-util/clog "post, action: " action)
@@ -81,14 +74,20 @@
                  :product-group 1,
                  :title "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
                  :year 1997})
-
+  
   (go (let [response (<! (http/post "/api/products/books" {:json-params my-book}))]
         (if (= 200 (:status response))
           (def ok-post (:body response))
           (do (def my-response response)
               (def failed-post (:status response))))))
 
-
+  (def my-movie {:product-group 2, :title "Juurakon Hulda", :price 82.92, :director "Valentin Vaala", :year 1937, :country "Finland", :genre "Drama"})
+  (go (let [response (<! (http/post "/api/products/movies" {:json-params my-movie}))]
+        (if (= 200 (:status response))
+          (def ok-post (:body response))
+          (do (def my-response response)
+              (def failed-post (:status response))))))
+  
   ok-post
   ;;=> {:title "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
   ;;    :author "Kari Marttila",
@@ -102,4 +101,5 @@
   failed-post
   my-response
 
-  *e)
+  *e
+  )

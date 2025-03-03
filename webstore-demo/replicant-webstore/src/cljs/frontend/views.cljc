@@ -1,7 +1,6 @@
 (ns frontend.views
   (:require [clojure.string :as cstring]
-            #_[frontend.util :as f-util]
-            ))
+            #_[frontend.util :as f-util]))
 
 
 (defn products-page? [page product]
@@ -90,6 +89,24 @@
      (product-groups-buttons (:db/pg-config state) (:page/navigated state))]]])
 
 
+(defn new-movie []
+  [:div
+   [:form {:on {:submit [[:dom/prevent-default]
+                         [:action/new {:pg :movies}]]}}
+    [:table.table-auto.w-full
+     [:tbody
+      (for [header ["Title" "Director" "Year" "Country" "Genre" "Price"]]
+        (let [input-tag (keyword (str "input#" (cstring/lower-case header)))
+              db-key-on (keyword (str (cstring/lower-case header)))]
+          [:tr
+           [:td.border.px-4.py-2 header]
+           [:td.border.px-4.py-2 [input-tag {:on {:input [[:db/assoc-in [:db/new-product db-key-on] :event/target.value]]}}]]]))]]
+    [:div.flex.justify-center.mt-4
+     [:button.rounded-lg.border-2.border-gray-300.px-4.py-1.m-2.hover:bg-gray-200.cursor-pointer
+      {:type :submit}
+      "Submit"]]]])
+
+
 (defn new-book []
   [:div
    [:form {:on {:submit [[:dom/prevent-default]
@@ -98,12 +115,10 @@
      [:tbody
       (for [header ["Title" "Author" "Year" "Country" "Language" "Price"]]
         (let [input-tag (keyword (str "input#" (cstring/lower-case header)))
-              db-key-mount (keyword (str (cstring/lower-case header) "-input-element"))
               db-key-on (keyword (str (cstring/lower-case header)))]
           [:tr
            [:td.border.px-4.py-2 header]
-           [:td.border.px-4.py-2 [input-tag {:replicant/on-mount [[:db/assoc-in [:db/new-product db-key-mount] :dom/node]]
-                                             :on {:input [[:db/assoc-in [:db/new-product db-key-on] :event/target.value]]}}]]]))]]
+           [:td.border.px-4.py-2 [input-tag {:on {:input [[:db/assoc-in [:db/new-product db-key-on] :event/target.value]]}}]]]))]]
     [:div.flex.justify-center.mt-4
      [:button.rounded-lg.border-2.border-gray-300.px-4.py-1.m-2.hover:bg-gray-200.cursor-pointer
       {:type :submit}
@@ -119,15 +134,17 @@
     ;(f-util/clog "page-content, page: " page)
     ;(f-util/clog "page-content, state: " state)
     (case (:page page)
-      :home 
-      (let [info (:db/product-created state)]
-        (when info
+      :home
+      (let [status (:db/product-created state)
+            error (:error status)]
+        (if error
           [:div
-           [:p.text-blue-500 "New product created!"]
-           ]))
+           [:p.text-red-500 " Failed to create new product"]]
+          (when status
+            [:div
+             [:p.text-blue-500 "New product created!"]])))
       :products
-      (let [
-            table (products-table (get-in state [:db/data (:pg page)]) (:pg page))]
+      (let [table (products-table (get-in state [:db/data (:pg page)]) (:pg page))]
         table)
       :product
       (let [id (:id page)
@@ -140,7 +157,7 @@
       :new
       (let [table (case (:pg page)
                     :books (new-book)
-                    :movies (new-book)
+                    :movies (new-movie)
                     [:div])]
         table)
       ; We need this for home page.

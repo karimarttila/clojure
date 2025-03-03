@@ -147,7 +147,26 @@
             deref
             :books))
   
+  
+  
+  (defn post-movie [movie]
+    (client/post "http://localhost:9333/api/products/movies"
+                 {:body (json/write-value-as-string movie)
+                  :headers {"Content-Type" "application/json"}}))
+  
+  (post-movie {:product-group 1,
+               :title "KARIN ELOKUVA 1111111111111111111",
+               :price 3.95,
+               :director "Kari Marttila",
+               :year 1935,
+               :country "Finland",
+               :genre "Horror"})
 
+  (count (-> (user/env)
+             :db/tsv
+             deref
+             :movies))
+  
   *e
 
   ; (next-id @(:db my-req) :books)

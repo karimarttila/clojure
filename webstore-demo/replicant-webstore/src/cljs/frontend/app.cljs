@@ -11,7 +11,7 @@
 
 (defonce ^:private !state (atom {; Let's make product-groups fixed in this demo.
                                  :db/pg-config
-                                 [{:id :books
+                                 [{:id :books 
                                    :pg-id 1
                                    :query {:id :books
                                            :api "/products/books"}
@@ -22,7 +22,7 @@
                                    :pg-id 2
                                    :query {:id :movies
                                            :api "/products/movies"}
-                                   :port {:id :movies
+                                   :post {:id :movies
                                           :api "/products/movies"}
                                    :name "Movies"}]}))
 
@@ -88,14 +88,28 @@
   (js/console.log "**************************************"))
 
 
+; GOOD
+;; "action-new-product YYYYYYYYYYYYYYYYYYYYYYYYYYYYYY "
+;; pg-c {:id :books, :pg-id 1, :query {:id :books, :api "/products/books"}, :post {:id :books, :api "/products/books"}, :name "Books"}
+;; pg-id " 1
+;; product: " {:title "9", :price 9, :author "9", :year 9, :country "9", :language "9", :product-group 1}
+
+; BAD
+;; pg-c {:id :movies, :pg-id 2, :query {:id :movies, :api "/products/movies"}, :port {:id :movies, :api "/products/movies"}, :name "Movies"}
+;; pg-id " 2
+;; product: " {:title "9", :price 9, :director "9", :year 9, :country "9", :genre "9", :product-group 2}
+
 (defn action-new-product [{:keys [pg state]}]
+  (when goog.DEBUG (f-util/clog "action-new-product YYYYYYYYYYYYYYYYYYYYYYYYYYYYYY ")) 
   (let [pg-c (f-util/get-pg-config-by-id pg (:db/pg-config state))
-        pg-id (:pg-id pg-c)
+        _ (when goog.DEBUG (f-util/clog "action-new-product pg-c " pg-c))
+        pg-id (:pg-id pg-c) ; This is the number that backend uses for product group.
+        _ (when goog.DEBUG (f-util/clog "action-new-product pg-id " pg-id))
         product (case pg
                   :books (get-book state pg-id)
                   :movies (get-movie state pg-id))
         dispatcher (get-dispatcher)]
-    ;(when goog.DEBUG (f-util/clog "action-new-product, book: " book))
+    (when goog.DEBUG (f-util/clog "action-new-product, product: " product))
     (dispatcher nil [[:backend/post {:post (:post pg-c)
                                      ; We need this to fetch new set of products.
                                      :query (:query pg-c)
