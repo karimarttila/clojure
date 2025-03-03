@@ -62,6 +62,7 @@
                                                    :pg pg
                                                    :id id}]]))))
 
+
 (defn- convert-fields [book]
   (-> book
       (update :price #(js/parseFloat %))
@@ -81,9 +82,7 @@
 (defn action-new-product [{:keys [pg state]}]
   (when goog.DEBUG (f-util/clog "action-new-product, pg: " pg))
   (let [pg-c (f-util/get-pg-config-by-id pg (:db/pg-config state))
-        _ (when goog.DEBUG (f-util/clog "action-new-product pg-c " pg-c))
         pg-id (:pg-id pg-c) ; This is the number that backend uses for product group.
-        _ (when goog.DEBUG (f-util/clog "action-new-product pg-id " pg-id))
         product ( get-product-from-store state pg-id) 
         dispatcher (get-dispatcher)]
     (dispatcher nil [[:backend/post {:post (:post pg-c)
@@ -117,7 +116,6 @@
          x)
        :else x))
    actions))
-
 
 
 (defn- enrich-action-from-state [state action]
