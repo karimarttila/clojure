@@ -2,7 +2,8 @@
   (:require [ring.util.http-response :as resp]
             [clj-http.client :as client]))
 
-;; NOTE: I intentionally left a lot of debugging config and rich comments for learning purposes in this file.
+
+;; NOTE: I intentionally left a lot of debugging config and rich comments for learning purposes in these source files.
 
 ;; NOTE (1/3): An example how to debug the handler: first create an atom in the namespace.
 ;; Then see the handler get-books and the rich comment.
@@ -10,7 +11,7 @@
 
 (defn get-books [req]
   (let [db (:db req)
-        _ (swap! my-atom assoc :req req)
+        ;_ (swap! my-atom assoc :req req)
         ;; NOTE (2/3): Open these two comments to see the db.
         ; _ (println @db)
         ; _ (swap! my-atom assoc :db @db)
@@ -18,8 +19,11 @@
     (resp/ok res)))
 
 (comment
-  
-  (require '[portal.api :as p])
+
+  (get-books {})
+  (get-movies {})
+  (require '[portal.api :as p]
+           '[user])
   (def p (p/open))
   (add-tap #'p/submit)
   (tap> (-> (user/env)
@@ -28,9 +32,7 @@
             :books))
 
   (:books @(:db/tsv (user/env)))
-  (:req @my-atom)
-  
-  )
+  (:req @my-atom))
 
 (comment
   ;; NOTE (3/3): If you opened the comments above, you can then debug the db entity like this:
@@ -95,8 +97,7 @@
 
 
 (defn create-book [req]
-  (let [_ (def my-req req)
-        book (:body (:parameters req))
+  (let [book (:body (:parameters req))
         id (next-id @(:db req) :books)
         book (assoc book :id id)]
     (add-product (:db req) :books book)
@@ -113,10 +114,10 @@
 
 
 (comment
-  
-  (:parameters my-req)
-  (keys my-req)
-  
+
+  ;(:parameters my-req)
+  ;(keys my-req)
+
   (require '[jsonista.core :as json])
 
   (defn post-book [book]
@@ -133,27 +134,25 @@
               :language "Finnish"})
 
   (client/get "http://localhost:9333/api/products/books")
-  
+
   (count (-> (user/env)
              :db/tsv
              deref
              :books))
-  
-  (require '[portal.api :as p])
+
+  ;(require '[portal.api :as p])
   (def p (p/open))
   (add-tap #'p/submit)
   (tap> (-> (user/env)
             :db/tsv
             deref
             :books))
-  
-  
-  
+
   (defn post-movie [movie]
     (client/post "http://localhost:9333/api/products/movies"
                  {:body (json/write-value-as-string movie)
                   :headers {"Content-Type" "application/json"}}))
-  
+
   (post-movie {:product-group 1,
                :title "KARIN ELOKUVA 1111111111111111111",
                :price 3.95,
@@ -166,14 +165,14 @@
              :db/tsv
              deref
              :movies))
-  
+
   *e
 
   ; (next-id @(:db my-req) :books)
   ;;=> 2002
-  
 
-  (require '[user])
+
+  ;(require '[user])
   (let [id 2002
         books (-> (user/env)
                   :db/tsv
@@ -197,20 +196,14 @@
   ;;     :year 1884,
   ;;     :country "United States",
   ;;     :language "English"}}
-  
+
   (let [dummy-req {:db (-> (user/env) :db/tsv)}
         dummy-req (assoc dummy-req :parameters {:path {:id 9002}})]
     (get-book dummy-req))
   ;;=> {:status 404, :headers {}, :body {:message "Not found", :id 9002}}
-  
+
   ; (require '[clj-http.client :as client])
   (client/get "http://localhost:9333/api/products/books/2002")
   (client/get "http://localhost:9333/api/products/books/9002")
-  *e
-  )
-
-
-
-
-
+  *e)
 

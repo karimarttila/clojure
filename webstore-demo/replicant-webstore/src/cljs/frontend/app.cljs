@@ -11,7 +11,7 @@
 
 (defonce ^:private !state (atom {; Let's make product-groups fixed in this demo.
                                  :db/pg-config
-                                 [{:id :books 
+                                 [{:id :books
                                    :pg-id 1
                                    :query {:id :books
                                            :api "/products/books"}
@@ -49,7 +49,6 @@
 
 (defn navigated-product-page [{:keys [id pg state]}]
   (when goog.DEBUG (f-util/clog "navigated-product-page, id: " id))
-  (when goog.DEBUG (f-util/clog "navigated-product-page, pg: " pg))
   (let [pg-c (f-util/get-pg-config-by-id pg (:db/pg-config state))
         products (get-in state [:db/data pg])
         dispatcher (get-dispatcher)]
@@ -88,19 +87,8 @@
   (js/console.log "**************************************"))
 
 
-; GOOD
-;; "action-new-product YYYYYYYYYYYYYYYYYYYYYYYYYYYYYY "
-;; pg-c {:id :books, :pg-id 1, :query {:id :books, :api "/products/books"}, :post {:id :books, :api "/products/books"}, :name "Books"}
-;; pg-id " 1
-;; product: " {:title "9", :price 9, :author "9", :year 9, :country "9", :language "9", :product-group 1}
-
-; BAD
-;; pg-c {:id :movies, :pg-id 2, :query {:id :movies, :api "/products/movies"}, :port {:id :movies, :api "/products/movies"}, :name "Movies"}
-;; pg-id " 2
-;; product: " {:title "9", :price 9, :director "9", :year 9, :country "9", :genre "9", :product-group 2}
-
 (defn action-new-product [{:keys [pg state]}]
-  (when goog.DEBUG (f-util/clog "action-new-product YYYYYYYYYYYYYYYYYYYYYYYYYYYYYY ")) 
+  (when goog.DEBUG (f-util/clog "action-new-product, pg: " pg))
   (let [pg-c (f-util/get-pg-config-by-id pg (:db/pg-config state))
         _ (when goog.DEBUG (f-util/clog "action-new-product pg-c " pg-c))
         pg-id (:pg-id pg-c) ; This is the number that backend uses for product group.
@@ -118,14 +106,14 @@
 
 
 (defn navigated-new-product-page [{:keys [pg _state]}]
-  ;(when goog.DEBUG (f-util/clog "navigated-new-product-page, pg: " pg))
+  (when goog.DEBUG (f-util/clog "navigated-new-product-page, pg: " pg))
   (let [dispatcher (get-dispatcher)]
     (dispatcher nil [[:db/assoc :page/navigated {:page :new
                                                  :pg pg}]])))
 
 
 (defn navigated-home-page []
-  ;(when goog.DEBUG (f-util/clog "navigated-home-page"))
+  (when goog.DEBUG (f-util/clog "navigated-home-page"))
   (let [dispatcher (get-dispatcher)]
     (dispatcher nil [[:db/assoc :page/navigated {:page :home}]])))
 

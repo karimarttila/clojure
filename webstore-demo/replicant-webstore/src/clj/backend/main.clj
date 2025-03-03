@@ -8,23 +8,27 @@
             [ring.adapter.jetty :as jetty]
             ;; For Integrant.
             [backend.routes]
-            [backend.db] 
-            ))
+            [backend.db]))
+
 
 (defmethod aero.core/reader 'ig/ref
   [_opts _tag value]
   (ig/ref value))
 
+
 (defn system-config []
   (aero/read-config (io/resource "config.edn")))
+
 
 (defmethod ig/init-key :adapter/jetty [_ {:keys [port routes] :as jetty-opts}]
   (log/infof "Starting Jetty server on http://localhost:%s" port)
   (jetty/run-jetty routes (-> jetty-opts (dissoc :handler) (assoc :join? false))))
 
+
 (defmethod ig/halt-key! :adapter/jetty [_ server]
   (log/info "Stopping Jetty")
   (.stop server))
+
 
 (defn run-system [config]
   (try
@@ -42,9 +46,8 @@
 
 
 (comment
-  (+ 1 1 )
+  (+ 1 1)
   (require '[portal.api :as p])
   (def p (p/open))
   (add-tap #'p/submit)
-  (tap> :hello)
-  )
+  (tap> :hello))

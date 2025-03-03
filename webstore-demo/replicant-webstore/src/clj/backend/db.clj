@@ -102,12 +102,10 @@
        (clojure.java.io/resource)
        (slurp)
        (clojure.string/split-lines)
-       (map #(clojure.string/split % #"\t"))
-       )
+       (map #(clojure.string/split % #"\t")))
 
   (->> "data/movies.tsv"
        (clojure.java.io/resource)
        (slurp)
        (clojure.string/split-lines)
-       (map #(clojure.string/split % #"\t"))
-       ))
+       (map #(clojure.string/split % #"\t"))))

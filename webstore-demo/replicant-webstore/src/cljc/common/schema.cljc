@@ -4,11 +4,11 @@
             [malli.experimental.time :as malli.time]
             [malli.registry :as malli.registry]))
 
+
 (malli.registry/set-default-registry!
  (malli.registry/composite-registry
   (m/default-schemas)
   (malli.time/schemas)))
-
 
 
 (def book
@@ -40,17 +40,20 @@
 
 
 ; For testing.
-(def any-schema
+#_(def any-schema
     [:any])
 
 
 (comment
 
+  book-without-id
+  movie-without-id
+
   (require '[user])
 
   ;; Let's leave the rich comment here,
   ;; readers can see how I developed the functionality.
-  
+
   ;; How to do coercion to malli? We need to convert strings to ints and doubles.
   ;; Let's examine it.
   (def item {:id 1 :text "Some text" :price 3.19})
@@ -71,7 +74,7 @@
   (m/decode item-schema item2 mt/string-transformer)
   ;;=> {:id 1, :text "Some text", :price 3.19}
   ; Beautiful. :-) 
-  
+
 
   (m/decode book (->> (user/env)
                       :db/tsv
@@ -88,7 +91,7 @@
   ;;    :year 1835,
   ;;    :country "Finland",
   ;;    :language "Finnish"}
-  
+
   (->> (user/env)
        :db/tsv
          ; Deref atom
@@ -104,7 +107,7 @@
   ;;    :year "1835",
   ;;    :country "Finland",
   ;;    :language "Finnish"}
-  
+
   (->> (user/env)
        :db/tsv
          ; Deref atom

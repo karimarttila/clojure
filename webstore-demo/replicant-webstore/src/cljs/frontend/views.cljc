@@ -21,6 +21,7 @@
        [:td.border.px-4.py-2 header]
        [:td.border.px-4.py-2 value]])]])
 
+
 (defn movie-details [movie]
   [:table.table-auto.w-full
    [:tbody
