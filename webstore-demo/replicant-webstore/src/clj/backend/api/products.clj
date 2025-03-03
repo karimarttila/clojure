@@ -10,11 +10,27 @@
 
 (defn get-books [req]
   (let [db (:db req)
+        _ (swap! my-atom assoc :req req)
         ;; NOTE (2/3): Open these two comments to see the db.
         ; _ (println @db)
         ; _ (swap! my-atom assoc :db @db)
         res (:books @db)]
     (resp/ok res)))
+
+(comment
+  
+  (require '[portal.api :as p])
+  (def p (p/open))
+  (add-tap #'p/submit)
+  (tap> (-> (user/env)
+            :db/tsv
+            deref
+            :books))
+
+  (:books @(:db/tsv (user/env)))
+  (:req @my-atom)
+  
+  )
 
 (comment
   ;; NOTE (3/3): If you opened the comments above, you can then debug the db entity like this:
@@ -79,7 +95,8 @@
 
 
 (defn create-book [req]
-  (let [book (:body (:parameters req))
+  (let [_ (def my-req req)
+        book (:body (:parameters req))
         id (next-id @(:db req) :books)
         book (assoc book :id id)]
     (add-product (:db req) :books book)
@@ -96,6 +113,10 @@
 
 
 (comment
+  
+  (:parameters my-req)
+  (keys my-req)
+  
   (require '[jsonista.core :as json])
 
   (defn post-book [book]
@@ -104,14 +125,27 @@
                   :headers {"Content-Type" "application/json"}}))
 
   (post-book {:product-group 1,
-              :title "Kalevala",
+              :title "KARIN KIRJA 1111111111111111111",
               :price 3.95,
               :author "Elias Lönnrot",
               :year 1835,
               :country "Finland",
               :language "Finnish"})
 
-  ; new-book
+  (client/get "http://localhost:9333/api/products/books")
+  
+  (count (-> (user/env)
+             :db/tsv
+             deref
+             :books))
+  
+  (require '[portal.api :as p])
+  (def p (p/open))
+  (add-tap #'p/submit)
+  (tap> (-> (user/env)
+            :db/tsv
+            deref
+            :books))
   
 
   *e

@@ -12,10 +12,12 @@
 
 (def routes [["/" {:name :route/home}]
              ["/products/:pg" {:name :route/products
-                               :path [:pg string?]}] 
+                               :path [:pg string?]}]
              ["/product/:pg/:id" {:name :route/product
                                   :path [:pg string?
-                                         :id string?]}]])
+                                         :id string?]}]
+             ["/new/:pg" {:name :route/new
+                          :path [:pg string?]}]])
 
 
 #_{:clj-kondo/ignore [:unused-binding]}
@@ -30,7 +32,9 @@
                       [[:route/products {:pg pg}]])
     :route/product (let [id (int (:id path-params))
                          pg (keyword (:pg path-params))]
-                     [[:route/product {:id id :pg pg}]])))
+                     [[:route/product {:id id :pg pg}]])
+    :route/new (let [pg (keyword (:pg path-params))]
+                 [[:route/new {:pg pg}]])))
 
 
 (defn start! [routes dispatch!]

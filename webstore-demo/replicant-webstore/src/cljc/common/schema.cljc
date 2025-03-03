@@ -38,6 +38,12 @@
 
 (def movie-without-id (into [:map] (remove #(= (first %) :id) (rest movie))))
 
+
+; For testing.
+(def any-schema
+    [:any])
+
+
 (comment
 
   (require '[user])

@@ -1,19 +1,11 @@
 (ns frontend.views
-  (:require [frontend.util :as f-util]))
+  (:require [clojure.string :as cstring]
+            #_[frontend.util :as f-util]
+            ))
 
 
 (defn products-page? [page product]
   (and (= (:page page) :products) (= (:pg page) (:id product))))
-
-
-(defn- product-button [product page]
-  (let [button-tag (if (products-page? page product)
-                     :button.rounded-lg.border-2.border-gray-500.bg-blue-100.p-4.m-2.hover:bg-gray-200.cursor-pointer
-                     :button.rounded-lg.border-2.border-gray-300.p-4.m-2.hover:bg-gray-200.cursor-pointer)]
-    [:a {:href (str "#/products/" (name (:id product)))}
-     [button-tag
-      [:p.text-center.text-xl.font-semibold
-       (:name product)]]]))
 
 
 (defn book-details [book]
@@ -60,6 +52,27 @@
            [:td.border.px-4.py-2 value])])]]))
 
 
+(defn- new-product-button [product]
+  (let [button-tag :button.rounded-lg.border-2.border-gray-300.px-4.py-1.m-2.hover:bg-gray-200.cursor-pointer]
+    [:div.flex.justify-center
+     [:a {:href (str "#/new/" (name (:id product)))}
+      [button-tag
+       [:p.text-center.text-xs
+        "Create"]]]]))
+
+
+(defn- product-button [product page]
+  (let [button-tag (if (products-page? page product)
+                     :button.rounded-lg.border-2.border-gray-500.bg-blue-100.p-4.m-2.hover:bg-gray-200.cursor-pointer
+                     :button.rounded-lg.border-2.border-gray-300.p-4.m-2.hover:bg-gray-200.cursor-pointer)]
+    [:div
+     [:a {:href (str "#/products/" (name (:id product)))}
+      [button-tag
+       [:p.text-center.text-xl.font-semibold
+        (:name product)]]]
+     (new-product-button product)]))
+
+
 (defn- product-groups-buttons [product-groups page]
   [:div
    [:div.flex.flex-wrap.justify-center
@@ -73,27 +86,61 @@
     ;[:div.flex.flex-col.items-center.min-h-screen.mt-1]
     [:h1.text-3xl.font-bold.text-center.mt-5 "WEB STORE with REPLICANT"]
     [:h2.text-xl.font-bold.text-center.mt-10 "Choose product group:"]
-    [:div.mt-10
+    [:div.mt-5
      (product-groups-buttons (:db/pg-config state) (:page/navigated state))]]])
+
+
+(defn new-book []
+  [:div
+   [:form {:on {:submit [[:dom/prevent-default]
+                         [:action/new {:pg :books}]]}}
+    [:table.table-auto.w-full
+     [:tbody
+      (for [header ["Title" "Author" "Year" "Country" "Language" "Price"]]
+        (let [input-tag (keyword (str "input#" (cstring/lower-case header)))
+              db-key-mount (keyword (str (cstring/lower-case header) "-input-element"))
+              db-key-on (keyword (str (cstring/lower-case header)))]
+          [:tr
+           [:td.border.px-4.py-2 header]
+           [:td.border.px-4.py-2 [input-tag {:replicant/on-mount [[:db/assoc-in [:db/new-product db-key-mount] :dom/node]]
+                                             :on {:input [[:db/assoc-in [:db/new-product db-key-on] :event/target.value]]}}]]]))]]
+    [:div.flex.justify-center.mt-4
+     [:button.rounded-lg.border-2.border-gray-300.px-4.py-1.m-2.hover:bg-gray-200.cursor-pointer
+      {:type :submit}
+      "Submit"]]]])
 
 
 (defn find-item-by-id [items id]
   (some #(when (= (:id %) id) %) items))
 
+
 (defn- page-content [state]
   (let [page (:page/navigated state)]
-    (f-util/clog "page-content, page: " page)
+    ;(f-util/clog "page-content, page: " page)
     ;(f-util/clog "page-content, state: " state)
     (case (:page page)
+      :home 
+      (let [info (:db/product-created state)]
+        (when info
+          [:div
+           [:p.text-blue-500 "New product created!"]
+           ]))
       :products
-      (let [table (products-table (get-in state [:db/data (:pg page)]) (:pg page))]
+      (let [
+            table (products-table (get-in state [:db/data (:pg page)]) (:pg page))]
         table)
       :product
       (let [id (:id page)
-            product (find-item-by-id (get-in state [:db/data (:pg page)]) id) 
+            product (find-item-by-id (get-in state [:db/data (:pg page)]) id)
             table (case (:pg page)
                     :books (book-details product)
                     :movies (movie-details product)
+                    [:div])]
+        table)
+      :new
+      (let [table (case (:pg page)
+                    :books (new-book)
+                    :movies (new-book)
                     [:div])]
         table)
       ; We need this for home page.

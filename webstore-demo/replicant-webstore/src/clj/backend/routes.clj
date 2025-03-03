@@ -89,8 +89,12 @@
          :get {:handler #'products/get-books
                :responses {200 {:body [:sequential schema/book]}}}
          :post {:handler #'products/create-book
+                ; TODO
                 :responses {200 {:body schema/book}}
-                :parameters {:body schema/book-without-id}}}]
+                :parameters {:body schema/book-without-id}                
+                ; :responses {200 {:body schema/any-schema}}
+                ; :parameters {:body schema/any-schema} 
+                }}]
        ["/:id"
         {:parameters {:path [:map [:id :int]]}
          :get {:responses {200 {:body schema/book}}

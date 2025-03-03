@@ -12,12 +12,18 @@
 (defonce ^:private !state (atom {; Let's make product-groups fixed in this demo.
                                  :db/pg-config
                                  [{:id :books
+                                   :pg-id 1
                                    :query {:id :books
                                            :api "/products/books"}
+                                   :post {:id :books
+                                          :api "/products/books"}
                                    :name "Books"}
                                   {:id :movies
+                                   :pg-id 2
                                    :query {:id :movies
                                            :api "/products/movies"}
+                                   :port {:id :movies
+                                          :api "/products/movies"}
                                    :name "Movies"}]}))
 
 
@@ -35,7 +41,8 @@
     (if products
       (dispatcher nil [[:db/assoc :page/navigated {:page :products
                                                    :pg pg}]])
-      (dispatcher nil [[:backend/fetch {:query (:query pg-c)}]
+      (dispatcher nil [[:backend/fetch {:query (:query pg-c)
+                                        :pg pg}]
                        [:db/assoc :page/navigated {:page :products
                                                    :pg pg}]]))))
 
@@ -50,14 +57,61 @@
       (dispatcher nil [[:db/assoc :page/navigated {:page :product
                                                    :pg pg
                                                    :id id}]])
-      (dispatcher nil [[:backend/fetch {:query (:query pg-c)}]
+      (dispatcher nil [[:backend/fetch {:query (:query pg-c)
+                                        :pg pg}]
                        [:db/assoc :page/navigated {:page :product
                                                    :pg pg
                                                    :id id}]]))))
 
+(defn- convert-fields [book]
+  (-> book
+      (update :price #(js/parseFloat %))
+      (update :year #(js/parseInt %))))
+
+
+(defn get-movie [state pg-id]
+  (let [fields [:title :price :director :year :country :genre]
+        movie (into {} (for [field fields] [field (get-in state [:db/new-product field])]))]
+    (-> movie
+        (assoc :product-group pg-id)
+        convert-fields)))
+
+
+(defn get-book [state pg-id]
+  (let [fields [:title :price :author :year :country :language]
+        book (into {} (for [field fields] [field (get-in state [:db/new-product field])]))]
+    (-> book
+        (assoc :product-group pg-id)
+        convert-fields)))
+
+(comment
+  (js/console.log "**************************************"))
+
+
+(defn action-new-product [{:keys [pg state]}]
+  (let [pg-c (f-util/get-pg-config-by-id pg (:db/pg-config state))
+        pg-id (:pg-id pg-c)
+        product (case pg
+                  :books (get-book state pg-id)
+                  :movies (get-movie state pg-id))
+        dispatcher (get-dispatcher)]
+    ;(when goog.DEBUG (f-util/clog "action-new-product, book: " book))
+    (dispatcher nil [[:backend/post {:post (:post pg-c)
+                                     ; We need this to fetch new set of products.
+                                     :query (:query pg-c)
+                                     :product product
+                                     :pg pg}]])))
+
+
+(defn navigated-new-product-page [{:keys [pg _state]}]
+  ;(when goog.DEBUG (f-util/clog "navigated-new-product-page, pg: " pg))
+  (let [dispatcher (get-dispatcher)]
+    (dispatcher nil [[:db/assoc :page/navigated {:page :new
+                                                 :pg pg}]])))
+
 
 (defn navigated-home-page []
-  (when goog.DEBUG (f-util/clog "navigated-home-page"))
+  ;(when goog.DEBUG (f-util/clog "navigated-home-page"))
   (let [dispatcher (get-dispatcher)]
     (dispatcher nil [[:db/assoc :page/navigated {:page :home}]])))
 
@@ -73,6 +127,7 @@
          x)
        :else x))
    actions))
+
 
 
 (defn- enrich-action-from-state [state action]
@@ -126,9 +181,12 @@
         :dom/set-input-text (set! (.-value (first args)) (second args))
         :dom/focus-element (.focus (first args))
         :backend/fetch (f-http/fetch (get-dispatcher) (second enriched-action))
+        :backend/post (f-http/post (get-dispatcher) (second enriched-action))
         :route/home (navigated-home-page)
         :route/products (navigated-products-page (assoc (second enriched-action) :state @!state))
         :route/product (navigated-product-page (assoc (second enriched-action) :state @!state))
+        :route/new (navigated-new-product-page (assoc (second enriched-action) :state @!state))
+        :action/new (action-new-product (assoc (second enriched-action) :state @!state))
         (when goog.DEBUG (f-util/clog "Unknown action" action)))))
   (render! @!state))
 
