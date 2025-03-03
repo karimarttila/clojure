@@ -129,6 +129,20 @@
 (defn find-item-by-id [items id]
   (some #(when (= (:id %) id) %) items))
 
+(defn- show-error [msg]
+    [:div.flex.justify-between.items-center.bg-red-50.border.border-red-500.rounded.px-4.py-3 {:role "alert"}
+     [:p.font-bold.text-red-700 msg]
+     [:button.text-xs.px-2.py-1.ml-4.rounded.bg-red-50.hover:bg-gray-300.cursor-pointer.border.border-gray-400
+      {:on {:click [[:db/dissoc :db/product-created]]}}
+      "X"]])
+
+(defn- show-info [msg]
+  [:div.flex.justify-between.items-center.bg-blue-50.border.border-blue-500.rounded.px-4.py-3 {:role "alert"}
+   [:p.font-bold.text-blue-700 msg]
+   [:button.text-xs.px-2.py-1.ml-4.rounded.bg-blue-50.hover:bg-gray-300.cursor-pointer.border.border-gray-400
+    {:on {:click [[:db/dissoc :db/product-created]]}}
+    "X"]])
+
 
 (defn- page-content [state]
   (let [page (:page/navigated state)]
@@ -140,10 +154,10 @@
             error (:error status)]
         (if error
           [:div
-           [:p.text-red-500 " Failed to create new product"]]
+           (show-error "Failed to create product!")]
           (when status
-            [:div
-             [:p.text-blue-500 "New product created!"]])))
+            [:div 
+             (show-info "New product created!")])))
       :products
       (let [table (products-table (get-in state [:db/data (:pg page)]) (:pg page))]
         table)
