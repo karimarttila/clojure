@@ -68,18 +68,9 @@
       (update :year #(js/parseInt %))))
 
 
-(defn get-movie [state pg-id]
-  (let [fields [:title :price :director :year :country :genre]
-        movie (into {} (for [field fields] [field (get-in state [:db/new-product field])]))]
-    (-> movie
-        (assoc :product-group pg-id)
-        convert-fields)))
-
-
-(defn get-book [state pg-id]
-  (let [fields [:title :price :author :year :country :language]
-        book (into {} (for [field fields] [field (get-in state [:db/new-product field])]))]
-    (-> book
+(defn get-product-from-store [state pg-id]
+  (let [product (:db/new-product state)]
+    (-> product
         (assoc :product-group pg-id)
         convert-fields)))
 
@@ -93,11 +84,8 @@
         _ (when goog.DEBUG (f-util/clog "action-new-product pg-c " pg-c))
         pg-id (:pg-id pg-c) ; This is the number that backend uses for product group.
         _ (when goog.DEBUG (f-util/clog "action-new-product pg-id " pg-id))
-        product (case pg
-                  :books (get-book state pg-id)
-                  :movies (get-movie state pg-id))
+        product ( get-product-from-store state pg-id) 
         dispatcher (get-dispatcher)]
-    (when goog.DEBUG (f-util/clog "action-new-product, product: " product))
     (dispatcher nil [[:backend/post {:post (:post pg-c)
                                      ; We need this to fetch new set of products.
                                      :query (:query pg-c)

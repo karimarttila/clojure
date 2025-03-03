@@ -9,7 +9,7 @@
 
 
 (defn fetch [dispatcher action]
-  (f-util/clog "***************************** fetch, action: " action)
+  (f-util/clog "fetch, action: " action)
   (let [pg (:pg action)
         url (str "/api" (get-in action [:query :api]))]
     (go (try
