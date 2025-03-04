@@ -1,14 +1,12 @@
 (ns common.schema
   (:require [malli.core :as m]
             [malli.transform :as mt]
-            [malli.experimental.time :as malli.time]
             [malli.registry :as malli.registry]))
 
 
 (malli.registry/set-default-registry!
  (malli.registry/composite-registry
-  (m/default-schemas)
-  (malli.time/schemas)))
+  (m/default-schemas)))
 
 
 (def book

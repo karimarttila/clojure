@@ -5,7 +5,10 @@
             [frontend.util :as f-util]
             [frontend.http :as f-http]
             [frontend.views :as f-views]
-            [frontend.routes :as f-routes]))
+            [frontend.routes :as f-routes]
+            [common.schema :as f-schema]
+            [malli.core :as m]
+            [malli.error :as me]))
 
 
 
@@ -61,12 +64,35 @@
                        [:db/assoc :page/navigated {:page :product
                                                    :pg pg
                                                    :id id}]]))))
+(defn- safe-parse-float [s]
+  (try
+    (let [parsed (js/parseFloat s)]
+      (if (js/isNaN parsed) s parsed))
+    (catch js/Error _ s)))
+
+(defn- safe-parse-int [s]
+  (try
+    (let [parsed (js/parseInt s)]
+      (if (js/isNaN parsed) s parsed))
+    (catch js/Error _ s)))
 
 
-(defn- convert-fields [book]
-  (-> book
-      (update :price #(js/parseFloat %))
-      (update :year #(js/parseInt %))))
+(defn- convert-fields [product]
+  (-> product
+      (cond-> (contains? product :price) (update :price #(if (string? %) (safe-parse-float %) %)))
+      (cond-> (contains? product :year) (update :year #(if (string? %) (safe-parse-int %) %)))))
+
+
+(comment
+
+  (safe-parse-int "aa")
+  ;;=> "aa" 
+  (convert-fields {:product-group 1,
+                   :title "Crime and Punishment",
+                   :author "Fyodor Dostoevsky", :year 1866,
+                   :country "Russia", :language "Russian"
+                   :price "aa"}))
+
 
 
 (defn get-product-from-store [state pg-id]
@@ -83,13 +109,33 @@
   (when goog.DEBUG (f-util/clog "action-new-product, pg: " pg))
   (let [pg-c (f-util/get-pg-config-by-id pg (:db/pg-config state))
         pg-id (:pg-id pg-c) ; This is the number that backend uses for product group.
-        product ( get-product-from-store state pg-id) 
+        product (get-product-from-store state pg-id)
         dispatcher (get-dispatcher)]
     (dispatcher nil [[:backend/post {:post (:post pg-c)
                                      ; We need this to fetch new set of products.
                                      :query (:query pg-c)
                                      :product product
                                      :pg pg}]])))
+
+
+(defn action-validate-new-product [{:keys [pg state]}]
+  (when goog.DEBUG (f-util/clog "action-validate-new-product *********************************************, pg: " pg))
+  (let [pg-c (f-util/get-pg-config-by-id pg (:db/pg-config state))
+        pg-id (:pg-id pg-c) ; This is the number that backend uses for product group.
+        product (get-product-from-store state pg-id)
+        _ (when goog.DEBUG (f-util/clog "product: *********************************************, product: " product))
+        dispatcher (get-dispatcher)]
+    (let [validation-ok
+          (case pg
+            :books (m/validate f-schema/book-without-id product)
+            :movies (m/validate f-schema/movie-without-id product))]
+      (if validation-ok
+        (dispatcher nil [[:action/new {:pg pg}]])
+        (let [error (case pg
+                      :books (me/humanize (m/explain f-schema/book-without-id product))
+                      :movies (me/humanize (m/explain f-schema/movie-without-id product)))]
+          (dispatcher nil [[:db/assoc :db/product-validation-error {:error error
+                                                                    :pg pg}]]))))))
 
 
 (defn navigated-new-product-page [{:keys [pg _state]}]
@@ -175,6 +221,7 @@
         :route/product (navigated-product-page (assoc (second enriched-action) :state @!state))
         :route/new (navigated-new-product-page (assoc (second enriched-action) :state @!state))
         :action/new (action-new-product (assoc (second enriched-action) :state @!state))
+        :action/validate (action-validate-new-product (assoc (second enriched-action) :state @!state))
         (when goog.DEBUG (f-util/clog "Unknown action" action)))))
   (render! @!state))
 
@@ -206,4 +253,18 @@
   (tap> :hello)
   (tap> (get-in @!state [:db/data :books]))
   ;; You should now see a vector of book maps in the portal window.
+
+  (def my-book {:product-group 1, :title "Moby Dick", :price 45.35, :author "Herman Melville", :year 1851, :country "United States", :language "English"})
+  (def my-book {:XXX 1, :title "Moby Dick", :price 45.35, :author "Herman Melville", :year 1851, :country "United States", :language "English"})
+
+  (m/validate f-schema/book-without-id my-book)
+  (def my-error
+    (let [validation-result (m/validate f-schema/book-without-id my-book)]
+      (if validation-result
+        {:ok "ok"}
+        (me/humanize (m/explain f-schema/book-without-id my-book)))))
+  ;;=> "Validation failed: {:product-group [\"missing required key\"]}"
+
+  my-error
+  ;;=> {:product-group ["missing required key"]}
   )

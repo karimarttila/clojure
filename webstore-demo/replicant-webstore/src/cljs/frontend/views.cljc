@@ -7,6 +7,25 @@
   (and (= (:page page) :products) (= (:pg page) (:id product))))
 
 
+(defn find-item-by-id [items id]
+  (some #(when (= (:id %) id) %) items))
+
+
+(defn- show-error [msg]
+  [:div.flex.justify-between.items-center.bg-red-50.border.border-red-500.rounded.px-4.py-3 {:role "alert"}
+   [:p.font-bold.text-red-700 msg]
+   [:button.text-xs.px-2.py-1.ml-4.rounded.bg-red-50.hover:bg-gray-300.cursor-pointer.border.border-gray-400
+    {:on {:click [[:db/dissoc :db/product-created]]}}
+    "X"]])
+
+(defn- show-info [msg]
+  [:div.flex.justify-between.items-center.bg-blue-50.border.border-blue-500.rounded.px-4.py-3 {:role "alert"}
+   [:p.font-bold.text-blue-700 msg]
+   [:button.text-xs.px-2.py-1.ml-4.rounded.bg-blue-50.hover:bg-gray-300.cursor-pointer.border.border-gray-400
+    {:on {:click [[:db/dissoc :db/product-created]]}}
+    "X"]])
+
+
 (defn book-details [book]
   [:table.table-auto.w-full
    [:tbody
@@ -89,11 +108,11 @@
     [:div.mt-5
      (product-groups-buttons (:db/pg-config state) (:page/navigated state))]]])
 
-
-(defn new-movie []
+; TODO: Refactor to (new-product [state headers pg])
+(defn new-movie [state]
   [:div
    [:form {:on {:submit [[:dom/prevent-default]
-                         [:action/new {:pg :movies}]]}}
+                         [:action/validate {:pg :movies}]]}}
     [:table.table-auto.w-full
      [:tbody
       (for [header ["Title" "Director" "Year" "Country" "Genre" "Price"]]
@@ -108,10 +127,10 @@
       "Submit"]]]])
 
 
-(defn new-book []
+(defn new-book [state]
   [:div
    [:form {:on {:submit [[:dom/prevent-default]
-                         [:action/new {:pg :books}]]}}
+                         [:action/validate {:pg :books}]]}}
     [:table.table-auto.w-full
      [:tbody
       (for [header ["Title" "Author" "Year" "Country" "Language" "Price"]]
@@ -123,25 +142,12 @@
     [:div.flex.justify-center.mt-4
      [:button.rounded-lg.border-2.border-gray-300.px-4.py-1.m-2.hover:bg-gray-200.cursor-pointer
       {:type :submit}
-      "Submit"]]]])
+      "Submit"]]
+    (let [error (:db/product-validation-error state)
+          [k v] (first (:error error))]
+      (when error
+        (show-error (str (name k) ": " (first v)))))]])
 
-
-(defn find-item-by-id [items id]
-  (some #(when (= (:id %) id) %) items))
-
-(defn- show-error [msg]
-    [:div.flex.justify-between.items-center.bg-red-50.border.border-red-500.rounded.px-4.py-3 {:role "alert"}
-     [:p.font-bold.text-red-700 msg]
-     [:button.text-xs.px-2.py-1.ml-4.rounded.bg-red-50.hover:bg-gray-300.cursor-pointer.border.border-gray-400
-      {:on {:click [[:db/dissoc :db/product-created]]}}
-      "X"]])
-
-(defn- show-info [msg]
-  [:div.flex.justify-between.items-center.bg-blue-50.border.border-blue-500.rounded.px-4.py-3 {:role "alert"}
-   [:p.font-bold.text-blue-700 msg]
-   [:button.text-xs.px-2.py-1.ml-4.rounded.bg-blue-50.hover:bg-gray-300.cursor-pointer.border.border-gray-400
-    {:on {:click [[:db/dissoc :db/product-created]]}}
-    "X"]])
 
 
 (defn- page-content [state]
@@ -156,7 +162,7 @@
           [:div
            (show-error "Failed to create product!")]
           (when status
-            [:div 
+            [:div
              (show-info "New product created!")])))
       :products
       (let [table (products-table (get-in state [:db/data (:pg page)]) (:pg page))]
@@ -171,8 +177,8 @@
         table)
       :new
       (let [table (case (:pg page)
-                    :books (new-book)
-                    :movies (new-movie)
+                    :books (new-book state)
+                    :movies (new-movie state)
                     [:div])]
         table)
       ; We need this for home page.
