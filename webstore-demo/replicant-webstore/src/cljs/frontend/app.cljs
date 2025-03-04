@@ -130,7 +130,7 @@
             :books (m/validate f-schema/book-without-id product)
             :movies (m/validate f-schema/movie-without-id product))]
       (if validation-ok
-        (dispatcher nil [[:action/new {:pg pg}]])
+        (dispatcher nil [[:db/dissoc :db/product-validation-error][:action/new {:pg pg}]])
         (let [error (case pg
                       :books (me/humanize (m/explain f-schema/book-without-id product))
                       :movies (me/humanize (m/explain f-schema/movie-without-id product)))]

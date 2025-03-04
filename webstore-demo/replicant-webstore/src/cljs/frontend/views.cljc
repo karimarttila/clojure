@@ -11,20 +11,25 @@
   (some #(when (= (:id %) id) %) items))
 
 
-(defn- show-error [msg]
+(defn- show-error [msg button? dissoc-key]
   [:div.flex.justify-between.items-center.bg-red-50.border.border-red-500.rounded.px-4.py-3 {:role "alert"}
    [:p.font-bold.text-red-700 msg]
-   [:button.text-xs.px-2.py-1.ml-4.rounded.bg-red-50.hover:bg-gray-300.cursor-pointer.border.border-gray-400
-    {:on {:click [[:db/dissoc :db/product-created]]}}
-    "X"]])
+   (when button?
+     [:button.text-xs.px-2.py-1.ml-4.rounded.bg-red-50.hover:bg-gray-300.cursor-pointer.border.border-gray-400
+      {:on {:click [[:db/dissoc dissoc-key]]}}
+      "X"])])
 
-(defn- show-info [msg]
+(defn- show-info [msg button? dissoc-key]
   [:div.flex.justify-between.items-center.bg-blue-50.border.border-blue-500.rounded.px-4.py-3 {:role "alert"}
    [:p.font-bold.text-blue-700 msg]
-   [:button.text-xs.px-2.py-1.ml-4.rounded.bg-blue-50.hover:bg-gray-300.cursor-pointer.border.border-gray-400
-    {:on {:click [[:db/dissoc :db/product-created]]}}
-    "X"]])
+   (when button?
+     [:button.text-xs.px-2.py-1.ml-4.rounded.bg-blue-50.hover:bg-gray-300.cursor-pointer.border.border-gray-400
+      {:on {:click [[:db/dissoc dissoc-key]]}}
+      "X"])])
 
+
+; TODO: We could refactor book-details and movie-details
+; to product-details, and give a list of [header key] as param.
 
 (defn book-details [book]
   [:table.table-auto.w-full
@@ -108,32 +113,14 @@
     [:div.mt-5
      (product-groups-buttons (:db/pg-config state) (:page/navigated state))]]])
 
-; TODO: Refactor to (new-product [state headers pg])
-(defn new-movie [state]
+
+(defn new-product [state pg headers]
   [:div
    [:form {:on {:submit [[:dom/prevent-default]
-                         [:action/validate {:pg :movies}]]}}
+                         [:action/validate {:pg pg}]]}}
     [:table.table-auto.w-full
      [:tbody
-      (for [header ["Title" "Director" "Year" "Country" "Genre" "Price"]]
-        (let [input-tag (keyword (str "input#" (cstring/lower-case header)))
-              db-key-on (keyword (str (cstring/lower-case header)))]
-          [:tr
-           [:td.border.px-4.py-2 header]
-           [:td.border.px-4.py-2 [input-tag {:on {:input [[:db/assoc-in [:db/new-product db-key-on] :event/target.value]]}}]]]))]]
-    [:div.flex.justify-center.mt-4
-     [:button.rounded-lg.border-2.border-gray-300.px-4.py-1.m-2.hover:bg-gray-200.cursor-pointer
-      {:type :submit}
-      "Submit"]]]])
-
-
-(defn new-book [state]
-  [:div
-   [:form {:on {:submit [[:dom/prevent-default]
-                         [:action/validate {:pg :books}]]}}
-    [:table.table-auto.w-full
-     [:tbody
-      (for [header ["Title" "Author" "Year" "Country" "Language" "Price"]]
+      (for [header headers]
         (let [input-tag (keyword (str "input#" (cstring/lower-case header)))
               db-key-on (keyword (str (cstring/lower-case header)))]
           [:tr
@@ -146,8 +133,7 @@
     (let [error (:db/product-validation-error state)
           [k v] (first (:error error))]
       (when error
-        (show-error (str (name k) ": " (first v)))))]])
-
+        (show-error (str (name k) ": " (first v)) false nil)))]])
 
 
 (defn- page-content [state]
@@ -160,10 +146,10 @@
             error (:error status)]
         (if error
           [:div
-           (show-error "Failed to create product!")]
+           (show-error "Failed to create product!" true :db/product-created)]
           (when status
             [:div
-             (show-info "New product created!")])))
+             (show-info "New product created!" true :db/product-created)])))
       :products
       (let [table (products-table (get-in state [:db/data (:pg page)]) (:pg page))]
         table)
@@ -177,8 +163,8 @@
         table)
       :new
       (let [table (case (:pg page)
-                    :books (new-book state)
-                    :movies (new-movie state)
+                    :books (new-product state :books ["Title" "Author" "Year" "Country" "Language" "Price"])
+                    :movies (new-product state :movies ["Title" "Director" "Year" "Country" "Genre" "Price"])
                     [:div])]
         table)
       ; We need this for home page.
