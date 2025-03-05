@@ -119,23 +119,22 @@
 
 
 (defn action-validate-new-product [{:keys [pg state]}]
-  (when goog.DEBUG (f-util/clog "action-validate-new-product *********************************************, pg: " pg))
+  (when goog.DEBUG (f-util/clog "action-validate-new-product, pg: " pg))
   (let [pg-c (f-util/get-pg-config-by-id pg (:db/pg-config state))
         pg-id (:pg-id pg-c) ; This is the number that backend uses for product group.
         product (get-product-from-store state pg-id)
-        _ (when goog.DEBUG (f-util/clog "product: *********************************************, product: " product))
-        dispatcher (get-dispatcher)]
-    (let [validation-ok
-          (case pg
-            :books (m/validate f-schema/book-without-id product)
-            :movies (m/validate f-schema/movie-without-id product))]
-      (if validation-ok
-        (dispatcher nil [[:db/dissoc :db/product-validation-error][:action/new {:pg pg}]])
-        (let [error (case pg
-                      :books (me/humanize (m/explain f-schema/book-without-id product))
-                      :movies (me/humanize (m/explain f-schema/movie-without-id product)))]
-          (dispatcher nil [[:db/assoc :db/product-validation-error {:error error
-                                                                    :pg pg}]]))))))
+        dispatcher (get-dispatcher)
+        validation-ok
+        (case pg
+          :books (m/validate f-schema/book-without-id product)
+          :movies (m/validate f-schema/movie-without-id product))]
+    (if validation-ok
+      (dispatcher nil [[:db/dissoc :db/product-validation-error] [:action/new {:pg pg}]])
+      (let [error (case pg
+                    :books (me/humanize (m/explain f-schema/book-without-id product))
+                    :movies (me/humanize (m/explain f-schema/movie-without-id product)))]
+        (dispatcher nil [[:db/assoc :db/product-validation-error {:error error
+                                                                  :pg pg}]])))))
 
 
 (defn navigated-new-product-page [{:keys [pg _state]}]
