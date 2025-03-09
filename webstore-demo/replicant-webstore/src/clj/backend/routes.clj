@@ -50,6 +50,29 @@
           :class (.getName (.getClass e))}})
 
 
+(defn portfolio-js-file []
+  (-> (io/file "target/dev/public/portfolio/manifest.edn")
+      slurp
+      edn/read-string
+      first
+      :output-name))
+
+
+;; Open portfolio in http://localhost:9333/portfolio/index
+(defn portfolio []
+  (hiccup/html {:mode :html}
+               (hiccup/raw "<!DOCTYPE html>\n")
+               [:html
+                {:lang "en"}
+                [:head
+                 [:title "Portfolio Design Area"]
+                 [:meta {:charset "utf-8"}]
+                 [:link {:rel "icon" :href "/assets/favicon.ico" :type "image/x-icon"}]]
+                [:body
+                 [:div#app]
+                 [:script {:type "text/javascript" :src (str "/portfolio/" (portfolio-js-file))}]]]))
+
+
 (defn main-js-file []
   (-> (or (io/resource "public/js/manifest.edn")
           (io/file "target/dev/public/js/manifest.edn"))
@@ -78,43 +101,49 @@
                  [:script {:type "text/javascript" :src (str "/js/" (main-js-file))}]]]))
 
 
+
 (defn app [env]
   (ring/ring-handler
    (ring/router
-    ["/api"
-     ["/products"
-      ["/books"
+    [""
+     ["/portfolio"
+      ["/index"
        [""
-        {:summary "Books api"
-         :get {:handler #'products/get-books
-               :responses {200 {:body [:sequential schema/book]}}}
-         :post {:handler #'products/create-book
+        {:get {:handler (fn [_req] (resp/ok (str (portfolio))))}}]]]
+     ["/api"
+      ["/products"
+       ["/books"
+        [""
+         {:summary "Books api"
+          :get {:handler #'products/get-books
+                :responses {200 {:body [:sequential schema/book]}}}
+          :post {:handler #'products/create-book
                 ; TODO
-                :responses {200 {:body schema/book}}
-                :parameters {:body schema/book-without-id}
+                 :responses {200 {:body schema/book}}
+                 :parameters {:body schema/book-without-id}
                 ; :responses {200 {:body schema/any-schema}}
                 ; :parameters {:body schema/any-schema} 
-                }}]
-       ["/:id"
-        {:parameters {:path [:map [:id :int]]}
-         :get {:responses {200 {:body schema/book}}
-               :handler #'products/get-book}}]]
-      ["/movies"
-       [""
-        {:summary "Movies api"
-         :get {:handler #'products/get-movies
-               :responses {200 {:body [:sequential schema/movie]}}}
-         :post {:handler #'products/create-movie
-                :responses {200 {:body schema/movie}}
-                :parameters {:body schema/movie-without-id}}}]
-       ["/:id"
-        {:parameters {:path [:map [:id :int]]}
-         :get {:responses {200 {:body schema/movie}}
-               :handler #'products/get-movie}}]]]
-     ["/swagger.json" {:no-doc true
-                       :get (swagger/create-swagger-handler)}]
-     ["/docs/*" {:no-doc true
-                 :get (swagger-ui/create-swagger-ui-handler {:url "/api/swagger.json"})}]]
+                 }}]
+        ["/:id"
+         {:parameters {:path [:map [:id :int]]}
+          :get {:responses {200 {:body schema/book}}
+                :handler #'products/get-book}}]]
+       ["/movies"
+        [""
+         {:summary "Movies api"
+          :get {:handler #'products/get-movies
+                :responses {200 {:body [:sequential schema/movie]}}}
+          :post {:handler #'products/create-movie
+                 :responses {200 {:body schema/movie}}
+                 :parameters {:body schema/movie-without-id}}}]
+        ["/:id"
+         {:parameters {:path [:map [:id :int]]}
+          :get {:responses {200 {:body schema/movie}}
+                :handler #'products/get-movie}}]]]
+      ["/swagger.json" {:no-doc true
+                        :get (swagger/create-swagger-handler)}]
+      ["/docs/*" {:no-doc true
+                  :get (swagger-ui/create-swagger-ui-handler {:url "/api/swagger.json"})}]]]
     {:data {:muuntaja muuntaja-instance
             :coercion malli.coercion/coercion
             :middleware [muuntaja/format-middleware
@@ -125,7 +154,7 @@
                          [wrap-database-middleware (:db env)]]}})
 
 
-    ;; Default handler - handle resources (js files), index.html and 404 for API endpoints
+    ;; Default handler - handle resources (js files), index.html anportfoliod 404 for API endpoints
    (ring/routes
     (ring/create-resource-handler {:path ""
                                    :root "public"})
@@ -134,7 +163,9 @@
       [""
        ["/api/*" {:handler (fn [_req]
                              (resp/not-found))}]
-           ;; Return index.html for any non-API routes for History API routing
+       ["/portfolio/*" {:handler (fn [_req]
+                                   (resp/not-found))}]
+       ;; Return index.html for any non-API routes for History API routing
        ["/*" {:get {:handler (fn [_req] (resp/ok (str (index))))}}]]
       {:conflicts nil})))))
 

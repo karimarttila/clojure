@@ -1,12 +1,12 @@
 {:deps {:aliases [:shadow-cljs :frontend]}
  ; Here you can find the Shadow cljs server http page.
  #_#_:http {:port 9030
-        :host "localhost"}
+            :host "localhost"}
  ; Here you can find the development frontend server http page.
  ; Let's comment it since we want to have the development server
  ; connect to port where backend is servinging frontend.
- :dev-http {9080 "public"
-            9081 "target/browser-test"}
+ #_#_:dev-http {9080 "public"
+                9081 "target/browser-test"}
  :builds {:app
           {:target :browser
         ;;   :module-hash-names true
@@ -16,6 +16,11 @@
            :modules {:main {:entries [frontend.app]
                             :init-fn frontend.app/init!}}
            :release {:output-dir "target/release/public/js"}}
+
+          :portfolio
+          {:target :browser
+           :modules {:main {:init-fn frontend.scenes/main}}
+           :dev {:output-dir "target/dev/public/portfolio"}}
 
         ;;   :test-browser
         ;;   {:target :browser-test

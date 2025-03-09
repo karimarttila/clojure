@@ -3,8 +3,13 @@
 
 ;; Initialize our frontend development environment:
 ; Start shadow-cljs server and watch.
-(do (require 'shadow.cljs.devtools.server) (shadow.cljs.devtools.server/start!))
-(do (require 'shadow.cljs.devtools.api) (shadow.cljs.devtools.api/watch :app))
+(do (require 'shadow.cljs.devtools.server)
+    (shadow.cljs.devtools.server/start!))
+(do
+  (require 'shadow.cljs.devtools.api)
+  (shadow.cljs.devtools.api/watch :app)
+  (shadow.cljs.devtools.api/watch :portfolio))
+
 ; Next hard reset browser: http://localhost:8333/struct/
 ; Note: you cannot do this with http call, since it calls the backend, 
 ; and you need to connect the _browser_ Javascript engine with the cljs repl.
