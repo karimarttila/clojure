@@ -12,20 +12,24 @@
 
 
 (defn- show-error [msg button? dissoc-key]
-  [:div.flex.justify-between.items-center.bg-red-50.border.border-red-500.rounded.px-4.py-3 {:role "alert"}
-   [:p.font-bold.text-red-700 msg]
-   (when button?
-     [:button.text-xs.px-2.py-1.ml-4.rounded.bg-red-50.hover:bg-gray-300.cursor-pointer.border.border-gray-400
-      {:on {:click [[:db/dissoc dissoc-key]]}}
-      "X"])])
+  [:div.inline-block.bg-red-50.border.border-red-500.rounded.px-4.py-3 {:role "alert" :style {:max-width "fit-content"}}
+   [:div.flex.items-center
+    [:p.font-bold.text-red-700 msg]
+    (when button?
+      [:button.text-xs.px-2.py-1.ml-4.rounded.bg-red-50.hover:bg-gray-300.cursor-pointer.border.border-gray-400
+       {:on {:click [[:db/dissoc dissoc-key]]}}
+       "X"])]])
+
 
 (defn- show-info [msg button? dissoc-key]
-  [:div.flex.justify-between.items-center.bg-blue-50.border.border-blue-500.rounded.px-4.py-3 {:role "alert"}
-   [:p.font-bold.text-blue-700 msg]
-   (when button?
-     [:button.text-xs.px-2.py-1.ml-4.rounded.bg-blue-50.hover:bg-gray-300.cursor-pointer.border.border-gray-400
-      {:on {:click [[:db/dissoc dissoc-key]]}}
-      "X"])])
+  [:div.inline-block.bg-blue-50.border.border-blue-500.rounded.px-4.py-3 {:role "alert" :style {:max-width "fit-content"}}
+   [:div.flex.items-center
+    [:p.font-bold.text-blue-700 msg]
+    (when button?
+      [:button.text-xs.px-2.py-1.ml-4.rounded.bg-blue-50.hover:bg-gray-300.cursor-pointer.border.border-gray-400
+       {:on {:click [[:db/dissoc dissoc-key]]}}
+       "X"])]])
+
 
 
 ; TODO: We could refactor book-details and movie-details
