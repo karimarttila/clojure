@@ -287,7 +287,20 @@ HTTP_PORT=9339 java -cp target/app.jar clojure.main -m backend.main
 
 ## Create a Docker Image
 
-TODO
+```bash
+docker build -t webstore:latest .
+docker run -p 9999:9333 webstore:latest
+```
+
+... and open browser in `http://localhost:9999`.
+
+If you need to debug the container:
+
+```bash
+docker ps -a  # => Check the Container id, below "ab"
+docker exec -it ab /bin/bash
+```
+
 
 ## Tapping to the data
 

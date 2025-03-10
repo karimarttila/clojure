@@ -2,6 +2,9 @@
   (:require [clojure.string :as cstring]
             #_[frontend.util :as f-util]))
 
+;; NOTE: You cannot use goog.DEBUG in the cljc file!
+;; For debugging sessions, remove comment of the logging calls, and after debuggins session comment out again.
+
 
 (defn products-page? [page product]
   (and (= (:page page) :products) (= (:pg page) (:id product))))
@@ -142,8 +145,8 @@
 
 (defn- page-content [state]
   (let [page (:page/navigated state)]
-    ;; (when goog.DEBUG (f-util/clog "page-content, page: " page))
-    ;; (when goog.DEBUG (f-util/clog "page-content, state: " state))
+    ; (f-util/clog "page-content, page: " page)
+    ; (f-util/clog "page-content, state: " state)
     (case (:page page)
       :home
       (let [status (:db/product-created state)
@@ -176,7 +179,7 @@
 
 
 (defn view [state]
-  ;(when goog.DEBUG (f-util/clog "view, state: " state))
+  ;(f-util/clog "view, state: " state)
   [:div.flex.h-screen
    [:div.flex-grow.p-4
     [:div.flex.flex-col.items-center.min-h-screen.mt-10
