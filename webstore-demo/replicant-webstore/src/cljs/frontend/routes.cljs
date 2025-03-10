@@ -22,9 +22,9 @@
 
 #_{:clj-kondo/ignore [:unused-binding]}
 (defn- get-route-actions [{:keys [data path-params] :as all}]
-  ;(f-util/clog "get-route-actions, all: " all)
-  ;(f-util/clog "get-route-actions, data: " data)
-  ;(f-util/clog "get-route-actions, path-params: " path-params)
+;;   (when goog.DEBUG (f-util/clog "get-route-actions, all: " all))
+;;   (when goog.DEBUG (f-util/clog "get-route-actions, data: " data))
+;;   (when goog.DEBUG (f-util/clog "get-route-actions, path-params: " path-params))
   ;; We see app.cljs => event-handler.
   (case (:name data)
     :route/home [[:route/home]]
@@ -38,10 +38,10 @@
 
 
 (defn start! [routes dispatch!]
-  ;(f-util/clog "routes.start!")
+  ;; (when goog.DEBUG (f-util/clog "routes.start!"))
   (rfe/start! (rf/router routes)
               (fn do-routing [m]
-                ;(f-util/clog "routes.do-routing, m: " m)
+                ;; (when goog.DEBUG (f-util/clog "routes.do-routing, m: " m))
                 (dispatch! nil (get-route-actions m)))
               {:use-fragment true}))
 

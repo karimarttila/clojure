@@ -9,7 +9,7 @@
 
 
 (defn fetch [dispatcher action]
-  (f-util/clog "fetch, action: " action)
+  (when goog.DEBUG (f-util/clog "fetch, action: " action))
   (let [pg (:pg action)
         url (str "/api" (get-in action [:query :api]))]
     (go (try
@@ -26,7 +26,7 @@
 
 
 (defn post [dispatcher action]
-  (f-util/clog "post, action: " action)
+  (when goog.DEBUG (f-util/clog "post, action: " action))
   (let [product (:product action)
         pg (:pg action)
         url (str "/api" (get-in action [:post :api]))]

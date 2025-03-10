@@ -15,7 +15,7 @@
            :output-dir "target/dev/public/js"
            :modules {:main {:entries [frontend.app]
                             :init-fn frontend.app/init!}}
-           :release {:output-dir "target/release/public/js"}}
+           :release {:output-dir "target/prod/public/js"}}
 
           :portfolio
           {:target :browser

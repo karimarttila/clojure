@@ -142,8 +142,8 @@
 
 (defn- page-content [state]
   (let [page (:page/navigated state)]
-    ;(f-util/clog "page-content, page: " page)
-    ;(f-util/clog "page-content, state: " state)
+    ;; (when goog.DEBUG (f-util/clog "page-content, page: " page))
+    ;; (when goog.DEBUG (f-util/clog "page-content, state: " state))
     (case (:page page)
       :home
       (let [status (:db/product-created state)
@@ -176,7 +176,7 @@
 
 
 (defn view [state]
-  ;(f-util/clog "view, state: " state)
+  ;(when goog.DEBUG (f-util/clog "view, state: " state))
   [:div.flex.h-screen
    [:div.flex-grow.p-4
     [:div.flex.flex-col.items-center.min-h-screen.mt-10

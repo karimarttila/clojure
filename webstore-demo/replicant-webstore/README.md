@@ -14,6 +14,7 @@
     - [Using Calva: Jack-in](#using-calva-jack-in)
     - [Some Extra Utilities](#some-extra-utilities)
   - [Building the Fullstack Application](#building-the-fullstack-application)
+  - [Create a Docker Image](#create-a-docker-image)
   - [Tapping to the data](#tapping-to-the-data)
     - [Gadget](#gadget)
     - [Portal](#portal)
@@ -276,14 +277,17 @@ Metosin example provided a good solution to building the application:
 bb build
 ```
 
-Run the built app:
+Run the built app jar to test it:
 
 ```bash
-java -cp target/app.jar clojure.main -m backend.main
+HTTP_PORT=9339 java -cp target/app.jar clojure.main -m backend.main
 ```
 
-... and open browser in `http://localhost:9333`.
+... and open browser in `http://localhost:9339`.
 
+## Create a Docker Image
+
+TODO
 
 ## Tapping to the data
 

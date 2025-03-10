@@ -230,40 +230,41 @@
 
 
 (defn ^:export init! []
-  (inspector/inspect "App state" !state)
+  (when goog.DEBUG
+    (inspector/inspect "App state" !state))
   (r/set-dispatch! event-handler)
   (swap! !dispatcher assoc :dispatcher event-handler)
   (f-routes/start! f-routes/routes event-handler)
   (start!))
 
 
-(comment
+;; (comment
 
-  (+ 1 1)
-  (js/console.log "I am connected to the browser!")
-  ;(js/alert "I am connected to the browser!")
+;;   (+ 1 1)
+;;   (js/console.log "I am connected to the browser!")
+;;   ;(js/alert "I am connected to the browser!")
 
-  ;; Example how to tap to the data using djblue Portal: 
-  (require '[portal.web :as p])
-  ; NOTE: This asks a popup window, you have to accept it in the browser!!! 
-  (p/open)
-  ; Now you should have a new pop-up browser window...
-  (add-tap #'p/submit)
-  (tap> :hello)
-  (tap> (get-in @!state [:db/data :books]))
-  ;; You should now see a vector of book maps in the portal window.
+;;   ;; Example how to tap to the data using djblue Portal: 
+;;   (require '[portal.web :as p])
+;;   ; NOTE: This asks a popup window, you have to accept it in the browser!!! 
+;;   (p/open)
+;;   ; Now you should have a new pop-up browser window...
+;;   (add-tap #'p/submit)
+;;   (tap> :hello)
+;;   (tap> (get-in @!state [:db/data :books]))
+;;   ;; You should now see a vector of book maps in the portal window.
 
-  (def my-book {:product-group 1, :title "Moby Dick", :price 45.35, :author "Herman Melville", :year 1851, :country "United States", :language "English"})
-  (def my-book {:XXX 1, :title "Moby Dick", :price 45.35, :author "Herman Melville", :year 1851, :country "United States", :language "English"})
+;;   (def my-book {:product-group 1, :title "Moby Dick", :price 45.35, :author "Herman Melville", :year 1851, :country "United States", :language "English"})
+;;   (def my-book {:XXX 1, :title "Moby Dick", :price 45.35, :author "Herman Melville", :year 1851, :country "United States", :language "English"})
 
-  (m/validate f-schema/book-without-id my-book)
-  (def my-error
-    (let [validation-result (m/validate f-schema/book-without-id my-book)]
-      (if validation-result
-        {:ok "ok"}
-        (me/humanize (m/explain f-schema/book-without-id my-book)))))
-  ;;=> "Validation failed: {:product-group [\"missing required key\"]}"
+;;   (m/validate f-schema/book-without-id my-book)
+;;   (def my-error
+;;     (let [validation-result (m/validate f-schema/book-without-id my-book)]
+;;       (if validation-result
+;;         {:ok "ok"}
+;;         (me/humanize (m/explain f-schema/book-without-id my-book)))))
+;;   ;;=> "Validation failed: {:product-group [\"missing required key\"]}"
 
-  my-error
-  ;;=> {:product-group ["missing required key"]}
-  )
+;;   my-error
+;;   ;;=> {:product-group ["missing required key"]}
+;;   )

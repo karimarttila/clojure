@@ -73,8 +73,8 @@
                  [:script {:type "text/javascript" :src (str "/portfolio/" (portfolio-js-file))}]]]))
 
 
-(defn main-js-file []
-  (-> (or (io/resource "public/js/manifest.edn")
+(defn main-js-file [] 
+  (-> (or (io/resource "public/js/manifest.edn")  ;; This is where it is in the uberjar.
           (io/file "target/dev/public/js/manifest.edn"))
       slurp
       edn/read-string
@@ -177,38 +177,38 @@
   (log/info "Shutting down web routes"))
 
 
-(comment
-  ; Remember to Integrant/reset first!
-  (str (index))
-  ;;=> "<!DOCTYPE html><html lang=\"en\"><head><title>Example</title><meta charset=\"utf-8\"><meta content=\"width=device-width, initial-scale=1, shrink-to-fit=no\" name=\"viewport\"></head><body><div id=\"app\"><div class=\"loading\"><h1>Loading, please wait...</h1></div></div><script src=\"/js/main.js\" type=\"text/javascript\"></script></body></html>"
-  (main-js-file)
-  ;;=> "main.js"
+;; (comment
+;;   ; Remember to Integrant/reset first!
+;;   (str (index))
+;;   ;;=> "<!DOCTYPE html><html lang=\"en\"><head><title>Example</title><meta charset=\"utf-8\"><meta content=\"width=device-width, initial-scale=1, shrink-to-fit=no\" name=\"viewport\"></head><body><div id=\"app\"><div class=\"loading\"><h1>Loading, please wait...</h1></div></div><script src=\"/js/main.js\" type=\"text/javascript\"></script></body></html>"
+;;   (main-js-file)
+;;   ;;=> "main.js"
 
-  (do (require '[clj-http.client :as client])
-      (client/get "http://localhost:9333/api/products/books"))
-  ;;=> {:cached nil,
-  ;;...
-  ;;    :status 200,
-  ;;    :body
-  ;;    "[{\"id\":2001,\"product-group\":1,\"title\":\"Kalevala\",\"price\":3.95,\"author\":\"Elias Lönnrot\",\"year\":1835,\"country\":\"Finland\",\"language\":\"Finnish\"}]",
+;;   (do (require '[clj-http.client :as client])
+;;       (client/get "http://localhost:9333/api/products/books"))
+;;   ;;=> {:cached nil,
+;;   ;;...
+;;   ;;    :status 200,
+;;   ;;    :body
+;;   ;;    "[{\"id\":2001,\"product-group\":1,\"title\":\"Kalevala\",\"price\":3.95,\"author\":\"Elias Lönnrot\",\"year\":1835,\"country\":\"Finland\",\"language\":\"Finnish\"}]",
 
-  ;; If error, see it using *e:
-  *e
+;;   ;; If error, see it using *e:
+;;   *e
 
-  ;; Example how to tap to the data using djblue Portal:
-  (require '[jsonista.core :as json])
-  (defn json-to-edn [json-str]
-    (json/read-value json-str (json/object-mapper {:decode-key-fn keyword})))
-  (json-to-edn "{\"name\": \"Book\", \"price\": 29.99}")
+;;   ;; Example how to tap to the data using djblue Portal:
+;;   (require '[jsonista.core :as json])
+;;   (defn json-to-edn [json-str]
+;;     (json/read-value json-str (json/object-mapper {:decode-key-fn keyword})))
+;;   (json-to-edn "{\"name\": \"Book\", \"price\": 29.99}")
 
-  (:body (client/get "http://localhost:9333/api/products/books"))
-  ;; Tap to the data:
-  ; https://github.com/djblue/portal
-  (require '[portal.api :as p])
-  ; This should open the Portal window.
-  (def p (p/open))
-  (add-tap #'p/submit)
-  (tap> :hello)
-  (tap> (json-to-edn (:body (client/get "http://localhost:9333/api/products/books"))))
-  ;; You should now see a vector of book maps in the portal window.
-  )
+;;   (:body (client/get "http://localhost:9333/api/products/books"))
+;;   ;; Tap to the data:
+;;   ; https://github.com/djblue/portal
+;;   (require '[portal.api :as p])
+;;   ; This should open the Portal window.
+;;   (def p (p/open))
+;;   (add-tap #'p/submit)
+;;   (tap> :hello)
+;;   (tap> (json-to-edn (:body (client/get "http://localhost:9333/api/products/books"))))
+;;   ;; You should now see a vector of book maps in the portal window.
+;;   )
