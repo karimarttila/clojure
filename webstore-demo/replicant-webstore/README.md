@@ -288,6 +288,7 @@ HTTP_PORT=9339 java -cp target/app.jar clojure.main -m backend.main
 ## Create a Docker Image
 
 ```bash
+bb build
 docker build -t webstore:latest .
 docker run -p 9999:9333 webstore:latest
 ```

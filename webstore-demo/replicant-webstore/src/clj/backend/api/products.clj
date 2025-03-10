@@ -8,6 +8,10 @@
 ;; Then see the handler get-books and the rich comment.
 (def my-atom (atom {}))
 
+
+(defn throw-test-exception []
+  (throw (Exception. "TEST Exception")))
+
 (defn get-books [req]
   (let [db (:db req)
         ;_ (swap! my-atom assoc :req req)
