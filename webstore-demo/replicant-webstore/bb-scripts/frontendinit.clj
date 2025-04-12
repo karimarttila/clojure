@@ -10,7 +10,7 @@
   (shadow.cljs.devtools.api/watch :app)
   (shadow.cljs.devtools.api/watch :portfolio))
 
-; Next hard reset browser: http://localhost:8333/struct/
+; Next hard reset browser: http://localhost:8331/struct/
 ; Note: you cannot do this with http call, since it calls the backend, 
 ; and you need to connect the _browser_ Javascript engine with the cljs repl.
 
