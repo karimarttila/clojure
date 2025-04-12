@@ -234,7 +234,7 @@ bb frontend-repl
 - VSCode command:
 - `Calva: Connect to a Running REPL in the Project`
 - Project type: `backend + frontend`
-- In browser hard refresh `http://localhost:8331/struct/` => This connects the frontend repl to the browser javascript engine (in the `frontendinit.clj` we already did the Integrant `(go)`, which started to serve the frontend).
+- In browser hard refresh `http://localhost:8331/` => This connects the frontend repl to the browser javascript engine (in the `frontendinit.clj` we already did the Integrant `(go)`, which started to serve the frontend).
 - You should be good to go now: You have both backend REPL and frontend REPL connected to your VSCode editor.
 - Test backend REPL: In the `clj` file try: `(+ 1 1)`
 - Test frontend REPL: In the `cljs` file try: `(js/console.log "I am connected to the browser!")`
