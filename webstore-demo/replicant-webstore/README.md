@@ -28,6 +28,8 @@
 
 I have implemented various webstore exercises (e.g. [Clojure Re-Frame Exercise](https://www.karimarttila.fi/clojure/2020/10/15/clojure-re-frame-exercise.html)) to learn how to use Clojure to implement both the backend and frontend. This new `store2` exercise is just one of them. In this new exercise I wanted to learn how to implement the frontend using [replicant](https://github.com/cjohansen/replicant) library, which is a thin HTML rendering layer for ClojureScript. I wanted to see how `replicant` compares to [Reagent](https://reagent-project.github.io/) that I have used previously with Clojurescript.
 
+**NOTE!** I have explained the tools I have used in this exercise in my blog post: [Clojure Power Tools Part 3](https://www.karimarttila.fi/clojure/2025/04/20/clojure-power-tools-part-3.html).
+
 # Example Projects
 
 I used mostly these example projects in my exercise:
@@ -399,13 +401,9 @@ Add this to `user.clj`
 (require '[snitch.core :refer [defn* defmethod* *fn *let]])
 ```
 
-TODO: Explain how to use it.
-
 ## Hashp
 
-TODO: Explain how to use it.
-
-
+Read the blog post...
 
 
 # Some To-dos
