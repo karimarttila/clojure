@@ -50,14 +50,15 @@
 
 
 (defmethod ig/init-key :db/tsv [_ {:keys [path data] :as db-opts}]
-  (log/infof "Reading tsv data, config is %s" (pr-str db-opts))
+   (log/infof "Reading tsv data, config is %s" (pr-str db-opts))
   (let [books (read-datafile (str path "/" (:books data)) book-line book-str)
         movies (read-datafile (str path "/" (:movies data)) movie-line movie-str)]
+
     (atom {:books books
            :movies movies})))
 
-
 (comment
+
   (require 'user)
 
   (first (read-datafile "data/books.tsv" book-line book-str))
@@ -65,11 +66,14 @@
   (->> (user/env)
        keys)
   ;;=> (:db/tsv :web/routes :adapter/jetty)
+
+  (keys (deref (:db/tsv (user/env))))
+  ;;=> (:books :movies)
+
   (->> (user/env)
        :db/tsv
        ; Deref atom
        deref
-       :db
        :movies
        count)
   ;;=> 169
@@ -77,24 +81,22 @@
        :db/tsv
        ; Deref atom
        deref
-       :db
        :movies
        first)
-;;=> {:id "1",
-;;    :product-group "2",
-;;    :title "Juurakon Hulda",
-;;    :price "82.92",
-;;    :director "Valentin Vaala",
-;;    :year "1937",
-;;    :country "Finland",
-;;    :genre "Drama"}
+  ;;=> {:id 1,
+  ;;    :product-group 2,
+  ;;    :title "Juurakon Hulda",
+  ;;    :price 82.92,
+  ;;    :director "Valentin Vaala",
+  ;;    :year 1937,
+  ;;    :country "Finland",
+  ;;    :genre "Drama"}
 
 
   (->> (user/env)
        :db/tsv
          ; Deref atom
        deref
-       :db
        :movies
        first)
 

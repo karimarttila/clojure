@@ -15,10 +15,13 @@
   - [Some Extra Utilities](#some-extra-utilities)
 - [Building the Fullstack Application](#building-the-fullstack-application)
 - [Create a Docker Image](#create-a-docker-image)
-- [Tapping to the data](#tapping-to-the-data)
+- [Development Tools](#development-tools)
+  - [Personal Profile Deps](#personal-profile-deps)
   - [Gadget](#gadget)
   - [Portal](#portal)
-- [TODO](#todo)
+  - [Snitch](#snitch)
+  - [Hashp](#hashp)
+- [Some To-dos](#some-to-dos)
 
 
 # Introduction
@@ -303,7 +306,39 @@ docker exec -it ab /bin/bash
 ```
 
 
-# Tapping to the data
+# Development Tools
+
+## Personal Profile Deps
+
+This is my current `~/.clojure/deps.edn` file:
+
+
+```clojure
+
+{:aliases {:kari {:extra-paths ["scratch"]
+                  :extra-deps {; NOTE: hashp 0.2.1 sci print bug.
+                               hashp/hashp {:mvn/version "0.2.2"}
+                               org.clojars.abhinav/snitch {:mvn/version "0.1.16"}
+                               com.gfredericks/debug-repl {:mvn/version "0.0.12"}
+                               djblue/portal {:mvn/version "0.58.5"}}}
+
+           :reveal {:extra-deps {vlaaad/reveal {:mvn/version "1.3.284"}}
+                    :ns-default vlaaad.reveal
+                    :exec-fn repl}
+
+           :outdated {;; Note that it is `:deps`, not `:extra-deps`
+                      :deps {com.github.liquidz/antq {:mvn/version "2.11.1269"}}
+                      :main-opts ["-m" "antq.core"]}}}
+```                      
+
+I use these tools quite often and therefore keep them in my personal profile *kari*.
+
+I then add my *kari* profile to scripts I use to start REPL in development, like this ([backendinit.clj](./bb-scripts/backendinit.clj)):
+
+```clojure
+:backend-repl-command ["clojure -M:dev:backend:frontend:shadow-cljs:calva-external-repl:test:kari -i bb-scripts/backendinit.clj -m nrepl.cmdline --middleware \"[cider.nrepl/cider-middleware,shadow.cljs.devtools.server.nrepl/middleware]\""]
+```
+
 
 ## Gadget
 
@@ -355,7 +390,24 @@ In the Clojurescript side, in [app.cljs](./src/cljs/frontend/app.cljs):
   ;; You should now see a vector of book maps in the portal window.
 ```
 
+## Snitch
 
-# TODO
+Add this to `user.clj`
+
+```clojure
+;; https://github.com/AbhinavOmprakash/snitch
+(require '[snitch.core :refer [defn* defmethod* *fn *let]])
+```
+
+TODO: Explain how to use it.
+
+## Hashp
+
+TODO: Explain how to use it.
+
+
+
+
+# Some To-dos
 
 - Where to find some off-the-self table component, with filterable / sortable headers, and page-buttons (e.g. `<- page 1/3 ->`, i.e. buttons `<-` and `->` move table view one page previous/next)?

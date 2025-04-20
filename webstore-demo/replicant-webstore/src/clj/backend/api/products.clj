@@ -13,13 +13,16 @@
   (throw (Exception. "TEST Exception")))
 
 (defn get-books [req]
-  (let [db (:db req)
+   (let [db (:db req)
         ;_ (swap! my-atom assoc :req req)
         ;; NOTE (2/3): Open these two comments to see the db.
         ; _ (println @db)
         ; _ (swap! my-atom assoc :db @db)
-        res (:books @db)]
-    (resp/ok res)))
+         res (:books @db)]
+
+      (resp/ok res)))
+
+
 
 ;; (comment
 
@@ -57,9 +60,17 @@
 
 
 (defn get-movies [req]
+;;  #dbg
   (let [db (:db req)
-        res (:movies @db)]
+        res (:movies @db)] 
     (resp/ok res)))
+
+;; Example how to use the Calva debugger.
+;; (comment
+;;   ; NOTE: You have to evaluate the get-movies function after Integrant reset!
+;;   (require '[clj-http.client :as client])
+;;   (client/get "http://localhost:8331/api/products/movies")
+;;   )
 
 
 (defn get-book [req]
@@ -208,4 +219,3 @@
 ;;   (client/get "http://localhost:9333/api/products/books/2002")
 ;;   (client/get "http://localhost:9333/api/products/books/9002")
 ;;   *e)
-
