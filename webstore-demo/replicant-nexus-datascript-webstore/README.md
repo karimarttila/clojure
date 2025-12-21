@@ -342,7 +342,7 @@ This is my current `~/.clojure/deps.edn` file:
                     :exec-fn repl}
 
            :outdated {;; Note that it is `:deps`, not `:extra-deps`
-                      :deps {com.github.liquidz/antq {:mvn/version "2.11.1269"}}
+                      :deps {com.github.liquidz/antq {:mvn/version "2.11.1276"}}
                       :main-opts ["-m" "antq.core"]}}}
 ```                      
 
