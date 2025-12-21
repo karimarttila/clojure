@@ -8,7 +8,8 @@
 (do
   (require 'shadow.cljs.devtools.api)
   (shadow.cljs.devtools.api/watch :app)
-  (shadow.cljs.devtools.api/watch :portfolio))
+  (shadow.cljs.devtools.api/watch :portfolio) 
+  )
 
 ; Next hard reset browser: http://localhost:8331/
 ; Note: you cannot do this with http call, since it calls the backend, 

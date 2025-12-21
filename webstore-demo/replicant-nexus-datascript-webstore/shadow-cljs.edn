@@ -10,12 +10,15 @@
  :builds {:app
           {:target :browser
         ;;   :module-hash-names true
+           ;; https://github.com/tonsky/datascript
+           ;;:compiler-options {:externs ["datascript/externs.js"]}
            :devtools {;:watch-dir "target/dev/public"
                       :preloads [preload devtools.preload dev]}
            :output-dir "target/dev/public/js"
            :modules {:main {:entries [frontend.app]
                             :init-fn frontend.app/init!}}
-           :release {:output-dir "target/prod/public/js"}}
+           :release {:output-dir "target/prod/public/js"}
+           }
 
           :portfolio
           {:target :browser

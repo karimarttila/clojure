@@ -19,7 +19,7 @@
 - [Create a Docker Image](#create-a-docker-image)
 - [Development Tools](#development-tools)
   - [Personal Profile Deps](#personal-profile-deps)
-  - [Gadget](#gadget)
+  - [Gadget - TODO: Remove later: use no.cjohansen/dataspex instead.](#gadget---todo-remove-later-use-nocjohansendataspex-instead)
   - [Portal](#portal)
   - [Snitch](#snitch)
   - [Hashp](#hashp)
@@ -354,7 +354,7 @@ I then add my `kari` profile to scripts I use to start REPL in development, like
 ```
 
 
-### Gadget
+### Gadget - TODO: Remove later: use no.cjohansen/dataspex instead.
 
 You can use [gadget](https://github.com/cjohansen/gadget-inspector) to view your app state in the browser. Just follow the instructions (and remember to build and install the extension).
 

@@ -115,7 +115,7 @@
   [:div.flex ;.h-screen
    [:div.flex-grow.p-4
     ;[:div.flex.flex-col.items-center.min-h-screen.mt-1]
-    [:h1.text-3xl.font-bold.text-center.mt-5 "WEB STORE with REPLICANT"]
+    [:h1.text-3xl.font-bold.text-center.mt-5 "WEB STORE with REPLICANT, NEXUS and DATASCRIPT"]
     [:h2.text-xl.font-bold.text-center.mt-10 "Choose product group:"]
     [:div.mt-5
      (product-groups-buttons (:db/pg-config state) (:page/navigated state))]]])

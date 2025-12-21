@@ -1,7 +1,8 @@
 (ns frontend.app
   (:require [clojure.walk :as walk]
             [replicant.dom :as r]
-            [gadget.inspector :as inspector]
+            ;; TODO: Remove later: use no.cjohansen/dataspex instead.
+            #_[gadget.inspector :as inspector]
             [frontend.util :as f-util]
             [frontend.http :as f-http]
             [frontend.views :as f-views]
@@ -230,7 +231,8 @@
 
 
 (defn ^:export init! []
-  (when goog.DEBUG
+  ;; TODO: Remove later: use no.cjohansen/dataspex instead.
+  #_(when goog.DEBUG
     (inspector/inspect "App state" !state))
   (r/set-dispatch! event-handler)
   (swap! !dispatcher assoc :dispatcher event-handler)

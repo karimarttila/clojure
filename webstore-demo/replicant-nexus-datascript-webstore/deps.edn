@@ -33,14 +33,14 @@
                          cljs-ajax/cljs-ajax {:mvn/version "0.8.4"}
                          org.clojure/core.match {:mvn/version "1.1.0"}
                          no.cjohansen/replicant {:mvn/version "2025.12.1"}
+                         no.cjohansen/nexus {:mvn/version "2025.11.1"}
+                         no.cjohansen/dataspex {:mvn/version "2025.10.2"}
                          no.cjohansen/lookup {:mvn/version "2025.12.1"}
                          no.cjohansen/portfolio {:mvn/version "2025.11.2"}
-                         ;; NOT stable yet.
-                         cjohansen/gadget-inspector {:mvn/version "0.2023.04.12"}
+                         datascript/datascript {:mvn/version "1.7.8"}
                          cljs-http/cljs-http {:mvn/version "0.1.49"}
                          org.clojure/core.async {:mvn/version "1.8.741"}
-                         org.slf4j/slf4j-simple {:mvn/version "2.0.17"}
-                         }}
+                         org.slf4j/slf4j-simple {:mvn/version "2.0.17"}}}
 
            :dev
            {:extra-paths ["dev/clj" "target/dev" "test/clj"]
