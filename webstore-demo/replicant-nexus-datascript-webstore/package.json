@@ -1,0 +1,28 @@
+{
+  "name": "replicant-webstore-frontend",
+  "scripts": {
+    "shadow:watch": "shadow-cljs watch app",
+    "shadow:release": "shadow-cljs release app",
+    "postcss:build": "cross-env postcss src/css/tailwind.css -o ./target/dev/public/css/main.css --verbose",
+    "postcss:watch": "cross-env postcss src/css/tailwind.css -o ./target/dev/public/css/main.css --verbose -w",
+    "postcss:release": "cross-env NODE_ENV=production postcss src/css/tailwind.css -o ./target/prod/public/css/main.css --verbose",
+    "dev": "run-p -l *:watch",
+    "release": "run-s *:release"
+  },
+  "devDependencies": {
+    "onchange": "^7.1.0",
+    "react-refresh": "^0.14.0",
+    "shadow-cljs": "2.28.21",
+    "autoprefixer": "^10.4.12",
+    "cssnano": "^6.0.0",
+    "npm-run-all": "^4.1.5",
+    "postcss": "^8.4.23",
+    "postcss-cli": "^10.1.0",
+    "tailwindcss": "^3.3.2",
+    "snabbdom": "3.5.1"    
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3",
+    "daisyui": "^4.12.23"
+  }
+}

@@ -1,0 +1,23 @@
+/* src/css/tailwind.css */
+
+/* NOTE: You have to refresh the browser view if you make changes in this file!!! */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+    .debugborder {
+        border: solid 1px blue;
+    }
+    
+    /* Basic text color */
+    .btc {
+        @apply text-blue-600;
+    }
+    a {
+        @apply text-blue-500 underline;
+    }
+
+}
+
