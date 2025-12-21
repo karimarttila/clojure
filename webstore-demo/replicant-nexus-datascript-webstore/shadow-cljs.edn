@@ -1,6 +1,6 @@
 {:deps {:aliases [:shadow-cljs :frontend]}
  ; Here you can find the Shadow cljs server http page.
- #_#_:http {:port 9030
+ #_#_:http {:port 9031
             :host "localhost"}
  ; Here you can find the development frontend server http page.
  ; Let's comment it since we want to have the development server

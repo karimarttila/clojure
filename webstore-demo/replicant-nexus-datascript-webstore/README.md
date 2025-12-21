@@ -329,26 +329,25 @@ This is my current `~/.clojure/deps.edn` file:
 
 
 ```clojure
-
 {:aliases {:kari {:extra-paths ["scratch"]
                   :extra-deps {; NOTE: hashp 0.2.1 sci print bug.
                                hashp/hashp {:mvn/version "0.2.2"}
                                org.clojars.abhinav/snitch {:mvn/version "0.1.16"}
                                com.gfredericks/debug-repl {:mvn/version "0.0.12"}
-                               djblue/portal {:mvn/version "0.58.5"}}}
+                               djblue/portal {:mvn/version "0.62.1"}}}
 
-           :reveal {:extra-deps {vlaaad/reveal {:mvn/version "1.3.284"}}
+           :reveal {:extra-deps {vlaaad/reveal {:mvn/version "1.3.312"}}
                     :ns-default vlaaad.reveal
                     :exec-fn repl}
 
            :outdated {;; Note that it is `:deps`, not `:extra-deps`
                       :deps {com.github.liquidz/antq {:mvn/version "2.11.1276"}}
                       :main-opts ["-m" "antq.core"]}}}
-```                      
+```
 
-I use these tools quite often and therefore keep them in my personal profile *kari*.
+I use these tools quite often and therefore keep them in my personal profile `kari`.
 
-I then add my *kari* profile to scripts I use to start REPL in development, like this ([backendinit.clj](./bb-scripts/backendinit.clj)):
+I then add my `kari` profile to scripts I use to start REPL in development, like this ([backendinit.clj](./bb-scripts/backendinit.clj)):
 
 ```clojure
 :backend-repl-command ["clojure -M:dev:backend:frontend:shadow-cljs:calva-external-repl:test:kari -i bb-scripts/backendinit.clj -m nrepl.cmdline --middleware \"[cider.nrepl/cider-middleware,shadow.cljs.devtools.server.nrepl/middleware]\""]
