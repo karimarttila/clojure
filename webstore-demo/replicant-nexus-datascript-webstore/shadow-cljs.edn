@@ -11,7 +11,7 @@
           {:target :browser
         ;;   :module-hash-names true
            ;; https://github.com/tonsky/datascript
-           ;;:compiler-options {:externs ["datascript/externs.js"]}
+           :compiler-options {:externs ["datascript/externs.js"]}
            :devtools {;:watch-dir "target/dev/public"
                       :preloads [preload devtools.preload dev]}
            :output-dir "target/dev/public/js"

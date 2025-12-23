@@ -2,6 +2,7 @@
   #_{:clj-kondo/ignore [:unused-namespace]}
   (:require [reitit.frontend :as rf]
             [reitit.frontend.easy :as rfe]
+            [nexus.registry :as nxr]
             [frontend.util :as f-util]))
 
 
@@ -22,9 +23,9 @@
 
 #_{:clj-kondo/ignore [:unused-binding]}
 (defn- get-route-actions [{:keys [data path-params] :as all}]
-;;   (when goog.DEBUG (f-util/clog "get-route-actions, all: " all))
-;;   (when goog.DEBUG (f-util/clog "get-route-actions, data: " data))
-;;   (when goog.DEBUG (f-util/clog "get-route-actions, path-params: " path-params))
+   (when goog.DEBUG (f-util/clog "get-route-actions, all: " all))
+   (when goog.DEBUG (f-util/clog "get-route-actions, data: " data))
+   (when goog.DEBUG (f-util/clog "get-route-actions, path-params: " path-params))
   ;; We see app.cljs => event-handler.
   (case (:name data)
     :route/home [[:route/home]]
@@ -37,14 +38,12 @@
                  [[:route/new {:pg pg}]])))
 
 
-(defn start! [routes dispatch!]
-  ;; (when goog.DEBUG (f-util/clog "routes.start!"))
+(defn start! [routes system]
+  (when goog.DEBUG (f-util/clog "routes.start!"))
   (rfe/start! (rf/router routes)
               (fn do-routing [m]
-                ;; (when goog.DEBUG (f-util/clog "routes.do-routing, m: " m))
-                (dispatch! nil (get-route-actions m)))
+                (when goog.DEBUG (f-util/clog "routes.do-routing, m: " m))
+                (let [actions (get-route-actions m)]
+                  (nxr/dispatch system nil actions)))
               {:use-fragment true}))
-
-
-
 

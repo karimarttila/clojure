@@ -1,8 +1,9 @@
 (ns frontend.app
   (:require [clojure.walk :as walk]
             [replicant.dom :as r]
-            ;; TODO: Remove later: use no.cjohansen/dataspex instead.
-            #_[gadget.inspector :as inspector]
+            [nexus.registry :as nxr]
+            [dataspex.core :as dataspex]
+            [datascript.core :as ds]
             [frontend.util :as f-util]
             [frontend.http :as f-http]
             [frontend.views :as f-views]
@@ -12,261 +13,139 @@
             [malli.error :as me]))
 
 
-
-(defonce ^:private !state (atom {; Let's make product-groups fixed in this demo.
-                                 :db/pg-config
-                                 [{:id :books
-                                   :pg-id 1
-                                   :query {:id :books
-                                           :api "/products/books"}
-                                   :post {:id :books
-                                          :api "/products/books"}
-                                   :name "Books"}
-                                  {:id :movies
-                                   :pg-id 2
-                                   :query {:id :movies
-                                           :api "/products/movies"}
-                                   :post {:id :movies
-                                          :api "/products/movies"}
-                                   :name "Movies"}]}))
+(def db-schema
+  {;; --- Identities ---
+   :pg/id      {:db/unique :db.unique/identity}
+   :product/id {:db/unique :db.unique/identity}
+   ;; --- Relationships ---
+   :product/pg {:db/valueType :db.type/ref}
+   ;; --- App structure ---
+   :app/pg-config {:db/cardinality :db.cardinality/many
+                   :db/valueType :db.type/ref}
+   :app/page {:db/valueType :db.type/ref}
+   :app/data {:db/valueType :db.type/ref}})
 
 
-;; Provides an easy way to programmatically dispatch.
-(defonce ^:private !dispatcher (atom {}))
+(defonce ^:private !conn (ds/create-conn db-schema))
 
-(defn- get-dispatcher [] (:dispatcher @!dispatcher))
+(defonce el (js/document.getElementById "app"))
 
-
-(defn navigated-products-page [{:keys [pg state]}]
-  (when goog.DEBUG (f-util/clog "navigated-products-page, data: " pg))
-  (let [pg-c (f-util/get-pg-config-by-id pg (:db/pg-config state))
-        products (get-in state [:db/data pg])
-        dispatcher (get-dispatcher)]
-    (if products
-      (dispatcher nil [[:db/assoc :page/navigated {:page :products
-                                                   :pg pg}]])
-      (dispatcher nil [[:backend/fetch {:query (:query pg-c)
-                                        :pg pg}]
-                       [:db/assoc :page/navigated {:page :products
-                                                   :pg pg}]]))))
-
-
-(defn navigated-product-page [{:keys [id pg state]}]
-  (when goog.DEBUG (f-util/clog "navigated-product-page, id: " id))
-  (let [pg-c (f-util/get-pg-config-by-id pg (:db/pg-config state))
-        products (get-in state [:db/data pg])
-        dispatcher (get-dispatcher)]
-    (if products
-      (dispatcher nil [[:db/assoc :page/navigated {:page :product
-                                                   :pg pg
-                                                   :id id}]])
-      (dispatcher nil [[:backend/fetch {:query (:query pg-c)
-                                        :pg pg}]
-                       [:db/assoc :page/navigated {:page :product
-                                                   :pg pg
-                                                   :id id}]]))))
-(defn- safe-parse-float [s]
-  (try
-    (let [parsed (js/parseFloat s)]
-      (if (js/isNaN parsed) s parsed))
-    (catch js/Error _ s)))
-
-(defn- safe-parse-int [s]
-  (try
-    (let [parsed (js/parseInt s)]
-      (if (js/isNaN parsed) s parsed))
-    (catch js/Error _ s)))
-
-
-(defn- convert-fields [product]
-  (-> product
-      (cond-> (contains? product :price) (update :price #(if (string? %) (safe-parse-float %) %)))
-      (cond-> (contains? product :year) (update :year #(if (string? %) (safe-parse-int %) %)))))
+;; Initial transact.
+(ds/transact! !conn
+              [;; Product groups
+               {:db/id -1
+                :pg/id :books
+                :pg/pg-id 1
+                :pg/query-id :books
+                :pg/query-api "/products/books"
+                :pg/post-id :books
+                :pg/post-api "/products/books"
+                :pg/name "Books"}
+               {:db/id -2
+                :pg/id :movies
+                :pg/pg-id 2
+                :pg/query-id :movies
+                :pg/query-api "/products/movies"
+                :pg/post-id :movies
+                :pg/post-api "/products/movies"
+                :pg/name "Movies"}
+               ;; Page entity with initial attribute
+               {:db/id -11
+                :page/navigated {:page :home}}
+               ;; Data entity with initial attribute (empty map for now)
+               {:db/id -12
+                :data/initialized true}
+               ;; Create app entity with references
+               {:db/id -10
+                :db/ident :app
+                :app/pg-config [-1 -2]
+                :app/page -11
+                :app/data -12}])
 
 
 (comment
+  ;; Experimentation
+  
+  (ds/pull (ds/db !conn) '[*] :app)
+  ;;=> {:db/id 5, :app/data {:db/id 4}, :app/page {:db/id 3}, :app/pg-config [{:db/id 1} {:db/id 2}], :db/ident :app}
 
-  (safe-parse-int "aa")
-  ;;=> "aa" 
-  (convert-fields {:product-group 1,
-                   :title "Crime and Punishment",
-                   :author "Fyodor Dostoevsky", :year 1866,
-                   :country "Russia", :language "Russian"
-                   :price "aa"}))
-
-
-
-(defn get-product-from-store [state pg-id]
-  (let [product (:db/new-product state)]
-    (-> product
-        (assoc :product-group pg-id)
-        convert-fields)))
-
-(comment
-  (js/console.log "**************************************"))
-
-
-(defn action-new-product [{:keys [pg state]}]
-  (when goog.DEBUG (f-util/clog "action-new-product, pg: " pg))
-  (let [pg-c (f-util/get-pg-config-by-id pg (:db/pg-config state))
-        pg-id (:pg-id pg-c) ; This is the number that backend uses for product group.
-        product (get-product-from-store state pg-id)
-        dispatcher (get-dispatcher)]
-    (dispatcher nil [[:backend/post {:post (:post pg-c)
-                                     ; We need this to fetch new set of products.
-                                     :query (:query pg-c)
-                                     :product product
-                                     :pg pg}]])))
+  (ds/pull (ds/db !conn) '[* {:app/pg-config [*]} {:app/page [*]} {:app/data [*]}] :app)
+  ;;=> {:app/data {:db/id 4, :data/initialized true},
+  ;;    :app/page {:db/id 3, :page/navigated {:page :home}},
+  ;;    :app/pg-config
+  ;;    [{:db/id 1,
+  ;;      :pg/id :books,
+  ;;      :pg/name "Books",
+  ;;      :pg/pg-id 1,
+  ;;      :pg/post-api "/products/books",
+  ;;      :pg/post-id :books,
+  ;;      :pg/query-api "/products/books",
+  ;;      :pg/query-id :books}
+  ;;     {:db/id 2,
+  ;;      :pg/id :movies,
+  ;;      :pg/name "Movies",
+  ;;      :pg/pg-id 2,
+  ;;      :pg/post-api "/products/movies",
+  ;;      :pg/post-id :movies,
+  ;;      :pg/query-api "/products/movies",
+  ;;      :pg/query-id :movies}],
+  ;;    :db/id 5,
+  ;;    :db/ident :app}
+  )
 
 
-(defn action-validate-new-product [{:keys [pg state]}]
-  (when goog.DEBUG (f-util/clog "action-validate-new-product, pg: " pg))
-  (let [pg-c (f-util/get-pg-config-by-id pg (:db/pg-config state))
-        pg-id (:pg-id pg-c) ; This is the number that backend uses for product group.
-        product (get-product-from-store state pg-id)
-        dispatcher (get-dispatcher)
-        validation-ok
-        (case pg
-          :books (m/validate f-schema/book-without-id product)
-          :movies (m/validate f-schema/movie-without-id product))]
-    (if validation-ok
-      (dispatcher nil [[:db/dissoc :db/product-validation-error] [:action/new {:pg pg}]])
-      (let [error (case pg
-                    :books (me/humanize (m/explain f-schema/book-without-id product))
-                    :movies (me/humanize (m/explain f-schema/movie-without-id product)))]
-        (dispatcher nil [[:db/assoc :db/product-validation-error {:error error
-                                                                  :pg pg}]])))))
+
+;; :db/transact, :db/add, etc. generic functions taken from https://github.com/cjohansen/replicant-state-datascript
+(nxr/register-system->state! (comp ds/db :conn))
+
+(nxr/register-effect! :db/transact
+                      ^:nexus/batch
+                      (fn [_ {:keys [conn]} txes]
+                        (let [_ (when goog.DEBUG (f-util/clog "action :db/transact, conn" conn))
+                              _ (when goog.DEBUG (f-util/clog "action :db/transact, txes" txes))
+                              ]
+                          (ds/transact! conn (apply concat (map first txes))))))
+
+(nxr/register-action! :db/add
+                      (fn [_ eid attr value]
+                        (let [_ (when goog.DEBUG (f-util/clog "action :db/add" {:eid eid, :attr attr, :value value}))]
+                          [[:db/transact [[:db/add eid attr value]]]])))
+
+(nxr/register-action! :db/retract
+                      (fn [_ eid attr & [value]]
+                        [[:db/transact [(cond-> [:db/retract eid attr]
+                                          value (conj value))]]]))
+
+(nxr/register-action! :route/home
+                      (fn [state]
+                        (when goog.DEBUG (f-util/clog "action :route/home"))
+                        (let [page-id (:db/id (:app/page (ds/pull state '[{:app/page [:db/id]}] :app)))]
+                          [[:db/transact [[:db/add page-id :page/navigated {:page :home}]]]])))
 
 
-(defn navigated-new-product-page [{:keys [pg _state]}]
-  (when goog.DEBUG (f-util/clog "navigated-new-product-page, pg: " pg))
-  (let [dispatcher (get-dispatcher)]
-    (dispatcher nil [[:db/assoc :page/navigated {:page :new
-                                                 :pg pg}]])))
 
-
-(defn navigated-home-page []
-  (when goog.DEBUG (f-util/clog "navigated-home-page"))
-  (let [dispatcher (get-dispatcher)]
-    (dispatcher nil [[:db/assoc :page/navigated {:page :home}]])))
-
-
-(defn- enrich-action-from-event [{:replicant/keys [js-event node]} actions]
-  (walk/postwalk
-   (fn [x]
-     (cond
-       (keyword? x)
-       (case x
-         :event/target.value (-> js-event .-target .-value)
-         :dom/node node
-         x)
-       :else x))
-   actions))
-
-
-(defn- enrich-action-from-state [state action]
-  (walk/postwalk
-   (fn [x]
-     (cond
-       (and (vector? x)
-            (= :db/get (first x))) (get state (second x))
-       :else x))
-   action))
-
-
-(defn- render! [state]
-  (r/render
-   (js/document.getElementById "app")
-   (f-views/view state)))
-
-
-(r/set-dispatch!
- (fn [event-data handler-data]
-   (when (= :replicant.trigger/dom-event
-            (:replicant/trigger event-data))
-     (when goog.DEBUG
-       (f-util/clog "** set-dispatch! **")
-       (f-util/clog "dom-event:" (:replicant/dom-event event-data))
-       (f-util/clog "node:" (:replicant/node event-data))
-       (f-util/clog "handler-data:" handler-data)))))
-
-
-(defn- event-handler [{:replicant/keys [^js js-event] :as replicant-data} actions]
-  (when goog.DEBUG
-    (f-util/clog "** event-handler **")
-    (f-util/clog "replicant-data:" replicant-data)
-    (f-util/clog "actions:" actions))
-  (doseq [action actions]
-    (when goog.DEBUG
-      (f-util/clog "**** event ****:")
-      (f-util/clog "action:" action)
-      (f-util/clog "event:" (:replicant/dom-event replicant-data))
-      (f-util/clog "node:" (:replicant/node replicant-data)))
-    (let [enriched-action (->> action
-                               (enrich-action-from-event replicant-data)
-                               (enrich-action-from-state @!state))
-          [action-name & args] enriched-action]
-      #_(when goog.DEBUG (f-util/clog "Enriched action:" enriched-action))
-      (case action-name
-        :dom/prevent-default (.preventDefault js-event)
-        :db/assoc (apply swap! !state assoc args)
-        :db/assoc-in (apply swap! !state assoc-in args)
-        :db/dissoc (apply swap! !state dissoc args)
-        :dom/set-input-text (set! (.-value (first args)) (second args))
-        :dom/focus-element (.focus (first args))
-        :backend/fetch (f-http/fetch (get-dispatcher) (second enriched-action))
-        :backend/post (f-http/post (get-dispatcher) (second enriched-action))
-        :route/home (navigated-home-page)
-        :route/products (navigated-products-page (assoc (second enriched-action) :state @!state))
-        :route/product (navigated-product-page (assoc (second enriched-action) :state @!state))
-        :route/new (navigated-new-product-page (assoc (second enriched-action) :state @!state))
-        :action/new (action-new-product (assoc (second enriched-action) :state @!state))
-        :action/validate (action-validate-new-product (assoc (second enriched-action) :state @!state))
-        (when goog.DEBUG (f-util/clog "Unknown action" action)))))
-  (render! @!state))
+(defn- render! [conn]
+  (let [state (ds/pull (ds/db !conn) '[* {:app/pg-config [*]} {:app/page [*]} {:app/data [*]}] :app)]
+    (when goog.DEBUG (f-util/clog "render!, state: " state))
+    (r/render
+     el
+     (f-views/view state))))
 
 
 (defn ^{:dev/after-load true :export true} start! []
-  (render! @!state))
+    (render! !conn))
 
 
 (defn ^:export init! []
-  ;; TODO: Remove later: use no.cjohansen/dataspex instead.
-  #_(when goog.DEBUG
-    (inspector/inspect "App state" !state))
-  (r/set-dispatch! event-handler)
-  (swap! !dispatcher assoc :dispatcher event-handler)
-  (f-routes/start! f-routes/routes event-handler)
-  (start!))
+  (when goog.DEBUG (f-util/clog "init!"))
+  (let [system {:conn !conn, :routes f-routes/routes}]
+    (dataspex/inspect "App state" !conn)
 
+    (r/set-dispatch!
+     (fn [dispatch-data actions]
+       (nxr/dispatch system dispatch-data actions)))
+    
+    (f-routes/start! f-routes/routes system)
+    (start!)
+    ))
 
-;; (comment
-
-;;   (+ 1 1)
-;;   (js/console.log "I am connected to the browser!")
-;;   ;(js/alert "I am connected to the browser!")
-
-;;   ;; Example how to tap to the data using djblue Portal: 
-;;   (require '[portal.web :as p])
-;;   ; NOTE: This asks a popup window, you have to accept it in the browser!!! 
-;;   (p/open)
-;;   ; Now you should have a new pop-up browser window...
-;;   (add-tap #'p/submit)
-;;   (tap> :hello)
-;;   (tap> (get-in @!state [:db/data :books]))
-;;   ;; You should now see a vector of book maps in the portal window.
-
-;;   (def my-book {:product-group 1, :title "Moby Dick", :price 45.35, :author "Herman Melville", :year 1851, :country "United States", :language "English"})
-;;   (def my-book {:XXX 1, :title "Moby Dick", :price 45.35, :author "Herman Melville", :year 1851, :country "United States", :language "English"})
-
-;;   (m/validate f-schema/book-without-id my-book)
-;;   (def my-error
-;;     (let [validation-result (m/validate f-schema/book-without-id my-book)]
-;;       (if validation-result
-;;         {:ok "ok"}
-;;         (me/humanize (m/explain f-schema/book-without-id my-book)))))
-;;   ;;=> "Validation failed: {:product-group [\"missing required key\"]}"
-
-;;   my-error
-;;   ;;=> {:product-group ["missing required key"]}
-;;   )

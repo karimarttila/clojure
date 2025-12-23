@@ -3,6 +3,10 @@
 ## Table of Contents <!-- omit in toc -->
 
 - [Introduction](#introduction)
+- [Reference Material](#reference-material)
+- [Development Tricks](#development-tricks)
+  - [Move Calva Output to a New Window](#move-calva-output-to-a-new-window)
+- [Frontend Initialization](#frontend-initialization)
 - [TODO: OLD](#todo-old)
 - [Example Projects](#example-projects)
 - [What Does This Demo Do and What is the Purpose of this Exercise?](#what-does-this-demo-do-and-what-is-the-purpose-of-this-exercise)
@@ -30,9 +34,39 @@
 
 This exercise is a continuation for my earlier [Clojure Fullstack Exercise Using Replicant](https://www.karimarttila.fi/clojurescript/2025/02/28/clojurescript-with-replicant.html). In that previous exercise I learned how to use the excellent [Replicant](https://github.com/cjohansen/replicant) library to build a frontend for my Webstore example.
 
-In that previous exercise I built a custom dispatch system and used a Clojure Atom as my application store for storing the state of the frontend application. In this new exercise I use [Nexus](https://github.com/cjohansen/nexus)[https://github.com/cjohansen/nexus] to do the heavy-lifting for creating the dispatch system, and instread of storing the application store in a Clojure Atom, I use [Datascript](https://github.com/tonsky/datascript).
+In that previous exercise I built a custom dispatch system and used a Clojure Atom as my application store for storing the state of the frontend application. In this new exercise I use [Nexus](https://github.com/cjohansen/nexus) to do the heavy-lifting for creating the dispatch system, and instread of storing the application store in a Clojure Atom, I use [Datascript](https://github.com/tonsky/datascript).
 
 So, only the frontend code is new / has been refactored to use Nexus and Datascript. The backend code and tooling is mostly the same as in the previous exercise (just bumped the newest library versions for the backend as well).
+
+I wrote a short blog post related to the experiences when creating this winter vacation Clojure exercise: [TODO](TODO).
+
+## Reference Material
+
+I used [replicant-state-datascript repo](https://github.com/cjohansen/replicant-state-datascript.git) as an example how to setup `Nexus` + `Datascript`. Christian Johansen also provided me good help in the Clojurians Slack - Thanks! Christian also kindly reviewed the frontend source code related how I use Nexus, and the Blog post I wrote.
+
+Links to the libraries:
+
+- [Replicant](https://github.com/cjohansen/replicant)
+- [Nexus](https://github.com/cjohansen/nexus) 
+- [Datascript](https://github.com/tonsky/datascript)
+
+Links to the example projects:
+
+- [replicant-state-datascript](https://github.com/cjohansen/replicant-state-datascript): An excellent example project which provides a skeleton for using Replicant + Nexus + Datascript. This example is all you need to get going.
+
+## Development Tricks
+
+### Move Calva Output to a New Window
+
+Once you have connected Calva to your REPL, you get the output in the terminal / Calva Output. I like to move this window to another monitor (I have four monitors at my table) to see the Calva output window and VSCode editor at the same time (but in different monitors). Use VSCode command: `Terminal: Move Terminal into New Window`.
+
+
+## Frontend Initialization
+
+I borrowed from the excellent [replicant-state-datascript](https://github.com/cjohansen/replicant-state-datascript) repo the solution how to register the `datascript` database for watching changes, and trigger `Replicant/render`.
+
+
+
 
 
 

@@ -1,6 +1,6 @@
 (ns frontend.views
   (:require [clojure.string :as cstring]
-            #_[frontend.util :as f-util]))
+            [frontend.util :as f-util]))
 
 ;; NOTE: You cannot use goog.DEBUG in the cljc file!
 ;; For debugging sessions, remove comment of the logging calls, and after debuggins session comment out again.
@@ -86,21 +86,23 @@
 (defn- new-product-button [product]
   (let [button-tag :button.rounded-lg.border-2.border-gray-300.px-4.py-1.m-2.hover:bg-gray-200.cursor-pointer]
     [:div.flex.justify-center
-     [:a {:href (str "#/new/" (name (:id product)))}
+     [:a {:href (str "#/new/" (name (:pg/id product)))}
       [button-tag
        [:p.text-center.text-xs
         "Create"]]]]))
 
 
 (defn- product-button [product page]
-  (let [button-tag (if (products-page? page product)
+  (let [_ (f-util/clog "product-button, product: " product)
+        button-tag :button.rounded-lg.border-2.border-gray-500.bg-blue-100.p-4.m-2.hover:bg-gray-200.cursor-pointer
+        #_#_button-tag (if (products-page? page product)
                      :button.rounded-lg.border-2.border-gray-500.bg-blue-100.p-4.m-2.hover:bg-gray-200.cursor-pointer
                      :button.rounded-lg.border-2.border-gray-300.p-4.m-2.hover:bg-gray-200.cursor-pointer)]
     [:div
-     [:a {:href (str "#/products/" (name (:id product)))}
+     [:a {:href (str "#/products/" (name (:pg/id product)))}
       [button-tag
        [:p.text-center.text-xl.font-semibold
-        (:name product)]]]
+        (:pg/name product)]]]
      (new-product-button product)]))
 
 
@@ -118,7 +120,7 @@
     [:h1.text-3xl.font-bold.text-center.mt-5 "WEB STORE with REPLICANT, NEXUS and DATASCRIPT"]
     [:h2.text-xl.font-bold.text-center.mt-10 "Choose product group:"]
     [:div.mt-5
-     (product-groups-buttons (:db/pg-config state) (:page/navigated state))]]])
+     (product-groups-buttons (:app/pg-config state) (:page/navigated state))]]])
 
 
 (defn new-product [state pg headers]
@@ -179,7 +181,7 @@
 
 
 (defn view [state]
-  ;(f-util/clog "view, state: " state)
+  (f-util/clog "view, state: " state)
   [:div.flex.h-screen
    [:div.flex-grow.p-4
     [:div.flex.flex-col.items-center.min-h-screen.mt-10
