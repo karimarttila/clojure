@@ -4,25 +4,62 @@
   (:require    [cljs.core.async :refer [<!]]
                [cljs-http.client :as http]
                [cognitect.transit :as transit]
+               [nexus.registry :as nxr]
                [frontend.util :as f-util]))
 
 
 
-(defn fetch [dispatcher action]
+(defn fetch [system action]
+  (when goog.DEBUG (f-util/clog "fetch, action: " action))
+  (let [pg (:pg action)
+        api (:api action)
+        url (str "/api" api)]
+    (go (try
+          (let [response (<! (http/get url))]
+            (if (= 200 (:status response))
+              (let [data (:body response)]
+                (when goog.DEBUG (f-util/clog "fetch, data: " data))
+                ;; Dispatch to Nexus to add products
+                (nxr/dispatch system nil [[:add/products {:pg pg :products data}]]))
+              (when goog.DEBUG (f-util/clog "fetch, error status: " (:status response)))))
+          (catch js/Error e
+            (when goog.DEBUG (f-util/clog "fetch, error: " (.-message e))))))))
+
+
+#_(defn fetch [system action]
   (when goog.DEBUG (f-util/clog "fetch, action: " action))
   (let [pg (:pg action)
         url (str "/api" (get-in action [:query :api]))]
     (go (try
           (let [response (<! (http/get url))]
             (if (= 200 (:status response))
-              (dispatcher nil [[:db/assoc-in [:db/data pg] (:body response)]])
-              (dispatcher nil [[:db/assoc-in [:db/data pg] {:error (:status response)
-                                                            :pg pg}]])))
+              (let [data (:body response)]
+                (when goog.DEBUG (f-util/clog "fetch, data: " data))
+                )
+              #_(dispatcher nil [[:db/assoc-in [:db/data pg] (:body response)]])
+              #_(dispatcher nil [[:db/assoc-in [:db/data pg] {:error (:status response)
+                                                              :pg pg}]])))
           (catch js/Error e
-            (dispatcher nil [[:db/assoc :db/data {:error (.-message e)
+            (when goog.DEBUG (f-util/clog "fetch, error: " (.-message e)))
+            #_(dispatcher nil [[:db/assoc :db/data {:error (.-message e)
                                                   :pg pg}]
                              [:route/home]]))))))
 
+
+
+(comment 
+  
+
+  
+  (let [action {:query {:id :books, :api "/products/books"}, :pg :books}]
+    ;; NOTE: You get the logging in the browser Console! (not in REPL window!)
+    (fetch :dummy action))
+  
+  
+  
+  
+  
+  )
 
 
 (defn post [dispatcher action]
