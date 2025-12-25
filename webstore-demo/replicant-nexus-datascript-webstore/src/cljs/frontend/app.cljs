@@ -23,12 +23,13 @@
    :app/pg-config {:db/cardinality :db.cardinality/many
                    :db/valueType :db.type/ref}
    :app/page {:db/valueType :db.type/ref}
-   :app/data {:db/valueType :db.type/ref}})
+   :app/data {:db/valueType :db.type/ref}
+   })
 
 
 (defonce ^:private !conn (ds/create-conn db-schema))
 
-(defonce el (js/document.getElementById "app"))
+(defonce ^:private !el (js/document.getElementById "app"))
 
 ;; Initial transact.
 (ds/transact! !conn
@@ -65,7 +66,7 @@
 
 (comment
   ;; Experimentation
-  
+
   (ds/pull (ds/db !conn) '[*] :app)
   ;;=> {:db/id 5, :app/data {:db/id 4}, :app/page {:db/id 3}, :app/pg-config [{:db/id 1} {:db/id 2}], :db/ident :app}
 
@@ -96,14 +97,15 @@
 
 
 ;; :db/transact, :db/add, etc. generic functions taken from https://github.com/cjohansen/replicant-state-datascript
+
+;; This tells Nexus: "To get the state, take the system map, get :conn from it, and call ds/db on it."
 (nxr/register-system->state! (comp ds/db :conn))
 
 (nxr/register-effect! :db/transact
                       ^:nexus/batch
                       (fn [_ {:keys [conn]} txes]
                         (let [_ (when goog.DEBUG (f-util/clog "action :db/transact, conn" conn))
-                              _ (when goog.DEBUG (f-util/clog "action :db/transact, txes" txes))
-                              ]
+                              _ (when goog.DEBUG (f-util/clog "action :db/transact, txes" txes))]
                           (ds/transact! conn (apply concat (map first txes))))))
 
 (nxr/register-action! :db/add
@@ -119,33 +121,39 @@
 (nxr/register-action! :route/home
                       (fn [state]
                         (when goog.DEBUG (f-util/clog "action :route/home"))
+                        (when goog.DEBUG (f-util/clog "action :route/home, state: " state))
                         (let [page-id (:db/id (:app/page (ds/pull state '[{:app/page [:db/id]}] :app)))]
                           [[:db/transact [[:db/add page-id :page/navigated {:page :home}]]]])))
 
 
-
-(defn- render! [conn]
-  (let [state (ds/pull (ds/db !conn) '[* {:app/pg-config [*]} {:app/page [*]} {:app/data [*]}] :app)]
-    (when goog.DEBUG (f-util/clog "render!, state: " state))
-    (r/render
-     el
-     (f-views/view state))))
-
-
-(defn ^{:dev/after-load true :export true} start! []
-    (render! !conn))
+(nxr/register-action! :route/products
+                      (fn [state params]
+                        (when goog.DEBUG (f-util/clog "action :route/products, params:" params))
+                        (let [pg (:pg params)
+                              page-id (:db/id (:app/page (ds/pull state '[{:app/page [:db/id]}] :app)))]
+                          [[:db/transact [[:db/add page-id :page/navigated {:page :products, :pg pg}]]]])))
 
 
 (defn ^:export init! []
   (when goog.DEBUG (f-util/clog "init!"))
-  (let [system {:conn !conn, :routes f-routes/routes}]
+  (let [system {:conn !conn, :routes f-routes/routes}
+        ;; Pull the view-state (basically, everything from Datascript store).
+        view-state (ds/pull (ds/db !conn) '[* {:app/pg-config [*]} {:app/page [*]} {:app/data [*]} :app/started-at] :app)]
+    ;; Add watch to trigger render when ever the state changes as in the replicant-state-datascript example.
+    (add-watch
+     !conn ::render
+     (fn [_ _ _ _]
+       (r/render !el
+                 (f-views/view view-state))))
+    ;; Add dataspex, see: https://chromewebstore.google.com/detail/dataspex/blgomkhaagnapapellmdfelmohbalneo
     (dataspex/inspect "App state" !conn)
-
+    ;; Tell replicant to use the Nexus dispatch mechanism.
     (r/set-dispatch!
      (fn [dispatch-data actions]
        (nxr/dispatch system dispatch-data actions)))
-    
+    ;; Initialize routes.
     (f-routes/start! f-routes/routes system)
-    (start!)
-    ))
+    ; Trigger initial render as in the replicant-state-datascript example.
+    (ds/transact! !conn
+                  [[:db/add :app :app/started-at (js/Date.)]])))
 

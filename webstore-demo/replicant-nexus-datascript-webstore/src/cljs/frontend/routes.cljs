@@ -23,9 +23,9 @@
 
 #_{:clj-kondo/ignore [:unused-binding]}
 (defn- get-route-actions [{:keys [data path-params] :as all}]
-   (when goog.DEBUG (f-util/clog "get-route-actions, all: " all))
-   (when goog.DEBUG (f-util/clog "get-route-actions, data: " data))
-   (when goog.DEBUG (f-util/clog "get-route-actions, path-params: " path-params))
+   (when goog.DEBUG (f-util/clog "routes.get-route-actions, all: " all))
+   (when goog.DEBUG (f-util/clog "routes.get-route-actions, data: " data))
+   (when goog.DEBUG (f-util/clog "routes.get-route-actions, path-params: " path-params))
   ;; We see app.cljs => event-handler.
   (case (:name data)
     :route/home [[:route/home]]
@@ -41,9 +41,15 @@
 (defn start! [routes system]
   (when goog.DEBUG (f-util/clog "routes.start!"))
   (rfe/start! (rf/router routes)
+              ;; This function is called when routing happens.
+              ;; ************************************************************************
+              ;; NOTE: If you change this function, you have to hard refresh the app in browser !!!
+              ;; ************************************************************************ 
               (fn do-routing [m]
                 (when goog.DEBUG (f-util/clog "routes.do-routing, m: " m))
                 (let [actions (get-route-actions m)]
+                  (when goog.DEBUG (f-util/clog "routes.do-routing, system " system))
+                  (when goog.DEBUG (f-util/clog "routes.do-routing, actions: " actions))
                   (nxr/dispatch system nil actions)))
               {:use-fragment true}))
 
