@@ -60,6 +60,12 @@
                ;; New product entity
                {:db/id -13
                 :db/ident :db/new-product}
+               ;; Product validation error entity
+               {:db/id -14
+                :db/ident :db/product-validation-error}
+               ;; Product created entity
+               {:db/id -15
+                :db/ident :db/product-created}
                ;; Create app entity with references
                {:db/id -10
                 :db/ident :app
@@ -110,7 +116,71 @@
 (nxr/register-action! :frontend.views/update-field
                       (fn [state path value]
                         (when goog.DEBUG (f-util/clog "register-action! ::update-field" {:path path, :value value}))
-                        [[:db/assoc-in path value]]))
+                        (let [[ident attr] path
+                              ;; Define numeric fields
+                              numeric-fields #{:price :year}
+                              ;; Convert to number if it's a numeric field and value is not empty
+                              coerced-value (if (and (numeric-fields attr) 
+                                                     (not (empty? value))
+                                                     (not (js/isNaN (js/parseFloat value))))
+                                              (js/parseFloat value)
+                                              value)]
+                          (when goog.DEBUG (f-util/clog "register-action! ::update-field, attr:" attr))
+                          (when goog.DEBUG (f-util/clog "register-action! ::update-field, value:" value))
+                          (when goog.DEBUG (f-util/clog "register-action! ::update-field, coerced-value:" coerced-value))
+                          [[:db/assoc-in path coerced-value]])))
+
+(defn- get-product-from-new-product [state pg-id]
+  (let [new-product (ds/pull state '[*] [:db/ident :db/new-product])]
+    (when goog.DEBUG (f-util/clog "get-product-from-new-product, new-product:" new-product))
+    (-> new-product
+        (select-keys [:title :price :author :year :country :language :director :genre])
+        (assoc :product-group pg-id)
+        ;; Remove nil values
+        (->> (remove (comp nil? val))
+             (into {})))))
+
+
+(nxr/register-action! :action/validate
+                      (fn [state params]
+                        (when goog.DEBUG (f-util/clog "register-action! :action/validate, params:" params))
+                        (let [pg (:pg params)
+                              pg-config (ds/pull state '[*] [:pg/id pg])
+                              pg-id (:pg/pg-id pg-config)
+                              product-raw (get-product-from-new-product state pg-id)
+                              _ (when goog.DEBUG (f-util/clog "register-action! :action/validate, product-raw:" product-raw))
+                              ;; Coerce string values to proper types before validation
+                              product (case pg
+                                        :books (m/decode f-schema/book-without-id product-raw (malli.transform/string-transformer))
+                                        :movies (m/decode f-schema/movie-without-id product-raw (malli.transform/string-transformer)))
+                              _ (when goog.DEBUG (f-util/clog "register-action! :action/validate, product (after coercion):" product))
+                              validation-ok (case pg
+                                              :books (m/validate f-schema/book-without-id product)
+                                              :movies (m/validate f-schema/movie-without-id product))
+                              _ (when goog.DEBUG (f-util/clog "register-action! :action/validate, validation-ok:" validation-ok))]
+                          (if validation-ok
+                            (do
+                              (when goog.DEBUG (f-util/clog "register-action! :action/validate, validation passed"))
+                              [[:db/retract [:db/ident :db/product-validation-error] :error]
+                               ;; Pass the coerced product instead of fetching it again
+                               [:action/new {:pg pg :product product}]])
+                            (let [error (case pg
+                                          :books (me/humanize (m/explain f-schema/book-without-id product))
+                                          :movies (me/humanize (m/explain f-schema/movie-without-id product)))]
+                              (when goog.DEBUG (f-util/clog "register-action! :action/validate, validation error:" error))
+                              [[:db/add [:db/ident :db/product-validation-error] :error error]])))))
+
+(nxr/register-action! :action/new
+                      (fn [state params]
+                        (when goog.DEBUG (f-util/clog "register-action! :action/new, params:" params))
+                        (let [pg (:pg params)
+                              ;; Use the product directly from params (already coerced)
+                              product (:product params)
+                              pg-config (ds/pull state '[*] [:pg/id pg])
+                              post-api (:pg/post-api pg-config)]
+                          (when goog.DEBUG (f-util/clog "register-action! :action/new, posting product:" product))
+                          [[:backend/post {:product product :pg pg :post {:api post-api}}]])))
+
 
 (nxr/register-action! :route/home
                       (fn [state]

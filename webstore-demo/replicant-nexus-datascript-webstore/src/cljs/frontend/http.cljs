@@ -33,15 +33,24 @@
     (go (try
           (let [response (<! (http/post url {:json-params product}))]
             (if (= 200 (:status response))
-              ;; Success - dispatch actions to add product and navigate home
-              (nxr/dispatch system nil [[:add/product {:product (:body response) :pg pg}]
+              ;; Success - dispatch actions to add product, clear form, and navigate home
+              (nxr/dispatch system nil [[:add/products {:products [(:body response)] :pg pg}]
+                                        [:db/retract [:db/ident :db/new-product] :title]
+                                        [:db/retract [:db/ident :db/new-product] :author]
+                                        [:db/retract [:db/ident :db/new-product] :year]
+                                        [:db/retract [:db/ident :db/new-product] :country]
+                                        [:db/retract [:db/ident :db/new-product] :language]
+                                        [:db/retract [:db/ident :db/new-product] :price]
+                                        [:db/retract [:db/ident :db/new-product] :director]
+                                        [:db/retract [:db/ident :db/new-product] :genre]
+                                        [:db/add [:db/ident :db/product-created] :success true]
                                         [:route/home]])
               ;; Error - dispatch action to show error
-              (nxr/dispatch system nil [[:db/assoc :db/product-created {:error (:status response) :pg pg}]
+              (nxr/dispatch system nil [[:db/add [:db/ident :db/product-created] :error (:status response)]
                                         [:route/home]])))
           (catch js/Error e
             ;; Exception - dispatch action to show error
-            (nxr/dispatch system nil [[:db/assoc :db/product-created {:error (.-message e) :pg pg}]
+            (nxr/dispatch system nil [[:db/add [:db/ident :db/product-created] :error (.-message e)]
                                       [:route/home]]))))))
 
 

@@ -137,14 +137,15 @@
              [:td.border.px-4.py-2 header]
              [:td.border.px-4.py-2 
               [input-tag {:value current-value
-                          :on {:input [[::update-field [:db/new-product db-key-on] :event/target.value]]}}]]]))]]
+                          :on {:input [[:frontend.views/update-field [:db/new-product db-key-on] :event/target.value]]}}]]]))]]
       [:div.flex.justify-center.mt-4
        [:button.rounded-lg.border-2.border-gray-300.px-4.py-1.m-2.hover:bg-gray-200.cursor-pointer
         {:type :submit}
         "Submit"]]
-      (let [error (:validation-error state)
-            [k v] (first (:error error))]
-        (when error
+      (let [error-data (:validation-error state)
+            error-map (:error error-data)
+            [k v] (first error-map)]
+        (when (and error-map k v)
           (show-error (str (name k) ": " (first v)) false nil)))]]))
 
 
