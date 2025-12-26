@@ -145,6 +145,32 @@
                                [:db/transact [[:db/add page-id :page/navigated {:page :products, :pg pg}]]]])))))
 
 
+(nxr/register-action! :route/product
+                      (fn [state params]
+                        (when goog.DEBUG (f-util/clog "register-action! :route/product, params:" params))
+                        (let [pg (:pg params)
+                              id (:id params)
+                              page-id (:db/id (:app/page (ds/pull state '[{:app/page [:db/id]}] :app)))
+                              ;; Check if we have any products for this pg
+                              has-products? (seq (ds/q '[:find [?e ...]
+                                                         :in $ ?pg
+                                                         :where
+                                                         [?e :product/pg ?pg-ref]
+                                                         [?pg-ref :pg/id ?pg]]
+                                                       state pg))]
+                          (when goog.DEBUG (f-util/clog "register-action! :route/product, has-products?:" has-products?))
+                          (if has-products?
+                            ;; Products already exist, just navigate to the specific product
+                            (do
+                              (when goog.DEBUG (f-util/clog "register-action! :route/product, showing product:" id))
+                              [[:db/transact [[:db/add page-id :page/navigated {:page :product, :pg pg, :id id}]]]])
+                            ;; No products yet, fetch them first then navigate to the product
+                            (let [pg-config (ds/pull state '[*] [:pg/id pg])
+                                  query-api (:pg/query-api pg-config)]
+                              (when goog.DEBUG (f-util/clog "register-action! :route/product, fetching products for:" pg))
+                              [[:backend/fetch {:api query-api :pg pg}]
+                               [:db/transact [[:db/add page-id :page/navigated {:page :product, :pg pg, :id id}]]]])))))
+
 ;; NOTE: Needs to be effect, since makes http get which is a side-effect.
 (nxr/register-effect! :backend/fetch
                       (fn [_ system params]

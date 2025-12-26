@@ -11,7 +11,7 @@
 
 
 (defn find-item-by-id [items id]
-  (some #(when (= (:id %) id) %) items))
+  (some #(when (= (:product/id %) id) %) items))
 
 
 (defn- show-error [msg button? dissoc-key]
@@ -41,7 +41,7 @@
 (defn book-details [book]
   [:table.table-auto.w-full
    [:tbody
-    (for [[header value] [["Id" (:id book)]
+    (for [[header value] [["Id" (:product/id book)]
                           ["Title" (:title book)]
                           ["Author" (:author book)]
                           ["Year" (:year book)]
@@ -56,7 +56,7 @@
 (defn movie-details [movie]
   [:table.table-auto.w-full
    [:tbody
-    (for [[header value] [["Id" (:id movie)]
+    (for [[header value] [["Id" (:product/id movie)]
                           ["Title" (:title movie)]
                           ["Director" (:director movie)]
                           ["Year" (:year movie)]
@@ -94,7 +94,7 @@
         "Create"]]]]))
 
 
-(defn- product-button [product page]
+(defn- product-button [product]
   (let [_ (f-util/clog "product-button, product: " product)
         button-tag :button.rounded-lg.border-2.border-gray-500.bg-blue-100.p-4.m-2.hover:bg-gray-200.cursor-pointer]
     [:div
@@ -105,11 +105,11 @@
      (new-product-button product)]))
 
 
-(defn- product-groups-buttons [product-groups page]
+(defn- product-groups-buttons [product-groups]
   [:div
    [:div.flex.flex-wrap.justify-center
     (for [product product-groups]
-      (product-button product page))]])
+      (product-button product))]])
 
 
 (defn- header-view [state]
@@ -119,7 +119,7 @@
     [:h1.text-3xl.font-bold.text-center.mt-5 "WEB STORE with REPLICANT, NEXUS and DATASCRIPT"]
     [:h2.text-xl.font-bold.text-center.mt-10 "Choose product group:"]
     [:div.mt-5
-     (product-groups-buttons (:pg-config state) (:page state))]]])
+     (product-groups-buttons (:pg-config state))]]])
 
 
 (defn new-product [state pg headers]
