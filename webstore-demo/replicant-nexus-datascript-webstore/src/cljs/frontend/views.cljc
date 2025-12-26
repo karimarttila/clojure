@@ -68,21 +68,41 @@
        [:td.border.px-4.py-2 value]])]])
 
 
-(defn products-table [products pg-key]
-  (let [_ (f-util/clog "products-table, products: " products)]
-    (let [pg (name pg-key)]
-      [:table.table-auto.w-full
-       [:thead
-        [:tr
-         (for [header ["Id" "Title"]]
-           [:th.px-4.py-2 header])]]
-       [:tbody
-        (for [product products]
-          (let [id (:product/id product)
-                title (:title product)]
-            [:tr
-             [:td.border.px-4.py-2 [:a {:href (str "#/product/" pg "/" id)} id]]
-             [:td.border.px-4.py-2 title]]))]])))
+(defn- sort-icon [current-field current-direction field]
+  (if (= current-field field)
+    (if (= current-direction :asc)
+      "▲"
+      "▼")
+    "⇅"))
+
+(defn products-table [products pg-key table-sort]
+  (let [_ (f-util/clog "products-table, products: " products)
+        pg (name pg-key)
+        sort-field (:sort/field table-sort)
+        sort-direction (:sort/direction table-sort)
+        ;; Sort products based on current sort state
+        sorted-products (if sort-field
+                          (let [comparator-fn (if (= sort-direction :asc)
+                                                compare
+                                                #(compare %2 %1))]
+                            (sort-by sort-field comparator-fn products))
+                          products)]
+    [:table.table-auto.w-full
+     [:thead
+      [:tr
+       (for [[header field] [["Id" :product/id] ["Title" :title]]]
+         [:th.px-4.py-2.cursor-pointer.hover:bg-gray-100
+          {:on {:click [[:action/sort-table {:field field}]]}}
+          [:div.flex.items-center.justify-center
+           [:span header]
+           [:span.ml-1.text-xs (sort-icon sort-field sort-direction field)]]])]]
+     [:tbody
+      (for [product sorted-products]
+        (let [id (:product/id product)
+              title (:title product)]
+          [:tr
+           [:td.border.px-4.py-2 [:a {:href (str "#/product/" pg "/" id)} id]]
+           [:td.border.px-4.py-2 title]]))]]))
 
 
 (defn- new-product-button [product]
@@ -163,7 +183,7 @@
           success [:div (show-info "New product created!" true [:db/retract [:db/ident :db/product-created] :success])]
           :else nil))
       :products
-      (let [table (products-table (:products state) (:pg page))]
+      (let [table (products-table (:products state) (:pg page) (:table-sort state))]
         table)
       :product
       (let [id (:id page)

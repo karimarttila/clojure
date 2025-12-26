@@ -66,6 +66,11 @@
                ;; Product created entity
                {:db/id -15
                 :db/ident :db/product-created}
+               ;; Table sort state entity
+               {:db/id -16
+                :db/ident :db/table-sort
+                :sort/field :product/id
+                :sort/direction :asc}
                ;; Create app entity with references
                {:db/id -10
                 :db/ident :app
@@ -193,6 +198,22 @@
                          [:db/retract [:db/ident :db/new-product] :director]
                          [:db/retract [:db/ident :db/new-product] :genre]]))
 
+(nxr/register-action! :action/sort-table
+                      (fn [state params]
+                        (when goog.DEBUG (f-util/clog "register-action! :action/sort-table, params:" params))
+                        (let [field (:field params)
+                              current-sort (ds/pull state '[*] [:db/ident :db/table-sort])
+                              current-field (:sort/field current-sort)
+                              current-direction (:sort/direction current-sort)
+                              ;; Toggle direction if clicking same field, otherwise default to :asc
+                              new-direction (if (= field current-field)
+                                              (if (= current-direction :asc) :desc :asc)
+                                              :asc)]
+                          (when goog.DEBUG (f-util/clog "register-action! :action/sort-table, new-direction:" new-direction))
+                          [[:db/transact [[:db/add [:db/ident :db/table-sort] :sort/field field]
+                                          [:db/add [:db/ident :db/table-sort] :sort/direction new-direction]]]])))
+
+
 (nxr/register-action! :route/home
                       (fn [state]
                         (when goog.DEBUG (f-util/clog "register-action! :route/home"))
@@ -317,13 +338,15 @@
              new-product (ds/pull db '[*] [:db/ident :db/new-product])
              product-created (ds/pull db '[*] [:db/ident :db/product-created])
              validation-error (ds/pull db '[*] [:db/ident :db/product-validation-error])
+             table-sort (ds/pull db '[*] [:db/ident :db/table-sort])
              view-state {:pg-config (:app/pg-config app)
                          :page (get-in app [:app/page :page/navigated])
                          :started-at (:app/started-at app)
                          :products products
                          :new-product new-product
                          :validation-error validation-error
-                         :product-created product-created}]
+                         :product-created product-created
+                         :table-sort table-sort}]
          (when goog.DEBUG (f-util/clog "view-state:" view-state))
          (r/render !el
                    (f-views/view view-state)))))
