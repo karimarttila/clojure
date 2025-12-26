@@ -10,7 +10,9 @@
             [frontend.routes :as f-routes]
             [common.schema :as f-schema]
             [malli.core :as m]
-            [malli.error :as me]))
+            [malli.error :as me]
+            [malli.transform]
+            ))
 
 
 (def db-schema
@@ -28,6 +30,7 @@
 (defonce ^:private !conn (ds/create-conn db-schema))
 
 (defonce ^:private !el (js/document.getElementById "app"))
+
 
 ;; Initial transact.
 (ds/transact! !conn
@@ -94,10 +97,6 @@
                         (let [page-id (:db/id (:app/page (ds/pull state '[{:app/page [:db/id]}] :app)))]
                           [[:db/transact [[:db/add page-id :page/navigated {:page :home}]]]])))
 
-
-(nxr/register-action! :route/products
-                      (fn [state params]
-                        (when goog.DEBUG (f-util/clog "register-action! :route/products, params:" params))))
 
 
 (nxr/register-action! :add/products
@@ -171,11 +170,28 @@
                               [[:backend/fetch {:api query-api :pg pg}]
                                [:db/transact [[:db/add page-id :page/navigated {:page :product, :pg pg, :id id}]]]])))))
 
-;; NOTE: Needs to be effect, since makes http get which is a side-effect.
+
+(nxr/register-action! :route/new
+                      (fn [state params]
+                        (when goog.DEBUG (f-util/clog "register-action! :route/new, params:" params))
+                        (let [pg (:pg params)
+                              page-id (:db/id (:app/page (ds/pull state '[{:app/page [:db/id]}] :app)))]
+                          [[:db/transact [[:db/add page-id :page/navigated {:page :new, :pg pg}]]]])))
+
+
+
+;; NOTE: Fetch and post needs to be effects, since they make http get and post which are a side-effects.
 (nxr/register-effect! :backend/fetch
                       (fn [_ system params]
                         (when goog.DEBUG (f-util/clog "effect :backend/fetch, params:" params))
                         (f-http/fetch system params)))
+
+
+(nxr/register-effect! :backend/post
+                      (fn [_ system params]
+                        (when goog.DEBUG (f-util/clog "effect :backend/post, params:" params))
+                        (f-http/post system params)))
+
 
 (defn ^:export init! []
   (when goog.DEBUG (f-util/clog "init!"))
@@ -184,11 +200,9 @@
     (add-watch
      !conn ::render
      (fn [_ _ _ _]
-       ;; Pull the view-state (basically, everything from Datascript store).
        (let [db (ds/db !conn)
              app (ds/pull db '[* {:app/pg-config [*]} {:app/page [*]} :app/started-at] :app)
              current-pg (get-in app [:app/page :page/navigated :pg])
-             ;; Pull products for the current pg if it exists
              products (when current-pg
                         (ds/q '[:find [(pull ?e [*]) ...]
                                 :in $ ?pg
@@ -196,14 +210,21 @@
                                 [?e :product/pg ?pg-ref]
                                 [?pg-ref :pg/id ?pg]]
                               db current-pg))
-             ;; Create a clean view-state map with four keys
+             ;; Pull additional state for forms
+             new-product (ds/pull db '[*] [:db/ident :db/new-product])
+             product-created (ds/pull db '[*] [:db/ident :db/product-created])
+             validation-error (ds/pull db '[*] [:db/ident :db/product-validation-error])
              view-state {:pg-config (:app/pg-config app)
                          :page (get-in app [:app/page :page/navigated])
                          :started-at (:app/started-at app)
-                         :products products}]
+                         :products products
+                         :new-product new-product
+                         :validation-error validation-error
+                         :product-created product-created}]
          (when goog.DEBUG (f-util/clog "view-state:" view-state))
          (r/render !el
                    (f-views/view view-state)))))
+    
     ;; Add dataspex, see: https://chromewebstore.google.com/detail/dataspex/blgomkhaagnapapellmdfelmohbalneo
     (dataspex/inspect "App state" !conn)
     ;; Tell replicant to use the Nexus dispatch mechanism.
