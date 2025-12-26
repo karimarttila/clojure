@@ -77,11 +77,12 @@
          (for [header ["Id" "Title"]]
            [:th.px-4.py-2 header])]]
        [:tbody
-        (for [{:keys [id title]} products]
-          [:tr
-           [:td.border.px-4.py-2 [:a {:href (str "#/product/" pg "/" id)} id]]
-           (for [value [title]]
-             [:td.border.px-4.py-2 value])])]])))
+        (for [product products]
+          (let [id (:product/id product)
+                title (:title product)]
+            [:tr
+             [:td.border.px-4.py-2 [:a {:href (str "#/product/" pg "/" id)} id]]
+             [:td.border.px-4.py-2 title]]))]])))
 
 
 (defn- new-product-button [product]
@@ -158,7 +159,7 @@
             [:div
              (show-info "New product created!" true :db/product-created)])))
       :products
-      (let [table (products-table (:products state) (:page state))]
+      (let [table (products-table (:products state) (:pg page))]
         table)
       :product
       (let [id (:id page)
