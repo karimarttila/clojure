@@ -5,6 +5,7 @@
                [cljs-http.client :as http]
                [cognitect.transit :as transit]
                [nexus.registry :as nxr]
+               [datascript.core :as ds]
                [frontend.util :as f-util]))
 
 
@@ -33,18 +34,16 @@
     (go (try
           (let [response (<! (http/post url {:json-params product}))]
             (if (= 200 (:status response))
-              ;; Success - dispatch actions to add product, clear form, and navigate home
-              (nxr/dispatch system nil [[:add/products {:products [(:body response)] :pg pg}]
-                                        [:db/retract [:db/ident :db/new-product] :title]
-                                        [:db/retract [:db/ident :db/new-product] :author]
-                                        [:db/retract [:db/ident :db/new-product] :year]
-                                        [:db/retract [:db/ident :db/new-product] :country]
-                                        [:db/retract [:db/ident :db/new-product] :language]
-                                        [:db/retract [:db/ident :db/new-product] :price]
-                                        [:db/retract [:db/ident :db/new-product] :director]
-                                        [:db/retract [:db/ident :db/new-product] :genre]
-                                        [:db/add [:db/ident :db/product-created] :success true]
-                                        [:route/home]])
+              ;; Success - get pg-config to fetch query API
+              (let [conn (:conn system)
+                    db (ds/db conn)
+                    pg-config (ds/pull db '[*] [:pg/id pg])
+                    query-api (:pg/query-api pg-config)]
+                ;; Dispatch actions to fetch fresh products list, clear form, and navigate home
+                (nxr/dispatch system nil [[:backend/fetch {:api query-api :pg pg}]
+                                          [:action/clear-new-product]
+                                          [:db/add [:db/ident :db/product-created] :success true]
+                                          [:route/home]]))
               ;; Error - dispatch action to show error
               (nxr/dispatch system nil [[:db/add [:db/ident :db/product-created] :error (:status response)]
                                         [:route/home]])))

@@ -14,23 +14,23 @@
   (some #(when (= (:product/id %) id) %) items))
 
 
-(defn- show-error [msg button? dissoc-key]
+(defn- show-error [msg button? action]
   [:div.inline-block.bg-red-50.border.border-red-500.rounded.px-4.py-3 {:role "alert" :style {:max-width "fit-content"}}
    [:div.flex.items-center
     [:p.font-bold.text-red-700 msg]
     (when button?
       [:button.text-xs.px-2.py-1.ml-4.rounded.bg-red-50.hover:bg-gray-300.cursor-pointer.border.border-gray-400
-       {:on {:click [[:db/dissoc dissoc-key]]}}
+       {:on {:click [action]}}
        "X"])]])
 
 
-(defn- show-info [msg button? dissoc-key]
+(defn- show-info [msg button? action]
   [:div.inline-block.bg-blue-50.border.border-blue-500.rounded.px-4.py-3 {:role "alert" :style {:max-width "fit-content"}}
    [:div.flex.items-center
     [:p.font-bold.text-blue-700 msg]
     (when button?
       [:button.text-xs.px-2.py-1.ml-4.rounded.bg-blue-50.hover:bg-gray-300.cursor-pointer.border.border-gray-400
-       {:on {:click [[:db/dissoc dissoc-key]]}}
+       {:on {:click [action]}}
        "X"])]])
 
 
@@ -155,14 +155,13 @@
     ; (f-util/clog "page-content, state: " state)
     (case (:page page)
       :home
-      (let [status (:db/product-created state)
-            error (:error status)]
-        (if error
-          [:div
-           (show-error "Failed to create product!" true :db/product-created)]
-          (when status
-            [:div
-             (show-info "New product created!" true :db/product-created)])))
+      (let [status (:product-created state)
+            error (:error status)
+            success (:success status)]
+        (cond
+          error [:div (show-error "Failed to create product!" true [:db/retract [:db/ident :db/product-created] :error])]
+          success [:div (show-info "New product created!" true [:db/retract [:db/ident :db/product-created] :success])]
+          :else nil))
       :products
       (let [table (products-table (:products state) (:pg page))]
         table)

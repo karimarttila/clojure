@@ -181,6 +181,17 @@
                           (when goog.DEBUG (f-util/clog "register-action! :action/new, posting product:" product))
                           [[:backend/post {:product product :pg pg :post {:api post-api}}]])))
 
+(nxr/register-action! :action/clear-new-product
+                      (fn [_state _params]
+                        (when goog.DEBUG (f-util/clog "register-action! :action/clear-new-product"))
+                        [[:db/retract [:db/ident :db/new-product] :title]
+                         [:db/retract [:db/ident :db/new-product] :author]
+                         [:db/retract [:db/ident :db/new-product] :year]
+                         [:db/retract [:db/ident :db/new-product] :country]
+                         [:db/retract [:db/ident :db/new-product] :language]
+                         [:db/retract [:db/ident :db/new-product] :price]
+                         [:db/retract [:db/ident :db/new-product] :director]
+                         [:db/retract [:db/ident :db/new-product] :genre]]))
 
 (nxr/register-action! :route/home
                       (fn [state]
