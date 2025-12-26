@@ -138,7 +138,7 @@
      [:button.rounded-lg.border-2.border-gray-300.px-4.py-1.m-2.hover:bg-gray-200.cursor-pointer
       {:type :submit}
       "Submit"]]
-    (let [error (:db/product-validation-error state)
+    (let [error (:validation-error state)
           [k v] (first (:error error))]
       (when error
         (show-error (str (name k) ": " (first v)) false nil)))]])
