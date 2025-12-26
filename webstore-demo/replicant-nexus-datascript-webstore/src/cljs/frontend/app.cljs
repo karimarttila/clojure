@@ -113,15 +113,14 @@
                           (when goog.DEBUG (f-util/clog "register-action! :db/assoc-in, eid:" eid))
                           (when goog.DEBUG (f-util/clog "register-action! :db/assoc-in, entity:" entity))
                           (when goog.DEBUG (f-util/clog "register-action! :db/assoc-in, current entity attrs:" entity))
-                          (let [current-value (get entity attr)
-                                new-entity (assoc entity attr value)]
+                          (let [new-entity (assoc entity attr value)]
                             (when goog.DEBUG (f-util/clog "register-action! :db/assoc-in, new-entity:" new-entity))
                             [[:db/transact [new-entity]]]))))
 
 (nxr/register-action! :frontend.views/update-field
-                      (fn [state path value]
+                      (fn [_ path value]
                         (when goog.DEBUG (f-util/clog "register-action! ::update-field" {:path path, :value value}))
-                        (let [[ident attr] path
+                        (let [[_ attr] path
                               ;; Define numeric fields
                               numeric-fields #{:price :year}
                               ;; Convert to number if it's a numeric field and value is not empty
@@ -134,6 +133,7 @@
                           (when goog.DEBUG (f-util/clog "register-action! ::update-field, value:" value))
                           (when goog.DEBUG (f-util/clog "register-action! ::update-field, coerced-value:" coerced-value))
                           [[:db/assoc-in path coerced-value]])))
+
 
 (defn- get-product-from-new-product [state pg-id]
   (let [new-product (ds/pull state '[*] [:db/ident :db/new-product])]
@@ -213,6 +213,8 @@
                           [[:db/transact [[:db/add [:db/ident :db/table-sort] :sort/field field]
                                           [:db/add [:db/ident :db/table-sort] :sort/direction new-direction]]]])))
 
+
+;; ********** ROUTING **********
 
 (nxr/register-action! :route/home
                       (fn [state]
@@ -303,6 +305,7 @@
                           [[:db/transact [[:db/add page-id :page/navigated {:page :new, :pg pg}]]]])))
 
 
+;; ********** HTTP EFFECTS **********
 
 ;; NOTE: Fetch and post needs to be effects, since they make http get and post which are a side-effects.
 (nxr/register-effect! :backend/fetch
@@ -348,8 +351,7 @@
                          :product-created product-created
                          :table-sort table-sort}]
          (when goog.DEBUG (f-util/clog "view-state:" view-state))
-         (r/render !el
-                   (f-views/view view-state)))))
+         (r/render !el (f-views/view view-state)))))
     
     ;; Add dataspex, see: https://chromewebstore.google.com/detail/dataspex/blgomkhaagnapapellmdfelmohbalneo
     (dataspex/inspect "App state" !conn)
@@ -376,5 +378,4 @@
     ;; Initialize routes.
     (f-routes/start! f-routes/routes system)
     ; Trigger initial render as in the replicant-state-datascript example.
-    (ds/transact! !conn
-                  [[:db/add :app :app/started-at (js/Date.)]])))
+    (ds/transact! !conn [[:db/add :app :app/started-at (js/Date.)]])))

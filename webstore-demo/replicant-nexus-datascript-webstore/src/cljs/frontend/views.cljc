@@ -6,10 +6,6 @@
 ;; For debugging sessions, remove comment of the logging calls, and after debuggins session comment out again.
 
 
-(defn products-page? [page product]
-  (and (= (:page page) :products) (= (:pg page) (:id product))))
-
-
 (defn find-item-by-id [items id]
   (some #(when (= (:product/id %) id) %) items))
 
@@ -115,8 +111,7 @@
 
 
 (defn- product-button [product]
-  (let [#_#__ (f-util/clog "product-button, product: " product)
-        button-tag :button.rounded-lg.border-2.border-gray-500.bg-blue-100.p-4.m-2.hover:bg-gray-200.cursor-pointer]
+  (let [button-tag :button.rounded-lg.border-2.border-gray-500.bg-blue-100.p-4.m-2.hover:bg-gray-200.cursor-pointer]
     [:div
      [:a {:href (str "#/products/" (name (:pg/id product)))}
       [button-tag
@@ -135,7 +130,6 @@
 (defn- header-view [state]
   [:div.flex ;.h-screen
    [:div.flex-grow.p-4
-    ;[:div.flex.flex-col.items-center.min-h-screen.mt-1]
     [:h1.text-3xl.font-bold.text-center.mt-5 "WEB STORE with REPLICANT, NEXUS and DATASCRIPT"]
     [:h2.text-xl.font-bold.text-center.mt-10 "Choose product group:"]
     [:div.mt-5
@@ -172,7 +166,6 @@
 (defn- page-content [state]
   (let [page (:page state)]
     (f-util/clog "page-content, page: " page)
-    ; (f-util/clog "page-content, state: " state)
     (case (:page page)
       :home
       (let [status (:product-created state)
@@ -216,6 +209,5 @@
   (get-in {:app/page {:db/id 3, :page/navigated {:page :products, :pg :books}}} [:app/page :page/navigated])
   ;;=> {:page :products, :pg :books}
   ;;=> {:db/id 3, :page/navigated {:page :products, :pg :books}}
-  
   
   )
