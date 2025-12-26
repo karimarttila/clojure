@@ -22,9 +22,7 @@
    ;; --- App structure ---
    :app/pg-config {:db/cardinality :db.cardinality/many
                    :db/valueType :db.type/ref}
-   :app/page {:db/valueType :db.type/ref}
-   :app/products {:db/valueType :db.type/ref}
-   })
+   :app/page {:db/valueType :db.type/ref}})
 
 
 (defonce ^:private !conn (ds/create-conn db-schema))
@@ -60,40 +58,10 @@
                {:db/id -10
                 :db/ident :app
                 :app/pg-config [-1 -2]
-                :app/page -11
-                :app/products -12}])
+                :app/page -11}])
 
 
-(comment
-  ;; Experimentation
-
-  (ds/pull (ds/db !conn) '[*] :app)
-  ;;=> {:db/id 5, :app/products {:db/id 4}, :app/page {:db/id 3}, :app/pg-config [{:db/id 1} {:db/id 2}], :db/ident :app}
-
-  (ds/pull (ds/db !conn) '[* {:app/pg-config [*]} {:app/page [*]} {:app/products [*]}] :app)
-  ;;=> {:app/products {:db/id 4, :data/initialized true},
-  ;;    :app/page {:db/id 3, :page/navigated {:page :home}},
-  ;;    :app/pg-config
-  ;;    [{:db/id 1,
-  ;;      :pg/id :books,
-  ;;      :pg/name "Books",
-  ;;      :pg/pg-id 1,
-  ;;      :pg/post-api "/products/books",
-  ;;      :pg/post-id :books,
-  ;;      :pg/query-api "/products/books",
-  ;;      :pg/query-id :books}
-  ;;     {:db/id 2,
-  ;;      :pg/id :movies,
-  ;;      :pg/name "Movies",
-  ;;      :pg/pg-id 2,
-  ;;      :pg/post-api "/products/movies",
-  ;;      :pg/post-id :movies,
-  ;;      :pg/query-api "/products/movies",
-  ;;      :pg/query-id :movies}],
-  ;;    :db/id 5,
-  ;;    :db/ident :app}
-  )
-
+;; See scratch_frontend.cljs for examples on how to query Datascript store.
 
 
 ;; :db/transact, :db/add, etc. generic functions taken from https://github.com/cjohansen/replicant-state-datascript
@@ -129,8 +97,7 @@
 
 (nxr/register-action! :route/products
                       (fn [state params]
-                        (when goog.DEBUG (f-util/clog "register-action! :route/products, params:" params))
-                        ))
+                        (when goog.DEBUG (f-util/clog "register-action! :route/products, params:" params))))
 
 
 (nxr/register-action! :add/products
@@ -186,15 +153,31 @@
 
 (defn ^:export init! []
   (when goog.DEBUG (f-util/clog "init!"))
-  (let [system {:conn !conn, :routes f-routes/routes}
-        ;; Pull the view-state (basically, everything from Datascript store).
-        view-state (ds/pull (ds/db !conn) '[* {:app/pg-config [*]} {:app/page [*]} {:app/products [*]} :app/started-at] :app)]
+  (let [system {:conn !conn, :routes f-routes/routes}]
     ;; Add watch to trigger render when ever the state changes as in the replicant-state-datascript example.
     (add-watch
      !conn ::render
      (fn [_ _ _ _]
-       (r/render !el
-                 (f-views/view view-state))))
+       ;; Pull the view-state (basically, everything from Datascript store).
+       (let [db (ds/db !conn)
+             app (ds/pull db '[* {:app/pg-config [*]} {:app/page [*]} :app/started-at] :app)
+             current-pg (get-in app [:app/page :page/navigated :pg])
+             ;; Pull products for the current pg if it exists
+             products (when current-pg
+                        (ds/q '[:find [(pull ?e [*]) ...]
+                                :in $ ?pg
+                                :where
+                                [?e :product/pg ?pg-ref]
+                                [?pg-ref :pg/id ?pg]]
+                              db current-pg))
+             ;; Create a clean view-state map with four keys
+             view-state {:pg-config (:app/pg-config app)
+                         :page (get-in app [:app/page :page/navigated])
+                         :started-at (:app/started-at app)
+                         :products products}]
+         (when goog.DEBUG (f-util/clog "view-state:" view-state))
+         (r/render !el
+                   (f-views/view view-state)))))
     ;; Add dataspex, see: https://chromewebstore.google.com/detail/dataspex/blgomkhaagnapapellmdfelmohbalneo
     (dataspex/inspect "App state" !conn)
     ;; Tell replicant to use the Nexus dispatch mechanism.

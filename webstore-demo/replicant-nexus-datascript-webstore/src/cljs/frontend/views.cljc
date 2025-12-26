@@ -69,18 +69,19 @@
 
 
 (defn products-table [products pg-key]
-  (let [pg (name pg-key)]
-    [:table.table-auto.w-full
-     [:thead
-      [:tr
-       (for [header ["Id" "Title"]]
-         [:th.px-4.py-2 header])]]
-     [:tbody
-      (for [{:keys [id title]} products]
+  (let [_ (f-util/clog "products-table, products: " products)]
+    (let [pg (name pg-key)]
+      [:table.table-auto.w-full
+       [:thead
         [:tr
-         [:td.border.px-4.py-2 [:a {:href (str "#/product/" pg "/" id)} id]]
-         (for [value [title]]
-           [:td.border.px-4.py-2 value])])]]))
+         (for [header ["Id" "Title"]]
+           [:th.px-4.py-2 header])]]
+       [:tbody
+        (for [{:keys [id title]} products]
+          [:tr
+           [:td.border.px-4.py-2 [:a {:href (str "#/product/" pg "/" id)} id]]
+           (for [value [title]]
+             [:td.border.px-4.py-2 value])])]])))
 
 
 (defn- new-product-button [product]
@@ -94,10 +95,7 @@
 
 (defn- product-button [product page]
   (let [_ (f-util/clog "product-button, product: " product)
-        button-tag :button.rounded-lg.border-2.border-gray-500.bg-blue-100.p-4.m-2.hover:bg-gray-200.cursor-pointer
-        #_#_button-tag (if (products-page? page product)
-                     :button.rounded-lg.border-2.border-gray-500.bg-blue-100.p-4.m-2.hover:bg-gray-200.cursor-pointer
-                     :button.rounded-lg.border-2.border-gray-300.p-4.m-2.hover:bg-gray-200.cursor-pointer)]
+        button-tag :button.rounded-lg.border-2.border-gray-500.bg-blue-100.p-4.m-2.hover:bg-gray-200.cursor-pointer]
     [:div
      [:a {:href (str "#/products/" (name (:pg/id product)))}
       [button-tag
@@ -120,7 +118,7 @@
     [:h1.text-3xl.font-bold.text-center.mt-5 "WEB STORE with REPLICANT, NEXUS and DATASCRIPT"]
     [:h2.text-xl.font-bold.text-center.mt-10 "Choose product group:"]
     [:div.mt-5
-     (product-groups-buttons (:app/pg-config state) (:page/navigated state))]]])
+     (product-groups-buttons (:pg-config state) (:page state))]]])
 
 
 (defn new-product [state pg headers]
@@ -146,8 +144,8 @@
 
 
 (defn- page-content [state]
-  (let [page (:page/navigated state)]
-    ; (f-util/clog "page-content, page: " page)
+  (let [page (:page state)]
+    (f-util/clog "page-content, page: " page)
     ; (f-util/clog "page-content, state: " state)
     (case (:page page)
       :home
@@ -160,11 +158,11 @@
             [:div
              (show-info "New product created!" true :db/product-created)])))
       :products
-      (let [table (products-table (get-in state [:db/data (:pg page)]) (:pg page))]
+      (let [table (products-table (:products state) (:page state))]
         table)
       :product
       (let [id (:id page)
-            product (find-item-by-id (get-in state [:db/data (:pg page)]) id)
+            product (find-item-by-id (:products state) id)
             table (case (:pg page)
                     :books (book-details product)
                     :movies (movie-details product)
@@ -189,3 +187,10 @@
      (page-content state)]]])
 
 
+(comment
+  (get-in {:app/page {:db/id 3, :page/navigated {:page :products, :pg :books}}} [:app/page :page/navigated])
+  ;;=> {:page :products, :pg :books}
+  ;;=> {:db/id 3, :page/navigated {:page :products, :pg :books}}
+  
+  
+  )
