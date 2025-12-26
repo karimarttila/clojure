@@ -95,7 +95,7 @@
 
 
 (defn- product-button [product]
-  (let [_ (f-util/clog "product-button, product: " product)
+  (let [#_#__ (f-util/clog "product-button, product: " product)
         button-tag :button.rounded-lg.border-2.border-gray-500.bg-blue-100.p-4.m-2.hover:bg-gray-200.cursor-pointer]
     [:div
      [:a {:href (str "#/products/" (name (:pg/id product)))}
@@ -123,25 +123,29 @@
 
 
 (defn new-product [state pg headers]
-  [:div
-   [:form {:on {:submit [[:dom/prevent-default]
-                         [:action/validate {:pg pg}]]}}
-    [:table.table-auto.w-full
-     [:tbody
-      (for [header headers]
-        (let [input-tag (keyword (str "input#" (cstring/lower-case header)))
-              db-key-on (keyword (str (cstring/lower-case header)))]
-          [:tr
-           [:td.border.px-4.py-2 header]
-           [:td.border.px-4.py-2 [input-tag {:on {:input [[:db/assoc-in [:db/new-product db-key-on] :event/target.value]]}}]]]))]]
-    [:div.flex.justify-center.mt-4
-     [:button.rounded-lg.border-2.border-gray-300.px-4.py-1.m-2.hover:bg-gray-200.cursor-pointer
-      {:type :submit}
-      "Submit"]]
-    (let [error (:validation-error state)
-          [k v] (first (:error error))]
-      (when error
-        (show-error (str (name k) ": " (first v)) false nil)))]])
+  (let [new-product-data (:new-product state)]
+    [:div
+     [:form {:on {:submit [[:dom/prevent-default]
+                           [:action/validate {:pg pg}]]}}
+      [:table.table-auto.w-full
+       [:tbody
+        (for [header headers]
+          (let [input-tag (keyword (str "input#" (cstring/lower-case header)))
+                db-key-on (keyword (str (cstring/lower-case header)))
+                current-value (get new-product-data db-key-on "")]
+            [:tr
+             [:td.border.px-4.py-2 header]
+             [:td.border.px-4.py-2 
+              [input-tag {:value current-value
+                          :on {:input [[::update-field [:db/new-product db-key-on] :event/target.value]]}}]]]))]]
+      [:div.flex.justify-center.mt-4
+       [:button.rounded-lg.border-2.border-gray-300.px-4.py-1.m-2.hover:bg-gray-200.cursor-pointer
+        {:type :submit}
+        "Submit"]]
+      (let [error (:validation-error state)
+            [k v] (first (:error error))]
+        (when error
+          (show-error (str (name k) ": " (first v)) false nil)))]]))
 
 
 (defn- page-content [state]

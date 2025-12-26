@@ -57,6 +57,9 @@
                ;; Data entity with initial attribute (empty map for now)
                {:db/id -12
                 :data/initialized true}
+               ;; New product entity
+               {:db/id -13
+                :db/ident :db/new-product}
                ;; Create app entity with references
                {:db/id -10
                 :db/ident :app
@@ -89,6 +92,25 @@
                         (let [_ (when goog.DEBUG (f-util/clog "register-action! :db/retract" {:eid eid, :attr attr, :value value}))]
                           [[:db/transact [(cond-> [:db/retract eid attr]
                                             value (conj value))]]])))
+
+(nxr/register-action! :db/assoc-in
+                      (fn [state path value]
+                        (when goog.DEBUG (f-util/clog "register-action! :db/assoc-in" {:path path, :value value}))
+                        (let [[ident attr] path
+                              entity (ds/pull state '[*] ident)
+                              eid (:db/id entity)]
+                          (when goog.DEBUG (f-util/clog "register-action! :db/assoc-in, eid:" eid))
+                          (when goog.DEBUG (f-util/clog "register-action! :db/assoc-in, entity:" entity))
+                          (when goog.DEBUG (f-util/clog "register-action! :db/assoc-in, current entity attrs:" entity))
+                          (let [current-value (get entity attr)
+                                new-entity (assoc entity attr value)]
+                            (when goog.DEBUG (f-util/clog "register-action! :db/assoc-in, new-entity:" new-entity))
+                            [[:db/transact [new-entity]]]))))
+
+(nxr/register-action! :frontend.views/update-field
+                      (fn [state path value]
+                        (when goog.DEBUG (f-util/clog "register-action! ::update-field" {:path path, :value value}))
+                        [[:db/assoc-in path value]]))
 
 (nxr/register-action! :route/home
                       (fn [state]
@@ -227,13 +249,28 @@
     
     ;; Add dataspex, see: https://chromewebstore.google.com/detail/dataspex/blgomkhaagnapapellmdfelmohbalneo
     (dataspex/inspect "App state" !conn)
-    ;; Tell replicant to use the Nexus dispatch mechanism.
+    ;; Tell replicant to use the Nexus dispatch mechanism with proper event data extraction.
     (r/set-dispatch!
-     (fn [dispatch-data actions]
-       (nxr/dispatch system dispatch-data actions)))
+     (fn [event actions]
+       (when goog.DEBUG (f-util/clog "dispatch, event:" event))
+       (when goog.DEBUG (f-util/clog "dispatch, actions:" actions))
+       ;; Build dispatch-data with resolved event values
+       (let [js-event (:replicant/js-event event)
+             event-value (when js-event (.. js-event -target -value))
+             ;; Resolve :event/target.value in actions before passing to Nexus
+             resolved-actions (when event-value
+                                (walk/postwalk
+                                 (fn [x]
+                                   (if (= x :event/target.value)
+                                     event-value
+                                     x))
+                                 actions))
+             final-actions (or resolved-actions actions)]
+         (when goog.DEBUG (f-util/clog "dispatch, event-value:" event-value))
+         (when goog.DEBUG (f-util/clog "dispatch, resolved-actions:" final-actions))
+         (nxr/dispatch system nil final-actions))))
     ;; Initialize routes.
     (f-routes/start! f-routes/routes system)
     ; Trigger initial render as in the replicant-state-datascript example.
     (ds/transact! !conn
                   [[:db/add :app :app/started-at (js/Date.)]])))
-
