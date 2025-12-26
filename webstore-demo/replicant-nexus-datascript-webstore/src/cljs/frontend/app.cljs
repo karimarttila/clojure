@@ -189,7 +189,9 @@
 (nxr/register-action! :action/clear-new-product
                       (fn [_state _params]
                         (when goog.DEBUG (f-util/clog "register-action! :action/clear-new-product"))
-                        [[:db/retract [:db/ident :db/new-product] :title]
+                        ;; Clear old validation errors, and old new product cache.
+                        [[:db/retract [:db/ident :db/product-validation-error] :error]
+                         [:db/retract [:db/ident :db/new-product] :title]
                          [:db/retract [:db/ident :db/new-product] :author]
                          [:db/retract [:db/ident :db/new-product] :year]
                          [:db/retract [:db/ident :db/new-product] :country]
@@ -221,8 +223,8 @@
                         (when goog.DEBUG (f-util/clog "register-action! :route/home"))
                         (when goog.DEBUG (f-util/clog "register-action! :route/home, state: " state))
                         (let [page-id (:db/id (:app/page (ds/pull state '[{:app/page [:db/id]}] :app)))]
-                          [[:db/transact [[:db/add page-id :page/navigated {:page :home}]]]])))
-
+                          [[:action/clear-new-product]
+                           [:db/transact [[:db/add page-id :page/navigated {:page :home}]]]])))
 
 
 (nxr/register-action! :add/products
@@ -261,12 +263,14 @@
                             ;; Products already exist, just navigate
                             (do
                               (when goog.DEBUG (f-util/clog "register-action! :route/products, products already fetched"))
-                              [[:db/transact [[:db/add page-id :page/navigated {:page :products, :pg pg}]]]])
+                              [[:action/clear-new-product]
+                               [:db/transact [[:db/add page-id :page/navigated {:page :products, :pg pg}]]]])
                             ;; No products yet, fetch them first then navigate
                             (let [pg-config (ds/pull state '[*] [:pg/id pg])
                                   query-api (:pg/query-api pg-config)]
                               (when goog.DEBUG (f-util/clog "register-action! :route/products, fetching products for:" pg))
-                              [[:backend/fetch {:api query-api :pg pg}]
+                              [[:action/clear-new-product]
+                               [:backend/fetch {:api query-api :pg pg}]
                                [:db/transact [[:db/add page-id :page/navigated {:page :products, :pg pg}]]]])))))
 
 
@@ -288,12 +292,14 @@
                             ;; Products already exist, just navigate to the specific product
                             (do
                               (when goog.DEBUG (f-util/clog "register-action! :route/product, showing product:" id))
-                              [[:db/transact [[:db/add page-id :page/navigated {:page :product, :pg pg, :id id}]]]])
+                              [[:action/clear-new-product]
+                               [:db/transact [[:db/add page-id :page/navigated {:page :product, :pg pg, :id id}]]]])
                             ;; No products yet, fetch them first then navigate to the product
                             (let [pg-config (ds/pull state '[*] [:pg/id pg])
                                   query-api (:pg/query-api pg-config)]
                               (when goog.DEBUG (f-util/clog "register-action! :route/product, fetching products for:" pg))
-                              [[:backend/fetch {:api query-api :pg pg}]
+                              [[:action/clear-new-product]
+                               [:backend/fetch {:api query-api :pg pg}]
                                [:db/transact [[:db/add page-id :page/navigated {:page :product, :pg pg, :id id}]]]])))))
 
 
@@ -302,6 +308,7 @@
                         (when goog.DEBUG (f-util/clog "register-action! :route/new, params:" params))
                         (let [pg (:pg params)
                               page-id (:db/id (:app/page (ds/pull state '[{:app/page [:db/id]}] :app)))]
+                          ;; Navigate to new product page.
                           [[:db/transact [[:db/add page-id :page/navigated {:page :new, :pg pg}]]]])))
 
 
