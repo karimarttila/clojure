@@ -25,33 +25,36 @@
           (catch js/Error e
             (when goog.DEBUG (f-util/clog "fetch, error: " (.-message e))))))))
 
-
 (defn post [system action]
   (when goog.DEBUG (f-util/clog "post, action: " action))
   (let [product (:product action)
         pg (:pg action)
         url (str "/api" (get-in action [:post :api]))]
     (go (try
+          (when goog.DEBUG (f-util/clog "post, sending request to:" url))
+          (when goog.DEBUG (f-util/clog "post, product data:" product))
           (let [response (<! (http/post url {:json-params product}))]
+            (when goog.DEBUG (f-util/clog "post, response status:" (:status response)))
             (if (= 200 (:status response))
               ;; Success - get pg-config to fetch query API
               (let [conn (:conn system)
                     db (ds/db conn)
                     pg-config (ds/pull db '[*] [:pg/id pg])
                     query-api (:pg/query-api pg-config)]
+                (when goog.DEBUG (f-util/clog "post, success - navigating to home"))
                 ;; Dispatch actions to fetch fresh products list, clear form, and navigate home
                 (nxr/dispatch system nil [[:backend/fetch {:api query-api :pg pg}]
                                           [:action/clear-new-product]
                                           [:db/add [:db/ident :db/product-created] :success true]
                                           [:route/home]]))
-              ;; Error - dispatch action to show error
-              (nxr/dispatch system nil [[:db/add [:db/ident :db/product-created] :error (:status response)]
-                                        [:route/home]])))
+              ;; Error - STAY on form, just show error, DO NOT navigate
+              (do
+                (when goog.DEBUG (f-util/clog "post, error - staying on form, status:" (:status response)))
+                (nxr/dispatch system nil [[:db/add [:db/ident :db/product-created] :error (:status response)]]))))
           (catch js/Error e
-            ;; Exception - dispatch action to show error
-            (nxr/dispatch system nil [[:db/add [:db/ident :db/product-created] :error (.-message e)]
-                                      [:route/home]]))))))
-
+            ;; Exception - STAY on form, just show error, DO NOT navigate
+            (when goog.DEBUG (f-util/clog "post, exception - staying on form, error:" (.-message e)))
+            (nxr/dispatch system nil [[:db/add [:db/ident :db/product-created] :error (.-message e)]]))))))
 
 
 (comment

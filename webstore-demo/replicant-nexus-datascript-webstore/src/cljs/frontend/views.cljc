@@ -135,12 +135,17 @@
     [:div.mt-5
      (product-groups-buttons (:pg-config state))]]])
 
-
 (defn new-product [state pg headers]
-  (let [new-product-data (:new-product state)]
+  (let [new-product-data (:new-product state)
+        validation-error (:validation-error state)
+        error-map (:error validation-error)
+        [k v] (first error-map)
+        product-created (:product-created state)
+        post-error (:error product-created)]
+    (f-util/clog "new-product rendering, new-product-data:" new-product-data)
+    (f-util/clog "new-product rendering, validation-error:" validation-error)
     [:div
-     [:form {:on {:submit [[:dom/prevent-default]
-                           [:action/validate {:pg pg}]]}}
+     [:form
       [:table.table-auto.w-full
        [:tbody
         (for [header headers]
@@ -149,18 +154,21 @@
                 current-value (get new-product-data db-key-on "")]
             [:tr
              [:td.border.px-4.py-2 header]
-             [:td.border.px-4.py-2 
+             [:td.border.px-4.py-2
               [input-tag {:value current-value
                           :on {:input [[:frontend.views/update-field [:db/new-product db-key-on] :event/target.value]]}}]]]))]]
       [:div.flex.justify-center.mt-4
        [:button.rounded-lg.border-2.border-gray-300.px-4.py-1.m-2.hover:bg-gray-200.cursor-pointer
-        {:type :submit}
+        {:type "button"
+         :on {:click [[:action/validate {:pg pg}]]}}
         "Submit"]]
-      (let [error-data (:validation-error state)
-            error-map (:error error-data)
-            [k v] (first error-map)]
-        (when (and error-map k v)
-          (show-error (str (name k) ": " (first v)) false nil)))]]))
+      ;; Show validation errors
+      (when (and error-map k v)
+        (show-error (str (name k) ": " (first v)) false nil))
+      ;; Show POST errors
+      (when post-error
+        (show-error (str "Failed to create product: " post-error) true
+                    [:db/retract [:db/ident :db/product-created] :error]))]]))
 
 
 (defn- page-content [state]

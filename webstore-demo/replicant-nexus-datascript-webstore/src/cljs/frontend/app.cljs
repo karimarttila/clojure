@@ -326,9 +326,14 @@
                         (when goog.DEBUG (f-util/clog "effect :backend/post, params:" params))
                         (f-http/post system params)))
 
-
 (defn ^:export init! []
-  (when goog.DEBUG (f-util/clog "init!"))
+  ;; Store timestamp to see if page reloaded
+  (when-not js/window.appInitTime
+    (set! js/window.appInitTime (js/Date.)))
+  (when goog.DEBUG (f-util/clog "init! called at:" (js/Date.)))
+  (when goog.DEBUG (f-util/clog "init! FIRST init was at:" js/window.appInitTime))
+  (when goog.DEBUG (f-util/clog "init! routes-initialized? before check:" @f-routes/routes-initialized?))
+
   (let [system {:conn !conn, :routes f-routes/routes}]
     ;; Add watch to trigger render when ever the state changes as in the replicant-state-datascript example.
     (add-watch
@@ -359,12 +364,13 @@
                          :table-sort table-sort}]
          (when goog.DEBUG (f-util/clog "view-state:" view-state))
          (r/render !el (f-views/view view-state)))))
-    
+
     ;; Add dataspex, see: https://chromewebstore.google.com/detail/dataspex/blgomkhaagnapapellmdfelmohbalneo
     (dataspex/inspect "App state" !conn)
     ;; Tell replicant to use the Nexus dispatch mechanism with proper event data extraction.
     (r/set-dispatch!
      (fn [event actions]
+       (when goog.DEBUG (f-util/clog "=== REPLICANT DISPATCH START ==="))
        (when goog.DEBUG (f-util/clog "dispatch, event:" event))
        (when goog.DEBUG (f-util/clog "dispatch, actions:" actions))
        ;; Build dispatch-data with resolved event values
@@ -381,8 +387,11 @@
              final-actions (or resolved-actions actions)]
          (when goog.DEBUG (f-util/clog "dispatch, event-value:" event-value))
          (when goog.DEBUG (f-util/clog "dispatch, resolved-actions:" final-actions))
-         (nxr/dispatch system nil final-actions))))
+         (nxr/dispatch system nil final-actions)
+         (when goog.DEBUG (f-util/clog "=== REPLICANT DISPATCH END ===")))))
     ;; Initialize routes.
     (f-routes/start! f-routes/routes system)
     ; Trigger initial render as in the replicant-state-datascript example.
     (ds/transact! !conn [[:db/add :app :app/started-at (js/Date.)]])))
+
+
