@@ -332,7 +332,7 @@
     (set! js/window.appInitTime (js/Date.)))
   (when goog.DEBUG (f-util/clog "init! called at:" (js/Date.)))
   (when goog.DEBUG (f-util/clog "init! FIRST init was at:" js/window.appInitTime))
-  (when goog.DEBUG (f-util/clog "init! routes-initialized? before check:" @f-routes/routes-initialized?))
+  #_(when goog.DEBUG (f-util/clog "init! routes-initialized? before check:" @f-routes/routes-initialized?))
 
   (let [system {:conn !conn, :routes f-routes/routes}]
     ;; Add watch to trigger render when ever the state changes as in the replicant-state-datascript example.

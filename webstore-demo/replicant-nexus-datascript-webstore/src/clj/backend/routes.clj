@@ -58,7 +58,7 @@
       :output-name))
 
 
-;; Open portfolio in http://localhost:9333/portfolio/index
+;; Open portfolio in http://localhost:8332/portfolio/index (check your port in config.edn!)
 (defn portfolio []
   (hiccup/html {:mode :html}
                (hiccup/raw "<!DOCTYPE html>\n")

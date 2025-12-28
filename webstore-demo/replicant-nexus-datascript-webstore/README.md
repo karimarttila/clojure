@@ -29,7 +29,6 @@
   - [Hashp](#hashp)
 - [Some To-dos](#some-to-dos)
 
-
 ## Introduction
 
 This exercise is a continuation for my earlier [Clojure Fullstack Exercise Using Replicant](https://www.karimarttila.fi/clojurescript/2025/02/28/clojurescript-with-replicant.html). In that previous exercise I learned how to use the excellent [Replicant](https://github.com/cjohansen/replicant) library to build a frontend for my Webstore example.

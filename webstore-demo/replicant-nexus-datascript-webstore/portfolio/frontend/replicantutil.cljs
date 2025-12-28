@@ -1,10 +1,6 @@
 (ns frontend.replicantutil
   (:require [clojure.walk :as walk]
-            [replicant.dom :as r]
-            ;; TODO: Remove later: use no.cjohansen/dataspex instead.
-            #_[gadget.inspector :as inspector]
-            )
-  )
+            [replicant.dom :as r]))
 
 ;; The same state as we use in the application side (in app.cljs)
 ;; But this is the Portfolio version for the Replicant.
@@ -47,20 +43,17 @@
        :else x))
    action))
 
-#_(defn- render! [state]
-    (r/render
-     (js/document.getElementById "app")
-     (f-views/view state)))
-
 
 (r/set-dispatch!
- (fn [event-data handler-data]
+ (fn [event-data _handler-data]
    (when (= :replicant.trigger/dom-event
             (:replicant/trigger event-data))
      (when goog.DEBUG
        (prn "** set-dispatch! **")))))
 
 
+
+#_{:clj-kondo/ignore [:unused-private-var]}
 (defn- event-handler [{:replicant/keys [^js js-event] :as replicant-data} actions]
   (doseq [action actions]
     (let [enriched-action (->> action

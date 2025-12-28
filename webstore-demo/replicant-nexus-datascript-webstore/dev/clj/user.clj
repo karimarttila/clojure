@@ -1,9 +1,11 @@
 (ns user
+  {:clj-kondo/config {:linters {:unused-referred-var {:level :off}}}} 
   (:require [integrant.repl :refer [clear go halt prep init reset reset-all]]
             [integrant.repl.state :as state]
             ))
 
 ;; https://github.com/AbhinavOmprakash/snitch
+#_{:clj-kondo/ignore [:unused-namespace]}
 (require '[snitch.core :refer [defn* defmethod* *fn *let]])
 
 
