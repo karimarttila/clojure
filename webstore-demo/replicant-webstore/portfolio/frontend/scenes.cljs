@@ -6,7 +6,7 @@
 
 
 ;; See portfolio in:
-;; http://localhost:9333/portfolio/index
+;; http://localhost:8331/portfolio/index
 
 (defscene show-info
   (f-views/show-info "Hello info from Portfolio!" true :db/dummy))

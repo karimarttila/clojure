@@ -1,10 +1,6 @@
 (ns frontend.util)
 
 
-(defn get-pg-config-by-id [id pg-config]
-  (some #(when (= (:id %) id) %) pg-config))
-
-
 ; Keep this file as cljc.
 ; If you need logging in cljc files, do it temporarily
 ; and comment out when you don't need it anymore.

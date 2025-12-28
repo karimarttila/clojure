@@ -1,5 +1,4 @@
 (ns frontend.routes
-  #_{:clj-kondo/ignore [:unused-namespace]}
   (:require [reitit.frontend :as rf]
             [reitit.frontend.easy :as rfe]
             [nexus.registry :as nxr]
@@ -20,9 +19,8 @@
              ["/new/:pg" {:name :route/new
                           :path [:pg string?]}]])
 
-(defonce ^:private routes-initialized? (atom false))
+(defonce routes-initialized? (atom false))
 
-#_{:clj-kondo/ignore [:unused-binding]}
 (defn- get-route-actions [{:keys [data path-params] :as all}]
   (when goog.DEBUG (f-util/clog "routes.get-route-actions, all: " all))
   (when goog.DEBUG (f-util/clog "routes.get-route-actions, data: " data))
