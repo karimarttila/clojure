@@ -61,16 +61,16 @@
                 :data/initialized true}
                ;; New product entity
                {:db/id -13
-                :db/ident :db/new-product}
+                :db/ident :product/new}
                ;; Product validation error entity
                {:db/id -14
-                :db/ident :db/product-validation-error}
+                :db/ident :product/validation-error}
                ;; Product created entity
                {:db/id -15
-                :db/ident :db/product-created}
+                :db/ident :product/created}
                ;; Table sort state entity
                {:db/id -16
-                :db/ident :db/table-sort
+                :db/ident :products-table/sort
                 :sort/field :product/id
                 :sort/direction :asc}
                ;; Create app entity with references
@@ -165,7 +165,7 @@
 
 
 (defn- get-product-from-new-product [state pg-id]
-  (let [new-product (ds/pull state '[*] [:db/ident :db/new-product])] 
+  (let [new-product (ds/pull state '[*] [:db/ident :product/new])] 
     (-> new-product
         (select-keys [:title :price :author :year :country :language :director :genre])
         (assoc :product-group pg-id)
@@ -188,13 +188,13 @@
                                               :books (m/validate f-schema/book-without-id product)
                                               :movies (m/validate f-schema/movie-without-id product))]
                           (if validation-ok
-                            [[:db/retract [:db/ident :db/product-validation-error] :error]
+                            [[:db/retract [:db/ident :product/validation-error] :error]
                              ;; Pass the coerced product instead of fetching it again
                              [:action/new {:pg pg :product product}]]
                             (let [error (case pg
                                           :books (me/humanize (m/explain f-schema/book-without-id product))
                                           :movies (me/humanize (m/explain f-schema/movie-without-id product)))] 
-                              [[:db/add [:db/ident :db/product-validation-error] :error error]])))))
+                              [[:db/add [:db/ident :product/validation-error] :error error]])))))
 
 (nxr/register-action! :action/new
                       (fn [state params] 
@@ -208,28 +208,28 @@
 (nxr/register-action! :action/clear-new-product
                       (fn [_state _params]                        
                         ;; Clear old validation errors, and old new product cache.
-                        [[:db/retract [:db/ident :db/product-validation-error] :error]
-                         [:db/retract [:db/ident :db/new-product] :title]
-                         [:db/retract [:db/ident :db/new-product] :author]
-                         [:db/retract [:db/ident :db/new-product] :year]
-                         [:db/retract [:db/ident :db/new-product] :country]
-                         [:db/retract [:db/ident :db/new-product] :language]
-                         [:db/retract [:db/ident :db/new-product] :price]
-                         [:db/retract [:db/ident :db/new-product] :director]
-                         [:db/retract [:db/ident :db/new-product] :genre]]))
+                        [[:db/retract [:db/ident :product/validation-error] :error]
+                         [:db/retract [:db/ident :product/new] :title]
+                         [:db/retract [:db/ident :product/new] :author]
+                         [:db/retract [:db/ident :product/new] :year]
+                         [:db/retract [:db/ident :product/new] :country]
+                         [:db/retract [:db/ident :product/new] :language]
+                         [:db/retract [:db/ident :product/new] :price]
+                         [:db/retract [:db/ident :product/new] :director]
+                         [:db/retract [:db/ident :product/new] :genre]]))
 
 (nxr/register-action! :action/sort-table
                       (fn [state params] 
                         (let [field (:field params)
-                              current-sort (ds/pull state '[*] [:db/ident :db/table-sort])
+                              current-sort (ds/pull state '[*] [:db/ident :products-table/sort])
                               current-field (:sort/field current-sort)
                               current-direction (:sort/direction current-sort)
                               ;; Toggle direction if clicking same field, otherwise default to :asc
                               new-direction (if (= field current-field)
                                               (if (= current-direction :asc) :desc :asc)
                                               :asc)] 
-                          [[:db/transact [[:db/add [:db/ident :db/table-sort] :sort/field field]
-                                          [:db/add [:db/ident :db/table-sort] :sort/direction new-direction]]]])))
+                          [[:db/transact [[:db/add [:db/ident :products-table/sort] :sort/field field]
+                                          [:db/add [:db/ident :products-table/sort] :sort/direction new-direction]]]])))
 
 
 ;; ********** ROUTING **********
@@ -349,10 +349,10 @@
                                 [?pg-ref :pg/id ?pg]]
                               db current-pg))
              ;; Pull additional state for forms
-             new-product (ds/pull db '[*] [:db/ident :db/new-product])
-             product-created (ds/pull db '[*] [:db/ident :db/product-created])
-             validation-error (ds/pull db '[*] [:db/ident :db/product-validation-error])
-             table-sort (ds/pull db '[*] [:db/ident :db/table-sort])
+             new-product (ds/pull db '[*] [:db/ident :product/new])
+             product-created (ds/pull db '[*] [:db/ident :product/created])
+             validation-error (ds/pull db '[*] [:db/ident :product/validation-error])
+             table-sort (ds/pull db '[*] [:db/ident :products-table/sort])
              view-state {:pg-config (:app/pg-config app)
                          :page (get-in app [:app/page :page/navigated])
                          :started-at (:app/started-at app)

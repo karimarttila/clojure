@@ -45,16 +45,16 @@
                 ;; Dispatch actions to fetch fresh products list, clear form, and navigate home
                 (nxr/dispatch system nil [[:backend/fetch {:api query-api :pg pg}]
                                           [:action/clear-new-product]
-                                          [:db/add [:db/ident :db/product-created] :success true]
+                                          [:db/add [:db/ident :product/created] :success true]
                                           [:route/home]]))
               ;; Error - STAY on form, just show error, DO NOT navigate
               (do
                 (when goog.DEBUG (f-util/clog "post, error - staying on form, status:" (:status response)))
-                (nxr/dispatch system nil [[:db/add [:db/ident :db/product-created] :error (:status response)]]))))
+                (nxr/dispatch system nil [[:db/add [:db/ident :product/created] :error (:status response)]]))))
           (catch js/Error e
             ;; Exception - STAY on form, just show error, DO NOT navigate
             (when goog.DEBUG (f-util/clog "post, exception - staying on form, error:" (.-message e)))
-            (nxr/dispatch system nil [[:db/add [:db/ident :db/product-created] :error (.-message e)]]))))))
+            (nxr/dispatch system nil [[:db/add [:db/ident :product/created] :error (.-message e)]]))))))
 
 
 (comment

@@ -156,7 +156,7 @@
              [:td.border.px-4.py-2 header]
              [:td.border.px-4.py-2
               [input-tag {:value current-value
-                          :on {:input [[:frontend.views/update-field [:db/new-product db-key-on] :event/target.value]]}}]]]))]]
+                          :on {:input [[:frontend.views/update-field [:product/new db-key-on] :event/target.value]]}}]]]))]]
       [:div.flex.justify-center.mt-4
        [:button.rounded-lg.border-2.border-gray-300.px-4.py-1.m-2.hover:bg-gray-200.cursor-pointer
         {:type "button"
@@ -168,7 +168,7 @@
       ;; Show POST errors
       (when post-error
         (show-error (str "Failed to create product: " post-error) true
-                    [:db/retract [:db/ident :db/product-created] :error]))]]))
+                    [:db/retract [:db/ident :product/created] :error]))]]))
 
 
 (defn- page-content [state]
@@ -180,8 +180,8 @@
             error (:error status)
             success (:success status)]
         (cond
-          error [:div (show-error "Failed to create product!" true [:db/retract [:db/ident :db/product-created] :error])]
-          success [:div (show-info "New product created!" true [:db/retract [:db/ident :db/product-created] :success])]
+          error [:div (show-error "Failed to create product!" true [:db/retract [:db/ident :product/created] :error])]
+          success [:div (show-info "New product created!" true [:db/retract [:db/ident :product/created] :success])]
           :else nil))
       :products
       (let [table (products-table (:products state) (:pg page) (:table-sort state))]
