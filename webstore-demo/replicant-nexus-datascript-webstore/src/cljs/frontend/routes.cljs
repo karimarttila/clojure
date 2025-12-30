@@ -21,10 +21,9 @@
 
 (defonce routes-initialized? (atom false))
 
-(defn- get-route-actions [{:keys [data path-params] :as all}]
-  (when goog.DEBUG (f-util/clog "routes.get-route-actions, all: " all))
-  (when goog.DEBUG (f-util/clog "routes.get-route-actions, data: " data))
-  (when goog.DEBUG (f-util/clog "routes.get-route-actions, path-params: " path-params))
+(defn- get-route-actions [{:keys [data path-params]}]
+  #_ (when goog.DEBUG (f-util/clog "routes.get-route-actions, data: " data))
+  #_ (when goog.DEBUG (f-util/clog "routes.get-route-actions, path-params: " path-params))
   (case (:name data)
     :route/home [[:route/home]]
     :route/products (let [pg (keyword (:pg path-params))]

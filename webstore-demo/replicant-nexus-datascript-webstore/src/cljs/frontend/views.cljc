@@ -72,7 +72,7 @@
     "⇅"))
 
 (defn products-table [products pg-key table-sort]
-  (let [_ (f-util/clog "products-table, products: " products)
+  (let [#_#_ _ (f-util/clog "products-table, products: " products)
         pg (name pg-key)
         sort-field (:sort/field table-sort)
         sort-direction (:sort/direction table-sort)
@@ -142,8 +142,8 @@
         [k v] (first error-map)
         product-created (:product-created state)
         post-error (:error product-created)]
-    (f-util/clog "new-product rendering, new-product-data:" new-product-data)
-    (f-util/clog "new-product rendering, validation-error:" validation-error)
+    #_ (f-util/clog "new-product rendering, new-product-data:" new-product-data)
+    #_ (f-util/clog "new-product rendering, validation-error:" validation-error)
     [:div
      [:form
       [:table.table-auto.w-full
@@ -173,7 +173,7 @@
 
 (defn- page-content [state]
   (let [page (:page state)]
-    (f-util/clog "page-content, page: " page)
+    #_ (f-util/clog "page-content, page: " page)
     (case (:page page)
       :home
       (let [status (:product-created state)
@@ -205,7 +205,7 @@
 
 
 (defn view [state]
-  (f-util/clog "view, state: " state)
+  #_ (f-util/clog "view, state: " state)
   [:div.flex.h-screen
    [:div.flex-grow.p-4
     [:div.flex.flex-col.items-center.min-h-screen.mt-10

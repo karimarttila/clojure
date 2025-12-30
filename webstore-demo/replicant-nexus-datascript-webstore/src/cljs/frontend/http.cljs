@@ -18,7 +18,7 @@
           (let [response (<! (http/get url))]
             (if (= 200 (:status response))
               (let [data (:body response)]
-                (when goog.DEBUG (f-util/clog "fetch, data: " data))
+                #_ (when goog.DEBUG (f-util/clog "fetch, data: " data))
                 ;; Dispatch to Nexus to add products
                 (nxr/dispatch system nil [[:add/products {:pg pg :products data}]]))
               (when goog.DEBUG (f-util/clog "fetch, error status: " (:status response)))))
