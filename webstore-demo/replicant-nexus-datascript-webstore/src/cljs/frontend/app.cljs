@@ -1,5 +1,6 @@
 (ns frontend.app
   (:require [clojure.walk :as walk]
+            [clojure.string :as string]
             [replicant.dom :as r]
             [nexus.registry :as nxr]
             [dataspex.core :as dataspex]
@@ -15,6 +16,7 @@
             ))
 
 
+; Datascript schema
 (def db-schema
   {;; --- Identities ---
    :pg/id      {:db/unique :db.unique/identity}
@@ -32,7 +34,7 @@
 (defonce ^:private !el (js/document.getElementById "app"))
 
 
-;; Initial transact.
+; Initial transact
 (ds/transact! !conn
               [;; Product groups
                {:db/id -1
@@ -78,13 +80,16 @@
                 :app/page -11}])
 
 
+;; ********** NEXUS **********
+
 ;; See scratch_frontend.cljs for examples on how to query Datascript store.
-
-
 ;; :db/transact, :db/add, etc. generic functions taken from https://github.com/cjohansen/replicant-state-datascript
 
 ;; This tells Nexus: "To get the state, take the system map, get :conn from it, and call ds/db on it."
 (nxr/register-system->state! (comp ds/db :conn))
+
+
+;; ********** INTERCEPTORS **********
 
 ;; See: https://github.com/cjohansen/nexus?tab=readme-ov-file#example-logging
 (def logger
@@ -114,12 +119,19 @@
        (f-util/clog "After action: " (pr-str action)))
      ctx)})
 
+
 (nxr/register-interceptor! logger)
+
+
+
+;; ********** TRANSACT **********
 
 (nxr/register-effect! :db/transact
                       ^:nexus/batch
                       (fn [_ {:keys [conn]} txes]
                         (ds/transact! conn (apply concat (map first txes)))))
+
+;; ********** NEXUS ACTIONS **********
 
 (nxr/register-action! :db/add
                       (fn [_ eid attr value]
