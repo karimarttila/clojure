@@ -14,6 +14,7 @@
   - [Dataspex](#dataspex)
 - [Frontend Initialization](#frontend-initialization)
 - [Nexus Actions and Effects](#nexus-actions-and-effects)
+- [Nexus Interceptors](#nexus-interceptors)
 - [Some Development Tricks Used in This Exercise](#some-development-tricks-used-in-this-exercise)
   - [Move Calva Output to a New Window](#move-calva-output-to-a-new-window)
   - [Browser Developer Tool Console Logging](#browser-developer-tool-console-logging)
@@ -104,6 +105,26 @@ An action example:
 ```
 
 I.e.: clear new product page form, fetch products, and then add the new page we navigated to the Datascript database.
+
+## Nexus Interceptors
+
+Nexus provides an easy way to add interceptors for effects and actions.
+
+```clojure
+
+(def logger
+  {:id :logger
+
+   :before-effect
+   (fn [{:keys [effect] :as ctx}] 
+     (f-util/clog "Before effect: " (pr-str effect))
+     ctx)
+; ...
+
+(nxr/register-interceptor! logger)
+```
+
+I learned this from [Nexus Interceptor example](https://github.com/cjohansen/nexus?tab=readme-ov-file#example-logging).
 
 ## Some Development Tricks Used in This Exercise
 
