@@ -120,8 +120,66 @@
      ctx)})
 
 
-(nxr/register-interceptor! logger)
+(def track-previous-page
+  {:id :track-previous-page
 
+   :before-action
+   (fn [{:keys [action state] :as ctx}]
+     (let [[action-name _params] action
+           ;; Check if this is a route action
+           route-action? (and (keyword? action-name)
+                              (string/starts-with? (str action-name) ":route/"))]
+       (if route-action?
+         (let [;; Get current page navigation
+               app-page (ds/pull state '[{:app/page [*]}] :app)
+               current-page (get-in app-page [:app/page :page/navigated])
+               page-id (get-in app-page [:app/page :db/id])]
+           ;; Store current page as previous before navigating
+           (if (and current-page page-id)
+             (do
+               (ds/transact! !conn [[:db/add page-id :page/previous current-page]])
+               ctx)
+             ctx))
+         ctx)))})
+
+
+(def reset-after-new-product-page
+  {:id :reset-after-new-product-page
+
+   :before-action
+   (fn [{:keys [action state] :as ctx}]
+     (let [[action-name _params] action
+           ;; Check if this is a route action
+           route-action? (and (keyword? action-name)
+                              (string/starts-with? (str action-name) ":route/"))]
+       (if route-action?
+         (let [;; Get previous page
+               app-page (ds/pull state '[{:app/page [*]}] :app)
+               previous-page (get-in app-page [:app/page :page/previous])
+               ;; Check if we're leaving the new product page
+               leaving-new-page? (and previous-page
+                                      (= (:page previous-page) :new))]
+           (if leaving-new-page?
+             (do
+               (when goog.DEBUG (f-util/clog "Leaving new product page, clearing form data"))
+               ;; Clear new product form data
+               (ds/transact! !conn [[:db/retract [:db/ident :product/validation-error] :error]
+                                    [:db/retract [:db/ident :product/new] :title]
+                                    [:db/retract [:db/ident :product/new] :author]
+                                    [:db/retract [:db/ident :product/new] :year]
+                                    [:db/retract [:db/ident :product/new] :country]
+                                    [:db/retract [:db/ident :product/new] :language]
+                                    [:db/retract [:db/ident :product/new] :price]
+                                    [:db/retract [:db/ident :product/new] :director]
+                                    [:db/retract [:db/ident :product/new] :genre]])
+               ctx)
+             ctx))
+         ctx)))})
+
+
+(nxr/register-interceptor! logger)
+(nxr/register-interceptor! track-previous-page)
+(nxr/register-interceptor! reset-after-new-product-page)
 
 
 ;; ********** TRANSACT **********
@@ -174,7 +232,7 @@
              (into {})))))
 
 
-(nxr/register-action! :action/validate
+(nxr/register-action! :action/validate-new-product
                       (fn [state params]
                         (let [pg (:pg params)
                               pg-config (ds/pull state '[*] [:pg/id pg])
@@ -205,19 +263,6 @@
                               post-api (:pg/post-api pg-config)] 
                           [[:backend/post {:product product :pg pg :post {:api post-api}}]])))
 
-(nxr/register-action! :action/clear-new-product
-                      (fn [_state _params]                        
-                        ;; Clear old validation errors, and old new product cache.
-                        [[:db/retract [:db/ident :product/validation-error] :error]
-                         [:db/retract [:db/ident :product/new] :title]
-                         [:db/retract [:db/ident :product/new] :author]
-                         [:db/retract [:db/ident :product/new] :year]
-                         [:db/retract [:db/ident :product/new] :country]
-                         [:db/retract [:db/ident :product/new] :language]
-                         [:db/retract [:db/ident :product/new] :price]
-                         [:db/retract [:db/ident :product/new] :director]
-                         [:db/retract [:db/ident :product/new] :genre]]))
-
 (nxr/register-action! :action/sort-table
                       (fn [state params] 
                         (let [field (:field params)
@@ -237,8 +282,7 @@
 (nxr/register-action! :route/home
                       (fn [state]
                         (let [page-id (:db/id (:app/page (ds/pull state '[{:app/page [:db/id]}] :app)))]
-                          [[:action/clear-new-product]
-                           [:db/transact [[:db/add page-id :page/navigated {:page :home}]]]])))
+                          [[:db/transact [[:db/add page-id :page/navigated {:page :home}]]]])))
 
 
 (nxr/register-action! :add/products
@@ -271,13 +315,11 @@
                                                        state pg))] 
                           (if has-products?
                             ;; Products already exist, just navigate
-                            [[:action/clear-new-product]
-                             [:db/transact [[:db/add page-id :page/navigated {:page :products, :pg pg}]]]]
+                            [[:db/transact [[:db/add page-id :page/navigated {:page :products, :pg pg}]]]]
                             ;; No products yet, fetch them first then navigate
                             (let [pg-config (ds/pull state '[*] [:pg/id pg])
                                   query-api (:pg/query-api pg-config)]
-                              [[:action/clear-new-product]
-                               [:backend/fetch {:api query-api :pg pg}]
+                              [[:backend/fetch {:api query-api :pg pg}]
                                [:db/transact [[:db/add page-id :page/navigated {:page :products, :pg pg}]]]])))))
 
 
@@ -295,13 +337,11 @@
                                                        state pg))] 
                           (if has-products?
                             ;; Products already exist, just navigate to the specific product
-                            [[:action/clear-new-product]
-                             [:db/transact [[:db/add page-id :page/navigated {:page :product, :pg pg, :id id}]]]]
+                            [[:db/transact [[:db/add page-id :page/navigated {:page :product, :pg pg, :id id}]]]]
                             ;; No products yet, fetch them first then navigate to the product
                             (let [pg-config (ds/pull state '[*] [:pg/id pg])
-                                  query-api (:pg/query-api pg-config)] 
-                              [[:action/clear-new-product]
-                               [:backend/fetch {:api query-api :pg pg}]
+                                  query-api (:pg/query-api pg-config)]
+                              [[:backend/fetch {:api query-api :pg pg}]
                                [:db/transact [[:db/add page-id :page/navigated {:page :product, :pg pg, :id id}]]]])))))
 
 

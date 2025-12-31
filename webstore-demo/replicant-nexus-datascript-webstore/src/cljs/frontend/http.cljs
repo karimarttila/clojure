@@ -44,7 +44,6 @@
                 (when goog.DEBUG (f-util/clog "post, success - navigating to home"))
                 ;; Dispatch actions to fetch fresh products list, clear form, and navigate home
                 (nxr/dispatch system nil [[:backend/fetch {:api query-api :pg pg}]
-                                          [:action/clear-new-product]
                                           [:db/add [:db/ident :product/created] :success true]
                                           [:route/home]]))
               ;; Error - STAY on form, just show error, DO NOT navigate

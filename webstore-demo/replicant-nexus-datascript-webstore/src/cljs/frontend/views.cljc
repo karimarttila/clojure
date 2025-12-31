@@ -1,10 +1,8 @@
 (ns frontend.views
-  (:require [clojure.string :as cstring]
-            [frontend.util :as f-util]))
+  (:require [clojure.string :as cstring]))
 
 ;; NOTE: You cannot use goog.DEBUG in the cljc file!
 ;; For debugging sessions, remove comment of the logging calls, and after debuggins session comment out again.
-
 
 (defn find-item-by-id [items id]
   (some #(when (= (:product/id %) id) %) items))
@@ -160,7 +158,7 @@
       [:div.flex.justify-center.mt-4
        [:button.rounded-lg.border-2.border-gray-300.px-4.py-1.m-2.hover:bg-gray-200.cursor-pointer
         {:type "button"
-         :on {:click [[:action/validate {:pg pg}]]}}
+         :on {:click [[:action/validate-new-product {:pg pg}]]}}
         "Submit"]]
       ;; Show validation errors
       (when (and error-map k v)
