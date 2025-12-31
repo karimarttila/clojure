@@ -25,9 +25,9 @@ This exercise is a continuation for my earlier [Clojure Fullstack Exercise Using
 
 In that previous exercise I built a custom dispatch system and used a Clojure Atom as my application store for storing the state of the frontend application. In this new exercise I use [Nexus](https://github.com/cjohansen/nexus) to do the heavy-lifting for creating the dispatch system, and instead of storing the application store in a Clojure Atom, I use [Datascript](https://github.com/tonsky/datascript).
 
-So, only the frontend code is new / has been refactored to use Nexus and Datascript. The backend code and tooling is mostly the same as in the previous exercise (just bumped the newest library versions for the backend as well).
+Only the frontend code is new / has been refactored to use Nexus and Datascript. The backend code and tooling is the same as in the previous exercise (just bumped the newest library versions for the backend as well).
 
-I wrote a short blog post related to the experiences when creating this winter vacation Clojure exercise: [TODO](TODO).
+I wrote a short blog post related to the experiences when creating this winter vacation Clojure exercise: [Clojure Fullstack Exercise Using Replicant, Nexus and Datascript](https://www.karimarttila.fi/clojurescript/2025/12/31/clojurescript-with-replicant-nexus-datascript.html). Mostly just a copy-paste from this README.
 
 ## Reference Material
 
@@ -46,7 +46,7 @@ Links to the example projects:
 
 ## The Libraries
 
-A short introduction to the libraries. Read more about the libraries in the link provided above.
+A short introduction to the libraries. Read more about the libraries in the links provided above.
 
 ### Replicant
 
@@ -78,7 +78,7 @@ So, in the `add-watch` we create a triggering mechanism to watch changes in our 
 
 I mostly borrowed the skeleton for Nexus actions and effects from the excellent [replicant-state-datascript](https://github.com/cjohansen/replicant-state-datascript) example application.
 
-Read more about the difference between Nexus Actions and Effects in the [Nexus documentation](https://github.com/cjohansen/nexus). Just briefly the difference is that an effect is something that has a side-effect (e.g. making a http get or post, or changing the application store state), and an action just returns data, other actions and effects to be executed by the dispatching mechanism.
+Read more about the difference between Nexus Actions and Effects in the [Nexus documentation](https://github.com/cjohansen/nexus). Just briefly the difference is that an effect is something that has a side-effect (e.g. making a http get or post, or changing the application store state), and an action just returns data, i.e. data related to other actions and effects to be executed by the dispatching mechanism.
 
 An effect example:
 
@@ -89,7 +89,7 @@ An effect example:
                         (f-http/post system params)))
 ```
 
-I.e.: just make a http post now with the parameters.
+I.e.: make a http post with the parameters.
 
 An action example:
 
@@ -109,7 +109,6 @@ I.e.: Set the :page/navigated to `:new` (new product page) so that our view know
 Nexus provides an easy way to add interceptors for effects and actions.
 
 ```clojure
-
 (def logger
   {:id :logger
 
