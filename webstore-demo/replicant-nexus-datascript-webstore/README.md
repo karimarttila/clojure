@@ -89,20 +89,20 @@ An effect example:
                         (f-http/post system params)))
 ```
 
-I.e.: make a http post with the parameters.
+Make a http post with the parameters.
 
 An action example:
 
 ```clojure
 (nxr/register-action! :route/new
-                      (fn [state params]
-                        (let [pg (:pg params)
-                              page-id (:db/id (:app/page (ds/pull state '[{:app/page [:db/id]}] :app)))]
-                          ;; Navigate to new product page.
-                          [[:db/transact [[:db/add page-id :page/navigated {:page :new, :pg pg}]]]])))
+                      (fn [_state params]
+                        (let [pg (:pg params)]
+                          [[:action/clear-new-product-form {:pg pg}]
+                           [:action/navigate {:navigation {:page :new, :pg pg}}]
+                           ])))
 ```
 
-I.e.: Set the :page/navigated to `:new` (new product page) so that our view knows which page to render.
+Navigated to the new product page: clear the new product form and validation errors (if coming from another page), and register the `:page/navigated` and `page/previous` (as with all route actions).
 
 ## Nexus Interceptors
 
@@ -122,66 +122,6 @@ Nexus provides an easy way to add interceptors for effects and actions.
 ```
 
 I learned this from [Nexus Interceptor example](https://github.com/cjohansen/nexus?tab=readme-ov-file#example-logging).
-
-I realized that I can utilize Nexus interceptors when clearing the new product form after navigating away from that page:
-
-```clojure
-(def track-previous-page
-  {:id :track-previous-page
-
-   :before-action
-   (fn [{:keys [action state] :as ctx}]
-     (let [[action-name _params] action
-           ;; Check if this is a route action
-           route-action? (and (keyword? action-name)
-                              (string/starts-with? (str action-name) ":route/"))]
-       (if route-action?
-         (let [;; Get current page navigation
-               app-page (ds/pull state '[{:app/page [*]}] :app)
-               current-page (get-in app-page [:app/page :page/navigated])
-               page-id (get-in app-page [:app/page :db/id])]
-           ;; Store current page as previous before navigating
-           (if (and current-page page-id)
-             (do
-               (ds/transact! !conn [[:db/add page-id :page/previous current-page]])
-               ctx)
-             ctx))
-         ctx)))})
-
-
-(def reset-after-new-product-page
-  {:id :reset-after-new-product-page
-
-   :before-action
-   (fn [{:keys [action state] :as ctx}]
-     (let [[action-name _params] action
-           ;; Check if this is a route action
-           route-action? (and (keyword? action-name)
-                              (string/starts-with? (str action-name) ":route/"))]
-       (if route-action?
-         (let [;; Get previous page
-               app-page (ds/pull state '[{:app/page [*]}] :app)
-               previous-page (get-in app-page [:app/page :page/previous])
-               ;; Check if we're leaving the new product page
-               leaving-new-page? (and previous-page
-                                      (= (:page previous-page) :new))]
-           (if leaving-new-page?
-             (do
-               (when goog.DEBUG (f-util/clog "Leaving new product page, clearing form data"))
-               ;; Clear new product form data
-               (ds/transact! !conn [[:db/retract [:db/ident :product/validation-error] :error]
-                                    [:db/retract [:db/ident :product/new] :title]
-                                    [:db/retract [:db/ident :product/new] :author]
-                                    [:db/retract [:db/ident :product/new] :year]
-                                    [:db/retract [:db/ident :product/new] :country]
-                                    [:db/retract [:db/ident :product/new] :language]
-                                    [:db/retract [:db/ident :product/new] :price]
-                                    [:db/retract [:db/ident :product/new] :director]
-                                    [:db/retract [:db/ident :product/new] :genre]])
-               ctx)
-             ctx))
-         ctx)))})
-```
 
 ## Some Development Tricks Used in This Exercise
 

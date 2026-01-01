@@ -216,11 +216,14 @@
                           [[:db/transact [[:db/add [:db/ident :products-table/sort] :sort/field field]
                                           [:db/add [:db/ident :products-table/sort] :sort/direction new-direction]]]])))
 
+
 (nxr/register-action! :action/clear-new-product-form
                       (fn [state params]
                         (let [pg (:pg params)
                               app-page (ds/pull state '[{:app/page [*]}] :app)
                               ;; Get CURRENT page (this will be the previous page after navigation)
+                              ;; This is because in Nexus, all actions in a dispatch see the same state snapshot
+                              ;; (and therefore we do not yet have the previous page where we came from).
                               current-page (get-in app-page [:app/page :page/navigated])
                               ;; Check if current page is NOT the new product page OR switching product groups
                               should-clear? (or (nil? current-page)
@@ -228,9 +231,6 @@
                                                 ;; Also clear if switching between different product groups
                                                 (and (= (:page current-page) :new)
                                                      (not= (:pg current-page) pg)))]
-                          (when goog.DEBUG (f-util/clog "action/clear-new-product-form, current-page: " current-page))
-                          (when goog.DEBUG (f-util/clog "action/clear-new-product-form, target pg: " pg))
-                          (when goog.DEBUG (f-util/clog "action/clear-new-product-form, should-clear?: " should-clear?))
                           (if should-clear?
                             [[:db/retract [:db/ident :product/validation-error] :error]
                              [:db/retract [:db/ident :product/created] :error]
@@ -245,7 +245,6 @@
                              [:db/retract [:db/ident :product/new] :genre]]
                             ;; Don't clear if condition not met
                             []))))
-
 
 
 (nxr/register-action! :add/products
