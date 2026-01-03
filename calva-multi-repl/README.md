@@ -9,7 +9,7 @@
 
 ## Introduction
 
-This a minimal Calva multi-repl demo.
+This a minimal Calva multi-repl demo. I did this demo for myself to experiment with the new Calva multi-repl functionality.
 
 ## Backend (Clojure) REPL
 
