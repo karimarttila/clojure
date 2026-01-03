@@ -1,0 +1,11 @@
+{:deps {:aliases [:shadow-cljs :frontend]}
+ :nrepl {:middleware [cider.nrepl/cider-middleware]}
+ :builds {:app
+          {:target :browser
+           :devtools {:http-root "public"
+                      :http-port 6080
+                      :preloads [devtools.preload]}
+           :output-dir "public/js"
+           :asset-path "/js"
+           :modules {:main {:entries [frontend.femain]
+                            :init-fn frontend.femain/init!}}}}}

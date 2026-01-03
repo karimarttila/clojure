@@ -1,0 +1,17 @@
+;; Babashka task runner.
+
+{:paths ["bb-scripts"]
+
+ :tasks {:requires ([tasks :as t])
+
+         backend-repl {:doc "Start backend nREPL process"
+                       :task (t/run-command :backend-repl-command ".user.edn")}
+         shadow-watch {:doc "Start shadow-cljs watch"
+              :task (shell "npm run shadow:watch")}         
+         outdated {:doc "Check depdendencies"
+                   :task (clojure "-M:outdated")}
+         lint {:doc "Lint"
+               :task (shell "clj-kondo --lint src")}
+         init-lint {:doc "Initialize clj-kondo cache and copy lib configs"
+                    :task (shell "sh -c" "clj-kondo --copy-configs --lint $(clj -Spath -A:backend:frontend)")}}
+ }

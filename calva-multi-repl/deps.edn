@@ -1,0 +1,35 @@
+{:paths ["src/cljc"]
+
+ :aliases {:backend
+           {:extra-paths ["src/clj" "src/cljc"]
+            :extra-deps {org.clojure/clojure {:mvn/version "1.12.4"}}}
+
+           :frontend
+           {:extra-paths ["src/cljs" "src/cljc"]
+            :extra-deps {org.clojure/clojurescript {:mvn/version "1.12.134"}}}
+
+           :dev
+           {:extra-paths ["dev/clj"]}
+
+
+           ;; NOTE: This is used for external repl!
+           ;; DO NOT USE this alias when doing Calva Jack-in!!! 
+           :calva-external-repl
+           {:extra-deps {nrepl/nrepl {:mvn/version,"1.5.1"}
+                         cider/cider-nrepl {:mvn/version,"0.58.0"}}}
+
+           :shadow-cljs
+           {:extra-paths ["dev/cljs"]
+            :extra-deps {thheller/shadow-cljs {:mvn/version "3.3.4"}
+                         binaryage/devtools {:mvn/version "1.0.7"}
+                         cider/cider-nrepl {:mvn/version "0.58.0"}}}
+
+           :babashka
+           {:extra-deps {babashka/process {:mvn/version "0.6.24"}}}
+
+           :outdated
+           {:deps {com.github.liquidz/antq {:mvn/version "RELEASE"}
+                   org.slf4j/slf4j-simple {:mvn/version "2.0.17"}}
+            :main-opts ["-m" "antq.core"]}}}
+
+

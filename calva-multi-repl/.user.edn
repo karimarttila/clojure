@@ -1,0 +1,4 @@
+{; Example .user.edn file to configure :repl-command for bb.edn
+ ; Calva REPL.
+ :backend-repl-command ["clojure -M:dev:backend:calva-external-repl:kari -i bb-scripts/backendinit.clj -m nrepl.cmdline --middleware \"[cider.nrepl/cider-middleware]\""]
+ }

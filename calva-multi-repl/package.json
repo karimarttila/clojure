@@ -1,0 +1,15 @@
+{
+  "name": "calva-multi-repl-frontend",
+  "scripts": {
+    "shadow:watch": "shadow-cljs watch app"
+  },
+  "devDependencies": {
+    "shadow-cljs": "2.28.21",
+    "onchange": "^7.1.0",
+    "autoprefixer": "^10.4.12",
+    "npm-run-all": "^4.1.5"
+  },
+  "dependencies": {
+    "cross-env": "^7.0.3"
+  }
+}
