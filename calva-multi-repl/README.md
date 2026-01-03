@@ -3,6 +3,7 @@
 ## Table of Contents <!-- omit in toc -->
 
 - [Introduction](#introduction)
+- [Calva Output to Terminal](#calva-output-to-terminal)
 - [Backend (Clojure) REPL](#backend-clojure-repl)
 - [Frontend (Clojurescript) REPL](#frontend-clojurescript-repl)
 - [CLJC Files](#cljc-files)
@@ -10,6 +11,19 @@
 ## Introduction
 
 This a minimal Calva multi-repl demo. I did this demo for myself to experiment with the new Calva multi-repl functionality.
+
+## Calva Output to Terminal
+
+In the following chapters I write that you can read the REPL output in the VSCode terminal. I have this setting in my VSCode `settings.json`:
+
+```json
+    "calva.outputDestinations": {
+
+        "evalResults": "terminal",
+        "evalOutput": "terminal",
+        "otherOutput": "terminal"
+    },
+```
 
 ## Backend (Clojure) REPL
 
