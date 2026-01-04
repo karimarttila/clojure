@@ -9,7 +9,7 @@
 - [Frontend (Clojurescript) REPL](#frontend-clojurescript-repl)
 - [CLJC Files](#cljc-files)
 
-![VSCode / Calva](/docs/screenshot.png)
+![VSCode / Calva](/calva-multi-repl/docs/screenshot.png)
 
 ## Introduction
 
