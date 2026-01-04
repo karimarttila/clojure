@@ -413,3 +413,7 @@
     (f-routes/start! f-routes/routes system)
     ; Trigger initial render as in the replicant-state-datascript example.
     (ds/transact! !conn [[:db/add :app :app/started-at (js/Date.)]])))
+
+(comment
+  (+ 1 2)
+  )

@@ -14,6 +14,7 @@
 - [Frontend Initialization](#frontend-initialization)
 - [Nexus Actions and Effects](#nexus-actions-and-effects)
 - [Nexus Interceptors](#nexus-interceptors)
+- [Start Development Environment](#start-development-environment)
 - [Some Development Tricks Used in This Exercise](#some-development-tricks-used-in-this-exercise)
   - [Move Calva Output to a New Window](#move-calva-output-to-a-new-window)
   - [Browser Developer Tool Console Logging](#browser-developer-tool-console-logging)
@@ -122,6 +123,39 @@ Nexus provides an easy way to add interceptors for effects and actions.
 ```
 
 I learned this from [Nexus Interceptor example](https://github.com/cjohansen/nexus?tab=readme-ov-file#example-logging).
+
+## Start Development Environment
+
+Short instructions how to start the development environment. For more information read blog post [Calva Multi-REPL](TODO).
+
+Open three terminals:
+
+In terminal #1 start watching css changes:
+
+```bash
+bb tailwind-watch
+```
+
+In terminal #2 start backend REPL:
+
+```bash
+bb backend-repl
+```
+
+In terminal #3 start frontend REPL:
+
+```bash
+bb frontend-repl
+```
+
+Navigate to browser: http://localhost:8332/ ... and check that the frontend has been built, and the app works.
+
+In Calva, connect to backend and frontend REPLs:
+
+- Backend REPL: In VSCode/Calva: Command Palette => `Calva: Connect to Running REPL Server in the Project` => Choose: `deps.edn`
+- Frontend REPL: In VSCode/Calva: Command Palette => `Calva: Connect to Running REPL Server in the Project` => Choose: `shadow-cljs` => `Select which build to connect to` => Choose: `:app`
+
+Test both in the backend Clojure code and frontend Clojurescript code that the REPLs work.
 
 ## Some Development Tricks Used in This Exercise
 

@@ -1,7 +1,10 @@
 (ns backendinit
-  (:require [clojure.java.io :as io]))
+  (:require [clojure.java.io :as io]
+            [integrant.repl :refer [go]]))
+
 
 (def target-dev-public-dir "target/dev/public/assets")
+
 
 (defn create-directory []
   (let [dir (io/file target-dev-public-dir)]
@@ -26,7 +29,5 @@
 (create-directory)
 ; Copy files
 (copy-all-assets)
-
-; NOTE: For reasons of how Calva connects to the REPLs, we must do 
-; Integrant go in the frontendinit.clj.
-
+; Do Integrant reset.
+(go)

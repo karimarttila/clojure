@@ -6,14 +6,12 @@
 
          build {:doc "Build uberjar"
                 :task (clojure "-T:shadow-cljs:frontend:backend:build uberjar")}
-         backend-repl {:doc "Start backend nREPL process"
+         backend-repl {:doc "Start backend nREPL process. In Calva use deps.edn project type."
                        :task (t/run-command :backend-repl-command ".user.edn")}
-         frontend-repl {:doc "Start frontend REPL and connect to backend REPL"
-                        :task (t/run-frontend-command :frontend-repl-command ".user.edn")}
+         frontend-repl {:doc "Start frontend nREPL.  In Calva use shadow-cljs project type."
+                        :task (t/run-command :frontend-repl-command ".user.edn")}
          tailwind-watch {:doc "Start tailwind watch"
                         :task (t/run-command :tailwind-watch ".user.edn")}
-         frontend-dev {:doc "NOTE: NOT NEEDED, USE frontend-repl insteace (Start shadow-cljs dev build process)"
-                       :task (t/run-command :shadow-run-dev-command ".user.edn")}
          outdated {:doc "Check depdendencies"
                    :task (clojure "-M:outdated")}
          lint {:doc "Lint"
