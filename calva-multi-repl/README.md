@@ -8,6 +8,8 @@
 - [Backend (Clojure) REPL](#backend-clojure-repl)
 - [Frontend (Clojurescript) REPL](#frontend-clojurescript-repl)
 - [CLJC Files](#cljc-files)
+- [Babashka](#babashka)
+- [Note from the Calva Creator](#note-from-the-calva-creator)
 
 ![VSCode / Calva](/calva-multi-repl/docs/screenshot.png)
 
@@ -254,3 +256,15 @@ nil
 Check in the browser Developer tools panel, that you also see `Hello from common` in the Console output.
 
 You have now verified that your cljc common files can be evaluated both in the backend Clojure REPL and in the frontend Clojurescript REPL.
+
+## Babashka
+
+You can nowadays connect Calva to various REPLs. You can try e.g. Babashka. In Calva command palette: `Start a Project REPL and Connect...` and then choose project type: `Babashka`. Open the [tasks.clj](./bb-scripts/tasks.clj) file and evaluate its namespace, and you can see that the REPL does not complain about requiring babashka specific dependency: `[babashka.process :as process]`.
+
+## Note from the Calva Creator
+
+The Calva Creator Peter Strömberg reviewed this README and wanted to emphasize one thing:
+
+> FYI the demo so far does not need new multi-session Calva. You could configure backend and frontend as one connect sequence (which you don’t even need to configure, the built-in deps.edn + shadow-cljs works just fine), Calva has a command for creating a full stack shadow-cljs project if you’re curious what it would look like. This setup is to prefer over multi-session because then your frontend repl will be spawned from the backend repl. Only one JVM process, and repl dev tools will be happier.
+
+So, you should remember, that this demo created these two separate REPLs just for experimentation purposes. Follow Calva best practices when you do real Clojure development.
