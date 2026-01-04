@@ -3,11 +3,10 @@
 {:paths ["bb-scripts"]
 
  :tasks {:requires ([tasks :as t])
-
-         backend-repl {:doc "Start backend nREPL process"
+         backend-repl {:doc "Start backend nREPL process. In Calva use deps.edn project type."
                        :task (t/run-command :backend-repl-command ".user.edn")}
-         shadow-watch {:doc "Start shadow-cljs watch"
-              :task (shell "npm run shadow:watch")}         
+         frontend-repl {:doc "Start frontend nREPL process. In Calva use shadow-cljs project type."
+                        :task (t/run-command :frontend-repl-command ".user.edn")}
          outdated {:doc "Check depdendencies"
                    :task (clojure "-M:outdated")}
          lint {:doc "Lint"
