@@ -57,9 +57,13 @@ Open a terminal in this directory and run command:
 
 ```bash
 bb backend-repl
-# Prints something like:
-# cmd:  [clojure -M:dev:backend:calva-external-repl:kari -i bb-scripts/backendinit.clj -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]"]
-# nREPL server started on port 34423 on host localhost - nrepl://localhost:34423
+```
+
+It prints something like:
+
+```text
+cmd:  [clojure -M:dev:backend:calva-external-repl:kari -i bb-scripts/backendinit.clj -m nrepl.cmdline --middleware "[cider.nrepl/cider-middleware]"]
+nREPL server started on port 34423 on host localhost - nrepl://localhost:34423
 ```
 
 In VSCode/Calva: Command Palette => `Calva: Connect to Running REPL Server in the Project` => Choose: `deps.edn`
@@ -116,9 +120,13 @@ Open a terminal in this directory and run command:
 
 ```bash
 bb frontend-repl
-# Prints something like:
-# cmd:  [clojure -M:shadow-cljs:frontend:kari -m shadow.cljs.devtools.cli watch app]
-# ...
+```
+
+It prints something like:
+
+```text
+cmd:  [clojure -M:shadow-cljs:frontend:kari -m shadow.cljs.devtools.cli watch app]
+...
 shadow-cljs - HTTP server available at http://localhost:6080
 shadow-cljs - server version: 3.3.4 running at http://localhost:9633
 shadow-cljs - nREPL server started on port 36259
