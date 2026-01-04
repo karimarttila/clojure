@@ -7,3 +7,4 @@
 
 # Let's add scratch to git in this repo, since there are e.g. Datascript query examples.
 !scratch/
+!.user.edn
