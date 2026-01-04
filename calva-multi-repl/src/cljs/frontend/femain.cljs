@@ -1,6 +1,5 @@
 (ns frontend.femain)
 
-
 (defn init! []
   (js/console.log "Hello, shadow-cljs!"))
 
@@ -12,4 +11,10 @@
   ;;=> 7
   (print "Hello from frontend")
   ;;=> nil
+
+  ;; Testing that snitch works in the frontend code.
+  (require '[snitch.core :refer [*let]])
+  (*let [x 3 
+        y 4]
+        (+ x y))
   )
